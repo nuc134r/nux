@@ -1,0 +1,24 @@
+# gitleaks configuration: the default rules plus nux-specific ones.
+# Run locally: gitleaks git --config .gitleaks.toml --redact .
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "nux-private-key-block"
+description = "Any PEM/OpenSSH private key block"
+regex = '''-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----'''
+keywords = ["private key"]
+
+[[rules]]
+id = "nux-zerotier-identity-secret"
+description = "ZeroTier identity.secret (address:0:public:private)"
+regex = '''\b[0-9a-f]{10}:0:[0-9a-f]{128}:[0-9a-f]{128}\b'''
+keywords = [":0:"]
+
+[[allowlists]]
+description = "Files that contain fake key headers on purpose (redaction code and its test)"
+paths = [
+  '''^lib/core/log/redact\.dart$''',
+  '''^test/redact_test\.dart$''',
+]

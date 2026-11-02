@@ -1,0 +1,67 @@
+{
+  "@@locale": "en",
+  "about": "About",
+  "appTitle": "nux",
+  "appVersion": "App version",
+  "appearance": "Appearance",
+  "cancel": "Cancel",
+  "changelog": "Changelog",
+  "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
+  "checkForUpdates": "Check for updates",
+  "errorGeneric": "Something went wrong: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
+  "homeWelcome": "Welcome to nux",
+  "language": "Language",
+  "languageSystem": "System",
+  "later": "Later",
+  "licenses": "Licenses",
+  "openReleasePage": "Open release page",
+  "predictiveBack": "Predictive back gesture",
+  "predictiveBackHint": "The page follows your back swipe",
+  "settings": "Settings",
+  "sourceCode": "Source code",
+  "theme": "Theme",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themeSystem": "System",
+  "upToDate": "You have the latest version",
+  "update": "Update",
+  "updateAvailable": "nux {version} is available",
+  "@updateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateDownloading": "Downloading update…",
+  "updateFailed": "Update failed: {error}",
+  "@updateFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "updateInstalling": "Opening the installer…",
+  "updatePermission": "Allow nux to install apps, then try again",
+  "updateTo": "Update to {version}",
+  "@updateTo": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updatesAuto": "Check for updates automatically",
+  "updatesBeta": "Beta versions",
+  "updatesBetaHint": "Also offer pre-releases. They may be unstable.",
+  "whatsNew": "What's new"
+}

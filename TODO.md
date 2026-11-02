@@ -3,18 +3,20 @@
 Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## M0 — Bootstrap
-- [ ] `fvm use 3.47.9`, `flutter create --org io.nuc134r --project-name nux --platforms android,linux,windows`, minSdk 26
-- [ ] Pub workspace root; `packages/nux_backend`, `packages/tab_switcher`
-- [ ] Lints (garage2's `analysis_options.yaml`), gen-l10n en + ru, Material 3 theme + dark mode, JetBrains Mono
-- [ ] Drift DB skeleton + migration test harness; secure-storage wrapper; logger with redaction
-- [ ] `.gitignore` for keystores/keys; gitleaks in CI
-- [ ] CI: `tests.yml`, `release.yml`, `release-notes.yml` ported from garage2; `tool/version.sh`, `tool/changelog.sh`
-- [ ] `docs/RELEASING.md` (no personal paths), CHANGELOG.md
-- [ ] In-app updates (port `features/updates`), beta channel toggle, `NUX_UPDATER` dart-define to disable
-- [ ] App icon pipeline (`icons/*.svg` → `tool/generate_icons.py`, as in garage2)
-- [ ] `CLAUDE.md` with commands and conventions
+- [x] `fvm use 3.47.9`, `flutter create --org io.nuc134r --project-name nux --platforms android,linux,windows`, minSdk 26
+- [x] Pub workspace root; `packages/nux_backend` (`packages/tab_switcher` is created with the 2.0 port in M1)
+- [x] Lints (garage2's `analysis_options.yaml`), gen-l10n en + ru, Material 3 theme + dark mode, JetBrains Mono
+- [x] Drift DB skeleton + migration test harness; secure-storage wrapper; logger with redaction
+- [x] `.gitignore` for keystores/keys; gitleaks in CI (`secrets.yml`, every push and PR, gates releases)
+- [x] CI: `tests.yml`, `release.yml`, `release-notes.yml` ported from garage2; `tool/version.sh`, `tool/changelog.sh`
+- [x] `docs/RELEASING.md` (no personal paths), CHANGELOG.md
+- [x] In-app updates (port `features/updates`), beta channel toggle, `NUX_UPDATER` dart-define to disable
+- [x] App icon pipeline (`icons/*.svg` → `tool/generate_icons.py`, as in garage2)
+- [x] `CLAUDE.md` with commands and conventions
+- [ ] Create the release keystore + `ANDROID_*` secrets, tag `v0.1.0` (owner)
 
 ## M1 — Tabs + SSH terminal
+- [ ] Create `packages/tab_switcher` in the workspace from the published 1.0.1 + lamp_studio's local copy
 - [ ] tab_switcher 2.0: merge lamp_studio's local copy, null safety, M3, predictive back, landscape
 - [ ] Live/parked tab lifecycle, serialisable `TabState`, session restore after restart
 - [ ] Tab menu (duplicate, pin, close others), groups, undo close, unsaved-changes guard

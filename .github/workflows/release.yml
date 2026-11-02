@@ -1,0 +1,158 @@
+name: Release APK
+
+# Push a tag like v1.2.0 to build signed APKs and publish a GitHub release (v1.2.0-beta.1 → pre-release).
+# "Run workflow" from the Actions tab: with a version (e.g. 2.3.1) it tags the commit and publishes the
+# release the same way; without one it only builds the APKs as a downloadable artifact.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version to tag and publish, e.g. 2.3.1 (empty = build only)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+# Tests and the APK build run side by side; the release is published once both pass.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  secrets:
+    uses: ./.github/workflows/secrets.yml
+
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    outputs:
+      name: ${{ steps.version.outputs.name }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # tags for tool/version.sh
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Gradle's downloads (wrapper, plugins, libraries) and build cache, kept between runs.
+      - uses: gradle/actions/setup-gradle@v6
+
+      # The NDK and CMake that Flutter's Android build asks for are not on the runner image; without
+      # this they are downloaded (~1 min, and the download has failed before) on every run.
+      # Bump the versions when a Flutter upgrade changes them (the build log shows what it installs).
+      - uses: actions/cache@v6
+        with:
+          path: |
+            /usr/local/lib/android/sdk/ndk/28.2.13676358
+            /usr/local/lib/android/sdk/cmake/3.22.1
+          key: android-ndk-28.2.13676358-cmake-3.22.1
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+          cache: true
+
+      - name: Version from tag
+        id: version
+        env:
+          REQUESTED: ${{ inputs.version }}
+        run: |
+          if [[ -n "$REQUESTED" ]]; then
+            [[ "$REQUESTED" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "::error::Not a version: $REQUESTED"; exit 1; }
+            git rev-parse -q --verify "refs/tags/v$REQUESTED" >/dev/null && { echo "::error::v$REQUESTED already exists"; exit 1; }
+            echo "name=$REQUESTED" >> "$GITHUB_OUTPUT"
+            echo "tag=v$REQUESTED" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=$(bash tool/version.sh)" >> "$GITHUB_OUTPUT"
+            [[ "$GITHUB_REF_TYPE" == "tag" ]] && echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          fi
+          echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore signing key
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storeFile=app/upload-keystore.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+
+      - name: Warn about debug signing
+        if: env.HAS_KEYSTORE != 'true'
+        run: echo "::warning::ANDROID_KEYSTORE_BASE64 is not set — APKs are signed with a throwaway debug key and cannot update each other. See docs/RELEASING.md."
+
+      - run: flutter pub get
+
+      - name: Build APKs
+        run: |
+          args="--release --build-name=${{ steps.version.outputs.name }} --build-number=${{ steps.version.outputs.number }}"
+          flutter build apk $args
+          flutter build apk $args --split-per-abi
+          mkdir -p dist
+          v="${{ steps.version.outputs.name }}"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/nux-$v.apk"
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            cp "build/app/outputs/flutter-apk/app-$abi-release.apk" "dist/nux-$v-$abi.apk"
+          done
+          ls -la dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nux-apk-${{ steps.version.outputs.name }}
+          path: dist/*.apk
+
+  publish:
+    needs: [test, secrets, apk]
+    if: needs.apk.outputs.tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: nux-apk-${{ needs.apk.outputs.name }}
+          path: dist
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.apk.outputs.tag }}
+        run: |
+          # Notes: the version's CHANGELOG.md section (also shown in the app's update card),
+          # followed by GitHub's generated "Full Changelog" link.
+          bash tool/changelog.sh "${{ needs.apk.outputs.name }}" > notes.md
+          [[ -s notes.md ]] || echo "::warning::CHANGELOG.md has no section for ${{ needs.apk.outputs.name }}"
+          # --target creates the tag on the built commit when it does not exist yet (manual runs).
+          gh release create "$TAG" dist/*.apk \
+            --target "$GITHUB_SHA" \
+            --title "nux ${{ needs.apk.outputs.name }}" \
+            --notes-file notes.md \
+            --generate-notes \
+            $([[ "$TAG" == *-* ]] && echo --prerelease)

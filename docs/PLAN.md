@@ -285,7 +285,7 @@ Keys ("identities") are their own screen, not a field hidden inside a connection
 
 - **Generate**: Ed25519 (default), ECDSA P-256/384/521, RSA 3072/4096. Optional passphrase, and a comment
   (default `nux@<device model>`).
-- **Import**: OpenSSH private key (`-----BEGIN OPENSSH PRIVATE KEY-----`), PEM/PKCS#1/PKCS#8, PuTTY `.ppk`
+- **Import**: OpenSSH private key (`openssh-key-v1` format), PEM/PKCS#1/PKCS#8, PuTTY `.ppk`
   (v2/v3). Import from a file picker, the clipboard or a share intent. Encrypted keys ask for the passphrase.
   The original file is not kept.
 - **Export**: copy or share the **public** key (`authorized_keys` line), show it as a QR code, show
