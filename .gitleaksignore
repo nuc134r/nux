@@ -1,0 +1,3 @@
+# Known false positives (gitleaks fingerprints: commit:file:rule:line). Keep this list short and explained.
+# docs/PLAN.md named the OpenSSH private key header as a format, no key material; reworded in a later commit.
+00a91404f9b7811e22ed5afdd89b880f05aab752:docs/PLAN.md:nux-private-key-block:288
