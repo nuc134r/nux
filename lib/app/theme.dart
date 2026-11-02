@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 /// Monospace family bundled with the app (assets/fonts, OFL).
 const monoFont = 'JetBrains Mono';
 
+/// For keys, fingerprints and randomart: JetBrains Mono's ligatures would merge `==`, `->` etc.
+const noLigatures = [FontFeature.disable('liga'), FontFeature.disable('calt')];
+
 const _seed = Color(0xFF2E7D6B);
 
 ThemeData buildTheme(Brightness brightness, {bool predictiveBack = false}) {

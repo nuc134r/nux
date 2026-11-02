@@ -4,11 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
+import 'package:nux/core/secure/secret_store.dart';
 
 import 'helpers.dart';
 
-/// Renders every route at phone and desktop widths, in both themes and both languages:
-/// catches overflows, missing translations and providers that throw. Add new routes to [Routes.all].
+/// Renders every route at phone and desktop widths with sample data: catches overflows, missing
+/// translations and providers that throw. Add new routes to [Routes.all].
 void main() {
   const sizes = {'phone': Size(360, 740), 'desktop': Size(1280, 800)};
 
@@ -19,7 +20,10 @@ void main() {
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
 
-        final container = ProviderContainer(overrides: testOverrides());
+        final db = memoryDb();
+        final secrets = MemorySecretStore();
+        await tester.runAsync(() => insertSamples(db, secrets));
+        final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
         addTearDown(container.dispose);
         await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
         await settle(tester);

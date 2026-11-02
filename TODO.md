@@ -16,22 +16,27 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Create the release keystore + `ANDROID_*` secrets, tag `v0.1.0` (owner)
 
 ## M1 — Tabs + SSH terminal
-- [ ] Create `packages/tab_switcher` in the workspace from the published 1.0.1 + lamp_studio's local copy
-- [ ] tab_switcher 2.0: merge lamp_studio's local copy, null safety, M3, predictive back, landscape
-- [ ] Live/parked tab lifecycle, serialisable `TabState`, session restore after restart
-- [ ] Tab menu (duplicate, pin, close others), groups, undo close, unsaved-changes guard
-- [ ] Connections: host, port, user, auth (key / password / agent-less), jump host, group, colour tag
-- [ ] Identities screen (PLAN §14): generate Ed25519/ECDSA/RSA with passphrase and comment
-- [ ] Import OpenSSH / PEM / PKCS#8 / PuTTY `.ppk` from file, clipboard or share intent
-- [ ] Public key export: copy, share, QR, fingerprints, randomart; guarded encrypted private export
-- [ ] "Install on server" (ssh-copy-id equivalent) and switch the connection to key auth
-- [ ] Keys in secure storage, optional biometric per key, "used by" list and delete warning
-- [ ] Key tests: round trip per type, fixtures generated at test time
-- [ ] Known hosts: TOFU dialog with fingerprint, changed-key warning, manage list
-- [ ] Spike: flterm vs xterm2 on a mid-range phone (htop, vim, tmux, emoji, CJK, 10 MB `cat`)
-- [ ] Terminal tab: `TerminalSurface`, extra-keys bar, sticky modifiers, font zoom, copy mode, links
-- [ ] Connection pool (sessions outlive widgets), reconnect banner, keep-alive
-- [ ] Smoke test that renders every tab kind at phone and tablet widths
+- [x] Create `packages/tab_switcher` in the workspace (rewritten as 2.0; ideas from 1.0.1 and lamp_studio's copy)
+- [x] tab_switcher 2.0: Dart 3, M3, back closes the grid, wide-screen tab strip, header swipe with the body following
+- [x] Live/parked tab lifecycle (`keepAlive`, `onParked`/`onResumed`, previews), session restore after restart
+- [x] Tab menu (pin, close others, "another terminal on this host"), grid sections by group, undo close, unsaved-changes guard
+- [x] Connections: host, port, user, keys in order, saved password, jump host (ProxyJump), group, colour tag, keep-alive
+- [x] Quick connect (`user@host:port`)
+- [x] Identities screen (PLAN §14): generate Ed25519/ECDSA/RSA with passphrase and comment
+- [x] Import OpenSSH / PEM / PKCS#8 (plain and PBES2) / PuTTY `.ppk` v2+v3 from file or clipboard
+- [ ] Import from a share intent (another app's "Share" → nux)
+- [x] Public key export: copy, share, QR, SHA256/MD5 fingerprints, randomart; guarded encrypted private export
+- [x] "Install on server" (ssh-copy-id equivalent) and switch the connection to the key
+- [x] Keys in secure storage, optional device unlock per key, "used by" list and delete warning, change passphrase
+- [x] Key tests against ssh-keygen / openssl / puttygen (throwaway keys made at test time)
+- [x] Known hosts: TOFU dialog with fingerprint, changed-key and new-key-type warnings, manage list
+- [ ] Spike on a real mid-range phone: flterm vs xterm2 (htop, vim, tmux, emoji, CJK, 10 MB `cat`)
+- [x] Terminal tab: flterm view, extra-keys bar with sticky Ctrl/Alt, font size setting, paste/copy all, URL links
+- [ ] Terminal: pinch to zoom, volume keys as modifiers, copy mode with handles, open file paths in an editor tab (M5)
+- [ ] Move a tab to another group from its menu
+- [x] Connection pool (shared per host, idle grace period), reconnect banner and "Enter to reconnect", keep-alive
+- [x] SSH integration tests against a throwaway local sshd (TOFU, exec, pty, changed key, jump host)
+- [x] Smoke test renders every route at phone and desktop widths; screenshot test (`tool/screenshots.sh`)
 
 ## M2 — SFTP + viewer
 - [ ] `FileSystem` port + SFTP implementation

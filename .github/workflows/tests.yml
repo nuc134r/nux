@@ -25,11 +25,15 @@ jobs:
           channel: stable
           cache: true
 
+      # Key and SSH tests create throwaway keys with these tools and run a local sshd (skipped without them).
+      - run: sudo apt-get update -q && sudo apt-get install -y -q putty-tools openssh-server openssl
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
       - name: Test packages
         run: |
           for p in packages/*/; do
-            (cd "$p" && echo "::group::$p" && dart test && echo "::endgroup::")
+            echo "::group::$p"
+            if grep -q flutter_test "$p/pubspec.yaml"; then (cd "$p" && flutter test); else (cd "$p" && dart test); fi
+            echo "::endgroup::"
           done

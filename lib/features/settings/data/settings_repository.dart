@@ -10,6 +10,7 @@ abstract final class SettingKeys {
   static const autoUpdateCheck = 'autoUpdateCheck';
   static const betaUpdates = 'betaUpdates';
   static const dismissedUpdate = 'dismissedUpdate';
+  static const terminalFontSize = 'terminalFontSize';
 }
 
 class AppSettingsState {
@@ -32,6 +33,8 @@ class AppSettingsState {
 
   /// Offer pre-releases too.
   bool get betaUpdates => values[SettingKeys.betaUpdates] == 'true';
+
+  double get terminalFontSize => (double.tryParse(values[SettingKeys.terminalFontSize] ?? '') ?? 14).clamp(8, 32);
 
   /// Release version the user chose "Later" for; not offered again.
   String? get dismissedUpdate => values[SettingKeys.dismissedUpdate];

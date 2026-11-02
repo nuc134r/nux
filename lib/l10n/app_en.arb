@@ -1,13 +1,99 @@
 {
   "@@locale": "en",
   "about": "About",
+  "addHost": "Add host",
+  "addKey": "Add key",
+  "addressVia": "{address} via {jump}",
+  "@addressVia": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      },
+      "jump": {
+        "type": "String"
+      }
+    }
+  },
+  "advanced": "Advanced",
+  "algEcdsa": "NIST curves. Use when a server or policy requires ECDSA.",
+  "algEd25519": "Small, fast and secure. Supported by every server from the last decade.",
+  "algRsa": "For old servers. Generating takes a while on a phone.",
   "appTitle": "nux",
   "appVersion": "App version",
   "appearance": "Appearance",
+  "authentication": "Sign in",
+  "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
   "cancel": "Cancel",
+  "change": "Change",
   "changelog": "Changelog",
   "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
   "checkForUpdates": "Check for updates",
+  "clipboardEmpty": "The clipboard is empty",
+  "close": "Close",
+  "closeOtherTabs": "Close other tabs",
+  "closeTab": "Close tab",
+  "connect": "Connect",
+  "continueAction": "Continue",
+  "copied": "Copied",
+  "copy": "Copy",
+  "copyAll": "Copy everything",
+  "copyOf": "{name} (copy)",
+  "@copyOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "currentPassphrase": "Current passphrase",
+  "delete": "Delete",
+  "deleteConnectionBody": "Its saved password is deleted too. Trusted host keys and SSH keys stay.",
+  "deleteConnectionJumpers": "These hosts connect through it and will connect directly: {names}",
+  "@deleteConnectionJumpers": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteConnectionTitle": "Delete {name}?",
+  "@deleteConnectionTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyBody": "The private key is erased from this device. Unless you have a copy, it cannot be recovered.",
+  "deleteKeyTitle": "Delete key {name}?",
+  "@deleteKeyTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteKeyUsed": "The private key is erased from this device and removed from these hosts: {names}. Unless you have a copy, it cannot be recovered.",
+  "@deleteKeyUsed": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "deleted": "Deleted {name}",
+  "@deleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "disconnect": "Disconnect",
+  "duplicate": "Duplicate",
+  "duplicateTab": "New terminal on this host",
+  "edit": "Edit",
+  "editHost": "Edit host",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
@@ -16,21 +102,303 @@
       }
     }
   },
+  "exportPassphraseTitle": "Passphrase for the exported key",
+  "exportPrivateKey": "Export private key",
+  "exportPrivateKeyHint": "As an encrypted OpenSSH file",
+  "exportPrivateKeyWarning": "Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.",
+  "fingerprint": "Fingerprint",
+  "fontSize": "Font size",
+  "forget": "Forget",
+  "forgetHostBody": "The next connection will show the server's key and ask you to trust it again.",
+  "forgetHostTitle": "Forget the key of {host}?",
+  "@forgetHostTitle": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "forgotten": "Forgot {host}",
+  "@forgotten": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "generate": "Generate",
+  "generateKey": "Generate a key",
+  "generateKeyHint": "A new key pair made on this device",
+  "generating": "Generating…",
+  "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
+  "groupField": "Group",
+  "hide": "Hide",
   "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
   "homeWelcome": "Welcome to nux",
+  "hostField": "Host",
+  "hostKeyChangedBody": "{host} presented a different key than before. If the server was not reinstalled or reconfigured, someone may be intercepting the connection. Do not trust the new key unless you know why it changed.",
+  "@hostKeyChangedBody": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hostKeyChangedTitle": "The server's key changed!",
+  "hostKeyCompareHint": "On the server: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub",
+  "hostKeyNewTypeBody": "{host} presented a key of a type you have not trusted for it before. This is usually harmless (for example after a server upgrade), but check the fingerprint.",
+  "@hostKeyNewTypeBody": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hostKeyNewTypeTitle": "New key type",
+  "hostKeyPresented": "Presented key",
+  "hostKeyTrust": "Trust",
+  "hostKeyTrustNew": "Trust the new key",
+  "hostKeyTrustedBefore": "Trusted before",
+  "hostKeyUnknownBody": "This is the first connection to {host}. Check that the fingerprint below matches the server's before trusting it.",
+  "@hostKeyUnknownBody": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hostKeyUnknownTitle": "New server",
+  "hosts": "Hosts",
+  "importAction": "Import",
+  "importFormatsHint": "OpenSSH, PEM, PKCS#8 or PuTTY (.ppk)",
+  "importFromClipboard": "Paste from clipboard",
+  "importFromFile": "Import from a file",
+  "importKey": "Import a key",
+  "importKeyPassphraseTitle": "This key has a passphrase",
+  "importKeyStaysEncrypted": "nux will store it encrypted with the same passphrase.",
+  "importedKey": "Imported key",
+  "installOnServer": "Install on a server",
+  "installOnServerHint": "Adds the public key to ~/.ssh/authorized_keys over an existing login (like ssh-copy-id)",
+  "installingKey": "Installing the key on {name}…",
+  "@installingKey": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidNumber": "Enter a number",
+  "invalidPort": "1–65535",
+  "jumpHost": "Jump host",
+  "jumpHostHint": "Connect through another saved host (like ProxyJump)",
+  "keepAlive": "Keep-alive, seconds",
+  "keepAliveHint": "Pings the server so idle connections are not dropped. 0 turns it off.",
+  "keepPassphrase": "Keep the key protected with this passphrase",
+  "keyAlreadyImported": "This key is already here as {name}",
+  "@keyAlreadyImported": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "keyComment": "Comment",
+  "keyCommentHint": "Shown at the end of the public key; helps you recognise it on servers",
+  "keyHasPassphrase": "Protected with a passphrase",
+  "keyInstalled": "Installed on {name}",
+  "@keyInstalled": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "keyInvalid": "This is not a private key nux can read",
+  "keyIsPublic": "This is a public key. Import the private key (the file without .pub).",
+  "keyNameHint": "e.g. Phone",
+  "keyNeedsPassphrase": "This key needs its passphrase",
+  "keyNeedsUnlock": "Device unlock required",
+  "keyNoPassphrase": "No passphrase",
+  "keyNowUsed": "{name} now signs in with this key first",
+  "@keyNowUsed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "keyStorageHint": "The private key is kept in the device's secure storage",
+  "keyType": "Type",
+  "keyUnsupported": "Unsupported key: {detail}",
+  "@keyUnsupported": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "keyWasInstalled": "{name} already accepts this key",
+  "@keyWasInstalled": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "keys": "Keys",
+  "knownHosts": "Known hosts",
+  "knownHostsEmpty": "No trusted servers yet. A server's key is saved here when you trust it on the first connection.",
+  "knownHostsHint": "Keys of servers you trusted. nux warns when a server presents a different key.",
   "language": "Language",
   "languageSystem": "System",
+  "lastSeen": "Last seen {date}",
+  "@lastSeen": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "later": "Later",
   "licenses": "Licenses",
+  "more": "More",
+  "nameField": "Name",
+  "newPassphrase": "New passphrase",
+  "newTab": "New tab",
+  "noColor": "No colour",
+  "noHosts": "No hosts yet",
+  "noHostsHint": "Add a server to connect to, or type user@host to connect right away.",
+  "noKeysHint": "Keys let you sign in without a password. Generate one here, or import a key you already use.",
+  "noKeysYet": "No keys yet",
+  "noPreview": "No preview",
+  "noTabs": "No open tabs",
+  "noTabsHint": "Open the hosts list or connect to a server.",
+  "none": "None",
+  "notNow": "Not now",
+  "ok": "OK",
   "openReleasePage": "Open release page",
+  "openTerminal": "Open terminal",
+  "organize": "Organize",
+  "passphrase": "Passphrase",
+  "passphraseChanged": "Passphrase changed",
+  "passphraseOptionalHint": "Optional. Asked when the key is used.",
+  "passphraseRemoved": "Passphrase removed",
+  "passphraseWrong": "Wrong passphrase",
+  "passphrasesDiffer": "The passphrases differ",
+  "password": "Password",
+  "passwordFor": "Password for {address}",
+  "@passwordFor": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordKeepHint": "A password is saved. Leave empty to keep it.",
+  "passwordWrong": "The server did not accept the password",
+  "paste": "Paste",
+  "pinTab": "Pin",
+  "pinnedTabs": "Pinned",
+  "portField": "Port",
   "predictiveBack": "Predictive back gesture",
   "predictiveBackHint": "The page follows your back swipe",
+  "protection": "Protection",
+  "publicKey": "Public key",
+  "qrCode": "QR code",
+  "quickConnect": "Quick connect",
+  "quickConnectHint": "Saved to hosts, offering all your keys",
+  "recommended": "recommended",
+  "reconnect": "Reconnect",
+  "rememberUntilClosed": "Remember until nux is closed",
+  "rename": "Rename",
+  "repeatPassphrase": "Repeat passphrase",
+  "requireUnlock": "Require device unlock",
+  "requireUnlockHint": "Fingerprint, face or screen lock before each use",
+  "required": "Required",
+  "save": "Save",
+  "saveAndConnect": "Save and connect",
+  "savePassword": "Save password",
+  "savePasswordHint": "Kept in the device's secure storage",
+  "searchHosts": "Search hosts",
   "settings": "Settings",
+  "share": "Share",
+  "show": "Show",
+  "showTabs": "Show tabs",
+  "skipKey": "Skip this key",
   "sourceCode": "Source code",
+  "ssh": "SSH",
+  "sshAuthFailed": "The server refused the keys and password offered",
+  "sshCancelled": "Cancelled",
+  "sshConnectionMissing": "This host was deleted",
+  "sshHostKeyRejected": "The server's key was not trusted",
+  "sshOtherError": "Connection failed: {detail}",
+  "@sshOtherError": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "sshUnreachable": "Could not reach the server: {detail}",
+  "@sshUnreachable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "sshVia": "{error} (through {via})",
+  "@sshVia": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      },
+      "via": {
+        "type": "String"
+      }
+    }
+  },
+  "tabClosed": "Closed {title}",
+  "@tabClosed": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "terminal": "Terminal",
+  "terminalConnecting": "Connecting to {address}…",
+  "@terminalConnecting": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "terminalDisconnected": "Disconnected",
+  "terminalPressEnter": "Press Enter to reconnect",
   "theme": "Theme",
   "themeDark": "Dark",
   "themeLight": "Light",
   "themeSystem": "System",
+  "undo": "Undo",
+  "unlockKey": "Unlock {name}",
+  "@unlockKey": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockKeyReason": "Use the key {name}",
+  "@unlockKeyReason": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unpinTab": "Unpin",
   "upToDate": "You have the latest version",
   "update": "Update",
   "updateAvailable": "nux {version} is available",
@@ -63,5 +431,17 @@
   "updatesAuto": "Check for updates automatically",
   "updatesBeta": "Beta versions",
   "updatesBetaHint": "Also offer pre-releases. They may be unstable.",
+  "useKey": "Use this key",
+  "useKeyFor": "Sign in to {name} with this key from now on?",
+  "@useKeyFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "usedBy": "Used by",
+  "usedByNone": "No host uses this key yet",
+  "usernameField": "Username",
   "whatsNew": "What's new"
 }

@@ -28,6 +28,11 @@ class NuxApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: ref.watch(routerProvider),
+      builder: (context, child) {
+        final l10n = context.l10n;
+        if (currentL10n.value != l10n) WidgetsBinding.instance.addPostFrameCallback((_) => currentL10n.value = l10n);
+        return child!;
+      },
     );
   }
 }

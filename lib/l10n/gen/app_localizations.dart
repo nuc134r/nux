@@ -104,6 +104,48 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// No description provided for @addHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Add host'**
+  String get addHost;
+
+  /// No description provided for @addKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Add key'**
+  String get addKey;
+
+  /// No description provided for @addressVia.
+  ///
+  /// In en, this message translates to:
+  /// **'{address} via {jump}'**
+  String addressVia(String address, String jump);
+
+  /// No description provided for @advanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get advanced;
+
+  /// No description provided for @algEcdsa.
+  ///
+  /// In en, this message translates to:
+  /// **'NIST curves. Use when a server or policy requires ECDSA.'**
+  String get algEcdsa;
+
+  /// No description provided for @algEd25519.
+  ///
+  /// In en, this message translates to:
+  /// **'Small, fast and secure. Supported by every server from the last decade.'**
+  String get algEd25519;
+
+  /// No description provided for @algRsa.
+  ///
+  /// In en, this message translates to:
+  /// **'For old servers. Generating takes a while on a phone.'**
+  String get algRsa;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
@@ -122,11 +164,29 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get appearance;
 
+  /// No description provided for @authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get authentication;
+
+  /// No description provided for @authenticationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'nux offers the checked keys in order, then the password, then asks the server what else it wants.'**
+  String get authenticationHint;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
 
   /// No description provided for @changelog.
   ///
@@ -146,11 +206,257 @@ abstract class AppLocalizations {
   /// **'Check for updates'**
   String get checkForUpdates;
 
+  /// No description provided for @clipboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The clipboard is empty'**
+  String get clipboardEmpty;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @closeOtherTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Close other tabs'**
+  String get closeOtherTabs;
+
+  /// No description provided for @closeTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Close tab'**
+  String get closeTab;
+
+  /// No description provided for @connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @copyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy everything'**
+  String get copyAll;
+
+  /// No description provided for @copyOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} (copy)'**
+  String copyOf(String name);
+
+  /// No description provided for @currentPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Current passphrase'**
+  String get currentPassphrase;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteConnectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its saved password is deleted too. Trusted host keys and SSH keys stay.'**
+  String get deleteConnectionBody;
+
+  /// No description provided for @deleteConnectionJumpers.
+  ///
+  /// In en, this message translates to:
+  /// **'These hosts connect through it and will connect directly: {names}'**
+  String deleteConnectionJumpers(String names);
+
+  /// No description provided for @deleteConnectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteConnectionTitle(String name);
+
+  /// No description provided for @deleteKeyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The private key is erased from this device. Unless you have a copy, it cannot be recovered.'**
+  String get deleteKeyBody;
+
+  /// No description provided for @deleteKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete key {name}?'**
+  String deleteKeyTitle(String name);
+
+  /// No description provided for @deleteKeyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'The private key is erased from this device and removed from these hosts: {names}. Unless you have a copy, it cannot be recovered.'**
+  String deleteKeyUsed(String names);
+
+  /// No description provided for @deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {name}'**
+  String deleted(String name);
+
+  /// No description provided for @disconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get disconnect;
+
+  /// No description provided for @duplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get duplicate;
+
+  /// No description provided for @duplicateTab.
+  ///
+  /// In en, this message translates to:
+  /// **'New terminal on this host'**
+  String get duplicateTab;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @editHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit host'**
+  String get editHost;
+
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
   /// **'Something went wrong: {error}'**
   String errorGeneric(String error);
+
+  /// No description provided for @exportPassphraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase for the exported key'**
+  String get exportPassphraseTitle;
+
+  /// No description provided for @exportPrivateKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Export private key'**
+  String get exportPrivateKey;
+
+  /// No description provided for @exportPrivateKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'As an encrypted OpenSSH file'**
+  String get exportPrivateKeyHint;
+
+  /// No description provided for @exportPrivateKeyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.'**
+  String get exportPrivateKeyWarning;
+
+  /// No description provided for @fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint'**
+  String get fingerprint;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font size'**
+  String get fontSize;
+
+  /// No description provided for @forget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget'**
+  String get forget;
+
+  /// No description provided for @forgetHostBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The next connection will show the server\'s key and ask you to trust it again.'**
+  String get forgetHostBody;
+
+  /// No description provided for @forgetHostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget the key of {host}?'**
+  String forgetHostTitle(String host);
+
+  /// No description provided for @forgotten.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot {host}'**
+  String forgotten(String host);
+
+  /// No description provided for @generate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get generate;
+
+  /// No description provided for @generateKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a key'**
+  String get generateKey;
+
+  /// No description provided for @generateKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A new key pair made on this device'**
+  String get generateKeyHint;
+
+  /// No description provided for @generating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating…'**
+  String get generating;
+
+  /// No description provided for @generatingRsa.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating an RSA key. This can take a minute on a phone.'**
+  String get generatingRsa;
+
+  /// No description provided for @groupField.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get groupField;
+
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hide;
 
   /// No description provided for @homeEarly.
   ///
@@ -164,6 +470,312 @@ abstract class AppLocalizations {
   /// **'Welcome to nux'**
   String get homeWelcome;
 
+  /// No description provided for @hostField.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get hostField;
+
+  /// No description provided for @hostKeyChangedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{host} presented a different key than before. If the server was not reinstalled or reconfigured, someone may be intercepting the connection. Do not trust the new key unless you know why it changed.'**
+  String hostKeyChangedBody(String host);
+
+  /// No description provided for @hostKeyChangedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The server\'s key changed!'**
+  String get hostKeyChangedTitle;
+
+  /// No description provided for @hostKeyCompareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'On the server: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub'**
+  String get hostKeyCompareHint;
+
+  /// No description provided for @hostKeyNewTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{host} presented a key of a type you have not trusted for it before. This is usually harmless (for example after a server upgrade), but check the fingerprint.'**
+  String hostKeyNewTypeBody(String host);
+
+  /// No description provided for @hostKeyNewTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New key type'**
+  String get hostKeyNewTypeTitle;
+
+  /// No description provided for @hostKeyPresented.
+  ///
+  /// In en, this message translates to:
+  /// **'Presented key'**
+  String get hostKeyPresented;
+
+  /// No description provided for @hostKeyTrust.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust'**
+  String get hostKeyTrust;
+
+  /// No description provided for @hostKeyTrustNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust the new key'**
+  String get hostKeyTrustNew;
+
+  /// No description provided for @hostKeyTrustedBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted before'**
+  String get hostKeyTrustedBefore;
+
+  /// No description provided for @hostKeyUnknownBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the first connection to {host}. Check that the fingerprint below matches the server\'s before trusting it.'**
+  String hostKeyUnknownBody(String host);
+
+  /// No description provided for @hostKeyUnknownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New server'**
+  String get hostKeyUnknownTitle;
+
+  /// No description provided for @hosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosts'**
+  String get hosts;
+
+  /// No description provided for @importAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get importAction;
+
+  /// No description provided for @importFormatsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenSSH, PEM, PKCS#8 or PuTTY (.ppk)'**
+  String get importFormatsHint;
+
+  /// No description provided for @importFromClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste from clipboard'**
+  String get importFromClipboard;
+
+  /// No description provided for @importFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from a file'**
+  String get importFromFile;
+
+  /// No description provided for @importKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a key'**
+  String get importKey;
+
+  /// No description provided for @importKeyPassphraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This key has a passphrase'**
+  String get importKeyPassphraseTitle;
+
+  /// No description provided for @importKeyStaysEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'nux will store it encrypted with the same passphrase.'**
+  String get importKeyStaysEncrypted;
+
+  /// No description provided for @importedKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported key'**
+  String get importedKey;
+
+  /// No description provided for @installOnServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Install on a server'**
+  String get installOnServer;
+
+  /// No description provided for @installOnServerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds the public key to ~/.ssh/authorized_keys over an existing login (like ssh-copy-id)'**
+  String get installOnServerHint;
+
+  /// No description provided for @installingKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Installing the key on {name}…'**
+  String installingKey(String name);
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number'**
+  String get invalidNumber;
+
+  /// No description provided for @invalidPort.
+  ///
+  /// In en, this message translates to:
+  /// **'1–65535'**
+  String get invalidPort;
+
+  /// No description provided for @jumpHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump host'**
+  String get jumpHost;
+
+  /// No description provided for @jumpHostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect through another saved host (like ProxyJump)'**
+  String get jumpHostHint;
+
+  /// No description provided for @keepAlive.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep-alive, seconds'**
+  String get keepAlive;
+
+  /// No description provided for @keepAliveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pings the server so idle connections are not dropped. 0 turns it off.'**
+  String get keepAliveHint;
+
+  /// No description provided for @keepPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the key protected with this passphrase'**
+  String get keepPassphrase;
+
+  /// No description provided for @keyAlreadyImported.
+  ///
+  /// In en, this message translates to:
+  /// **'This key is already here as {name}'**
+  String keyAlreadyImported(String name);
+
+  /// No description provided for @keyComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get keyComment;
+
+  /// No description provided for @keyCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown at the end of the public key; helps you recognise it on servers'**
+  String get keyCommentHint;
+
+  /// No description provided for @keyHasPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected with a passphrase'**
+  String get keyHasPassphrase;
+
+  /// No description provided for @keyInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed on {name}'**
+  String keyInstalled(String name);
+
+  /// No description provided for @keyInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not a private key nux can read'**
+  String get keyInvalid;
+
+  /// No description provided for @keyIsPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a public key. Import the private key (the file without .pub).'**
+  String get keyIsPublic;
+
+  /// No description provided for @keyNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Phone'**
+  String get keyNameHint;
+
+  /// No description provided for @keyNeedsPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'This key needs its passphrase'**
+  String get keyNeedsPassphrase;
+
+  /// No description provided for @keyNeedsUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Device unlock required'**
+  String get keyNeedsUnlock;
+
+  /// No description provided for @keyNoPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'No passphrase'**
+  String get keyNoPassphrase;
+
+  /// No description provided for @keyNowUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} now signs in with this key first'**
+  String keyNowUsed(String name);
+
+  /// No description provided for @keyStorageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The private key is kept in the device\'s secure storage'**
+  String get keyStorageHint;
+
+  /// No description provided for @keyType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get keyType;
+
+  /// No description provided for @keyUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported key: {detail}'**
+  String keyUnsupported(String detail);
+
+  /// No description provided for @keyWasInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} already accepts this key'**
+  String keyWasInstalled(String name);
+
+  /// No description provided for @keys.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys'**
+  String get keys;
+
+  /// No description provided for @knownHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Known hosts'**
+  String get knownHosts;
+
+  /// No description provided for @knownHostsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No trusted servers yet. A server\'s key is saved here when you trust it on the first connection.'**
+  String get knownHostsEmpty;
+
+  /// No description provided for @knownHostsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys of servers you trusted. nux warns when a server presents a different key.'**
+  String get knownHostsHint;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
@@ -175,6 +787,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get languageSystem;
+
+  /// No description provided for @lastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {date}'**
+  String lastSeen(String date);
 
   /// No description provided for @later.
   ///
@@ -188,11 +806,197 @@ abstract class AppLocalizations {
   /// **'Licenses'**
   String get licenses;
 
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// No description provided for @nameField.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get nameField;
+
+  /// No description provided for @newPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'New passphrase'**
+  String get newPassphrase;
+
+  /// No description provided for @newTab.
+  ///
+  /// In en, this message translates to:
+  /// **'New tab'**
+  String get newTab;
+
+  /// No description provided for @noColor.
+  ///
+  /// In en, this message translates to:
+  /// **'No colour'**
+  String get noColor;
+
+  /// No description provided for @noHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No hosts yet'**
+  String get noHosts;
+
+  /// No description provided for @noHostsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a server to connect to, or type user@host to connect right away.'**
+  String get noHostsHint;
+
+  /// No description provided for @noKeysHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Keys let you sign in without a password. Generate one here, or import a key you already use.'**
+  String get noKeysHint;
+
+  /// No description provided for @noKeysYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No keys yet'**
+  String get noKeysYet;
+
+  /// No description provided for @noPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'No preview'**
+  String get noPreview;
+
+  /// No description provided for @noTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'No open tabs'**
+  String get noTabs;
+
+  /// No description provided for @noTabsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the hosts list or connect to a server.'**
+  String get noTabsHint;
+
+  /// No description provided for @none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
   /// No description provided for @openReleasePage.
   ///
   /// In en, this message translates to:
   /// **'Open release page'**
   String get openReleasePage;
+
+  /// No description provided for @openTerminal.
+  ///
+  /// In en, this message translates to:
+  /// **'Open terminal'**
+  String get openTerminal;
+
+  /// No description provided for @organize.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize'**
+  String get organize;
+
+  /// No description provided for @passphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase'**
+  String get passphrase;
+
+  /// No description provided for @passphraseChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase changed'**
+  String get passphraseChanged;
+
+  /// No description provided for @passphraseOptionalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Asked when the key is used.'**
+  String get passphraseOptionalHint;
+
+  /// No description provided for @passphraseRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Passphrase removed'**
+  String get passphraseRemoved;
+
+  /// No description provided for @passphraseWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong passphrase'**
+  String get passphraseWrong;
+
+  /// No description provided for @passphrasesDiffer.
+  ///
+  /// In en, this message translates to:
+  /// **'The passphrases differ'**
+  String get passphrasesDiffer;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @passwordFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Password for {address}'**
+  String passwordFor(String address);
+
+  /// No description provided for @passwordKeepHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A password is saved. Leave empty to keep it.'**
+  String get passwordKeepHint;
+
+  /// No description provided for @passwordWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'The server did not accept the password'**
+  String get passwordWrong;
+
+  /// No description provided for @paste.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get paste;
+
+  /// No description provided for @pinTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin'**
+  String get pinTab;
+
+  /// No description provided for @pinnedTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get pinnedTabs;
+
+  /// No description provided for @portField.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get portField;
 
   /// No description provided for @predictiveBack.
   ///
@@ -206,17 +1010,227 @@ abstract class AppLocalizations {
   /// **'The page follows your back swipe'**
   String get predictiveBackHint;
 
+  /// No description provided for @protection.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection'**
+  String get protection;
+
+  /// No description provided for @publicKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Public key'**
+  String get publicKey;
+
+  /// No description provided for @qrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code'**
+  String get qrCode;
+
+  /// No description provided for @quickConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick connect'**
+  String get quickConnect;
+
+  /// No description provided for @quickConnectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to hosts, offering all your keys'**
+  String get quickConnectHint;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'recommended'**
+  String get recommended;
+
+  /// No description provided for @reconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect'**
+  String get reconnect;
+
+  /// No description provided for @rememberUntilClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember until nux is closed'**
+  String get rememberUntilClosed;
+
+  /// No description provided for @rename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get rename;
+
+  /// No description provided for @repeatPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat passphrase'**
+  String get repeatPassphrase;
+
+  /// No description provided for @requireUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Require device unlock'**
+  String get requireUnlock;
+
+  /// No description provided for @requireUnlockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint, face or screen lock before each use'**
+  String get requireUnlockHint;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @saveAndConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and connect'**
+  String get saveAndConnect;
+
+  /// No description provided for @savePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get savePassword;
+
+  /// No description provided for @savePasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept in the device\'s secure storage'**
+  String get savePasswordHint;
+
+  /// No description provided for @searchHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search hosts'**
+  String get searchHosts;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get show;
+
+  /// No description provided for @showTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Show tabs'**
+  String get showTabs;
+
+  /// No description provided for @skipKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this key'**
+  String get skipKey;
+
   /// No description provided for @sourceCode.
   ///
   /// In en, this message translates to:
   /// **'Source code'**
   String get sourceCode;
+
+  /// No description provided for @ssh.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH'**
+  String get ssh;
+
+  /// No description provided for @sshAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The server refused the keys and password offered'**
+  String get sshAuthFailed;
+
+  /// No description provided for @sshCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get sshCancelled;
+
+  /// No description provided for @sshConnectionMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This host was deleted'**
+  String get sshConnectionMissing;
+
+  /// No description provided for @sshHostKeyRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The server\'s key was not trusted'**
+  String get sshHostKeyRejected;
+
+  /// No description provided for @sshOtherError.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed: {detail}'**
+  String sshOtherError(String detail);
+
+  /// No description provided for @sshUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not reach the server: {detail}'**
+  String sshUnreachable(String detail);
+
+  /// No description provided for @sshVia.
+  ///
+  /// In en, this message translates to:
+  /// **'{error} (through {via})'**
+  String sshVia(String error, String via);
+
+  /// No description provided for @tabClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed {title}'**
+  String tabClosed(String title);
+
+  /// No description provided for @terminal.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal'**
+  String get terminal;
+
+  /// No description provided for @terminalConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to {address}…'**
+  String terminalConnecting(String address);
+
+  /// No description provided for @terminalDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get terminalDisconnected;
+
+  /// No description provided for @terminalPressEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Enter to reconnect'**
+  String get terminalPressEnter;
 
   /// No description provided for @theme.
   ///
@@ -241,6 +1255,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get themeSystem;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @unlockKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock {name}'**
+  String unlockKey(String name);
+
+  /// No description provided for @unlockKeyReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the key {name}'**
+  String unlockKeyReason(String name);
+
+  /// No description provided for @unpinTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin'**
+  String get unpinTab;
 
   /// No description provided for @upToDate.
   ///
@@ -307,6 +1345,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Also offer pre-releases. They may be unstable.'**
   String get updatesBetaHint;
+
+  /// No description provided for @useKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this key'**
+  String get useKey;
+
+  /// No description provided for @useKeyFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to {name} with this key from now on?'**
+  String useKeyFor(String name);
+
+  /// No description provided for @usedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Used by'**
+  String get usedBy;
+
+  /// No description provided for @usedByNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No host uses this key yet'**
+  String get usedByNone;
+
+  /// No description provided for @usernameField.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameField;
 
   /// No description provided for @whatsNew.
   ///

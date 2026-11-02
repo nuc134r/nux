@@ -3,8 +3,15 @@
 A phone-first SSH/SFTP client, port forwarder (SSH and ZeroTier, TCP and UDP) and mobile IDE with git,
 a code editor and LSP support, built with Flutter. Everything opens in Chrome-style tabs.
 
-**Status:** early. The first build sets up settings and in-app updates. Features arrive milestone by milestone:
-see [`TODO.md`](TODO.md) and the plan in [`docs/PLAN.md`](docs/PLAN.md).
+**Status:** early. SSH terminals in tabs, saved hosts, SSH key management and host key checking work.
+SFTP, port forwarding, ZeroTier, the editor and git come next: see [`TODO.md`](TODO.md) and the plan in
+[`docs/PLAN.md`](docs/PLAN.md).
+
+<p>
+  <img src="docs/screenshots/terminal.png" width="240" alt="Terminal">
+  <img src="docs/screenshots/tabs.png" width="240" alt="Tabs">
+  <img src="docs/screenshots/key.png" width="240" alt="SSH key">
+</p>
 
 ## Install
 

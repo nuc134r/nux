@@ -1,5 +1,6 @@
 package io.nuc134r.nux
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// FlutterFragmentActivity: local_auth (device unlock before using a protected key) needs a FragmentActivity.
+class MainActivity : FlutterFragmentActivity()

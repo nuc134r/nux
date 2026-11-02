@@ -1,0 +1,19 @@
+name: tab_switcher
+description: Build apps around full-screen tabs like Chrome for Android. Live tabs keep their state, background tabs park with a preview.
+version: 2.0.0-dev.1
+repository: https://github.com/nuc134r/nux/tree/main/packages/tab_switcher
+publish_to: 'none' # published from here once stable (docs/PLAN.md §13)
+resolution: workspace
+
+environment:
+  sdk: ^3.13.7
+  flutter: '>=3.47.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

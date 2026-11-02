@@ -61,6 +61,44 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           Island(
+            title: l10n.ssh,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.key),
+                title: Text(l10n.keys),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.keys),
+              ),
+              ListTile(
+                leading: const Icon(Icons.verified_user_outlined),
+                title: Text(l10n.knownHosts),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.knownHosts),
+              ),
+            ],
+          ),
+          Island(
+            title: l10n.terminal,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.format_size),
+                title: Text(l10n.fontSize),
+                subtitle: Slider(
+                  value: settings.terminalFontSize,
+                  min: 8,
+                  max: 24,
+                  divisions: 16,
+                  label: settings.terminalFontSize.round().toString(),
+                  onChanged: (v) => repo.set(SettingKeys.terminalFontSize, v.round().toString()),
+                ),
+                trailing: Text(
+                  '${settings.terminalFontSize.round()}',
+                  style: TextStyle(fontFamily: 'JetBrains Mono', fontSize: settings.terminalFontSize),
+                ),
+              ),
+            ],
+          ),
+          Island(
             title: l10n.about,
             children: [
               ListTile(
