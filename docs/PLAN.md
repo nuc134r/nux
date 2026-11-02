@@ -265,11 +265,40 @@ See [`TODO.md`](../TODO.md) for the checklist. Order:
 
 M4 can run in parallel with M2–M3 because it lives in its own repo.
 
-## 13. Open questions
+## 13. Decisions (answered 2026-11-02)
 
-1. Keep `tab_switcher` inside the nux workspace, or publish 2.0 from its own repo like zerotier_sockets?
-   (Plan assumes: develop in-workspace, publish once stable.)
-2. Distribution: GitHub releases only, or also F-Droid / Play? Play needs 16 KB-aligned native libs (handled)
-   and a `specialUse` justification for the forwarding foreground service.
-3. Is `lamp_studio`'s connection export format worth an importer, or start clean?
-4. Minimum Android version: proposal **API 26** (Android 8). Needed by modern Keystore and foreground-service APIs.
+1. `tab_switcher` 2.0 is developed inside the nux workspace (`packages/tab_switcher`) and published from
+   there once it is stable.
+2. Distribution: **GitHub releases** for now. Keep **F-Droid** possible later:
+   - no proprietary dependencies (no Firebase / Play Services);
+   - every native binary can be built from source (the libzt hook's `LIBZT_SRC` / toolchain path, and the
+     same for libghostty and libgit2), because F-Droid does not accept prebuilt binaries;
+   - the in-app updater checks only GitHub, and an F-Droid build turns it off with a build flag
+     (`--dart-define=NUX_UPDATER=false`);
+   - reproducible builds: pinned Flutter (FVM), committed `pubspec.lock`, `fastlane/metadata` added when needed.
+3. **Start clean**: no importer for lamp_studio data. **SSH key management** is a first-class feature (§14).
+4. Minimum Android version: **API 26** (Android 8).
+
+## 14. SSH key management
+
+Keys ("identities") are their own screen, not a field hidden inside a connection.
+
+- **Generate**: Ed25519 (default), ECDSA P-256/384/521, RSA 3072/4096. Optional passphrase, and a comment
+  (default `nux@<device model>`).
+- **Import**: OpenSSH private key (`-----BEGIN OPENSSH PRIVATE KEY-----`), PEM/PKCS#1/PKCS#8, PuTTY `.ppk`
+  (v2/v3). Import from a file picker, the clipboard or a share intent. Encrypted keys ask for the passphrase.
+  The original file is not kept.
+- **Export**: copy or share the **public** key (`authorized_keys` line), show it as a QR code, show
+  SHA256 and MD5 fingerprints and the randomart. Exporting the private key needs explicit confirmation plus
+  biometric/device credential, and it always leaves encrypted with a passphrase.
+- **Install on server** (`ssh-copy-id` equivalent): over an already authenticated (password) session,
+  append the public key to `~/.ssh/authorized_keys` with the right permissions, skip it if it is already there,
+  then offer to switch the connection to key auth.
+- **Storage**: private keys live in `flutter_secure_storage` (Android Keystore-backed). Optional "require
+  biometric unlock" per key. Passphrase-protected keys can remember the passphrase for the session only or not at all.
+- **Usage**: each key lists the connections that use it; deleting a used key warns and lists them.
+  A connection can try several keys in order.
+- **Later**: an SSH agent inside nux with agent forwarding (per connection, off by default), FIDO2/security keys
+  (`sk-ssh-ed25519`), certificates (`*-cert.pub`).
+- **Tests**: round-trip generate → serialise → parse for every key type, golden fixtures generated with
+  `ssh-keygen` on throwaway keys (fixtures are created in the test, never committed private keys).

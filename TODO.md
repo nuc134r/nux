@@ -3,14 +3,14 @@
 Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## M0 — Bootstrap
-- [ ] `fvm use 3.47.9`, `flutter create --org io.nuc134r --project-name nux --platforms android,linux,windows`
+- [ ] `fvm use 3.47.9`, `flutter create --org io.nuc134r --project-name nux --platforms android,linux,windows`, minSdk 26
 - [ ] Pub workspace root; `packages/nux_backend`, `packages/tab_switcher`
 - [ ] Lints (garage2's `analysis_options.yaml`), gen-l10n en + ru, Material 3 theme + dark mode, JetBrains Mono
 - [ ] Drift DB skeleton + migration test harness; secure-storage wrapper; logger with redaction
 - [ ] `.gitignore` for keystores/keys; gitleaks in CI
 - [ ] CI: `tests.yml`, `release.yml`, `release-notes.yml` ported from garage2; `tool/version.sh`, `tool/changelog.sh`
 - [ ] `docs/RELEASING.md` (no personal paths), CHANGELOG.md
-- [ ] In-app updates (port `features/updates`), beta channel toggle
+- [ ] In-app updates (port `features/updates`), beta channel toggle, `NUX_UPDATER` dart-define to disable
 - [ ] App icon pipeline (`icons/*.svg` → `tool/generate_icons.py`, as in garage2)
 - [ ] `CLAUDE.md` with commands and conventions
 
@@ -19,7 +19,12 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Live/parked tab lifecycle, serialisable `TabState`, session restore after restart
 - [ ] Tab menu (duplicate, pin, close others), groups, undo close, unsaved-changes guard
 - [ ] Connections: host, port, user, auth (key / password / agent-less), jump host, group, colour tag
-- [ ] Identities: generate ed25519, import OpenSSH/PEM (with passphrase), copy public key, biometric unlock
+- [ ] Identities screen (PLAN §14): generate Ed25519/ECDSA/RSA with passphrase and comment
+- [ ] Import OpenSSH / PEM / PKCS#8 / PuTTY `.ppk` from file, clipboard or share intent
+- [ ] Public key export: copy, share, QR, fingerprints, randomart; guarded encrypted private export
+- [ ] "Install on server" (ssh-copy-id equivalent) and switch the connection to key auth
+- [ ] Keys in secure storage, optional biometric per key, "used by" list and delete warning
+- [ ] Key tests: round trip per type, fixtures generated at test time
 - [ ] Known hosts: TOFU dialog with fingerprint, changed-key warning, manage list
 - [ ] Spike: flterm vs xterm2 on a mid-range phone (htop, vim, tmux, emoji, CJK, 10 MB `cat`)
 - [ ] Terminal tab: `TerminalSurface`, extra-keys bar, sticky modifiers, font zoom, copy mode, links
@@ -82,6 +87,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Tablet / desktop layouts, hardware keyboard shortcuts
 - [ ] tree-sitter highlighting and outline
 - [ ] Encrypted backup/restore of connections (secrets only with a passphrase)
+- [ ] In-app SSH agent + agent forwarding; FIDO2 `sk-` keys; SSH certificates
+- [ ] F-Droid: `NUX_UPDATER=false` flavour, build-from-source paths for all native libs, fastlane metadata
 
 ## Owner actions (outside this repo)
 - [ ] Revoke the SSH key that `lamp_studio` commit `8fa47a2` hardcoded; rewrite or keep that repo private
