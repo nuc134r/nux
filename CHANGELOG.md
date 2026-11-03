@@ -9,6 +9,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Faster file browser**: large folders open and sort much faster, and folders with many links load in one go.
 - **Big text files** open the first 512 KB right away (Load all for the rest), decode in the background and skip syntax colouring above 1 MB, so opening them no longer freezes the app.
 - **Scrollbars** you can drag in the file browser and in text, Markdown and hex views.
+- **Copy and paste**: selecting text in the terminal shows Copy, Paste and Select all; the text editor gets Cut, Copy, Paste and Select all on its selection.
 - Leaving a **ZeroTier** network asks first.
 - The unused "predictive back" setting is gone.
 

@@ -105,18 +105,103 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
             ),
           if (_session.state == TerminalState.connecting) const LinearProgressIndicator(minHeight: 2),
           Expanded(
-            child: PinchTextSize(
-              kind: TextSizeKind.terminal,
-              child: TerminalView(
-                controller: _session.terminal,
-                theme: theme,
-                autofocus: true,
-                linkSettings: _links,
-              ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: PinchTextSize(
+                    kind: TextSizeKind.terminal,
+                    child: TerminalView(
+                      controller: _session.terminal,
+                      theme: theme,
+                      autofocus: true,
+                      linkSettings: _links,
+                    ),
+                  ),
+                ),
+                Positioned(top: 8, left: 0, right: 0, child: Center(child: _SelectionBar(terminal: _session.terminal))),
+              ],
             ),
           ),
           ExtraKeysBar(terminal: _session.terminal),
         ],
+      ),
+    );
+  }
+}
+
+/// Copy / Paste / Select all while text is selected (long press selects; flterm has no menu of its own).
+/// Rebuilds only when the selection appears or goes, not on every output chunk.
+class _SelectionBar extends StatefulWidget {
+  const _SelectionBar({required this.terminal});
+
+  final TerminalController terminal;
+
+  @override
+  State<_SelectionBar> createState() => _SelectionBarState();
+}
+
+class _SelectionBarState extends State<_SelectionBar> {
+  bool _shown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.terminal.addListener(_changed);
+    _shown = widget.terminal.hasSelection;
+  }
+
+  @override
+  void didUpdateWidget(_SelectionBar old) {
+    super.didUpdateWidget(old);
+    if (old.terminal != widget.terminal) {
+      old.terminal.removeListener(_changed);
+      widget.terminal.addListener(_changed);
+      _changed();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.terminal.removeListener(_changed);
+    super.dispose();
+  }
+
+  void _changed() {
+    final now = widget.terminal.hasSelection;
+    if (now != _shown && mounted) setState(() => _shown = now);
+  }
+
+  Future<void> _copy() async {
+    final text = widget.terminal.selectedText();
+    widget.terminal.clearSelection();
+    if (text.isNotEmpty) await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> _paste() async {
+    final text = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
+    widget.terminal.clearSelection();
+    if (text != null && text.isNotEmpty) widget.terminal.paste(text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_shown) return const SizedBox.shrink();
+    final labels = MaterialLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.surfaceContainerHighest,
+      elevation: 4,
+      shape: const StadiumBorder(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(onPressed: _copy, child: Text(labels.copyButtonLabel)),
+            TextButton(onPressed: _paste, child: Text(labels.pasteButtonLabel)),
+            TextButton(onPressed: widget.terminal.selectAll, child: Text(labels.selectAllButtonLabel)),
+          ],
+        ),
       ),
     );
   }

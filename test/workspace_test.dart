@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flterm/flterm.dart' show TerminalView;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/app/app.dart';
@@ -232,6 +233,24 @@ void main() {
     await tester.tapAt(tester.getCenter(find.byType(TerminalView)));
     await tester.pump();
     expect(tester.testTextInput.log.map((c) => c.method), contains('TextInput.show'));
+
+    // Selected text: a bar with Copy / Paste / Select all; Copy puts it on the clipboard.
+    String? copied;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'Clipboard.setData') copied = (call.arguments as Map)['text'] as String?;
+      return null;
+    });
+    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
+    final terminal = tester.widget<TerminalView>(find.byType(TerminalView)).controller;
+    expect(find.widgetWithText(TextButton, 'Copy'), findsNothing);
+    terminal.selectAll();
+    await tester.pump();
+    expect(find.widgetWithText(TextButton, 'Paste'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Copy'));
+    await tester.pump();
+    expect(copied, isNotEmpty);
+    expect(terminal.hasSelection, isFalse);
+    expect(find.widgetWithText(TextButton, 'Copy'), findsNothing);
 
     // The terminal's menu opens a file browser on the same host.
     await tester.tap(find.byType(NuxMenuButton));

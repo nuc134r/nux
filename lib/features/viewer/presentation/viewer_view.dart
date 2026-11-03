@@ -167,7 +167,35 @@ class _CodeView extends ConsumerWidget {
     final mode = language == null || text.length > RemoteDocument.highlightLimit ? null : modeFor(language);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
+    final editing = tab.editing;
     return CodeEditor(
+      // Long press / selection: Cut, Copy, Paste, Select all (re_editor has no menu of its own).
+      toolbarController: MobileSelectionToolbarController(
+        builder: ({required context, required anchors, required controller, required onDismiss, required onRefresh}) {
+          final selected = !controller.selection.isCollapsed;
+          void run(void Function() action) {
+            action();
+            onDismiss();
+          }
+
+          return AdaptiveTextSelectionToolbar.buttonItems(
+            anchors: anchors,
+            buttonItems: [
+              if (editing && selected) ContextMenuButtonItem(type: ContextMenuButtonType.cut, onPressed: () => run(controller.cut)),
+              if (selected) ContextMenuButtonItem(type: ContextMenuButtonType.copy, onPressed: () => run(controller.copy)),
+              if (editing) ContextMenuButtonItem(type: ContextMenuButtonType.paste, onPressed: () => run(controller.paste)),
+              if (!controller.isAllSelected)
+                ContextMenuButtonItem(
+                  type: ContextMenuButtonType.selectAll,
+                  onPressed: () {
+                    controller.selectAll();
+                    onRefresh();
+                  },
+                ),
+            ],
+          );
+        },
+      ),
       // Vertical only: horizontal scrolling (no wrap) keeps the default.
       scrollbarBuilder: (context, child, details) =>
           details.direction == AxisDirection.down ? Scrollbar(controller: details.controller, child: child) : child,
