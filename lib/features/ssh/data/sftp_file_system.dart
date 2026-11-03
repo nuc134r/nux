@@ -30,7 +30,8 @@ class SftpFileSystem implements FileSystem {
         for (final n in names) {
           if (n.filename == '.' || n.filename == '..') continue;
           final path = posix.join(directory, n.filename);
-          var entry = _entry(path, n.attr);
+          final (owner, group) = ownerFromLongname(n.longname) ?? (n.attr.userID?.toString(), n.attr.groupID?.toString());
+          var entry = _entry(path, n.attr, owner: owner, group: group);
           if (entry.type == FileType.link) {
             // Follow links so "link to a directory" can be browsed; a broken link stays a link.
             try {
@@ -42,6 +43,8 @@ class SftpFileSystem implements FileSystem {
                 modified: entry.modified,
                 mode: entry.mode,
                 targetIsDirectory: target.isDirectory,
+                owner: entry.owner,
+                group: entry.group,
               );
             } catch (_) {}
           }
@@ -69,10 +72,12 @@ class SftpFileSystem implements FileSystem {
           mode: attrs.mode == null ? null : attrs.mode!.value & 0x1ff,
           linkTarget: target,
           targetIsDirectory: isDir,
+          owner: attrs.userID?.toString(),
+          group: attrs.groupID?.toString(),
         );
       });
 
-  FileEntry _entry(String path, SftpFileAttrs a) => FileEntry(
+  FileEntry _entry(String path, SftpFileAttrs a, {String? owner, String? group}) => FileEntry(
         path: path,
         type: a.isDirectory
             ? FileType.directory
@@ -84,6 +89,8 @@ class SftpFileSystem implements FileSystem {
         size: a.isDirectory ? 0 : a.size ?? 0,
         modified: _time(a.modifyTime),
         mode: a.mode == null ? null : a.mode!.value & 0x1ff,
+        owner: owner ?? a.userID?.toString(),
+        group: group ?? a.groupID?.toString(),
       );
 
   DateTime? _time(int? seconds) => seconds == null ? null : DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
@@ -199,4 +206,12 @@ class SftpFileSystem implements FileSystem {
     };
     return BackendException(kind, e.message, path: path, cause: e);
   }
+}
+
+/// Owner and group names from an SFTP v3 "longname", which servers format like `ls -l`:
+/// `-rw-r--r--    1 alice    staff        1234 Mar  5 10:00 notes.txt`. Null when it does not look so.
+(String, String)? ownerFromLongname(String longname) {
+  final f = longname.trim().split(RegExp(r'\s+'));
+  if (f.length < 5 || !RegExp(r'^[-dlcbps][-rwxsStT]{9}').hasMatch(f[0]) || int.tryParse(f[1]) == null) return null;
+  return (f[2], f[3]);
 }

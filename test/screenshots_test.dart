@@ -9,7 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nux_backend/nux_backend.dart' show LocalFileSystem;
+import 'package:nux_backend/nux_backend.dart' show FileEntry, FileSystem, LocalFileSystem;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
 import 'package:nux/core/secure/secret_store.dart';
@@ -80,7 +80,7 @@ void main() {
   }
 
   Future<void> useLocal(ProviderContainer c, Directory root) async {
-    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root.path), release: () {});
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(_Owned(LocalFileSystem(root.path)), release: () {});
   }
 
   final shots = <String, _Shot>{
@@ -278,4 +278,48 @@ class _Frame extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The local file system with an owner on every entry, as SFTP reports it.
+class _Owned implements FileSystem {
+  _Owned(this._fs);
+
+  final FileSystem _fs;
+
+  FileEntry _own(FileEntry e) => FileEntry(
+        path: e.path,
+        type: e.type,
+        size: e.size,
+        modified: e.modified,
+        mode: e.mode,
+        linkTarget: e.linkTarget,
+        targetIsDirectory: e.targetIsDirectory,
+        owner: 'dev',
+        group: 'dev',
+      );
+
+  @override
+  Future<String> home() => _fs.home();
+  @override
+  Future<List<FileEntry>> list(String directory) async => [for (final e in await _fs.list(directory)) _own(e)];
+  @override
+  Future<FileEntry> stat(String path) async => _own(await _fs.stat(path));
+  @override
+  Future<Uint8List> readBytes(String path) => _fs.readBytes(path);
+  @override
+  Stream<Uint8List> openRead(String path, {int start = 0, void Function(int read)? onProgress}) =>
+      _fs.openRead(path, start: start, onProgress: onProgress);
+  @override
+  Future<void> writeBytes(String path, Uint8List bytes) => _fs.writeBytes(path, bytes);
+  @override
+  Future<void> writeStream(String path, Stream<List<int>> data, {int offset = 0, void Function(int written)? onProgress}) =>
+      _fs.writeStream(path, data, offset: offset, onProgress: onProgress);
+  @override
+  Future<void> createDirectory(String path, {bool recursive = false}) => _fs.createDirectory(path, recursive: recursive);
+  @override
+  Future<void> rename(String from, String to) => _fs.rename(from, to);
+  @override
+  Future<void> delete(String path, {bool recursive = false}) => _fs.delete(path, recursive: recursive);
+  @override
+  Future<void> setMode(String path, int mode) => _fs.setMode(path, mode);
 }

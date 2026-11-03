@@ -12,6 +12,8 @@ class FileEntry {
     this.mode,
     this.linkTarget,
     this.targetIsDirectory = false,
+    this.owner,
+    this.group,
   });
 
   /// Absolute path in the backend's own syntax (POSIX for SSH and Termux).
@@ -30,6 +32,10 @@ class FileEntry {
 
   /// A symbolic link to a directory (opening it browses into it).
   final bool targetIsDirectory;
+
+  /// Owning user and group (names, or numeric ids when the backend has no names), when reported.
+  final String? owner;
+  final String? group;
 
   String get name {
     final trimmed = path.length > 1 && path.endsWith('/') ? path.substring(0, path.length - 1) : path;

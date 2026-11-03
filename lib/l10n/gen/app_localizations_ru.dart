@@ -78,6 +78,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get browseFiles => 'Файлы';
 
   @override
+  String bytesCount(String bytes) {
+    return '$bytes байт';
+  }
+
+  @override
   String get cancel => 'Отмена';
 
   @override
@@ -144,6 +149,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get currentPassphrase => 'Текущая парольная фраза';
+
+  @override
+  String daysAgo(int count) {
+    return '$count дн. назад';
+  }
 
   @override
   String get delete => 'Удалить';
@@ -558,6 +568,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hosts => 'Хосты';
 
   @override
+  String hoursAgo(int count) {
+    return '$count ч назад';
+  }
+
+  @override
   String get imageUnreadable => 'Не удалось открыть изображение';
 
   @override
@@ -622,6 +637,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get jumpHostHint =>
       'Подключаться через другой сохранённый хост (как ProxyJump)';
+
+  @override
+  String get justNow => 'только что';
 
   @override
   String get keepAlive => 'Keep-alive, секунды';
@@ -735,10 +753,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get licenses => 'Лицензии';
 
   @override
+  String get linkTargetLabel => 'Ссылается на';
+
+  @override
   String get loadAll => 'Загрузить всё';
 
   @override
   String get matchCase => 'Учитывать регистр';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count мин назад';
+  }
+
+  @override
+  String get modifiedLabel => 'Изменён';
 
   @override
   String get more => 'Ещё';
@@ -837,6 +866,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get overwrite => 'Перезаписать';
+
+  @override
+  String get ownerLabel => 'Владелец';
 
   @override
   String partiallyLoaded(String loaded, String total) {
@@ -1055,6 +1087,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showTabs => 'Показать вкладки';
+
+  @override
+  String get sizeLabel => 'Размер';
 
   @override
   String get skipKey => 'Пропустить ключ';
@@ -1308,6 +1343,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get wrapLines => 'Переносить строки';
+
+  @override
+  String get yesterday => 'вчера';
 
   @override
   String get zerotierNetwork => 'Сеть ZeroTier';

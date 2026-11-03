@@ -89,3 +89,24 @@ bool looksBinary(List<int> head) {
   }
   return odd / sample.length > .1;
 }
+
+/// How long ago something changed, coarse enough for a list ("5 min ago", "yesterday", or a date).
+enum AgeUnit { justNow, minutes, hours, yesterday, days, sameYear, olderYear }
+
+/// [time] relative to [now]: a unit and a count (minutes, hours or days; 0 otherwise). Future times
+/// (clock skew) show as dates.
+(AgeUnit, int) ageOf(DateTime time, DateTime now) {
+  final d = now.difference(time);
+  if (d.isNegative && d.inMinutes.abs() > 1) {
+    return (time.year == now.year ? AgeUnit.sameYear : AgeUnit.olderYear, 0);
+  }
+  if (d.inMinutes < 1) return (AgeUnit.justNow, 0);
+  if (d.inMinutes < 60) return (AgeUnit.minutes, d.inMinutes);
+  if (d.inHours < 24 && time.day == now.day) return (AgeUnit.hours, d.inHours);
+  final today = DateTime(now.year, now.month, now.day);
+  final day = DateTime(time.year, time.month, time.day);
+  final days = today.difference(day).inDays;
+  if (days <= 1) return (AgeUnit.yesterday, 1);
+  if (days < 7) return (AgeUnit.days, days);
+  return (time.year == now.year ? AgeUnit.sameYear : AgeUnit.olderYear, 0);
+}

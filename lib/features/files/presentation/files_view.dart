@@ -22,6 +22,22 @@ import 'file_dialogs.dart';
 import 'files_tab.dart';
 import 'transfers_sheet.dart';
 
+/// "5 min ago", "yesterday", "Mar 5", "Mar 5, 2023".
+String relativeTime(BuildContext context, DateTime time, {DateTime? now}) {
+  final l10n = context.l10n;
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  final (unit, n) = ageOf(time, now ?? DateTime.now());
+  return switch (unit) {
+    AgeUnit.justNow => l10n.justNow,
+    AgeUnit.minutes => l10n.minutesAgo(n),
+    AgeUnit.hours => l10n.hoursAgo(n),
+    AgeUnit.yesterday => l10n.yesterday,
+    AgeUnit.days => l10n.daysAgo(n),
+    AgeUnit.sameYear => DateFormat.MMMd(locale).format(time),
+    AgeUnit.olderYear => DateFormat.yMMMd(locale).format(time),
+  };
+}
+
 /// Text for a file operation error.
 String fileErrorText(AppLocalizations l10n, Object e) => switch (e) {
       SshConnectException() => sshErrorText(l10n, e),
@@ -100,6 +116,7 @@ class _FilesViewState extends ConsumerState<FilesView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(leading: Icon(fileIcon(e)), title: Text(e.name), subtitle: Text(e.path)),
+              _EntryDetails(entry: e),
               const Divider(height: 1),
               if (!e.isBrowsable) ...[
                 ListTile(leading: const Icon(Icons.visibility_outlined), title: Text(l10n.open), onTap: () => Navigator.pop(context, 'open')),
@@ -322,22 +339,81 @@ class _EntryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final e = entry;
-    final date = e.modified == null ? null : DateFormat.yMMMd(Localizations.localeOf(context).toLanguageTag()).add_Hm().format(e.modified!);
     final details = [
       if (!e.isBrowsable) formatSize(e.size),
-      ?date,
-      if (e.mode != null) permissionString(e.mode!),
+      if (e.modified != null) relativeTime(context, e.modified!),
+      ?e.owner,
     ].join(' · ');
+    final muted = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant);
     return ListTile(
       selected: selected,
+      dense: true,
+      visualDensity: const VisualDensity(vertical: -3),
+      minLeadingWidth: 24,
+      horizontalTitleGap: 12,
+      contentPadding: const EdgeInsets.only(left: 16, right: 4),
       leading: selecting
           ? Checkbox(value: selected, onChanged: (_) => onTap())
-          : Icon(fileIcon(e), color: e.isBrowsable ? theme.colorScheme.primary : null),
-      title: Text(e.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: e.isHidden ? TextStyle(color: theme.colorScheme.onSurfaceVariant) : null),
-      subtitle: Text(details, maxLines: 1, overflow: TextOverflow.ellipsis),
+          : Icon(fileIcon(e), size: 22, color: e.isBrowsable ? theme.colorScheme.primary : null),
+      title: Text(
+        e.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodyLarge?.copyWith(color: e.isHidden ? theme.colorScheme.onSurfaceVariant : null),
+      ),
+      subtitle: details.isEmpty ? null : Text(details, maxLines: 1, overflow: TextOverflow.ellipsis, style: muted),
       onTap: onTap,
       onLongPress: onLongPress,
-      trailing: selecting ? null : IconButton(tooltip: context.l10n.more, icon: const Icon(Icons.more_vert), onPressed: onMore),
+      trailing: selecting
+          ? null
+          : IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: context.l10n.more,
+              icon: const Icon(Icons.more_vert, size: 20),
+              onPressed: onMore,
+            ),
+    );
+  }
+}
+
+/// Everything known about an entry, for the top of its actions sheet.
+class _EntryDetails extends StatelessWidget {
+  const _EntryDetails({required this.entry});
+
+  final FileEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final e = entry;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final rows = <(String, String)>[
+      if (!e.isBrowsable) (l10n.sizeLabel, '${formatSize(e.size)} (${l10n.bytesCount(NumberFormat.decimalPattern(locale).format(e.size))})'),
+      if (e.modified != null) (l10n.modifiedLabel, DateFormat.yMMMd(locale).add_Hms().format(e.modified!)),
+      if (e.owner != null) (l10n.ownerLabel, e.group == null ? e.owner! : '${e.owner}:${e.group}'),
+      if (e.mode != null) (l10n.permissions, '${permissionString(e.mode!)}  ${e.mode!.toRadixString(8).padLeft(3, '0')}'),
+      if (e.linkTarget != null) (l10n.linkTargetLabel, e.linkTarget!),
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    final label = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Table(
+        columnWidths: const {0: IntrinsicColumnWidth(), 1: FlexColumnWidth()},
+        defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          for (final (k, v) in rows)
+            TableRow(children: [
+              Padding(padding: const EdgeInsets.only(right: 16, bottom: 4), child: Text(k, style: label)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: SelectableText(v, style: theme.textTheme.bodyMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
+              ),
+            ]),
+        ],
+      ),
     );
   }
 }

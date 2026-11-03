@@ -5,6 +5,8 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.1
 
+- **Denser file lists** with the owner of each file and relative dates ("5 min ago", "yesterday"). The exact date, size in bytes, permissions, owner and group are in the file's ⋮ sheet.
+- The tab overview's top bar is now part of the background, without the "nux" title.
 - **Sessions stay alive in the background**, like in Termux: while a terminal or file browser is connected, nux keeps running with a notification ("2 SSH connections"), so switching apps no longer drops your sessions. The notification's "Disconnect all" closes everything; port forwards share the same notification.
 - Tapping the terminal really brings the keyboard back after Back has hidden it (the 0.7.0 fix did not work on phones).
 - Installing a key on a server shows its progress on the "Install on a server" row; the result comes as a message with a "Use key" button (no more dialog).

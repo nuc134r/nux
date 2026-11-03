@@ -66,4 +66,26 @@ void main() {
     expect(await fs.home(), isNotEmpty);
     return (fs, dir.path);
   });
+
+  test('listings carry the owner and group names', () async {
+    final client = await connector.connect(connectionId, FakePrompter());
+    final fs = SftpFileSystem(client);
+    final dir = Directory.systemTemp.createTempSync('nux-sftp-owner-');
+    addTearDown(() async {
+      await fs.close();
+      client.close();
+      dir.deleteSync(recursive: true);
+    });
+    File('${dir.path}/a.txt').writeAsStringSync('a');
+    final entry = (await fs.list(dir.path)).single;
+    expect(entry.owner, TestSshServer.user);
+    expect(entry.group, isNotEmpty);
+  });
+
+  test('owner and group from an ls -l style longname', () {
+    expect(ownerFromLongname('-rw-r--r--    1 alice    staff        1234 Mar  5 10:00 notes.txt'), ('alice', 'staff'));
+    expect(ownerFromLongname('drwxr-xr-x 2 1000 1000 4096 Jan 1 2025 dir'), ('1000', '1000'));
+    expect(ownerFromLongname('notes.txt'), isNull);
+    expect(ownerFromLongname(''), isNull);
+  });
 }

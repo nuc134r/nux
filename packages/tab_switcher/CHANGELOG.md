@@ -2,6 +2,7 @@
 
 - Header swipes settle faster (`SnappyPageScrollPhysics`: stiffer spring, shorter flicks change the tab).
 - `TabSwitcher.isActive(context)`: whether a tab's content is the one in front (for `PopScope`s in tabs).
+- Over the grid the header blends into the background (no tab colour, no hairline).
 - The header has its own background (`headerColor`, default `surfaceContainer`) and a hairline under it.
 
 ## 2.0.0-dev.1

@@ -77,6 +77,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseFiles => 'Browse files';
 
   @override
+  String bytesCount(String bytes) {
+    return '$bytes bytes';
+  }
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -143,6 +148,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentPassphrase => 'Current passphrase';
+
+  @override
+  String daysAgo(int count) {
+    return '$count d ago';
+  }
 
   @override
   String get delete => 'Delete';
@@ -551,6 +561,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hosts => 'Hosts';
 
   @override
+  String hoursAgo(int count) {
+    return '$count h ago';
+  }
+
+  @override
   String get imageUnreadable => 'This image could not be decoded';
 
   @override
@@ -614,6 +629,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get jumpHostHint =>
       'Connect through another saved host (like ProxyJump)';
+
+  @override
+  String get justNow => 'just now';
 
   @override
   String get keepAlive => 'Keep-alive, seconds';
@@ -727,10 +745,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get licenses => 'Licenses';
 
   @override
+  String get linkTargetLabel => 'Points to';
+
+  @override
   String get loadAll => 'Load all';
 
   @override
   String get matchCase => 'Match case';
+
+  @override
+  String minutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String get modifiedLabel => 'Modified';
 
   @override
   String get more => 'More';
@@ -828,6 +857,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overwrite => 'Overwrite';
+
+  @override
+  String get ownerLabel => 'Owner';
 
   @override
   String partiallyLoaded(String loaded, String total) {
@@ -1043,6 +1075,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showTabs => 'Show tabs';
+
+  @override
+  String get sizeLabel => 'Size';
 
   @override
   String get skipKey => 'Skip this key';
@@ -1296,6 +1331,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wrapLines => 'Wrap lines';
+
+  @override
+  String get yesterday => 'yesterday';
 
   @override
   String get zerotierNetwork => 'ZeroTier network';

@@ -101,15 +101,9 @@ class _Header extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                tab?.title ?? l10n.appTitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontFamily: tab == null ? 'JetBrains Mono' : null,
-                  fontWeight: tab == null ? FontWeight.w600 : null,
-                ),
-              ),
+              // Over the tab grid the bar is just background: no title.
+              if (tab != null)
+                Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
               if (tab?.subtitle case final subtitle?)
                 Text(
                   subtitle,

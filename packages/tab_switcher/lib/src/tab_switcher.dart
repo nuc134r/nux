@@ -295,6 +295,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
               height: widget.headerHeight,
               topPadding: wide && !_c.isEmpty ? 0 : media.padding.top,
               color: widget.headerColor,
+              overGrid: grid,
               onSwipeDown: () => _c.gridOpen = true,
               child: grid || wide
                   ? widget.headerBuilder(context, grid ? null : _c.current)
@@ -389,9 +390,13 @@ class _Header extends StatelessWidget {
     required this.height,
     required this.topPadding,
     required this.color,
+    required this.overGrid,
     required this.onSwipeDown,
     required this.child,
   });
+
+  /// Above the grid the header is part of the background, not a tab's title bar.
+  final bool overGrid;
 
   final double height;
   final double topPadding;
@@ -403,8 +408,8 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      color: color ?? theme.colorScheme.surfaceContainer,
-      shape: Border(bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: .5)),
+      color: overGrid ? theme.colorScheme.surface : color ?? theme.colorScheme.surfaceContainer,
+      shape: overGrid ? null : Border(bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: .5)),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onVerticalDragEnd: (d) {

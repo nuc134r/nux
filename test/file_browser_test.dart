@@ -65,6 +65,18 @@ void main() {
     expect(b.error, isA<BackendException>().having((e) => e.kind, 'kind', BackendErrorKind.notFound));
   });
 
+  test('relative ages', () {
+    final now = DateTime(2026, 11, 3, 15, 30);
+    expect(ageOf(now.subtract(const Duration(seconds: 20)), now), (AgeUnit.justNow, 0));
+    expect(ageOf(now.subtract(const Duration(minutes: 5)), now), (AgeUnit.minutes, 5));
+    expect(ageOf(DateTime(2026, 11, 3, 9), now), (AgeUnit.hours, 6));
+    expect(ageOf(DateTime(2026, 11, 2, 23), now), (AgeUnit.yesterday, 1), reason: 'before midnight is yesterday');
+    expect(ageOf(DateTime(2026, 10, 30, 12), now), (AgeUnit.days, 4));
+    expect(ageOf(DateTime(2026, 3, 5), now), (AgeUnit.sameYear, 0));
+    expect(ageOf(DateTime(2024, 3, 5), now), (AgeUnit.olderYear, 0));
+    expect(ageOf(DateTime(2026, 11, 4), now), (AgeUnit.sameYear, 0), reason: 'future (clock skew) shows the date');
+  });
+
   test('listing helpers', () {
     expect(permissionString(0x1ed), 'rwxr-xr-x');
     expect(permissionString(0x180), 'rw-------');

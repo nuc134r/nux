@@ -218,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Browse files'**
   String get browseFiles;
 
+  /// No description provided for @bytesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{bytes} bytes'**
+  String bytesCount(String bytes);
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -343,6 +349,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current passphrase'**
   String get currentPassphrase;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} d ago'**
+  String daysAgo(int count);
 
   /// No description provided for @delete.
   ///
@@ -956,6 +968,12 @@ abstract class AppLocalizations {
   /// **'Hosts'**
   String get hosts;
 
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String hoursAgo(int count);
+
   /// No description provided for @imageUnreadable.
   ///
   /// In en, this message translates to:
@@ -1075,6 +1093,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connect through another saved host (like ProxyJump)'**
   String get jumpHostHint;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get justNow;
 
   /// No description provided for @keepAlive.
   ///
@@ -1262,6 +1286,12 @@ abstract class AppLocalizations {
   /// **'Licenses'**
   String get licenses;
 
+  /// No description provided for @linkTargetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Points to'**
+  String get linkTargetLabel;
+
   /// No description provided for @loadAll.
   ///
   /// In en, this message translates to:
@@ -1273,6 +1303,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Match case'**
   String get matchCase;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String minutesAgo(int count);
+
+  /// No description provided for @modifiedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get modifiedLabel;
 
   /// No description provided for @more.
   ///
@@ -1447,6 +1489,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Overwrite'**
   String get overwrite;
+
+  /// No description provided for @ownerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get ownerLabel;
 
   /// No description provided for @partiallyLoaded.
   ///
@@ -1849,6 +1897,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show tabs'**
   String get showTabs;
+
+  /// No description provided for @sizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sizeLabel;
 
   /// No description provided for @skipKey.
   ///
@@ -2275,6 +2329,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wrap lines'**
   String get wrapLines;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get yesterday;
 
   /// No description provided for @zerotierNetwork.
   ///

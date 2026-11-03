@@ -37,6 +37,14 @@
   "bookmarkFolder": "Bookmark this folder",
   "bookmarks": "Bookmarks",
   "browseFiles": "Browse files",
+  "bytesCount": "{bytes} bytes",
+  "@bytesCount": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
   "cancel": "Cancel",
   "change": "Change",
   "changedOnServer": "Changed on the server",
@@ -72,6 +80,14 @@
   },
   "copyPath": "Copy path",
   "currentPassphrase": "Current passphrase",
+  "daysAgo": "{count} d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "delete": "Delete",
   "deleteConnectionBody": "Its saved password is deleted too. Trusted host keys and SSH keys stay.",
   "deleteConnectionJumpers": "These hosts connect through it and will connect directly: {names}",
@@ -429,6 +445,14 @@
   },
   "hostKeyUnknownTitle": "New server",
   "hosts": "Hosts",
+  "hoursAgo": "{count} h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "imageUnreadable": "This image could not be decoded",
   "importAction": "Import",
   "importFormatsHint": "OpenSSH, PEM, PKCS#8 or PuTTY (.ppk)",
@@ -456,6 +480,7 @@
   "joinNetwork": "Join a network",
   "jumpHost": "Jump host",
   "jumpHostHint": "Connect through another saved host (like ProxyJump)",
+  "justNow": "just now",
   "keepAlive": "Keep-alive, seconds",
   "keepAliveHint": "Pings the server so idle connections are not dropped. 0 turns it off.",
   "keepEditing": "Keep editing",
@@ -529,8 +554,18 @@
   "later": "Later",
   "leave": "Leave",
   "licenses": "Licenses",
+  "linkTargetLabel": "Points to",
   "loadAll": "Load all",
   "matchCase": "Match case",
+  "minutesAgo": "{count} min ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "modifiedLabel": "Modified",
   "more": "More",
   "move": "Move",
   "moveTo": "Move to…",
@@ -567,6 +602,7 @@
   "openTerminal": "Open terminal",
   "organize": "Organize",
   "overwrite": "Overwrite",
+  "ownerLabel": "Owner",
   "partiallyLoaded": "Showing the first {loaded} of {total}",
   "@partiallyLoaded": {
     "placeholders": {
@@ -679,6 +715,7 @@
   "showRendered": "Show formatted",
   "showSource": "Show source",
   "showTabs": "Show tabs",
+  "sizeLabel": "Size",
   "skipKey": "Skip this key",
   "smallerText": "Smaller text",
   "socksPortHint": "Point apps' SOCKS5 proxy setting at this port (1080 is the usual one)",
@@ -844,6 +881,7 @@
   },
   "whatsNew": "What's new",
   "wrapLines": "Wrap lines",
+  "yesterday": "yesterday",
   "zerotierNetwork": "ZeroTier network",
   "ztAbout": "nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.",
   "ztAccessDenied": "Not authorized: allow this node in the network's controller",
