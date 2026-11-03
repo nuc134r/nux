@@ -5,6 +5,9 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.4
 
+- **More reliable background connections**: when Android refuses to start the background service (it does that while nux is in the background), nux notices, keeps trying, and starts it as soon as you come back, so the notification and your forwards no longer disappear for good.
+- **Settings → Background connections** shows whether notifications are allowed and whether nux is exempt from battery optimisation, with a button to fix each. nux asks once for the battery exemption, like Termux.
+- **Settings → Share log**: what nux did since it started (hosts and addresses hidden), to attach to a bug report.
 - Host pings refresh every 5 seconds. Connected hosts are measured over their SSH session, so hosts behind a jump host show a ping too while connected.
 
 ## 0.7.3

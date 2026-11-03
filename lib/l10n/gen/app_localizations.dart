@@ -158,6 +158,12 @@ abstract class AppLocalizations {
   /// **'All ({count})'**
   String allRules(int count);
 
+  /// No description provided for @allow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get allow;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
@@ -205,6 +211,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stays connected while nux is in the background'**
   String get backgroundHint;
+
+  /// No description provided for @batteryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Battery optimisation'**
+  String get batteryLabel;
+
+  /// No description provided for @batteryOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimised: some phones stop background connections anyway'**
+  String get batteryOff;
+
+  /// No description provided for @batteryOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrestricted: Android leaves background connections running'**
+  String get batteryOn;
 
   /// No description provided for @bookmarkFolder.
   ///
@@ -1322,6 +1346,12 @@ abstract class AppLocalizations {
   /// **'Load all'**
   String get loadAll;
 
+  /// No description provided for @logEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The log is empty'**
+  String get logEmpty;
+
   /// No description provided for @matchCase.
   ///
   /// In en, this message translates to:
@@ -1471,6 +1501,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get notNow;
+
+  /// No description provided for @notificationsBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn them on in Android settings: Apps → nux → Notifications'**
+  String get notificationsBlocked;
+
+  /// No description provided for @notificationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsLabel;
+
+  /// No description provided for @notificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off: background connections run without their notification'**
+  String get notificationsOff;
+
+  /// No description provided for @notificationsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed: the notification shows what keeps running'**
+  String get notificationsOn;
 
   /// No description provided for @ok.
   ///
@@ -1903,6 +1957,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get share;
+
+  /// No description provided for @shareLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Share log'**
+  String get shareLog;
+
+  /// No description provided for @shareLogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What nux did since it started, with hosts and addresses hidden'**
+  String get shareLogHint;
 
   /// No description provided for @show.
   ///

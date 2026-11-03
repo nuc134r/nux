@@ -47,6 +47,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get allow => 'Разрешить';
+
+  @override
   String get appTitle => 'nux';
 
   @override
@@ -70,6 +73,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get backgroundHint => 'Остаётся на связи, пока nux в фоне';
+
+  @override
+  String get batteryLabel => 'Оптимизация батареи';
+
+  @override
+  String get batteryOff =>
+      'Оптимизируется: некоторые телефоны всё равно останавливают фоновые подключения';
+
+  @override
+  String get batteryOn =>
+      'Без ограничений: Android не останавливает фоновые подключения';
 
   @override
   String get bookmarkFolder => 'Добавить папку в закладки';
@@ -771,6 +785,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadAll => 'Загрузить всё';
 
   @override
+  String get logEmpty => 'Журнал пуст';
+
+  @override
   String get matchCase => 'Учитывать регистр';
 
   @override
@@ -857,6 +874,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notNow => 'Не сейчас';
+
+  @override
+  String get notificationsBlocked =>
+      'Включите их в настройках Android: Приложения → nux → Уведомления';
+
+  @override
+  String get notificationsLabel => 'Уведомления';
+
+  @override
+  String get notificationsOff =>
+      'Выключены: фоновые подключения работают без уведомления';
+
+  @override
+  String get notificationsOn =>
+      'Разрешены: уведомление показывает, что работает в фоне';
 
   @override
   String get ok => 'ОК';
@@ -1092,6 +1124,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get share => 'Поделиться';
+
+  @override
+  String get shareLog => 'Поделиться журналом';
+
+  @override
+  String get shareLogHint =>
+      'Что делал nux с момента запуска; хосты и адреса скрыты';
 
   @override
   String get show => 'Показать';

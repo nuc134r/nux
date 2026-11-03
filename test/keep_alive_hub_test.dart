@@ -65,4 +65,19 @@ void main() {
     await flush();
     expect(pressed, unorderedEquals(['ssh', 'forwarding']));
   });
+
+  test('resync starts the service again while it is wanted (a start refused in the background)', () async {
+    final ssh = hub.slot('ssh');
+    hub.resync(); // nothing wanted: nothing to do
+    await ssh.start(title: '1 SSH connection', text: '', stopLabel: 'Disconnect all');
+    hub.resync();
+    await ssh.stop();
+    hub.resync();
+    await flush();
+    expect(service.calls, [
+      'start 1 SSH connection | In the background | Disconnect all',
+      'start 1 SSH connection | In the background | Disconnect all',
+      'stop',
+    ]);
+  });
 }

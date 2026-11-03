@@ -46,6 +46,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get allow => 'Allow';
+
+  @override
   String get appTitle => 'nux';
 
   @override
@@ -69,6 +72,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backgroundHint => 'Stays connected while nux is in the background';
+
+  @override
+  String get batteryLabel => 'Battery optimisation';
+
+  @override
+  String get batteryOff =>
+      'Optimised: some phones stop background connections anyway';
+
+  @override
+  String get batteryOn =>
+      'Unrestricted: Android leaves background connections running';
 
   @override
   String get bookmarkFolder => 'Bookmark this folder';
@@ -763,6 +777,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadAll => 'Load all';
 
   @override
+  String get logEmpty => 'The log is empty';
+
+  @override
   String get matchCase => 'Match case';
 
   @override
@@ -848,6 +865,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notNow => 'Not now';
+
+  @override
+  String get notificationsBlocked =>
+      'Turn them on in Android settings: Apps → nux → Notifications';
+
+  @override
+  String get notificationsLabel => 'Notifications';
+
+  @override
+  String get notificationsOff =>
+      'Off: background connections run without their notification';
+
+  @override
+  String get notificationsOn =>
+      'Allowed: the notification shows what keeps running';
 
   @override
   String get ok => 'OK';
@@ -1080,6 +1112,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get share => 'Share';
+
+  @override
+  String get shareLog => 'Share log';
+
+  @override
+  String get shareLogHint =>
+      'What nux did since it started, with hosts and addresses hidden';
 
   @override
   String get show => 'Show';

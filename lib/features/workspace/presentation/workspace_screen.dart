@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 
 import '../../../app/router.dart';
+import '../../../core/background/background_providers.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
@@ -44,6 +45,7 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(zeroTierAutoStartProvider);
     // Open terminals and file browsers keep nux running in the background (with a notification).
     ref.watch(sshKeepAliveProvider);
+    ref.watch(backgroundResyncProvider);
     return TabSwitcher(
       controller: controller,
       headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),

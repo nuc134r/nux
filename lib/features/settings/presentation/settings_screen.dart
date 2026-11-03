@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/router.dart';
 import '../../../core/app_info.dart';
+import '../../../core/background/background_access.dart';
+import '../../../core/log/log.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../data/settings_repository.dart';
@@ -130,6 +133,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
+          const _BackgroundIsland(),
           Island(
             title: l10n.about,
             children: [
@@ -139,6 +143,16 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: Text(displayVersion(ref.watch(appVersionProvider).value) ?? '…'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push(Routes.version),
+              ),
+              ListTile(
+                leading: const Icon(Icons.receipt_long_outlined),
+                title: Text(l10n.shareLog),
+                subtitle: Text(l10n.shareLogHint),
+                onTap: () {
+                  final text = ref.read(logProvider).export();
+                  if (text.isEmpty) return showSnack(context, l10n.logEmpty);
+                  SharePlus.instance.share(ShareParams(text: text, subject: 'nux log'));
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.code),
@@ -220,6 +234,97 @@ class _SliderTile extends StatelessWidget {
         onChanged: onChanged,
       ),
       trailing: SizedBox(width: 44, child: Text(label(v), textAlign: TextAlign.end)),
+    );
+  }
+}
+
+/// Whether Android lets background connections run and show their notification, with buttons to fix it.
+/// Refreshed when the app comes back from Android's settings.
+class _BackgroundIsland extends ConsumerStatefulWidget {
+  const _BackgroundIsland();
+
+  @override
+  ConsumerState<_BackgroundIsland> createState() => _BackgroundIslandState();
+}
+
+class _BackgroundIslandState extends ConsumerState<_BackgroundIsland> {
+  late final _lifecycle = AppLifecycleListener(onResume: _refresh);
+  bool? _notifications;
+  bool? _battery;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle; // created now, so it hears the app come back
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    final access = ref.read(backgroundAccessProvider);
+    final n = await access.notificationsAllowed();
+    final b = await access.batteryUnrestricted();
+    if (!mounted) return;
+    setState(() {
+      _notifications = n;
+      _battery = b;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final access = ref.read(backgroundAccessProvider);
+    final error = Theme.of(context).colorScheme.error;
+    Widget tile({
+      required IconData icon,
+      required String title,
+      required bool? ok,
+      required String okText,
+      required String badText,
+      required Future<void> Function() allow,
+    }) =>
+        ListTile(
+          leading: Icon(icon, color: ok == false ? error : null),
+          title: Text(title),
+          subtitle: Text(ok == false ? badText : okText),
+          trailing: ok == false
+              ? FilledButton.tonal(
+                  onPressed: () async {
+                    await allow();
+                    await _refresh();
+                  },
+                  child: Text(l10n.allow),
+                )
+              : null,
+        );
+    return Island(
+      title: l10n.backgroundChannel,
+      children: [
+        tile(
+          icon: Icons.notifications_outlined,
+          title: l10n.notificationsLabel,
+          ok: _notifications,
+          okText: l10n.notificationsOn,
+          badText: l10n.notificationsOff,
+          allow: () async {
+            if (!await access.allowNotifications() && context.mounted) showSnack(context, l10n.notificationsBlocked);
+          },
+        ),
+        tile(
+          icon: Icons.battery_saver_outlined,
+          title: l10n.batteryLabel,
+          ok: _battery,
+          okText: l10n.batteryOn,
+          badText: l10n.batteryOff,
+          allow: access.allowUnrestrictedBattery,
+        ),
+      ],
     );
   }
 }
