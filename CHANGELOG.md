@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.2
+
+- **Open terminal here** in the file browser's ⋮ menu: a shell on the same host, in the folder you are looking at.
+
 ## 0.7.1
 
 - **No more floating buttons**: Add host, Upload, Add key, Join network and Add forward are in the ⋮ menu of their tab or screen (Stop all too), so nothing covers the content.

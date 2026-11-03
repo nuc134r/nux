@@ -874,6 +874,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openTerminal => 'Открыть терминал';
 
   @override
+  String get openTerminalHere => 'Открыть терминал здесь';
+
+  @override
   String get organize => 'Упорядочить';
 
   @override

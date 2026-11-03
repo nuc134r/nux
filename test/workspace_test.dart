@@ -233,6 +233,13 @@ void main() {
     await tester.pump();
     expect(tester.testTextInput.log.map((c) => c.method), contains('TextInput.show'));
 
+    // The terminal's menu opens a file browser on the same host.
+    await tester.tap(find.byType(NuxMenuButton));
+    await settle(tester);
+    await tester.tap(find.text('Browse files'));
+    await settle(tester);
+    expect(container.read(workspaceProvider).current, isA<FilesTab>());
+
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });
@@ -256,7 +263,7 @@ void main() {
 
     await tester.tap(find.byType(NuxMenuButton)); // the header's ⋮ (file rows have their own)
     await settle(tester);
-    for (final label in ['New folder', 'Refresh', 'Sort', 'View', 'Copy path', 'Settings']) {
+    for (final label in ['Open terminal here', 'New folder', 'Upload', 'Refresh', 'Sort', 'View', 'Copy path', 'Settings']) {
       expect(find.text(label), findsOneWidget, reason: label);
     }
     await tester.tap(find.text('Sort'));
@@ -275,6 +282,14 @@ void main() {
     await tester.tap(find.text('Hidden files'));
     await settle(tester);
     expect(files.browser.showHidden, isTrue);
+
+    await tester.tap(find.byType(NuxMenuButton));
+    await settle(tester);
+    await tester.tap(find.text('Open terminal here'));
+    await settle(tester);
+    final terminal = container.read(workspaceProvider).current;
+    expect(terminal, isA<TerminalTab>());
+    expect((terminal! as TerminalTab).directory, root.path);
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);

@@ -865,6 +865,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openTerminal => 'Open terminal';
 
   @override
+  String get openTerminalHere => 'Open terminal here';
+
+  @override
   String get organize => 'Organize';
 
   @override

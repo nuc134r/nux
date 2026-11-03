@@ -10,6 +10,8 @@ import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
+import '../../terminal/domain/terminal_tab.dart';
+import '../../workspace/data/workspace.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../data/files_providers.dart';
 import '../data/ssh_fs.dart';
@@ -94,6 +96,15 @@ class FilesTab extends NuxTab {
         };
     final transfers = _transfers;
     return [
+      NuxMenuAction(
+        icon: Icons.terminal,
+        label: l10n.openTerminalHere,
+        enabled: b.path != null,
+        // Built directly: this tab's ref belongs to the tab factory, which cannot read itself.
+        onSelected: () => _ref
+            .read(workspaceProvider)
+            .open(TerminalTab(_ref, connectionId: connectionId, directory: b.path)),
+      ),
       NuxMenuAction(
         icon: Icons.create_new_folder_outlined,
         label: l10n.newFolder,
