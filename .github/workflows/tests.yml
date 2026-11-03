@@ -25,6 +25,16 @@ jobs:
           channel: stable
           cache: true
 
+      # Native code built by package build hooks (libzt for ZeroTier, compiled from source with CMake; also
+      # libghostty and sqlite3). The hooks skip work whose inputs are unchanged, so a restored folder turns
+      # a several-minute compile into a check. pubspec.lock pins the package versions (and the
+      # zerotier_sockets commit), so the key changes with them; an older entry is still a good start.
+      - uses: actions/cache@v6
+        with:
+          path: .dart_tool/hooks_runner
+          key: native-hooks-${{ runner.os }}-${{ github.workflow }}-${{ github.job }}-flutter-3.47.9-${{ hashFiles('pubspec.lock') }}
+          restore-keys: native-hooks-${{ runner.os }}-${{ github.workflow }}-${{ github.job }}-flutter-3.47.9-
+
       # Key and SSH tests create throwaway keys with these tools and run a local sshd (skipped without them).
       - run: sudo apt-get update -q && sudo apt-get install -y -q putty-tools openssh-server openssl
       - run: flutter pub get
@@ -65,6 +75,16 @@ jobs:
           flutter-version: 3.47.9
           channel: stable
           cache: true
+
+      # Native code built by package build hooks (libzt for ZeroTier, compiled from source with CMake; also
+      # libghostty and sqlite3). The hooks skip work whose inputs are unchanged, so a restored folder turns
+      # a several-minute compile into a check. pubspec.lock pins the package versions (and the
+      # zerotier_sockets commit), so the key changes with them; an older entry is still a good start.
+      - uses: actions/cache@v6
+        with:
+          path: .dart_tool/hooks_runner
+          key: native-hooks-${{ runner.os }}-${{ github.workflow }}-${{ github.job }}-flutter-3.47.9-${{ hashFiles('pubspec.lock') }}
+          restore-keys: native-hooks-${{ runner.os }}-${{ github.workflow }}-${{ github.job }}-flutter-3.47.9-
 
       - run: flutter pub get
       - run: flutter build apk --debug --target-platform android-arm64
