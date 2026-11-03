@@ -93,11 +93,11 @@ void main() {
     await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
     await settle(tester);
 
-    // The hosts tab has no entries of its own: just Settings, no divider above it.
+    // The hosts tab's menu has Add host (no floating button) and Settings.
     await tester.tap(find.byType(NuxMenuButton));
     await settle(tester);
+    expect(find.text('Add host'), findsOneWidget);
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.descendant(of: find.byType(Material).last, matching: find.byType(Divider)), findsNothing);
     await tester.tapAt(const Offset(10, 500));
     await settle(tester);
 

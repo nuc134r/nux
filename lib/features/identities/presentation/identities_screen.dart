@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
@@ -60,11 +61,14 @@ class IdentitiesScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final keys = ref.watch(identitiesProvider).value ?? const <Identity>[];
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.keys)),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
-        label: Text(l10n.addKey),
-        onPressed: () => _add(context, ref),
+      appBar: AppBar(
+        title: Text(l10n.keys),
+        actions: [
+          NuxMenuButton(
+            tooltip: l10n.more,
+            items: (_) => [NuxMenuAction(icon: Icons.add, label: l10n.addKey, onSelected: () => _add(context, ref))],
+          ),
+        ],
       ),
       body: keys.isEmpty
           ? Center(
@@ -90,7 +94,7 @@ class IdentitiesScreen extends ConsumerWidget {
               ),
             )
           : ListView(
-              padding: const EdgeInsets.only(bottom: 96),
+              padding: const EdgeInsets.only(bottom: 16),
               children: [
                 for (final k in keys)
                   ListTile(

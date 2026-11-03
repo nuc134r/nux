@@ -100,6 +100,12 @@ class FilesTab extends NuxTab {
         enabled: b.path != null,
         onSelected: () => createFolder(context, b),
       ),
+      NuxMenuAction(
+        icon: Icons.upload,
+        label: l10n.upload,
+        enabled: b.path != null,
+        onSelected: () => uploadInto(context, _transfers, connectionId, b),
+      ),
       NuxMenuAction(icon: Icons.refresh, label: l10n.refresh, onSelected: b.refresh),
       NuxMenuSubmenu(
         icon: Icons.sort,

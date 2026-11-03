@@ -50,6 +50,9 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
   (`apt install openssh-client openssh-server openssl putty-tools`); without them those tests skip.
 - Look at the UI, not just the tests: `bash tool/screenshots.sh` renders `docs/screenshots/*.png`.
 - User-visible changes get a line in `CHANGELOG.md` under the next version (it is the release notes).
+- **UI: no FABs and no extra header buttons.** Tab headers have only the tab count and ⋮; actions go in
+  `NuxTab.menuEntries` (submenus for option groups), screens put them in an app-bar `NuxMenuButton`.
+  Progress shows where the action started, results in snackbars. See `docs/PLAN.md` "UI conventions".
 
 ## Icons
 Never edit generated icon files (`android/.../res/{drawable,mipmap-*}/ic_*`, `assets/app_icon.png`);

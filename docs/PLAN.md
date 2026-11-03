@@ -159,6 +159,29 @@ local forward (`http://127.0.0.1:<port>`), a SOCKS forward (-D) used as the WebV
 allows it (Android `ProxyController`), web UIs on ZeroTier addresses, and later the VS Code server (§9).
 Plain browsing works too; downloads go to the transfers list, links to other apps open outside.
 
+### UI conventions: one menu, no floating buttons
+
+nux is a tool for a small screen full of content (terminals, code, file lists), so chrome stays out of
+the way and every screen works the same way:
+
+- **No floating action buttons** anywhere. They cover content (the last lines of a terminal or a list),
+  compete with the extra-keys bar and the keyboard, and each screen would put its main action somewhere
+  else. The action goes into the **⋮ menu** instead.
+- **A tab's header** holds the title, the **tab count** button and **⋮**, nothing else. Everything the
+  tab can do is in its menu (`NuxTab.menuEntries`), with **Settings** always last. Over the tab
+  overview the bar is plain background, and its menu has New tab and the app-wide screens.
+- **Screens that are not tabs** (Keys, Port forwarding, ZeroTier, …) put their actions in a ⋮ menu in
+  the app bar too (`NuxMenuButton`).
+- **Menus** are `NuxMenu`: quick to open, grouped with dividers, long option lists in **submenus**
+  (Sort ▸, View ▸) with check marks, the current choice shown at the end of the row. A tab can put a dot
+  on ⋮ when something needs attention (transfers running).
+- **List items** open their own menu when tapped, beside the item (hosts: SSH and SFTP first); no
+  per-row ⋮ where a tap can do it.
+- **Empty states** may have buttons in the content (Add host, Generate key): that is where the eye is
+  when there is nothing else, and they disappear once there is something to show.
+- Results and errors are **snackbars** (low, swipe to dismiss); progress is shown **where the action
+  was started** (on the row, in the tab), not in a snackbar.
+
 ## 6. Terminal
 
 **Choice: `flterm`** (Flutter widget over Ghostty's `libghostty-vt`, active, all platforms, native assets),

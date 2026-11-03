@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zerotier_sockets/zerotier_sockets.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
@@ -59,14 +60,19 @@ class ZeroTierScreen extends ConsumerWidget {
                 ? l10n.ztOnline
                 : l10n.ztOffline;
         return Scaffold(
-          appBar: AppBar(title: const Text('ZeroTier')),
-          floatingActionButton: FloatingActionButton.extended(
-            icon: const Icon(Icons.add),
-            label: Text(l10n.joinNetwork),
-            onPressed: () => _join(context, service),
+          appBar: AppBar(
+            title: const Text('ZeroTier'),
+            actions: [
+              NuxMenuButton(
+                tooltip: l10n.more,
+                items: (_) => [
+                  NuxMenuAction(icon: Icons.add, label: l10n.joinNetwork, onSelected: () => _join(context, service)),
+                ],
+              ),
+            ],
           ),
           body: ListView(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: const EdgeInsets.only(bottom: 16),
             children: [
               Island(
                 children: [
@@ -108,7 +114,12 @@ class ZeroTierScreen extends ConsumerWidget {
               Island(
                 title: l10n.ztNetworks,
                 children: [
-                  if (service.networks.isEmpty) ListTile(title: Text(l10n.ztNoNetworks), subtitle: Text(l10n.ztNoNetworksHint)),
+                  if (service.networks.isEmpty)
+                    ListTile(
+                      title: Text(l10n.ztNoNetworks),
+                      subtitle: Text(l10n.ztNoNetworksHint),
+                      trailing: FilledButton.tonal(onPressed: () => _join(context, service), child: Text(l10n.join)),
+                    ),
                   for (final id in service.networks)
                     _NetworkTile(id: id, state: service.network(id), running: service.running, onLeave: () => service.leave(id)),
                 ],

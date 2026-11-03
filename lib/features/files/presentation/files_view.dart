@@ -217,14 +217,6 @@ class _FilesViewState extends ConsumerState<FilesView> {
             _b.selecting ? _b.clearSelection() : _b.up();
           },
           child: Scaffold(
-            floatingActionButton: _b.selecting || _b.path == null
-                ? null
-                : FloatingActionButton(
-                    heroTag: null,
-                    tooltip: l10n.upload,
-                    onPressed: () => uploadInto(context, ref, widget.tab.connectionId, _b),
-                    child: const Icon(Icons.upload),
-                  ),
             bottomNavigationBar: _b.selecting ? _SelectionBar(view: this) : null,
             body: Column(
               children: [
@@ -248,7 +240,7 @@ class _FilesViewState extends ConsumerState<FilesView> {
                                 ),
                               ])
                             : ListView.builder(
-                                padding: const EdgeInsets.only(bottom: 88),
+                                padding: const EdgeInsets.only(bottom: 16),
                                 itemCount: entries.length,
                                 itemBuilder: (context, i) => _EntryTile(
                                   entry: entries[i],
@@ -271,10 +263,9 @@ class _FilesViewState extends ConsumerState<FilesView> {
 }
 
 /// Picks files on the device and uploads them into the browser's folder.
-Future<void> uploadInto(BuildContext context, WidgetRef ref, String connectionId, FileBrowser b) async {
+Future<void> uploadInto(BuildContext context, TransferManager manager, String connectionId, FileBrowser b) async {
   final files = await FilePicker.pickFiles();
   if (files.isEmpty || b.path == null || !context.mounted) return;
-  final manager = ref.read(transferManagerProvider);
   for (final f in files) {
     final x = f.xFile;
     final size = await x.length();

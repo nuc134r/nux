@@ -5,6 +5,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.1
 
+- **No more floating buttons**: Add host, Upload, Add key, Join network and Add forward are in the ⋮ menu of their tab or screen (Stop all too), so nothing covers the content.
 - **New hosts list**: hosts are small tiles with a reachability dot and the round-trip time to their SSH port (refreshed every 20 seconds), the name and just the address. Tap a host for its menu: **SSH** and **SFTP** side by side, then port forwarding, edit, duplicate and delete. The search bar and the letter avatars are gone.
 - Tab previews in the overview are sharp (rendered for the screen's density).
 - The hosts tab's ⋮ menu no longer shows a stray divider.

@@ -42,6 +42,15 @@ class HostsTab extends NuxTab {
   Widget buildContent(BuildContext context) => const _HostsView();
 
   @override
+  List<NuxMenuItem> menuEntries(BuildContext context) => [
+        NuxMenuAction(
+          icon: Icons.add,
+          label: context.l10n.addHost,
+          onSelected: () => context.push(Routes.newConnection),
+        ),
+      ];
+
+  @override
   void dispose() {
     currentL10n.removeListener(notifyListeners);
     super.dispose();
@@ -73,21 +82,14 @@ class _HostsViewState extends ConsumerState<_HostsView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final all = ref.watch(connectionsProvider).value ?? const <Connection>[];
     final pool = ref.watch(sshPoolProvider);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: null,
-        icon: const Icon(Icons.add),
-        label: Text(l10n.addHost),
-        onPressed: () => context.push(Routes.newConnection),
-      ),
       body: ListenableBuilder(
         listenable: pool,
         builder: (context, _) => ListView(
-          padding: const EdgeInsets.only(top: 4, bottom: 96),
+          padding: const EdgeInsets.only(top: 4, bottom: 16),
           children: [
             const UpdateBanner(),
             if (all.isEmpty) const _Empty() else const _ForwardingToggles(),

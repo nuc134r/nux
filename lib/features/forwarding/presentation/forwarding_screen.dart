@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/widgets.dart';
@@ -35,18 +36,19 @@ class ForwardingScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(connectionId == null ? l10n.portForwarding : l10n.portForwardingOn(connections[connectionId]?.name ?? '')),
         actions: [
-          ListenableBuilder(
-            listenable: manager,
-            builder: (context, _) => manager.activeCount == 0
-                ? const SizedBox.shrink()
-                : TextButton(onPressed: manager.stopAll, child: Text(l10n.stopAll)),
+          NuxMenuButton(
+            tooltip: l10n.more,
+            items: (_) => [
+              NuxMenuAction(
+                icon: Icons.add,
+                label: l10n.addForward,
+                onSelected: () => context.push(Routes.newForward(connectionId: connectionId)),
+              ),
+              if (manager.activeCount > 0)
+                NuxMenuAction(icon: Icons.stop_circle_outlined, label: l10n.stopAll, onSelected: manager.stopAll),
+            ],
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
-        label: Text(l10n.addForward),
-        onPressed: () => context.push(Routes.newForward(connectionId: connectionId)),
       ),
       body: rules.isEmpty
           ? ListView(
@@ -62,10 +64,18 @@ class ForwardingScreen extends ConsumerWidget {
                   (Icons.hub_outlined, l10n.forwardDynamic, l10n.forwardDynamicHint),
                 ])
                   ListTile(leading: Icon(icon), title: Text(title), subtitle: Text(text)),
+                const SizedBox(height: 16),
+                Center(
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.addForward),
+                    onPressed: () => context.push(Routes.newForward(connectionId: connectionId)),
+                  ),
+                ),
               ],
             )
           : ListView(
-              padding: const EdgeInsets.only(bottom: 96),
+              padding: const EdgeInsets.only(bottom: 16),
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),

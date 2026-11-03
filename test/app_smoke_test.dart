@@ -33,6 +33,7 @@ void main() {
         }
         expect(tester.takeException(), isNull);
         expect(find.byType(Scaffold), findsWidgets);
+        expect(find.byType(FloatingActionButton), findsNothing, reason: 'actions go in the ⋮ menu (PLAN: UI conventions)');
 
         // Unmount before the database closes so Drift streams are cancelled first.
         await tester.pumpWidget(const SizedBox());
