@@ -55,6 +55,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appearance => 'Appearance';
 
   @override
+  String get ascending => 'Ascending';
+
+  @override
   String get authentication => 'Sign in';
 
   @override
@@ -209,6 +212,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String deleted(String name) {
     return 'Deleted $name';
   }
+
+  @override
+  String get descending => 'Descending';
 
   @override
   String get devicePort => 'Port on this device';
@@ -500,6 +506,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get groupField => 'Group';
+
+  @override
+  String get hiddenFiles => 'Hidden files';
 
   @override
   String get hide => 'Hide';
@@ -1099,6 +1108,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sortBySize => 'Sort by size';
 
   @override
+  String get sortMenu => 'Sort';
+
+  @override
+  String get sortModified => 'Date modified';
+
+  @override
+  String get sortName => 'Name';
+
+  @override
+  String get sortSize => 'Size';
+
+  @override
   String get sourceCode => 'Source code';
 
   @override
@@ -1240,6 +1261,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transfers => 'Transfers';
 
   @override
+  String transfersActive(int count) {
+    return '$count active';
+  }
+
+  @override
   String get tryAgain => 'Try again';
 
   @override
@@ -1325,6 +1351,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String viaZeroTier(String network) {
     return 'ZeroTier $network';
   }
+
+  @override
+  String get viewMenu => 'View';
 
   @override
   String get whatsNew => 'What\'s new';

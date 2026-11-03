@@ -5,22 +5,27 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../workspace/domain/nux_tab.dart';
+import '../data/files_providers.dart';
 import '../data/ssh_fs.dart';
 import '../domain/file_browser.dart';
 import '../domain/file_listing.dart';
 import '../domain/fs_handle.dart';
+import '../domain/transfers.dart';
 import 'files_view.dart';
+import 'transfers_sheet.dart';
 
 /// A file browser on a host (SFTP).
 class FilesTab extends NuxTab {
   /// [open] replaces SFTP (tests and screenshots browse a local folder).
   FilesTab(Ref ref, {required this.connectionId, String? path, String? id, FsOpener? open})
-      : id = id ?? 'files:${newId()}',
+      : _ref = ref,
+        id = id ?? 'files:${newId()}',
         browser = FileBrowser(
           open: open ?? sshFsOpener(ref.read(sshPoolProvider), () => ref.read(sshPrompterProvider), connectionId),
           path: path,
@@ -33,6 +38,9 @@ class FilesTab extends NuxTab {
   }
 
   static const kindName = 'files';
+
+  final Ref _ref;
+  TransferManager get _transfers => _ref.read(transferManagerProvider);
 
   @override
   final String id;
@@ -70,34 +78,65 @@ class FilesTab extends NuxTab {
   Widget buildContent(BuildContext context) => FilesView(tab: this);
 
   @override
-  List<Widget> buildActions(BuildContext context) => [FilesActions(tab: this)];
+  bool get menuBadge => _transfers.activeCount > 0;
 
   @override
-  List<TabMenuEntry> menuEntries(BuildContext context) {
+  Listenable get menuBadgeChanges => _transfers;
+
+  @override
+  List<NuxMenuItem> menuEntries(BuildContext context) {
     final l10n = context.l10n;
     final b = browser;
+    String sortName(FileSort s) => switch (s) {
+          FileSort.name => l10n.sortName,
+          FileSort.size => l10n.sortSize,
+          FileSort.modified => l10n.sortModified,
+        };
+    final transfers = _transfers;
     return [
-      TabMenuEntry(icon: Icons.refresh, label: l10n.refresh, onSelected: b.refresh),
-      TabMenuEntry(
-        icon: b.showHidden ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-        label: b.showHidden ? l10n.hideHiddenFiles : l10n.showHiddenFiles,
-        onSelected: b.toggleHidden,
+      NuxMenuAction(
+        icon: Icons.create_new_folder_outlined,
+        label: l10n.newFolder,
+        enabled: b.path != null,
+        onSelected: () => createFolder(context, b),
       ),
-      for (final s in FileSort.values)
-        TabMenuEntry(
-          icon: s == b.sort ? (b.descending ? Icons.arrow_downward : Icons.arrow_upward) : Icons.sort,
-          label: switch (s) {
-            FileSort.name => l10n.sortByName,
-            FileSort.size => l10n.sortBySize,
-            FileSort.modified => l10n.sortByDate,
-          },
-          onSelected: () => b.setSort(s),
-        ),
+      NuxMenuAction(icon: Icons.refresh, label: l10n.refresh, onSelected: b.refresh),
+      NuxMenuSubmenu(
+        icon: Icons.sort,
+        label: l10n.sortMenu,
+        hint: sortName(b.sort),
+        items: [
+          for (final s in FileSort.values)
+            NuxMenuAction(icon: null, label: sortName(s), checked: s == b.sort, onSelected: () => b.sortBy(s)),
+          const NuxMenuDivider(),
+          NuxMenuAction(icon: null, label: l10n.ascending, checked: !b.descending, onSelected: () => b.setDescending(false)),
+          NuxMenuAction(icon: null, label: l10n.descending, checked: b.descending, onSelected: () => b.setDescending(true)),
+        ],
+      ),
+      NuxMenuSubmenu(
+        icon: Icons.visibility_outlined,
+        label: l10n.viewMenu,
+        items: [
+          NuxMenuAction(
+            icon: null,
+            label: b.hiddenCount > 0 ? '${l10n.hiddenFiles} (${b.hiddenCount})' : l10n.hiddenFiles,
+            checked: b.showHidden,
+            onSelected: b.toggleHidden,
+          ),
+        ],
+      ),
       if (b.path != null)
-        TabMenuEntry(
+        NuxMenuAction(
           icon: Icons.copy,
           label: l10n.copyPath,
           onSelected: () => Clipboard.setData(ClipboardData(text: b.path!)),
+        ),
+      if (transfers.transfers.isNotEmpty)
+        NuxMenuAction(
+          icon: Icons.swap_vert,
+          label: l10n.transfers,
+          hint: transfers.activeCount > 0 ? l10n.transfersActive(transfers.activeCount) : null,
+          onSelected: () => showTransfersSheet(context),
         ),
     ];
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
 import '../../../l10n/l10n.dart';
@@ -75,16 +76,16 @@ class TerminalTab extends NuxTab {
   TextSizeKind? get textSizeKind => TextSizeKind.terminal;
 
   @override
-  List<TabMenuEntry> menuEntries(BuildContext context) {
+  List<NuxMenuItem> menuEntries(BuildContext context) {
     final l10n = context.l10n;
     final connected = session.state == TerminalState.connected;
     return [
-      TabMenuEntry(
+      NuxMenuAction(
         icon: Icons.folder_outlined,
         label: l10n.browseFiles,
         onSelected: () => _ref.read(workspaceProvider).open(_ref.read(tabFactoryProvider).files(connectionId)),
       ),
-      TabMenuEntry(
+      NuxMenuAction(
         icon: Icons.content_paste,
         label: l10n.paste,
         onSelected: () async {
@@ -92,7 +93,7 @@ class TerminalTab extends NuxTab {
           if (text != null) session.terminal.paste(text);
         },
       ),
-      TabMenuEntry(
+      NuxMenuAction(
         icon: Icons.select_all,
         label: l10n.copyAll,
         onSelected: () {
@@ -102,9 +103,9 @@ class TerminalTab extends NuxTab {
         },
       ),
       if (connected)
-        TabMenuEntry(icon: Icons.link_off, label: l10n.disconnect, onSelected: session.disconnect)
+        NuxMenuAction(icon: Icons.link_off, label: l10n.disconnect, onSelected: session.disconnect)
       else
-        TabMenuEntry(
+        NuxMenuAction(
           icon: Icons.refresh,
           label: l10n.reconnect,
           enabled: session.state != TerminalState.connecting,

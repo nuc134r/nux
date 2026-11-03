@@ -105,9 +105,18 @@ void main() {
     'menu': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       final root = sampleProject();
       await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
+      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
       await settle(tester);
       await tester.tap(find.byTooltip('More'));
+    }),
+    'menu_sort': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
+      await settle(tester);
+      await tester.tap(find.byTooltip('More'));
+      await settle(tester);
+      await tester.tap(find.text('Sort'));
     }),
     'markdown': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       final root = sampleProject();

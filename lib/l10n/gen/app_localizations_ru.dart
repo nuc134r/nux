@@ -56,6 +56,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appearance => 'Оформление';
 
   @override
+  String get ascending => 'По возрастанию';
+
+  @override
   String get authentication => 'Вход';
 
   @override
@@ -211,6 +214,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String deleted(String name) {
     return 'Удалено: $name';
   }
+
+  @override
+  String get descending => 'По убыванию';
 
   @override
   String get devicePort => 'Порт на этом устройстве';
@@ -507,6 +513,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get groupField => 'Группа';
+
+  @override
+  String get hiddenFiles => 'Скрытые файлы';
 
   @override
   String get hide => 'Скрыть';
@@ -1111,6 +1120,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sortBySize => 'По размеру';
 
   @override
+  String get sortMenu => 'Сортировка';
+
+  @override
+  String get sortModified => 'Дата изменения';
+
+  @override
+  String get sortName => 'Имя';
+
+  @override
+  String get sortSize => 'Размер';
+
+  @override
   String get sourceCode => 'Исходный код';
 
   @override
@@ -1251,6 +1272,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get transfers => 'Передачи';
 
   @override
+  String transfersActive(int count) {
+    return 'активных: $count';
+  }
+
+  @override
   String get tryAgain => 'Повторить';
 
   @override
@@ -1337,6 +1363,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String viaZeroTier(String network) {
     return 'ZeroTier $network';
   }
+
+  @override
+  String get viewMenu => 'Вид';
 
   @override
   String get whatsNew => 'Что нового';

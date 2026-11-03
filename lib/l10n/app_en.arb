@@ -30,6 +30,7 @@
   "appTitle": "nux",
   "appVersion": "App version",
   "appearance": "Appearance",
+  "ascending": "Ascending",
   "authentication": "Sign in",
   "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
   "backgroundChannel": "Background connections",
@@ -148,6 +149,7 @@
       }
     }
   },
+  "descending": "Descending",
   "devicePort": "Port on this device",
   "discard": "Discard",
   "discardChangesBody": "The changes you made have not been saved.",
@@ -407,6 +409,7 @@
   "generating": "Generating…",
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
   "groupField": "Group",
+  "hiddenFiles": "Hidden files",
   "hide": "Hide",
   "hideHiddenFiles": "Hide hidden files",
   "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
@@ -722,6 +725,10 @@
   "sortByDate": "Sort by date",
   "sortByName": "Sort by name",
   "sortBySize": "Sort by size",
+  "sortMenu": "Sort",
+  "sortModified": "Date modified",
+  "sortName": "Name",
+  "sortSize": "Size",
   "sourceCode": "Source code",
   "ssh": "SSH",
   "sshAuthFailed": "The server refused the keys and password offered",
@@ -806,6 +813,14 @@
   "transferQueued": "Waiting",
   "transferUploaded": "Uploaded",
   "transfers": "Transfers",
+  "transfersActive": "{count} active",
+  "@transfersActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tryAgain": "Try again",
   "undo": "Undo",
   "undoEdit": "Undo",
@@ -879,6 +894,7 @@
       }
     }
   },
+  "viewMenu": "View",
   "whatsNew": "What's new",
   "wrapLines": "Wrap lines",
   "yesterday": "yesterday",

@@ -545,53 +545,19 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-/// Header buttons of a files tab: new folder and the transfers indicator.
-class FilesActions extends ConsumerWidget {
-  const FilesActions({super.key, required this.tab});
-
-  final FilesTab tab;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final manager = ref.watch(transferManagerProvider);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          tooltip: l10n.newFolder,
-          icon: const Icon(Icons.create_new_folder_outlined),
-          onPressed: tab.browser.path == null
-              ? null
-              : () async {
-                  final b = tab.browser;
-                  final name = await askText(context,
-                      title: l10n.newFolder,
-                      label: l10n.nameField,
-                      validate: (v) => v.contains('/') ? l10n.invalidFileName : (b.names.contains(v) ? l10n.fileExists : null));
-                  if (name == null) return;
-                  try {
-                    await b.mkdir(name);
-                  } catch (e) {
-                    if (context.mounted) showSnack(context, fileErrorText(l10n, e));
-                  }
-                },
-        ),
-        ListenableBuilder(
-          listenable: manager,
-          builder: (context, _) => manager.transfers.isEmpty
-              ? const SizedBox.shrink()
-              : IconButton(
-                  tooltip: l10n.transfers,
-                  onPressed: () => showTransfersSheet(context),
-                  icon: Badge(
-                    isLabelVisible: manager.activeCount > 0,
-                    label: Text('${manager.activeCount}'),
-                    child: const Icon(Icons.swap_vert),
-                  ),
-                ),
-        ),
-      ],
-    );
+/// Asks for a name and creates a folder in the browser's current folder.
+Future<void> createFolder(BuildContext context, FileBrowser b) async {
+  final l10n = context.l10n;
+  final name = await askText(
+    context,
+    title: l10n.newFolder,
+    label: l10n.nameField,
+    validate: (v) => v.contains('/') ? l10n.invalidFileName : (b.names.contains(v) ? l10n.fileExists : null),
+  );
+  if (name == null) return;
+  try {
+    await b.mkdir(name);
+  } catch (e) {
+    if (context.mounted) showSnack(context, fileErrorText(l10n, e));
   }
 }

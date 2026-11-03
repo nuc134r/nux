@@ -176,6 +176,12 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get appearance;
 
+  /// No description provided for @ascending.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending'**
+  String get ascending;
+
   /// No description provided for @authentication.
   ///
   /// In en, this message translates to:
@@ -421,6 +427,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleted {name}'**
   String deleted(String name);
+
+  /// No description provided for @descending.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get descending;
 
   /// No description provided for @devicePort.
   ///
@@ -865,6 +877,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Group'**
   String get groupField;
+
+  /// No description provided for @hiddenFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden files'**
+  String get hiddenFiles;
 
   /// No description provided for @hide.
   ///
@@ -1940,6 +1958,30 @@ abstract class AppLocalizations {
   /// **'Sort by size'**
   String get sortBySize;
 
+  /// No description provided for @sortMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get sortMenu;
+
+  /// No description provided for @sortModified.
+  ///
+  /// In en, this message translates to:
+  /// **'Date modified'**
+  String get sortModified;
+
+  /// No description provided for @sortName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get sortName;
+
+  /// No description provided for @sortSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get sortSize;
+
   /// No description provided for @sourceCode.
   ///
   /// In en, this message translates to:
@@ -2174,6 +2216,12 @@ abstract class AppLocalizations {
   /// **'Transfers'**
   String get transfers;
 
+  /// No description provided for @transfersActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String transfersActive(int count);
+
   /// No description provided for @tryAgain.
   ///
   /// In en, this message translates to:
@@ -2317,6 +2365,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ZeroTier {network}'**
   String viaZeroTier(String network);
+
+  /// No description provided for @viewMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get viewMenu;
 
   /// No description provided for @whatsNew.
   ///

@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
 import 'package:nux/core/secure/secret_store.dart';
+import 'package:nux/core/widgets/nux_menu.dart';
+import 'package:nux/features/files/domain/file_listing.dart';
 import 'package:nux/features/files/domain/fs_handle.dart';
 import 'package:nux/features/settings/data/settings_repository.dart';
 import 'package:nux/features/terminal/domain/terminal_session.dart';
@@ -215,6 +217,49 @@ void main() {
     await tester.tapAt(tester.getCenter(find.byType(TerminalView)));
     await tester.pump();
     expect(tester.testTextInput.log.map((c) => c.method), contains('TextInput.show'));
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('the files menu: actions, and Sort / View submenus; the header has no other buttons', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-menu-');
+    addTearDown(() => root.deleteSync(recursive: true));
+    File('${root.path}/a.txt').writeAsStringSync('a');
+    final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(container.dispose);
+    container.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root.path), release: () {});
+    await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
+    await settle(tester);
+    final files = container.read(tabFactoryProvider).files('sample', path: root.path);
+    container.read(workspaceProvider).open(files);
+    await settle(tester);
+    expect(find.byTooltip('New folder'), findsNothing, reason: 'actions moved into the menu');
+
+    await tester.tap(find.byType(NuxMenuButton)); // the header's ⋮ (file rows have their own)
+    await settle(tester);
+    for (final label in ['New folder', 'Refresh', 'Sort', 'View', 'Copy path', 'Settings']) {
+      expect(find.text(label), findsOneWidget, reason: label);
+    }
+    await tester.tap(find.text('Sort'));
+    await settle(tester);
+    expect(find.text('Date modified'), findsOneWidget);
+    expect(find.text('New folder'), findsNothing, reason: 'the submenu replaces the menu');
+    await tester.tap(find.text('Size'));
+    await settle(tester);
+    expect(files.browser.sort, FileSort.size);
+    expect(find.text('Date modified'), findsNothing, reason: 'choosing closes the menu');
+
+    await tester.tap(find.byType(NuxMenuButton)); // the header's ⋮ (file rows have their own)
+    await settle(tester);
+    await tester.tap(find.text('View'));
+    await settle(tester);
+    await tester.tap(find.text('Hidden files'));
+    await settle(tester);
+    expect(files.browser.showHidden, isTrue);
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);

@@ -7,12 +7,37 @@ sealed class NuxMenuItem {
 
 /// A tappable row; closes the menu, then runs [onSelected].
 class NuxMenuAction extends NuxMenuItem {
-  const NuxMenuAction({required this.icon, required this.label, required this.onSelected, this.enabled = true});
+  const NuxMenuAction({
+    required this.icon,
+    required this.label,
+    required this.onSelected,
+    this.enabled = true,
+    this.checked,
+    this.hint,
+  });
 
-  final IconData icon;
+  final IconData? icon;
   final String label;
   final VoidCallback onSelected;
   final bool enabled;
+
+  /// Shows a check mark when true (options in a submenu); null for plain actions.
+  final bool? checked;
+
+  /// Short text at the end of the row (e.g. "2 active").
+  final String? hint;
+}
+
+/// A row that opens [items] in place of the menu (with a back row).
+class NuxMenuSubmenu extends NuxMenuItem {
+  const NuxMenuSubmenu({required this.icon, required this.label, required this.items, this.hint});
+
+  final IconData icon;
+  final String label;
+  final List<NuxMenuItem> items;
+
+  /// The current choice, shown at the end of the row (e.g. "Name").
+  final String? hint;
 }
 
 class NuxMenuDivider extends NuxMenuItem {
@@ -117,14 +142,27 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
   }
 }
 
-class _MenuPanel extends StatelessWidget {
+/// Width of the menu panel (fits the longest labels, Russian included).
+const double menuWidth = 280;
+
+class _MenuPanel extends StatefulWidget {
   const _MenuPanel({required this.items});
 
   final List<NuxMenuItem> items;
 
   @override
+  State<_MenuPanel> createState() => _MenuPanelState();
+}
+
+class _MenuPanelState extends State<_MenuPanel> {
+  /// Open submenus, innermost last.
+  final _stack = <NuxMenuSubmenu>[];
+
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final sub = _stack.lastOrNull;
+    final items = sub?.items ?? widget.items;
     return Material(
       color: scheme.surfaceContainerHigh,
       elevation: 6,
@@ -134,19 +172,64 @@ class _MenuPanel extends StatelessWidget {
         side: BorderSide(color: scheme.outlineVariant.withValues(alpha: .5), width: .5),
       ),
       clipBehavior: Clip.antiAlias,
-      child: IntrinsicWidth(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final item in items)
-                switch (item) {
-                  NuxMenuAction() => _ActionRow(item: item),
-                  NuxMenuDivider() => Divider(height: 9, indent: 16, endIndent: 16, color: scheme.outlineVariant),
-                  NuxMenuCustom() => Builder(builder: item.builder),
-                },
-            ],
+      // One width for the menu and its submenus, so pages switch in place.
+      child: SizedBox(
+        width: menuWidth,
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topRight,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 140),
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween(begin: const Offset(.08, 0), end: Offset.zero).animate(animation),
+                child: child,
+              ),
+            ),
+            layoutBuilder: (current, previous) =>
+                Stack(alignment: Alignment.topLeft, children: [...previous, ?current]),
+            child: KeyedSubtree(
+              key: ValueKey(_stack.length),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (sub != null) ...[
+                      _Row(
+                        icon: Icons.arrow_back,
+                        label: sub.label,
+                        bold: true,
+                        onTap: () => setState(_stack.removeLast),
+                      ),
+                      Divider(height: 9, indent: 16, endIndent: 16, color: scheme.outlineVariant),
+                    ],
+                    for (final item in items)
+                      switch (item) {
+                        NuxMenuAction() => _Row(
+                          icon: item.icon,
+                          label: item.label,
+                          enabled: item.enabled,
+                          checked: item.checked,
+                          hint: item.hint,
+                          onTap: () => Navigator.of(context).pop(item.onSelected),
+                        ),
+                        NuxMenuSubmenu() => _Row(
+                          icon: item.icon,
+                          label: item.label,
+                          hint: item.hint,
+                          chevron: true,
+                          onTap: () => setState(() => _stack.add(item)),
+                        ),
+                        NuxMenuDivider() => Divider(height: 9, indent: 16, endIndent: 16, color: scheme.outlineVariant),
+                        NuxMenuCustom() => Builder(builder: item.builder),
+                      },
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -154,29 +237,64 @@ class _MenuPanel extends StatelessWidget {
   }
 }
 
-class _ActionRow extends StatelessWidget {
-  const _ActionRow({required this.item});
+class _Row extends StatelessWidget {
+  const _Row({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.enabled = true,
+    this.checked,
+    this.hint,
+    this.chevron = false,
+    this.bold = false,
+  });
 
-  final NuxMenuAction item;
+  final IconData? icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool enabled;
+  final bool? checked;
+  final String? hint;
+  final bool chevron;
+  final bool bold;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = item.enabled ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: .38);
+    final scheme = theme.colorScheme;
+    final color = enabled ? scheme.onSurface : scheme.onSurface.withValues(alpha: .38);
+    final muted = enabled ? scheme.onSurfaceVariant : color;
+    final leading = checked == null ? icon : (checked! ? Icons.check : null);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: item.enabled ? () => Navigator.of(context).pop(item.onSelected) : null,
+        onTap: enabled ? onTap : null,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 11, 20, 11),
+          padding: EdgeInsets.fromLTRB(12, 11, chevron ? 10 : 20, 11),
           child: Row(
             children: [
-              Icon(item.icon, size: 20, color: item.enabled ? theme.colorScheme.onSurfaceVariant : color),
-              const SizedBox(width: 14),
-              Flexible(
-                child: Text(item.label, style: theme.textTheme.bodyLarge?.copyWith(color: color)),
+              SizedBox(
+                width: 20,
+                child: leading == null
+                    ? null
+                    : Icon(leading, size: 20, color: checked == true ? scheme.primary : muted),
               ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: color,
+                    fontWeight: bold || checked == true ? FontWeight.w600 : null,
+                  ),
+                ),
+              ),
+              if (hint != null) ...[
+                const SizedBox(width: 12),
+                Text(hint!, style: theme.textTheme.bodyMedium?.copyWith(color: muted)),
+              ],
+              if (chevron) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: muted)],
             ],
           ),
         ),

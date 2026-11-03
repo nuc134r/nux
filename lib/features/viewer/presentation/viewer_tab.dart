@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
 import 'package:re_editor/re_editor.dart';
 
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/data/files_providers.dart';
@@ -191,65 +192,46 @@ class ViewerTab extends NuxTab {
   }
 
   @override
-  List<Widget> buildActions(BuildContext context) {
+  TextSizeKind? get textSizeKind => TextSizeKind.editor;
+
+  @override
+  List<NuxMenuItem> menuEntries(BuildContext context) {
     final l10n = context.l10n;
-    final textual = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
-    final canEdit = textual && !document.truncated && document.bytes != null;
+    final textual = document.kind == FileKind.text || document.kind == FileKind.markdown;
+    final shownAsText = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
+    final canEdit = shownAsText && !document.truncated && document.bytes != null;
     return [
       if (editing) ...[
-        IconButton(
-          tooltip: l10n.doneEditing,
-          icon: const Icon(Icons.check),
-          onPressed: () => exitEditing(context),
+        NuxMenuAction(
+          icon: Icons.save_outlined,
+          label: l10n.save,
+          enabled: dirty && !document.saving,
+          onSelected: () => onSave?.call(),
         ),
-        IconButton(
-          tooltip: l10n.save,
-          icon: document.saving
-              ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-              : Icon(dirty ? Icons.save : Icons.save_outlined),
-          onPressed: dirty && !document.saving ? onSave : null,
-        ),
+        NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
+        NuxMenuAction(icon: Icons.undo, label: l10n.undoEdit, enabled: _editor?.canUndo ?? false, onSelected: () => _editor?.undo()),
+        NuxMenuAction(icon: Icons.redo, label: l10n.redoEdit, enabled: _editor?.canRedo ?? false, onSelected: () => _editor?.redo()),
       ] else if (canEdit)
-        IconButton(tooltip: l10n.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => setEditing(true)),
+        NuxMenuAction(icon: Icons.edit_outlined, label: l10n.edit, onSelected: () => setEditing(true)),
+      if (shownAsText) NuxMenuAction(icon: Icons.search, label: l10n.find, onSelected: () => _finder?.findMode()),
       if (document.kind == FileKind.markdown)
-        IconButton(
-          tooltip: rendered ? l10n.showSource : l10n.showRendered,
-          icon: Icon(rendered ? Icons.code : Icons.article_outlined),
-          onPressed: () async {
+        NuxMenuAction(
+          icon: rendered ? Icons.code : Icons.article_outlined,
+          label: rendered ? l10n.showSource : l10n.showRendered,
+          onSelected: () async {
             // The rendered view shows the file, not the editor: leave edit mode first.
             if (!rendered && !await exitEditing(context)) return;
             setRendered(!rendered);
           },
         ),
+      const NuxMenuDivider(),
+      NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
       if (textual)
-        IconButton(
-          tooltip: l10n.find,
-          icon: const Icon(Icons.search),
-          onPressed: _finder?.findMode,
-        ),
-    ];
-  }
-
-  @override
-  TextSizeKind? get textSizeKind => TextSizeKind.editor;
-
-  @override
-  List<TabMenuEntry> menuEntries(BuildContext context) {
-    final l10n = context.l10n;
-    final textual = document.kind == FileKind.text || document.kind == FileKind.markdown;
-    return [
-      if (editing) ...[
-        TabMenuEntry(icon: Icons.undo, label: l10n.undoEdit, enabled: _editor?.canUndo ?? false, onSelected: () => _editor?.undo()),
-        TabMenuEntry(icon: Icons.redo, label: l10n.redoEdit, enabled: _editor?.canRedo ?? false, onSelected: () => _editor?.redo()),
-        TabMenuEntry(icon: Icons.visibility_outlined, label: l10n.stopEditing, onSelected: () => exitEditing(context)),
-      ],
-      TabMenuEntry(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
-      if (textual)
-        TabMenuEntry(icon: Icons.wrap_text, label: wrap ? l10n.noWrap : l10n.wrapLines, onSelected: () => setWrap(!wrap)),
+        NuxMenuAction(icon: Icons.wrap_text, label: wrap ? l10n.noWrap : l10n.wrapLines, onSelected: () => setWrap(!wrap)),
       if (document.kind == FileKind.binary)
-        TabMenuEntry(icon: Icons.notes, label: l10n.showAsText, onSelected: document.showAsText),
-      TabMenuEntry(icon: Icons.copy, label: l10n.copyPath, onSelected: () => Clipboard.setData(ClipboardData(text: path))),
-      TabMenuEntry(
+        NuxMenuAction(icon: Icons.notes, label: l10n.showAsText, onSelected: document.showAsText),
+      NuxMenuAction(icon: Icons.copy, label: l10n.copyPath, onSelected: () => Clipboard.setData(ClipboardData(text: path))),
+      NuxMenuAction(
         icon: Icons.download,
         label: l10n.download,
         onSelected: () {

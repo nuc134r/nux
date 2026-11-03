@@ -88,7 +88,6 @@ class _Header extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final tab = this.tab;
-    final entries = tab?.menuEntries(context) ?? const <TabMenuEntry>[];
     return Row(
       children: [
         const SizedBox(width: 16),
@@ -114,17 +113,11 @@ class _Header extends ConsumerWidget {
             ],
           ),
         ),
-        ...?tab?.buildActions(context),
-        if (tab == null)
-          IconButton(
-            tooltip: l10n.newTab,
-            icon: const Icon(Icons.add),
-            onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
-          ),
+        // Only the tab count and the menu: every action lives in the menu.
         TabCountButton(controller: controller, tooltip: l10n.showTabs),
-        NuxMenuButton(
-          tooltip: l10n.more,
-          items: (context) {
+        _MenuButton(tab: tab, items: (_) {
+            // Built when the menu opens (fresh state); actions run with the header's context.
+            final entries = tab?.menuEntries(context) ?? const <NuxMenuItem>[];
             final sizeKind = tab?.textSizeKind;
             final settings = NuxMenuAction(
               icon: Icons.settings_outlined,
@@ -135,13 +128,18 @@ class _Header extends ConsumerWidget {
               return [
                 if (sizeKind != null) textSizeMenuItem(sizeKind),
                 if (sizeKind != null && entries.isNotEmpty) const NuxMenuDivider(),
-                for (final e in entries)
-                  NuxMenuAction(icon: e.icon, label: e.label, onSelected: e.onSelected, enabled: e.enabled),
+                ...entries,
                 const NuxMenuDivider(),
                 settings,
               ];
             }
             return [
+              NuxMenuAction(
+                icon: Icons.add,
+                label: l10n.newTab,
+                onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+              ),
+              const NuxMenuDivider(),
               NuxMenuAction(
                 icon: Icons.dns_outlined,
                 label: l10n.hosts,
@@ -162,11 +160,31 @@ class _Header extends ConsumerWidget {
               const NuxMenuDivider(),
               settings,
             ];
-          },
-        ),
+          }),
         const SizedBox(width: 4),
       ],
     );
+  }
+}
+
+/// The ⋮ button, with a dot when the tab asks for attention (e.g. transfers running).
+class _MenuButton extends StatelessWidget {
+  const _MenuButton({required this.tab, required this.items});
+
+  final NuxTab? tab;
+  final List<NuxMenuItem> Function(BuildContext context) items;
+
+  @override
+  Widget build(BuildContext context) {
+    final tab = this.tab;
+    Widget button(bool badge) => NuxMenuButton(
+          tooltip: context.l10n.more,
+          icon: Badge(isLabelVisible: badge, smallSize: 8, child: const Icon(Icons.more_vert)),
+          items: items,
+        );
+    final changes = tab?.menuBadgeChanges;
+    if (tab == null || changes == null) return button(tab?.menuBadge ?? false);
+    return ListenableBuilder(listenable: changes, builder: (context, _) => button(tab.menuBadge));
   }
 }
 

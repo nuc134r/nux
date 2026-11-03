@@ -129,6 +129,17 @@ class FileBrowser extends ChangeNotifier {
     _notify();
   }
 
+  /// Sorts by [s], keeping the direction.
+  void sortBy(FileSort s) {
+    sort = s;
+    _notify();
+  }
+
+  void setDescending(bool v) {
+    descending = v;
+    _notify();
+  }
+
   void toggleHidden() {
     showHidden = !showHidden;
     _notify();
