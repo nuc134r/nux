@@ -90,7 +90,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
     super.dispose();
   }
 
-  Future<void> _save({bool connect = false}) async {
+  Future<void> _save() async {
     if (!_form.currentState!.validate()) return;
     final repo = ref.read(connectionRepositoryProvider);
     final now = DateTime.now();
@@ -117,7 +117,6 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
       await repo.setSavedPassword(id, _password.text);
     }
     if (!mounted) return;
-    if (connect) openTerminal(ref, id);
     context.pop();
   }
 
@@ -296,17 +295,13 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
                     },
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton(onPressed: () => _save(), child: Text(l10n.save)),
-                      const SizedBox(width: 8),
-                      FilledButton.icon(
-                        icon: const Icon(Icons.terminal),
-                        label: Text(l10n.saveAndConnect),
-                        onPressed: () => _save(connect: true),
-                      ),
-                    ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                      onPressed: _save,
+                      child: Text(l10n.save),
+                    ),
                   ),
                 ],
               ),

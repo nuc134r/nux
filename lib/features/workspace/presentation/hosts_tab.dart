@@ -209,8 +209,8 @@ class _HostTile extends ConsumerWidget {
   }
 }
 
-/// A coloured dot and the round-trip time; grey when it cannot be measured directly (jump host,
-/// ZeroTier) or while measuring, red when the port does not answer.
+/// A coloured dot and the round-trip time; grey when it cannot be measured (behind a jump host, or its
+/// ZeroTier network is not up) or while measuring, red when the port does not answer.
 class _Ping extends ConsumerWidget {
   const _Ping({required this.connection});
 
@@ -220,13 +220,12 @@ class _Ping extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final c = connection;
-    final direct = c.jumpHostId == null && c.zerotierNetwork == null;
-    final ping = direct ? ref.watch(hostPingProvider((c.host, c.port))) : null;
-    final ms = ping?.value?.inMilliseconds;
-    final (Color color, String label) = switch (ping) {
-      null => (theme.colorScheme.outline, ''),
-      AsyncValue(hasValue: true, value: null) => (theme.colorScheme.error, context.l10n.pingFailed),
-      AsyncValue(hasValue: true) => (pingColor(ms!), context.l10n.pingMs(ms)),
+    final ping = c.jumpHostId == null ? ref.watch(hostPingProvider((c.host, c.port, c.zerotierNetwork))) : null;
+    final result = ping?.value;
+    final (Color color, String label) = switch ((ping, result)) {
+      (null, _) || (_, Ping(measured: false)) => (theme.colorScheme.outline, ''),
+      (_, Ping(rtt: null)) => (theme.colorScheme.error, context.l10n.pingFailed),
+      (_, Ping(:final rtt?)) => (pingColor(rtt.inMilliseconds), context.l10n.pingMs(rtt.inMilliseconds)),
       _ => (theme.colorScheme.outlineVariant, '…'),
     };
     return Column(

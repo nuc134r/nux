@@ -63,8 +63,6 @@ class TerminalTab extends NuxTab {
         _ => Icons.terminal,
       };
 
-  @override
-  String? get group => session.connection?.groupName;
 
   @override
   Color? get color => session.connection?.color == null ? null : Color(session.connection!.color!);

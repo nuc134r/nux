@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.3
+
+- The host editor has one big **Save** button (no "Save and connect").
+- Hosts reached through **ZeroTier** show their ping too, while ZeroTier is on and the network is up.
+- The tab overview no longer splits tabs into sections by host group.
+
 ## 0.7.2
 
 - **ZeroTier**: networks show their names instead of only their ids, and turning ZeroTier on with several networks no longer crashes nux.

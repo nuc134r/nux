@@ -70,8 +70,6 @@ class FilesTab extends NuxTab {
   @override
   IconData get icon => Icons.folder_outlined;
 
-  @override
-  String? get group => connection?.groupName;
 
   @override
   Color? get color => connection?.color == null ? null : Color(connection!.color!);
