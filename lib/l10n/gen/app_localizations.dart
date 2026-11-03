@@ -218,6 +218,18 @@ abstract class AppLocalizations {
   /// **'Change'**
   String get change;
 
+  /// No description provided for @changedOnServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed on the server'**
+  String get changedOnServer;
+
+  /// No description provided for @changedOnServerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was changed on the server after you opened it. Overwrite it with your version, or discard your changes and load the new one?'**
+  String changedOnServerBody(String name);
+
   /// No description provided for @changelog.
   ///
   /// In en, this message translates to:
@@ -391,6 +403,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Port on this device'**
   String get devicePort;
+
+  /// No description provided for @discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get discard;
+
+  /// No description provided for @discardChangesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The changes you made have not been saved.'**
+  String get discardChangesBody;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes to {name}?'**
+  String discardChangesTitle(String name);
+
+  /// No description provided for @discardMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard mine'**
+  String get discardMine;
 
   /// No description provided for @disconnect.
   ///
@@ -1022,6 +1058,12 @@ abstract class AppLocalizations {
   /// **'Pings the server so idle connections are not dropped. 0 turns it off.'**
   String get keepAliveHint;
 
+  /// No description provided for @keepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get keepEditing;
+
   /// No description provided for @keepPassphrase.
   ///
   /// In en, this message translates to:
@@ -1358,6 +1400,12 @@ abstract class AppLocalizations {
   /// **'Organize'**
   String get organize;
 
+  /// No description provided for @overwrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite'**
+  String get overwrite;
+
   /// No description provided for @partiallyLoaded.
   ///
   /// In en, this message translates to:
@@ -1580,6 +1628,12 @@ abstract class AppLocalizations {
   /// **'Reconnect'**
   String get reconnect;
 
+  /// No description provided for @redoEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo'**
+  String get redoEdit;
+
   /// No description provided for @refresh.
   ///
   /// In en, this message translates to:
@@ -1681,6 +1735,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved {name}'**
   String savedAs(String name);
+
+  /// No description provided for @savedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {name}'**
+  String savedFile(String name);
 
   /// No description provided for @searchHosts.
   ///
@@ -1838,6 +1898,12 @@ abstract class AppLocalizations {
   /// **'Stop all'**
   String get stopAll;
 
+  /// No description provided for @stopEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop editing'**
+  String get stopEditing;
+
   /// No description provided for @tabClosed.
   ///
   /// In en, this message translates to:
@@ -1981,6 +2047,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get undo;
+
+  /// No description provided for @undoEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoEdit;
 
   /// No description provided for @unlockKey.
   ///

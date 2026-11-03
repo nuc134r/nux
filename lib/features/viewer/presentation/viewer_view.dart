@@ -8,6 +8,7 @@ import 'package:re_highlight/styles/atom-one-light.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/presentation/files_view.dart' show fileErrorText;
@@ -33,9 +34,42 @@ class _ViewerViewState extends State<ViewerView> {
     if (_doc.bytes == null && !_doc.loading) WidgetsBinding.instance.addPostFrameCallback((_) => _doc.load());
   }
 
+  /// Saves; when the file changed on the server meanwhile, asks whether to overwrite or reload.
+  Future<void> _save() async {
+    final l10n = context.l10n;
+    try {
+      await widget.tab.save();
+      if (mounted) showSnack(context, l10n.savedFile(_doc.name));
+    } on RemoteChangedException {
+      if (!mounted) return;
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          icon: const Icon(Icons.sync_problem),
+          title: Text(l10n.changedOnServer),
+          content: Text(l10n.changedOnServerBody(_doc.name)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            TextButton(onPressed: () => Navigator.pop(context, 'reload'), child: Text(l10n.discardMine)),
+            FilledButton(onPressed: () => Navigator.pop(context, 'overwrite'), child: Text(l10n.overwrite)),
+          ],
+        ),
+      );
+      if (choice == 'overwrite') {
+        await widget.tab.save(force: true);
+        if (mounted) showSnack(context, l10n.savedFile(_doc.name));
+      } else if (choice == 'reload') {
+        await _doc.load();
+      }
+    } catch (e) {
+      if (mounted) showSnack(context, fileErrorText(l10n, e));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    widget.tab.onSave = _save;
     return ListenableBuilder(
       listenable: widget.tab,
       builder: (context, _) {
@@ -97,7 +131,7 @@ class _CodeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final doc = tab.document;
     final text = doc.text;
-    final (editor, finder) = tab.editorFor(doc.bytes!, text);
+    final (editor, finder) = tab.editorFor(doc.generation, text);
     final firstLine = text.substring(0, min(text.length, 120)).split('\n').first;
     final language = languageFor(doc.path) ?? languageFromShebang(firstLine);
     final mode = language == null ? null : modeFor(language);
@@ -106,8 +140,9 @@ class _CodeView extends StatelessWidget {
     return CodeEditor(
       controller: editor,
       findController: finder,
-      readOnly: true,
+      readOnly: !tab.editing,
       showCursorWhenReadOnly: false,
+      autofocus: tab.editing,
       wordWrap: tab.wrap,
       style: CodeEditorStyle(
         fontFamily: monoFont,

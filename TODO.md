@@ -77,6 +77,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Publish zerotier_sockets 2.0 to pub.dev (nux pins a git commit until then)
 
 ## M5 — Editor + workspaces
+- [x] Editing: edit mode in the viewer, save with remote-change detection (overwrite / discard mine), undo/redo, "•" in the tab title, close guard for unsaved changes
 - [ ] Workspace = backend + root; recent workspaces; project tree tab
 - [ ] Edit mode: undo/redo, auto-indent, brackets, find/replace, go to line, save, save-as-root (`sudo tee`)
 - [ ] Remote change detection (mtime/hash) with a reload/overwrite/diff choice

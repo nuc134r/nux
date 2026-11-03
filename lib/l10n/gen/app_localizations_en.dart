@@ -77,6 +77,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get change => 'Change';
 
   @override
+  String get changedOnServer => 'Changed on the server';
+
+  @override
+  String changedOnServerBody(String name) {
+    return '$name was changed on the server after you opened it. Overwrite it with your version, or discard your changes and load the new one?';
+  }
+
+  @override
   String get changelog => 'Changelog';
 
   @override
@@ -188,6 +196,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get devicePort => 'Port on this device';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get discardChangesBody => 'The changes you made have not been saved.';
+
+  @override
+  String discardChangesTitle(String name) {
+    return 'Discard changes to $name?';
+  }
+
+  @override
+  String get discardMine => 'Discard mine';
 
   @override
   String get disconnect => 'Disconnect';
@@ -586,6 +608,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pings the server so idle connections are not dropped. 0 turns it off.';
 
   @override
+  String get keepEditing => 'Keep editing';
+
+  @override
   String get keepPassphrase => 'Keep the key protected with this passphrase';
 
   @override
@@ -781,6 +806,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get organize => 'Organize';
 
   @override
+  String get overwrite => 'Overwrite';
+
+  @override
   String partiallyLoaded(String loaded, String total) {
     return 'Showing the first $loaded of $total';
   }
@@ -901,6 +929,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reconnect => 'Reconnect';
 
   @override
+  String get redoEdit => 'Redo';
+
+  @override
   String get refresh => 'Refresh';
 
   @override
@@ -951,6 +982,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String savedAs(String name) {
+    return 'Saved $name';
+  }
+
+  @override
+  String savedFile(String name) {
     return 'Saved $name';
   }
 
@@ -1041,6 +1077,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stopAll => 'Stop all';
 
   @override
+  String get stopEditing => 'Stop editing';
+
+  @override
   String tabClosed(String title) {
     return 'Closed $title';
   }
@@ -1119,6 +1158,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get undo => 'Undo';
+
+  @override
+  String get undoEdit => 'Undo';
 
   @override
   String unlockKey(String name) {

@@ -78,6 +78,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get change => 'Изменить';
 
   @override
+  String get changedOnServer => 'Файл изменился на сервере';
+
+  @override
+  String changedOnServerBody(String name) {
+    return '$name изменили на сервере после того, как вы его открыли. Перезаписать вашей версией или отказаться от своих правок и загрузить новую?';
+  }
+
+  @override
   String get changelog => 'История изменений';
 
   @override
@@ -190,6 +198,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get devicePort => 'Порт на этом устройстве';
+
+  @override
+  String get discard => 'Отменить правки';
+
+  @override
+  String get discardChangesBody => 'Сделанные правки не сохранены.';
+
+  @override
+  String discardChangesTitle(String name) {
+    return 'Отменить правки в $name?';
+  }
+
+  @override
+  String get discardMine => 'Отказаться от своих';
 
   @override
   String get disconnect => 'Отключиться';
@@ -594,6 +616,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пингует сервер, чтобы простаивающее соединение не обрывалось. 0 — выключить.';
 
   @override
+  String get keepEditing => 'Продолжить правку';
+
+  @override
   String get keepPassphrase => 'Хранить ключ защищённым этой парольной фразой';
 
   @override
@@ -790,6 +815,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get organize => 'Упорядочить';
 
   @override
+  String get overwrite => 'Перезаписать';
+
+  @override
   String partiallyLoaded(String loaded, String total) {
     return 'Показаны первые $loaded из $total';
   }
@@ -913,6 +941,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reconnect => 'Переподключиться';
 
   @override
+  String get redoEdit => 'Повторить';
+
+  @override
   String get refresh => 'Обновить';
 
   @override
@@ -963,6 +994,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String savedAs(String name) {
+    return 'Сохранено: $name';
+  }
+
+  @override
+  String savedFile(String name) {
     return 'Сохранено: $name';
   }
 
@@ -1052,6 +1088,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get stopAll => 'Остановить все';
 
   @override
+  String get stopEditing => 'Закончить правку';
+
+  @override
   String tabClosed(String title) {
     return 'Вкладка «$title» закрыта';
   }
@@ -1129,6 +1168,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get undo => 'Отменить';
+
+  @override
+  String get undoEdit => 'Отменить';
 
   @override
   String unlockKey(String name) {

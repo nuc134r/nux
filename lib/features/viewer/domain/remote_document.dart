@@ -8,7 +8,13 @@ import 'package:nux_backend/nux_backend.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/domain/fs_handle.dart';
 
-/// A remote file loaded for viewing. Big files load partially first (see [limitFor]).
+/// The file changed on the server after it was opened here.
+class RemoteChangedException implements Exception {
+  const RemoteChangedException();
+}
+
+/// A remote file loaded for viewing and editing. Big files load partially first (see [limitFor]).
+
 class RemoteDocument extends ChangeNotifier {
   RemoteDocument({required this._open, required this.path});
 
@@ -21,6 +27,14 @@ class RemoteDocument extends ChangeNotifier {
 
   /// Size of the whole file.
   int size = 0;
+
+  /// Modification time when loaded (or last saved), to notice changes made elsewhere.
+  DateTime? modified;
+
+  /// Bumped by every [load] (not by [save]), so an editor knows when to take the new content.
+  int generation = 0;
+
+  bool saving = false;
 
   /// Detected from the name, then corrected by the content (a text-named file full of NULs is binary).
   FileKind kind = FileKind.text;
@@ -54,7 +68,9 @@ class RemoteDocument extends ChangeNotifier {
     try {
       handle = await _open();
       final fs = handle.fs;
-      size = (await fs.stat(path)).size;
+      final stat = await fs.stat(path);
+      size = stat.size;
+      modified = stat.modified;
       final named = fileKindByName(path);
       final limit = all ? size : limitFor(named);
       final out = BytesBuilder(copy: false);
@@ -66,12 +82,40 @@ class RemoteDocument extends ChangeNotifier {
       }
       bytes = out.takeBytes();
       _text = null;
+      generation++;
       kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!) ? FileKind.binary : named;
     } catch (e) {
       error = e;
     } finally {
       handle?.release();
       loading = false;
+      _notify();
+    }
+  }
+
+  /// Writes [text] back. Throws [RemoteChangedException] when the file changed on the server since it was
+  /// loaded (unless [force]).
+  Future<void> save(String text, {bool force = false}) async {
+    saving = true;
+    _notify();
+    FsHandle? handle;
+    try {
+      handle = await _open();
+      final fs = handle.fs;
+      if (!force) {
+        final now = await fs.stat(path);
+        if (now.size != size || now.modified != modified) throw const RemoteChangedException();
+      }
+      final data = Uint8List.fromList(utf8.encode(text));
+      await fs.writeBytes(path, data);
+      final after = await fs.stat(path);
+      bytes = data;
+      _text = text;
+      size = after.size;
+      modified = after.modified;
+    } finally {
+      handle?.release();
+      saving = false;
       _notify();
     }
   }

@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.6.0
+
+- **Edit files**: open a file, tap the pencil, change it and save. If someone changed the file on the server meanwhile, nux asks whether to overwrite it or take their version. Undo and redo are in the menu; tabs with unsaved changes show a dot and ask before closing.
+
 ## 0.5.0
 
 - **ZeroTier built in**: nux runs its own ZeroTier node (no VPN permission, no separate app). Join networks by id, see their status and your addresses, and copy the node id to authorize it.

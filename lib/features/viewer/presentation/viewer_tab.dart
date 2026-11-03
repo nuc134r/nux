@@ -44,19 +44,59 @@ class ViewerTab extends NuxTab {
 
   CodeLineEditingController? _editor;
   CodeFindController? _finder;
-  Object? _editorSource;
+  int _editorGeneration = -1;
 
-  /// The editor controllers for the loaded text, recreated when the content changes.
-  (CodeLineEditingController, CodeFindController) editorFor(Object source, String text) {
-    if (_editor == null || !identical(_editorSource, source)) {
+  /// Edit mode (the file opens read-only).
+  bool editing = false;
+
+  /// The text differs from what was loaded or last saved.
+  bool dirty = false;
+
+  /// The editor controllers for the loaded text, recreated when the file is (re)loaded, not when saved,
+  /// so undo history survives saving.
+  (CodeLineEditingController, CodeFindController) editorFor(int generation, String text) {
+    if (_editor == null || _editorGeneration != generation) {
       _finder?.dispose();
+      _editor?.removeListener(_edited);
       _editor?.dispose();
-      _editor = CodeLineEditingController.fromText(text);
+      _editor = CodeLineEditingController.fromText(text)..addListener(_edited);
       _finder = CodeFindController(_editor!);
-      _editorSource = source;
+      _editorGeneration = generation;
+      dirty = false;
     }
     return (_editor!, _finder!);
   }
+
+  void _edited() {
+    final now = editing && _editor!.text != document.text;
+    if (now != dirty) {
+      dirty = now;
+      notifyListeners();
+    }
+  }
+
+  @override
+  bool get hasUnsavedChanges => dirty;
+
+  /// Text to save.
+  String? get editedText => _editor?.text;
+
+  void setEditing(bool v) {
+    editing = v;
+    notifyListeners();
+  }
+
+  /// Saves; called by the view, which handles [RemoteChangedException].
+  Future<void> save({bool force = false}) async {
+    final text = _editor?.text;
+    if (text == null) return;
+    await document.save(text, force: force);
+    dirty = false;
+    notifyListeners();
+  }
+
+  /// Set by the view: saves with conflict handling and messages.
+  Future<void> Function()? onSave;
 
   @override
   String get kind => kindName;
@@ -65,7 +105,7 @@ class ViewerTab extends NuxTab {
   Map<String, Object?> get args => {'connectionId': connectionId, 'path': path};
 
   @override
-  String get title => posix.basename(path);
+  String get title => '${dirty ? '• ' : ''}${posix.basename(path)}';
 
   @override
   String? get subtitle => posix.dirname(path);
@@ -95,7 +135,18 @@ class ViewerTab extends NuxTab {
   List<Widget> buildActions(BuildContext context) {
     final l10n = context.l10n;
     final textual = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
+    final canEdit = textual && !document.truncated && document.bytes != null;
     return [
+      if (editing)
+        IconButton(
+          tooltip: l10n.save,
+          icon: document.saving
+              ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+              : Icon(dirty ? Icons.save : Icons.save_outlined),
+          onPressed: dirty && !document.saving ? onSave : null,
+        )
+      else if (canEdit)
+        IconButton(tooltip: l10n.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => setEditing(true)),
       if (document.kind == FileKind.markdown)
         IconButton(
           tooltip: rendered ? l10n.showSource : l10n.showRendered,
@@ -116,7 +167,12 @@ class ViewerTab extends NuxTab {
     final l10n = context.l10n;
     final textual = document.kind == FileKind.text || document.kind == FileKind.markdown;
     return [
-      TabMenuEntry(icon: Icons.refresh, label: l10n.reload, onSelected: document.load),
+      if (editing) ...[
+        TabMenuEntry(icon: Icons.undo, label: l10n.undoEdit, enabled: _editor?.canUndo ?? false, onSelected: () => _editor?.undo()),
+        TabMenuEntry(icon: Icons.redo, label: l10n.redoEdit, enabled: _editor?.canRedo ?? false, onSelected: () => _editor?.redo()),
+        TabMenuEntry(icon: Icons.visibility_outlined, label: l10n.stopEditing, enabled: !dirty, onSelected: () => setEditing(false)),
+      ],
+      TabMenuEntry(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
       if (textual)
         TabMenuEntry(icon: Icons.wrap_text, label: wrap ? l10n.noWrap : l10n.wrapLines, onSelected: () => setWrap(!wrap)),
       if (document.kind == FileKind.binary)
@@ -140,6 +196,7 @@ class ViewerTab extends NuxTab {
     document.removeListener(notifyListeners);
     document.dispose();
     _finder?.dispose();
+    _editor?.removeListener(_edited);
     _editor?.dispose();
     super.dispose();
   }

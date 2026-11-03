@@ -47,6 +47,23 @@ void main() {
         '00000000  48 65 6c 6c 6f 2c 20 6e  75 78 21 0a              |Hello, nux!.|');
   });
 
+  test('save writes back and refuses to overwrite changes made elsewhere', () async {
+    final file = File('${dir.path}/notes.txt')..writeAsStringSync('one\n');
+    final d = doc('notes.txt');
+    await d.load();
+    final generation = d.generation;
+    await d.save('two\n');
+    expect(file.readAsStringSync(), 'two\n');
+    expect(d.generation, generation, reason: 'saving keeps the editor (and its undo history)');
+
+    // Someone else edits the file (different size, so even coarse mtimes notice).
+    file.writeAsStringSync('changed elsewhere\n');
+    await expectLater(d.save('three\n'), throwsA(isA<RemoteChangedException>()));
+    expect(file.readAsStringSync(), 'changed elsewhere\n');
+    await d.save('three\n', force: true);
+    expect(file.readAsStringSync(), 'three\n');
+  });
+
   test('missing files report an error', () async {
     final d = doc('nope');
     await d.load();

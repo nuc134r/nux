@@ -1462,8 +1462,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "60b7c946a2a4c9c1be16224ec708771559612add"
-      resolved-ref: "60b7c946a2a4c9c1be16224ec708771559612add"
+      ref: "87c6cb9938db87b93892d58dcb64bbe8c480642f"
+      resolved-ref: "87c6cb9938db87b93892d58dcb64bbe8c480642f"
       url: "https://github.com/nuc134r/zerotier_sockets_flutter.git"
     source: git
     version: "2.0.0-dev.1"

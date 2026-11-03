@@ -22,6 +22,19 @@ class WorkspaceScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final controller = ref.watch(workspaceProvider);
+    controller.confirmClose ??= (tab) async =>
+        await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.discardChangesTitle(tab.title.replaceFirst('• ', ''))),
+            content: Text(l10n.discardChangesBody),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.keepEditing)),
+              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.discard)),
+            ],
+          ),
+        ) ??
+        false;
     if (ref.watch(workspaceReadyProvider).isLoading) return const Scaffold();
     // Rules marked "start with nux" start once the screen (and its dialogs) can be shown.
     ref.watch(forwardingAutoStartProvider);

@@ -37,6 +37,15 @@
   "browseFiles": "Browse files",
   "cancel": "Cancel",
   "change": "Change",
+  "changedOnServer": "Changed on the server",
+  "changedOnServerBody": "{name} was changed on the server after you opened it. Overwrite it with your version, or discard your changes and load the new one?",
+  "@changedOnServerBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "changelog": "Changelog",
   "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
   "checkForUpdates": "Check for updates",
@@ -122,6 +131,17 @@
     }
   },
   "devicePort": "Port on this device",
+  "discard": "Discard",
+  "discardChangesBody": "The changes you made have not been saved.",
+  "discardChangesTitle": "Discard changes to {name}?",
+  "@discardChangesTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "discardMine": "Discard mine",
   "disconnect": "Disconnect",
   "download": "Download",
   "duplicate": "Duplicate",
@@ -433,6 +453,7 @@
   "jumpHostHint": "Connect through another saved host (like ProxyJump)",
   "keepAlive": "Keep-alive, seconds",
   "keepAliveHint": "Pings the server so idle connections are not dropped. 0 turns it off.",
+  "keepEditing": "Keep editing",
   "keepPassphrase": "Keep the key protected with this passphrase",
   "keyAlreadyImported": "This key is already here as {name}",
   "@keyAlreadyImported": {
@@ -538,6 +559,7 @@
   "openReleasePage": "Open release page",
   "openTerminal": "Open terminal",
   "organize": "Organize",
+  "overwrite": "Overwrite",
   "partiallyLoaded": "Showing the first {loaded} of {total}",
   "@partiallyLoaded": {
     "placeholders": {
@@ -606,6 +628,7 @@
   "reachThroughZeroTierHint": "For hosts with no public address: nux joins the network itself, no VPN app needed",
   "recommended": "recommended",
   "reconnect": "Reconnect",
+  "redoEdit": "Redo",
   "refresh": "Refresh",
   "regex": "Regular expression",
   "reload": "Reload",
@@ -624,6 +647,14 @@
   "savePasswordHint": "Kept in the device's secure storage",
   "savedAs": "Saved {name}",
   "@savedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savedFile": "Saved {name}",
+  "@savedFile": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -680,6 +711,7 @@
     }
   },
   "stopAll": "Stop all",
+  "stopEditing": "Stop editing",
   "tabClosed": "Closed {title}",
   "@tabClosed": {
     "placeholders": {
@@ -718,6 +750,7 @@
   "transfers": "Transfers",
   "tryAgain": "Try again",
   "undo": "Undo",
+  "undoEdit": "Undo",
   "unlockKey": "Unlock {name}",
   "@unlockKey": {
     "placeholders": {
