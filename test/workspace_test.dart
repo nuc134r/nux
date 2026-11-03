@@ -37,11 +37,14 @@ void main() {
     expect(tabs.tabs.single, isA<HostsTab>());
     expect(find.text('Hosts'), findsWidgets);
     expect(find.text('Work'), findsOneWidget, reason: 'group header');
-    expect(find.text('dev@build.example.com'), findsOneWidget);
+    expect(find.text('build.example.com'), findsOneWidget, reason: 'only the address, no user or port');
+    expect(find.text('42 ms'), findsOneWidget, reason: 'ping (faked in tests)');
 
     // The sample host is unreachable from the test, and the refusing prompter declines everything:
     // the terminal shows the failure instead of hanging.
-    await tester.tap(find.text('Build server'));
+    await tester.tap(find.text('Build server')); // the host's menu
+    await settle(tester);
+    await tester.tap(find.text('SSH'));
     await settle(tester);
     expect(tabs.length, 2);
     final terminal = tabs.current! as TerminalTab;
@@ -90,7 +93,17 @@ void main() {
     await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
     await settle(tester);
 
-    await tester.tap(find.text('Build server'));
+    // The hosts tab has no entries of its own: just Settings, no divider above it.
+    await tester.tap(find.byType(NuxMenuButton));
+    await settle(tester);
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.descendant(of: find.byType(Material).last, matching: find.byType(Divider)), findsNothing);
+    await tester.tapAt(const Offset(10, 500));
+    await settle(tester);
+
+    await tester.tap(find.text('Build server')); // the host's menu
+    await settle(tester);
+    await tester.tap(find.text('SSH'));
     await settle(tester);
     expect(container.read(workspaceProvider).current, isA<TerminalTab>());
 
@@ -209,7 +222,9 @@ void main() {
     addTearDown(container.dispose);
     await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
     await settle(tester);
-    await tester.tap(find.text('Build server'));
+    await tester.tap(find.text('Build server')); // the host's menu
+    await settle(tester);
+    await tester.tap(find.text('SSH'));
     await settle(tester);
 
     // As if Back had hidden the keyboard: the terminal keeps focus, so only an explicit show helps.

@@ -66,14 +66,20 @@ class NuxMenuButton extends StatelessWidget {
   }
 }
 
-/// Opens the menu under the widget of [context] (aligned to its right edge).
-Future<void> showNuxMenu(BuildContext context, List<NuxMenuItem> Function(BuildContext context) items) async {
+/// Opens the menu over the widget of [context] (aligned to its right edge), or with [beside] just below
+/// it (above it when it is low on the screen), leaving the widget visible (list items).
+Future<void> showNuxMenu(
+  BuildContext context,
+  List<NuxMenuItem> Function(BuildContext context) items, {
+  bool beside = false,
+}) async {
   final box = context.findRenderObject()! as RenderBox;
   final overlay = Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
   final anchor = box.localToGlobal(Offset.zero, ancestor: overlay) & box.size;
   final action = await Navigator.of(context).push<VoidCallback>(
     _NuxMenuRoute(
       anchor: anchor,
+      beside: beside,
       items: items,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       capturedThemes: InheritedTheme.capture(from: context, to: Navigator.of(context).context),
@@ -83,9 +89,16 @@ Future<void> showNuxMenu(BuildContext context, List<NuxMenuItem> Function(BuildC
 }
 
 class _NuxMenuRoute extends PopupRoute<VoidCallback> {
-  _NuxMenuRoute({required this.anchor, required this.items, required this.barrierLabel, required this.capturedThemes});
+  _NuxMenuRoute({
+    required this.anchor,
+    required this.beside,
+    required this.items,
+    required this.barrierLabel,
+    required this.capturedThemes,
+  });
 
   final Rect anchor;
+  final bool beside;
   final List<NuxMenuItem> Function(BuildContext context) items;
   final CapturedThemes capturedThemes;
 
@@ -111,23 +124,29 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
         builder: (context, constraints) {
           final media = MediaQuery.of(context);
           final right = (constraints.maxWidth - anchor.right + 4).clamp(8.0, constraints.maxWidth);
-          final top = anchor.top + 4;
+          // Beside a list item: below it, or above it when it sits in the lower part of the screen.
+          final above = beside && anchor.bottom > constraints.maxHeight * .55;
+          final top = beside ? anchor.bottom + 4 : anchor.top + 4;
+          final bottom = constraints.maxHeight - anchor.top + 4;
           final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeIn);
           return Stack(
             children: [
               Positioned(
-                top: top,
+                top: above ? null : top,
+                bottom: above ? bottom : null,
                 right: right,
                 child: FadeTransition(
                   opacity: curved,
                   child: ScaleTransition(
-                    alignment: Alignment.topRight,
+                    alignment: above ? Alignment.bottomRight : Alignment.topRight,
                     scale: Tween(begin: .85, end: 1.0).animate(curved),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minWidth: 220,
                         maxWidth: (constraints.maxWidth - 16).clamp(0, 320),
-                        maxHeight: constraints.maxHeight - top - media.padding.bottom - 8,
+                        maxHeight: above
+                            ? anchor.top - media.padding.top - 8
+                            : constraints.maxHeight - top - media.padding.bottom - 8,
                       ),
                       child: _MenuPanel(items: items(context)),
                     ),

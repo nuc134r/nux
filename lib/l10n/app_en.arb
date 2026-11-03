@@ -67,6 +67,7 @@
   "closeOtherTabs": "Close other tabs",
   "closeTab": "Close tab",
   "connect": "Connect",
+  "connected": "Connected",
   "continueAction": "Continue",
   "copied": "Copied",
   "copy": "Copy",
@@ -651,6 +652,15 @@
     }
   },
   "pinTab": "Pin",
+  "pingFailed": "no reply",
+  "pingMs": "{ms} ms",
+  "@pingMs": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
   "pinnedTabs": "Pinned",
   "portField": "Port",
   "portForwarding": "Port forwarding",

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/core/app_info.dart';
 import 'package:nux/core/db/database.dart';
 import 'package:nux/core/secure/secret_store.dart';
+import 'package:nux/features/connections/data/host_ping.dart';
 import 'package:nux/features/identities/data/device_name.dart';
 import 'package:nux/features/identities/domain/key_generator.dart';
 import 'package:nux/features/identities/domain/key_material.dart';
@@ -23,6 +24,7 @@ List<Override> testOverrides({AppDatabase? db, SecretStore? secrets, SshPrompter
       appVersionProvider.overrideWith((ref) async => '0.1.0+1'),
       sshPrompterProvider.overrideWithValue(prompter ?? const RefusingPrompter()),
       deviceNameProvider.overrideWith((ref) async => 'Pixel-9'),
+      hostPingerProvider.overrideWithValue((host, port) async => const Duration(milliseconds: 42)),
     ];
 
 /// Says no to everything (no dialogs in widget tests).

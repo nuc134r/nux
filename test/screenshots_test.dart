@@ -85,6 +85,9 @@ void main() {
 
   final shots = <String, _Shot>{
     'hosts': const _Shot(ThemeMode.dark, Routes.home),
+    'host_menu': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      await tester.tap(find.text('Build server'));
+    }),
     'terminal': _Shot(ThemeMode.dark, Routes.home, act: terminalTab),
     'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       await terminalTab(tester, c);

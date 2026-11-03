@@ -5,6 +5,9 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.1
 
+- **New hosts list**: hosts are small tiles with a reachability dot and the round-trip time to their SSH port (refreshed every 20 seconds), the name and just the address. Tap a host for its menu: **SSH** and **SFTP** side by side, then port forwarding, edit, duplicate and delete. The search bar and the letter avatars are gone.
+- Tab previews in the overview are sharp (rendered for the screen's density).
+- The hosts tab's ⋮ menu no longer shows a stray divider.
 - **Cleaner tab bar**: only the tab count and ⋮ are left; every action (new folder, transfers, edit, save, find, show source…) is in the ⋮ menu. The file browser's menu is shorter, with **Sort** and **View** submenus; a dot on ⋮ means transfers are running.
 - **Denser file lists** with the owner of each file and relative dates ("5 min ago", "yesterday"). The exact date, size in bytes, permissions, owner and group are in the file's ⋮ sheet.
 - The tab overview's top bar is now part of the background, without the "nux" title.

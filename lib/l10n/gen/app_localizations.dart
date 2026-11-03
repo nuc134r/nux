@@ -314,6 +314,12 @@ abstract class AppLocalizations {
   /// **'Connect'**
   String get connect;
 
+  /// No description provided for @connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connected;
+
   /// No description provided for @continueAction.
   ///
   /// In en, this message translates to:
@@ -1639,6 +1645,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pin'**
   String get pinTab;
+
+  /// No description provided for @pingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'no reply'**
+  String get pingFailed;
+
+  /// No description provided for @pingMs.
+  ///
+  /// In en, this message translates to:
+  /// **'{ms} ms'**
+  String pingMs(int ms);
 
   /// No description provided for @pinnedTabs.
   ///

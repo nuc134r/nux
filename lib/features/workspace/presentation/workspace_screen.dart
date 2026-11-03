@@ -129,7 +129,8 @@ class _Header extends ConsumerWidget {
                 if (sizeKind != null) textSizeMenuItem(sizeKind),
                 if (sizeKind != null && entries.isNotEmpty) const NuxMenuDivider(),
                 ...entries,
-                const NuxMenuDivider(),
+                // No divider above Settings when it is the only entry (e.g. the hosts tab).
+                if (sizeKind != null || entries.isNotEmpty) const NuxMenuDivider(),
                 settings,
               ];
             }

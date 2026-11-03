@@ -61,7 +61,7 @@ class TabSwitcher extends StatefulWidget {
     this.strings = const TabSwitcherStrings(),
     this.headerHeight = kToolbarHeight,
     this.wideBreakpoint = 840,
-    this.previewPixelRatio = .5,
+    this.previewScale = .6,
     this.headerColor,
   });
 
@@ -84,8 +84,9 @@ class TabSwitcher extends StatefulWidget {
   final double headerHeight;
   final double wideBreakpoint;
 
-  /// Scale of preview images relative to the screen.
-  final double previewPixelRatio;
+  /// Resolution of preview images relative to the screen's physical pixels (grid cards show tabs at
+  /// about half size, so a bit over .5 keeps them sharp on any density).
+  final double previewScale;
 
   /// The header's background; defaults to the colour scheme's `surfaceContainer`, set apart from the
   /// tab content by a hairline.
@@ -190,7 +191,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     if (tab == null || boundary is! RenderRepaintBoundary || !boundary.hasSize || boundary.debugNeedsPaint) return;
     // toImage takes the layer now and rasterizes it later, so this is still the picture of the tab
     // being left even though the next frame shows another one.
-    boundary.toImage(pixelRatio: widget.previewPixelRatio).then(
+    boundary.toImage(pixelRatio: View.of(context).devicePixelRatio * widget.previewScale).then(
       (image) => _c.setPreview(tab, image),
       onError: (Object _) {}, // not painted yet (opened and left in the same frame): keep the old preview
     );

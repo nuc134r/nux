@@ -131,6 +131,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get connect => 'Подключиться';
 
   @override
+  String get connected => 'Подключено';
+
+  @override
   String get continueAction => 'Продолжить';
 
   @override
@@ -949,6 +952,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pinTab => 'Закрепить';
+
+  @override
+  String get pingFailed => 'нет ответа';
+
+  @override
+  String pingMs(int ms) {
+    return '$ms мс';
+  }
 
   @override
   String get pinnedTabs => 'Закреплённые';

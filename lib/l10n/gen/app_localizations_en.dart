@@ -130,6 +130,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get connect => 'Connect';
 
   @override
+  String get connected => 'Connected';
+
+  @override
   String get continueAction => 'Continue';
 
   @override
@@ -938,6 +941,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinTab => 'Pin';
+
+  @override
+  String get pingFailed => 'no reply';
+
+  @override
+  String pingMs(int ms) {
+    return '$ms ms';
+  }
 
   @override
   String get pinnedTabs => 'Pinned';
