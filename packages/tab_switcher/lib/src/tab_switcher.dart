@@ -91,8 +91,23 @@ class TabSwitcher extends StatefulWidget {
   /// tab content by a hairline.
   final Color? headerColor;
 
+  /// Whether the tab content around [context] is the one in front (not parked, not a neighbour being
+  /// swiped in, not under the grid). Live tabs stay mounted, so a `PopScope` in a tab should only act
+  /// when this is true. True outside a [TabSwitcher].
+  static bool isActive(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_ActiveTab>()?.active ?? true;
+
   @override
   State<TabSwitcher> createState() => _TabSwitcherState();
+}
+
+class _ActiveTab extends InheritedWidget {
+  const _ActiveTab({required this.active, required super.child});
+
+  final bool active;
+
+  @override
+  bool updateShouldNotify(_ActiveTab old) => active != old.active;
 }
 
 class _TabSwitcherState extends State<TabSwitcher> {
@@ -483,7 +498,10 @@ class _Slot extends StatelessWidget {
           enabled: active,
           child: FocusScope(
             canRequestFocus: active,
-            child: Transform.translate(offset: Offset(offset, 0), child: child),
+            child: _ActiveTab(
+              active: active,
+              child: Transform.translate(offset: Offset(offset, 0), child: child),
+            ),
           ),
         ),
       ),

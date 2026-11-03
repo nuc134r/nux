@@ -215,6 +215,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disconnect => 'Disconnect';
 
   @override
+  String get doneEditing => 'Done editing';
+
+  @override
   String get download => 'Download';
 
   @override
@@ -801,6 +804,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get open => 'Open';
+
+  @override
+  String get openLinkQuestion => 'Open this link?';
 
   @override
   String get openReleasePage => 'Open release page';

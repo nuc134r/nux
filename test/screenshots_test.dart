@@ -68,7 +68,10 @@ void main() {
     Directory('${root.path}/lib/src').createSync(recursive: true);
     Directory('${root.path}/test').createSync();
     Directory('${root.path}/.git').createSync();
-    File('${root.path}/README.md').writeAsStringSync('# demo\n\nA sample project.\n');
+    File('${root.path}/README.md').writeAsStringSync(
+      '# demo\n\nA sample project.\n\n## Next\n\n- [x] Count taps\n- [ ] Reset button\n- [ ] Dark theme\n\n'
+      '```dart\nvoid main() => runApp(const CounterApp());\n```\n',
+    );
     File('${root.path}/pubspec.yaml').writeAsStringSync('name: demo\nenvironment:\n  sdk: ^3.13.0\n');
     File('${root.path}/.gitignore').writeAsStringSync('build/\n');
     File('${root.path}/lib/main.dart').writeAsStringSync(_sampleDart);
@@ -105,6 +108,11 @@ void main() {
       c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
       await settle(tester);
       await tester.tap(find.byTooltip('More'));
+    }),
+    'markdown': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/README.md'));
     }),
     'host_key': _Shot(ThemeMode.light, Routes.home, act: (tester, c) async {
       showDialog<void>(

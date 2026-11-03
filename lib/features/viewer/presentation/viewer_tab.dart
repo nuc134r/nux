@@ -13,6 +13,7 @@ import '../../files/domain/fs_handle.dart';
 import '../../files/presentation/transfers_sheet.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../settings/data/settings_repository.dart';
+import '../../workspace/data/workspace.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../domain/remote_document.dart';
 import 'viewer_view.dart';
@@ -20,7 +21,14 @@ import 'viewer_view.dart';
 /// Read-only view of a remote file: code, Markdown, images or hex.
 class ViewerTab extends NuxTab {
   /// [open] replaces SFTP (tests and screenshots view local files).
-  ViewerTab(this._ref, {required this.connectionId, required this.path, String? id, FsOpener? open})
+  ViewerTab(
+    this._ref, {
+    required this.connectionId,
+    required this.path,
+    String? id,
+    FsOpener? open,
+    this.openerId,
+  })
       : id = id ?? 'viewer:${newId()}',
         document = RemoteDocument(
           open: open ?? sshFsOpener(_ref.read(sshPoolProvider), () => _ref.read(sshPrompterProvider), connectionId),
@@ -37,6 +45,9 @@ class ViewerTab extends NuxTab {
   final String id;
   final String connectionId;
   final String path;
+
+  /// The tab that opened this file, if any: Back returns there.
+  final String? openerId;
   final RemoteDocument document;
 
   /// View state that outlives the widget (kept while the tab is parked).
@@ -85,6 +96,53 @@ class ViewerTab extends NuxTab {
   void setEditing(bool v) {
     editing = v;
     notifyListeners();
+  }
+
+  /// Leaves edit mode; unsaved changes are saved or discarded after asking. Returns whether edit mode
+  /// is off now.
+  Future<bool> exitEditing(BuildContext context) async {
+    if (!editing) return true;
+    if (dirty) {
+      final l10n = context.l10n;
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.discardChangesTitle(posix.basename(path))),
+          content: Text(l10n.discardChangesBody),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.keepEditing)),
+            TextButton(onPressed: () => Navigator.pop(context, 'discard'), child: Text(l10n.discard)),
+            FilledButton(onPressed: () => Navigator.pop(context, 'save'), child: Text(l10n.save)),
+          ],
+        ),
+      );
+      switch (choice) {
+        case 'save':
+          await onSave?.call();
+          if (dirty) return false;
+        case 'discard':
+          _editorGeneration = -1; // fresh controllers with the loaded text
+          dirty = false;
+        default:
+          return false;
+      }
+    }
+    setEditing(false);
+    return true;
+  }
+
+  /// Whether Back is handled by this tab (rather than leaving the app).
+  bool get handlesBack => editing || openerId != null;
+
+  /// Back: leaves edit mode, else closes this tab and returns to the tab that opened it.
+  Future<void> back(BuildContext context) async {
+    if (editing) {
+      await exitEditing(context);
+      return;
+    }
+    final tabs = _ref.read(workspaceProvider);
+    final opener = tabs.tabs.where((t) => t.id == openerId).firstOrNull;
+    if (await tabs.close(this) && opener != null) tabs.select(opener);
   }
 
   /// Saves; called by the view, which handles [RemoteChangedException].
@@ -138,21 +196,30 @@ class ViewerTab extends NuxTab {
     final textual = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
     final canEdit = textual && !document.truncated && document.bytes != null;
     return [
-      if (editing)
+      if (editing) ...[
+        IconButton(
+          tooltip: l10n.doneEditing,
+          icon: const Icon(Icons.check),
+          onPressed: () => exitEditing(context),
+        ),
         IconButton(
           tooltip: l10n.save,
           icon: document.saving
               ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
               : Icon(dirty ? Icons.save : Icons.save_outlined),
           onPressed: dirty && !document.saving ? onSave : null,
-        )
-      else if (canEdit)
+        ),
+      ] else if (canEdit)
         IconButton(tooltip: l10n.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => setEditing(true)),
       if (document.kind == FileKind.markdown)
         IconButton(
           tooltip: rendered ? l10n.showSource : l10n.showRendered,
           icon: Icon(rendered ? Icons.code : Icons.article_outlined),
-          onPressed: () => setRendered(!rendered),
+          onPressed: () async {
+            // The rendered view shows the file, not the editor: leave edit mode first.
+            if (!rendered && !await exitEditing(context)) return;
+            setRendered(!rendered);
+          },
         ),
       if (textual)
         IconButton(
@@ -174,7 +241,7 @@ class ViewerTab extends NuxTab {
       if (editing) ...[
         TabMenuEntry(icon: Icons.undo, label: l10n.undoEdit, enabled: _editor?.canUndo ?? false, onSelected: () => _editor?.undo()),
         TabMenuEntry(icon: Icons.redo, label: l10n.redoEdit, enabled: _editor?.canRedo ?? false, onSelected: () => _editor?.redo()),
-        TabMenuEntry(icon: Icons.visibility_outlined, label: l10n.stopEditing, enabled: !dirty, onSelected: () => setEditing(false)),
+        TabMenuEntry(icon: Icons.visibility_outlined, label: l10n.stopEditing, onSelected: () => exitEditing(context)),
       ],
       TabMenuEntry(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
       if (textual)

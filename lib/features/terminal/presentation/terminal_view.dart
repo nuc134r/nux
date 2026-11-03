@@ -1,5 +1,6 @@
 import 'package:flterm/flterm.dart' hide Key;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +24,42 @@ class TerminalTabView extends ConsumerStatefulWidget {
 
 class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
   TerminalSession get _session => widget.tab.session;
+
+  /// Web links are underlined all the time (touch screens have no hover) and open after asking.
+  static final _urlRule = LinkRule.regex(
+    id: 'url',
+    pattern: RegExp(r"""https?://[^\s<>"'`]*[^\s<>"'`.,;:!?)\]}]"""),
+    priority: 10,
+    highlightMode: LinkHighlightMode.always,
+  );
+  late final _links = LinkSettings(rules: [_urlRule], onActivate: _openLink);
+
+  Future<void> _openLink(ActivatedLink link) async {
+    final uri = link.uri ?? Uri.tryParse(link.text);
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) return;
+    final open = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        final l10n = context.l10n;
+        return AlertDialog(
+          title: Text(l10n.openLinkQuestion),
+          content: SelectableText(uri.toString()),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: uri.toString()));
+                Navigator.pop(context, false);
+              },
+              child: Text(l10n.copy),
+            ),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.open)),
+          ],
+        );
+      },
+    );
+    if (open ?? false) await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
 
   @override
   void initState() {
@@ -74,14 +111,7 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
                 controller: _session.terminal,
                 theme: theme,
                 autofocus: true,
-                linkSettings: LinkSettings(
-                  onActivate: (link) {
-                    final uri = link.uri;
-                    if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-                      launchUrl(uri, mode: LaunchMode.externalApplication);
-                    }
-                  },
-                ),
+                linkSettings: _links,
               ),
             ),
           ),

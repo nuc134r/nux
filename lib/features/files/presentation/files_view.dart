@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart' show FilePicker;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tab_switcher/tab_switcher.dart';
 import 'package:intl/intl.dart';
 import 'package:nux_backend/nux_backend.dart';
 
@@ -82,7 +83,9 @@ class _FilesViewState extends ConsumerState<FilesView> {
     } else if (fileKindByName(e.name) == FileKind.archive) {
       _entryActions(e);
     } else {
-      ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path));
+      ref
+            .read(workspaceProvider)
+            .open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path, openerId: widget.tab.id));
     }
   }
 
@@ -117,7 +120,9 @@ class _FilesViewState extends ConsumerState<FilesView> {
     if (!mounted || action == null) return;
     switch (action) {
       case 'open':
-        ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path));
+        ref
+            .read(workspaceProvider)
+            .open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path, openerId: widget.tab.id));
       case 'download':
         _download([e]);
       case 'rename':
@@ -186,10 +191,12 @@ class _FilesViewState extends ConsumerState<FilesView> {
       listenable: _b,
       builder: (context, _) {
         final entries = _b.entries;
+        // Live tabs stay mounted: only the tab in front handles Back.
+        final active = TabSwitcher.isActive(context);
         return PopScope(
-          canPop: !_b.selecting && !_b.canGoUp,
+          canPop: !active || (!_b.selecting && !_b.canGoUp),
           onPopInvokedWithResult: (didPop, _) {
-            if (didPop) return;
+            if (didPop || !active) return;
             _b.selecting ? _b.clearSelection() : _b.up();
           },
           child: Scaffold(

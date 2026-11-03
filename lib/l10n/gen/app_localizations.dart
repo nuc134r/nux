@@ -434,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Disconnect'**
   String get disconnect;
 
+  /// No description provided for @doneEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Done editing'**
+  String get doneEditing;
+
   /// No description provided for @download.
   ///
   /// In en, this message translates to:
@@ -1393,6 +1399,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get open;
+
+  /// No description provided for @openLinkQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this link?'**
+  String get openLinkQuestion;
 
   /// No description provided for @openReleasePage.
   ///

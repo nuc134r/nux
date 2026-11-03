@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/app/app.dart';
 import 'package:nux/core/secure/secret_store.dart';
+import 'package:nux/features/files/domain/fs_handle.dart';
 import 'package:nux/features/settings/data/settings_repository.dart';
 import 'package:nux/features/terminal/domain/terminal_session.dart';
 import 'package:nux/features/terminal/domain/terminal_tab.dart';
@@ -11,6 +14,8 @@ import 'package:nux/features/viewer/presentation/viewer_tab.dart';
 import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
 import 'package:nux/features/workspace/presentation/hosts_tab.dart';
+
+import 'package:nux_backend/nux_backend.dart';
 
 import 'helpers.dart';
 
@@ -112,6 +117,52 @@ void main() {
     await tester.tap(find.text('ZeroTier').last);
     await settle(tester);
     expect(find.text('Start with nux'), findsWidgets);
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('Back in a file opened from the files tab closes it and returns there; in edit mode it leaves edit mode', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-back-');
+    addTearDown(() => root.deleteSync(recursive: true));
+    Directory('${root.path}/sub').createSync();
+    File('${root.path}/sub/notes.txt').writeAsStringSync('hello\n');
+
+    final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(container.dispose);
+    container.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root.path), release: () {});
+    await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
+    await settle(tester);
+    final tabs = container.read(workspaceProvider);
+    final files = container.read(tabFactoryProvider).files('sample', path: '${root.path}/sub');
+    tabs.open(files);
+    await settle(tester);
+    expect(find.text('notes.txt'), findsOneWidget);
+
+    Future<void> openNotes() async {
+      await tester.tap(find.text('notes.txt'));
+      await settle(tester);
+      expect(tabs.current, isA<ViewerTab>());
+    }
+
+    await openNotes();
+    await tester.binding.handlePopRoute();
+    await settle(tester);
+    expect(tabs.current, same(files));
+    expect(tabs.tabs.whereType<ViewerTab>(), isEmpty);
+    expect(files.browser.path, '${root.path}/sub', reason: 'the files tab did not go up');
+
+    await openNotes();
+    final viewer = tabs.current! as ViewerTab;
+    viewer.setEditing(true);
+    await settle(tester);
+    await tester.binding.handlePopRoute();
+    await settle(tester);
+    expect(viewer.editing, isFalse);
+    expect(tabs.current, same(viewer));
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);

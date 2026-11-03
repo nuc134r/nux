@@ -10,6 +10,11 @@ shown in the app under Settings → App version. Write for people using the app,
 - A **new ⋮ menu** that opens instantly: in a tab it shows that tab's actions and Settings; in the tab overview it leads to hosts, quick connect, port forwarding, keys, ZeroTier and settings.
 - The tab header now stands apart from the tab's content, and swiping between tabs is quicker.
 - Tapping the terminal brings the keyboard back after Back has hidden it.
+- Web links in the terminal are underlined, and nux asks before opening one (or copies it).
+- Leaving edit mode is easy: a ✓ button, Back, or switching a Markdown file to its rendered view; unsaved changes can be saved or discarded.
+- Back in a file opened from the file browser closes the file and returns to the browser (it used to move the browser up a folder instead).
+- Checkboxes in Markdown files are visible in dark mode.
+- Messages at the bottom sit higher and can be swiped away sideways.
 - A wrong password now says so (instead of "Cancelled") and nux asks for it again.
 - Turning ZeroTier off really stops it. Connections and forwards no longer start it again until you turn it back on.
 - Host key fingerprints now look like OpenSSH's (`ssh-keygen -l`), so you can compare them with the server's. Hosts you already trusted stay trusted.

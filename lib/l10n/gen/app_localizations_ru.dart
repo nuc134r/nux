@@ -217,6 +217,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get disconnect => 'Отключиться';
 
   @override
+  String get doneEditing => 'Закончить правку';
+
+  @override
   String get download => 'Скачать';
 
   @override
@@ -810,6 +813,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get open => 'Открыть';
+
+  @override
+  String get openLinkQuestion => 'Открыть ссылку?';
 
   @override
   String get openReleasePage => 'Открыть страницу релиза';

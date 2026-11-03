@@ -31,6 +31,13 @@ ThemeData buildTheme(Brightness brightness, {bool predictiveBack = false}) {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     ),
     appBarTheme: AppBarTheme(backgroundColor: scheme.surface, scrolledUnderElevation: 2),
+    // Floating above the bottom bars (extra keys, navigation) and swiped away sideways.
+    snackBarTheme: const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      insetPadding: EdgeInsets.fromLTRB(16, 0, 16, 72),
+      dismissDirection: DismissDirection.horizontal,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+    ),
     scrollbarTheme: ScrollbarThemeData(
       radius: const Radius.circular(8),
       thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .2)),

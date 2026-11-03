@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_editor/re_editor.dart';
+import 'package:tab_switcher/tab_switcher.dart';
 import 'package:re_highlight/styles/atom-one-dark.dart';
 import 'package:re_highlight/styles/atom-one-light.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -73,6 +74,22 @@ class _ViewerViewState extends State<ViewerView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     widget.tab.onSave = _save;
+    // Live tabs stay mounted: only the tab in front handles Back.
+    final active = TabSwitcher.isActive(context);
+    return ListenableBuilder(
+      listenable: widget.tab,
+      builder: (context, child) => PopScope(
+        canPop: !active || !widget.tab.handlesBack,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop && active && widget.tab.handlesBack) widget.tab.back(context);
+        },
+        child: child!,
+      ),
+      child: _content(l10n),
+    );
+  }
+
+  Widget _content(AppLocalizations l10n) {
     return ListenableBuilder(
       listenable: widget.tab,
       builder: (context, _) {
@@ -253,6 +270,7 @@ class _MarkdownView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fontSize = watchTextSize(ref, TextSizeKind.editor);
+    final base = MarkdownStyleSheet.fromTheme(Theme.of(context));
     return Markdown(
       data: text,
       selectable: true,
@@ -262,8 +280,10 @@ class _MarkdownView extends ConsumerWidget {
           launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       },
-      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+      styleSheet: base.copyWith(
         code: TextStyle(fontFamily: monoFont, fontSize: fontSize),
+        // fromTheme uses primaryColor, which is nearly the background in dark Material 3.
+        checkbox: base.checkbox?.copyWith(color: Theme.of(context).colorScheme.primary),
         textScaler: TextScaler.linear(fontSize / TextSizeKind.editor.defaultSize),
       ),
     );
