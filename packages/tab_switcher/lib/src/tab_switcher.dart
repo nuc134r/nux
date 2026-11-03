@@ -130,7 +130,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   @override
   void initState() {
     super.initState();
-    _pages = PageController(initialPage: _c.currentIndex.clamp(0, 1 << 30));
+    _pages = _newPages();
     _live = _c.liveIds;
     _shownId = _c.current?.id;
     _shownGrid = _c.gridOpen;
@@ -174,6 +174,19 @@ class _TabSwitcherState extends State<TabSwitcher> {
     setState(() {});
     // The header's PageView learns about new tabs in this rebuild, so jump after it.
     WidgetsBinding.instance.addPostFrameCallback((_) => _syncPage());
+  }
+
+  /// keepPage off: a restored page (from before tabs were closed in the grid) would be out of range and
+  /// spring back into place, sliding the header in.
+  PageController _newPages() => PageController(initialPage: _c.currentIndex.clamp(0, 1 << 30), keepPage: false);
+
+  /// The header's PageView is unmounted while the grid (or the wide strip) shows; when it comes back it
+  /// starts on the current tab instead of where it was.
+  void _resetPagesIfDetached() {
+    if (_pages.hasClients || _pages.initialPage == _c.currentIndex.clamp(0, 1 << 30)) return;
+    final old = _pages;
+    _pages = _newPages();
+    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
   }
 
   void _syncPage() {
@@ -276,6 +289,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
     final media = MediaQuery.of(context);
     final wide = media.size.width >= widget.wideBreakpoint;
     final grid = _c.gridOpen;
+    if (!grid && !wide) _resetPagesIfDetached();
     return PopScope(
       canPop: !(grid && !_c.isEmpty),
       onPopInvokedWithResult: (didPop, _) {

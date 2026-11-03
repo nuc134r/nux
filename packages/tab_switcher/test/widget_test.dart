@@ -145,4 +145,36 @@ void main() {
     expect(c.current?.id, 'a');
     expect(find.text('a:0'), findsOneWidget);
   });
+
+  testWidgets('opening a tab from the grid does not slide the header in', (tester) async {
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    c
+      ..open(CounterTab('a'))
+      ..open(CounterTab('b'))
+      ..open(CounterTab('c')); // current: c, the last page
+    await tester.pumpWidget(app(c));
+    await tester.pumpAndSettle();
+
+    Future<void> openFromGrid(String id) async {
+      c.gridOpen = true;
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Tab $id').last);
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(tester.getTopLeft(find.text('header $id')).dx, 0, reason: 'frame $i: the header is in place at once');
+      }
+    }
+
+    // Closing tabs in the grid leaves the old page out of range: it used to spring back into place.
+    c.gridOpen = true;
+    await tester.pumpAndSettle();
+    await c.close(c.tabs[2], force: true);
+    await c.close(c.tabs[1], force: true);
+    await openFromGrid('a');
+
+    c.open(CounterTab('d'));
+    await tester.pumpAndSettle();
+    await openFromGrid('a'); // another page than the one shown before the grid
+  });
 }

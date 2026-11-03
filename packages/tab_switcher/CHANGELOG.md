@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Opening a tab from the grid no longer slides the header in (the page controller restored a stale,
+  out-of-range page, e.g. after closing tabs in the grid).
 - Previews follow the screen density: `previewScale` (default .6 of the device pixel ratio) replaces
   the fixed `previewPixelRatio` (.5 logical, blurry on phones).
 - Header swipes settle faster (`SnappyPageScrollPhysics`: stiffer spring, shorter flicks change the tab).
