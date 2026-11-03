@@ -7,6 +7,8 @@ library;
 export 'src/backend.dart';
 export 'src/errors.dart';
 export 'src/file_system.dart';
+export 'src/local_file_system.dart';
+export 'src/paths.dart';
 export 'src/process_runner.dart';
 export 'src/pty.dart';
 export 'src/shell_quote.dart';

@@ -5,13 +5,15 @@ import 'dart:typed_data';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:nux_backend/nux_backend.dart';
 
-/// A [Backend] on top of an authenticated SSH connection: exec channels and shells.
-/// Files (SFTP) arrive in M2.
+import 'sftp_file_system.dart';
+
+/// A [Backend] on top of an authenticated SSH connection: SFTP, exec channels and shells.
 class SshBackend implements Backend {
   SshBackend({required this.id, required this.displayName, required SSHClient client, this.kind = BackendKind.ssh})
       : _client = client,
         processRunner = SshProcessRunner(client),
-        ptyHost = SshPtyHost(client);
+        ptyHost = SshPtyHost(client),
+        fileSystem = SftpFileSystem(client);
 
   @override
   final String id;
@@ -25,10 +27,10 @@ class SshBackend implements Backend {
   final SSHClient _client;
 
   @override
-  Set<Capability> get capabilities => const {Capability.exec, Capability.pty};
+  Set<Capability> get capabilities => const {Capability.files, Capability.exec, Capability.pty};
 
   @override
-  FileSystem? get fileSystem => null;
+  final SftpFileSystem fileSystem;
 
   @override
   final ProcessRunner processRunner;
@@ -37,7 +39,10 @@ class SshBackend implements Backend {
   final PtyHost ptyHost;
 
   @override
-  Future<void> close() async => _client.close();
+  Future<void> close() async {
+    await fileSystem.close();
+    _client.close();
+  }
 }
 
 /// Prefixes [command] with `cd` and exported variables (servers often refuse `env` requests).

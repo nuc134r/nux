@@ -39,10 +39,14 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Smoke test renders every route at phone and desktop widths; screenshot test (`tool/screenshots.sh`)
 
 ## M2 — SFTP + viewer
-- [ ] `FileSystem` port + SFTP implementation
-- [ ] File browser tab: breadcrumbs, sort, hidden files, multi-select, rename/move/delete/chmod, bookmarks
-- [ ] Transfers: upload/download queue with progress, resume, share to/from other apps (SAF)
-- [ ] Read-only code viewer (re_editor), large-file lazy loading, image / markdown / hex views
+- [x] `FileSystem` port + SFTP and local (`dart:io`) implementations, one contract test for both
+- [x] File browser tab: breadcrumbs, sort (folders first, natural order), hidden files, multi-select,
+      rename/move/delete/chmod/new folder, bookmarks per host, back goes up, "Terminal here"
+- [x] Transfers: upload/download queue with progress, cancel, resume after a drop; save as / share downloads
+- [ ] Downloading and uploading whole folders
+- [ ] Receive files shared from other apps (share intent → upload)
+- [x] Read-only code viewer (re_editor): ~45 highlighted languages, line numbers, folding, find, wrap
+- [x] Large files load the first 2 MB with "Load all"; image, Markdown (rendered/source) and hex views
 
 ## M3 — SSH port forwarding
 - [ ] Rules: local (-L), remote (-R), dynamic SOCKS5 (-D), per connection, auto-start

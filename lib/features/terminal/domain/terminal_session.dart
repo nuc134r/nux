@@ -44,6 +44,7 @@ class TerminalStrings {
 class TerminalSession extends ChangeNotifier {
   TerminalSession({
     required this.connectionId,
+    this.directory,
     required this._pool,
     required this._prompter,
     required ConnectionRepository connections,
@@ -61,6 +62,7 @@ class TerminalSession extends ChangeNotifier {
   }
 
   final String connectionId;
+  final String? directory;
   final SshPool _pool;
   final SshPrompter Function() _prompter;
   final ConnectionRepository _connections;
@@ -99,7 +101,7 @@ class TerminalSession extends ChangeNotifier {
       final (cols, rows) = await _waitForSize();
       final pty = await SshBackend(id: connectionId, displayName: c?.name ?? '', client: lease.client)
           .ptyHost
-          .open(columns: cols, rows: rows);
+          .open(columns: cols, rows: rows, workingDirectory: directory);
       if (_disposed) {
         await pty.close();
         return lease.release();

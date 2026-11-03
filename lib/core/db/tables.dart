@@ -83,3 +83,10 @@ class KnownHosts extends Table with SyncedTable {
         {host, port, keyType},
       ];
 }
+
+/// Folders saved for quick access in a host's file browser.
+class Bookmarks extends Table with SyncedTable {
+  TextColumn get connectionId => text().references(Connections, #id, onDelete: KeyAction.cascade)();
+  TextColumn get path => text()();
+  TextColumn get name => text()();
+}

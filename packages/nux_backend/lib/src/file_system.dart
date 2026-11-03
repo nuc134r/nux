@@ -11,6 +11,7 @@ class FileEntry {
     this.modified,
     this.mode,
     this.linkTarget,
+    this.targetIsDirectory = false,
   });
 
   /// Absolute path in the backend's own syntax (POSIX for SSH and Termux).
@@ -27,6 +28,9 @@ class FileEntry {
   /// Where a symbolic link points, when known.
   final String? linkTarget;
 
+  /// A symbolic link to a directory (opening it browses into it).
+  final bool targetIsDirectory;
+
   String get name {
     final trimmed = path.length > 1 && path.endsWith('/') ? path.substring(0, path.length - 1) : path;
     final i = trimmed.lastIndexOf('/');
@@ -34,6 +38,9 @@ class FileEntry {
   }
 
   bool get isDirectory => type == FileType.directory;
+
+  /// A directory, or a link to one.
+  bool get isBrowsable => isDirectory || targetIsDirectory;
 
   /// Hidden by convention (dot files).
   bool get isHidden => name.startsWith('.') && name != '.' && name != '..';
@@ -60,6 +67,11 @@ abstract interface class FileSystem {
 
   /// Replaces the file's contents (creates it when missing).
   Future<void> writeBytes(String path, Uint8List bytes);
+
+  /// Writes [data] into [path] from [offset] on; the file is created when missing and truncated when
+  /// [offset] is 0. A non-zero [offset] resumes an interrupted upload. [onProgress] gets the bytes
+  /// written by this call so far.
+  Future<void> writeStream(String path, Stream<List<int>> data, {int offset = 0, void Function(int written)? onProgress});
 
   Future<void> createDirectory(String path, {bool recursive = false});
 

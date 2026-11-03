@@ -55,6 +55,15 @@ class AppLocalizationsRu extends AppLocalizations {
       'nux предлагает отмеченные ключи по порядку, затем пароль, затем спрашивает сервер, что ещё нужно.';
 
   @override
+  String get bookmarkFolder => 'Добавить папку в закладки';
+
+  @override
+  String get bookmarks => 'Закладки';
+
+  @override
+  String get browseFiles => 'Файлы';
+
+  @override
   String get cancel => 'Отмена';
 
   @override
@@ -69,6 +78,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get checkForUpdates => 'Проверить обновления';
+
+  @override
+  String get clearFinished => 'Убрать завершённые';
+
+  @override
+  String get clearSelection => 'Снять выделение';
 
   @override
   String get clipboardEmpty => 'Буфер обмена пуст';
@@ -103,6 +118,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get copyPath => 'Копировать путь';
+
+  @override
   String get currentPassphrase => 'Текущая парольная фраза';
 
   @override
@@ -120,6 +138,27 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String deleteConnectionTitle(String name) {
     return 'Удалить $name?';
+  }
+
+  @override
+  String deleteFileTitle(String name) {
+    return 'Удалить $name?';
+  }
+
+  @override
+  String get deleteFilesBody =>
+      'Папки удаляются вместе с содержимым. Это нельзя отменить.';
+
+  @override
+  String deleteFilesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Удалить $count объектов?',
+      few: 'Удалить $count объекта?',
+      one: 'Удалить $count объект?',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -143,6 +182,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get disconnect => 'Отключиться';
+
+  @override
+  String get download => 'Скачать';
 
   @override
   String get duplicate => 'Дублировать';
@@ -176,7 +218,47 @@ class AppLocalizationsRu extends AppLocalizations {
       'Любой, у кого есть этот файл и его парольная фраза, сможет войти везде, где принимается этот ключ. Экспортируйте только для переноса на доверенное устройство. Затем вы зададите парольную фразу для файла.';
 
   @override
+  String get fileDisconnected => 'Соединение потеряно';
+
+  @override
+  String get fileExists => 'Объект с таким именем уже есть';
+
+  @override
+  String get fileNotFound => 'Не найдено';
+
+  @override
+  String get filePermissionDenied => 'Нет доступа';
+
+  @override
+  String get find => 'Найти';
+
+  @override
   String get fingerprint => 'Отпечаток';
+
+  @override
+  String get folderEmpty => 'Папка пуста';
+
+  @override
+  String get folderNotEmpty => 'Папка не пуста';
+
+  @override
+  String folderOnlyHidden(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Здесь только $count скрытых объектов',
+      few: 'Здесь только $count скрытых объекта',
+      one: 'Здесь только $count скрытый объект',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get folderPath => 'Папка';
+
+  @override
+  String get foldersNotDownloaded =>
+      'Папки пока не скачиваются; в очередь добавлены только файлы';
 
   @override
   String get fontSize => 'Размер шрифта';
@@ -220,6 +302,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get hide => 'Скрыть';
+
+  @override
+  String get hideHiddenFiles => 'Скрыть скрытые файлы';
 
   @override
   String get homeEarly =>
@@ -275,6 +360,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hosts => 'Хосты';
 
   @override
+  String get imageUnreadable => 'Не удалось открыть изображение';
+
+  @override
   String get importAction => 'Импортировать';
 
   @override
@@ -310,6 +398,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String installingKey(String name) {
     return 'Установка ключа на $name…';
   }
+
+  @override
+  String get invalidFileName => 'Имя не может содержать /';
 
   @override
   String get invalidNumber => 'Введите число';
@@ -427,16 +518,46 @@ class AppLocalizationsRu extends AppLocalizations {
   String get licenses => 'Лицензии';
 
   @override
+  String get loadAll => 'Загрузить всё';
+
+  @override
+  String get matchCase => 'Учитывать регистр';
+
+  @override
   String get more => 'Ещё';
 
   @override
+  String get move => 'Переместить';
+
+  @override
+  String get moveTo => 'Переместить в…';
+
+  @override
+  String nSelected(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Выбрано $count',
+      few: 'Выбрано $count',
+      one: 'Выбран $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get nameField => 'Название';
+
+  @override
+  String get newFolder => 'Новая папка';
 
   @override
   String get newPassphrase => 'Новая парольная фраза';
 
   @override
   String get newTab => 'Новая вкладка';
+
+  @override
+  String get next => 'Следующее';
 
   @override
   String get noColor => 'Без цвета';
@@ -465,6 +586,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noTabsHint => 'Откройте список хостов или подключитесь к серверу.';
 
   @override
+  String get noTransfers => 'Передач нет';
+
+  @override
+  String get noWrap => 'Не переносить строки';
+
+  @override
   String get none => 'Нет';
 
   @override
@@ -474,6 +601,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ok => 'ОК';
 
   @override
+  String get open => 'Открыть';
+
+  @override
   String get openReleasePage => 'Открыть страницу релиза';
 
   @override
@@ -481,6 +611,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get organize => 'Упорядочить';
+
+  @override
+  String partiallyLoaded(String loaded, String total) {
+    return 'Показаны первые $loaded из $total';
+  }
 
   @override
   String get passphrase => 'Парольная фраза';
@@ -520,6 +655,32 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paste => 'Вставить';
 
   @override
+  String get permExecute => 'Запуск';
+
+  @override
+  String get permGroup => 'Группа';
+
+  @override
+  String get permOthers => 'Остальные';
+
+  @override
+  String get permOwner => 'Владелец';
+
+  @override
+  String get permRead => 'Чтение';
+
+  @override
+  String get permWrite => 'Запись';
+
+  @override
+  String get permissions => 'Права доступа';
+
+  @override
+  String permissionsOf(String name) {
+    return 'Права доступа: $name';
+  }
+
+  @override
   String get pinTab => 'Закрепить';
 
   @override
@@ -533,6 +694,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get predictiveBackHint => 'Страница следует за жестом «назад»';
+
+  @override
+  String get previous => 'Предыдущее';
 
   @override
   String get protection => 'Защита';
@@ -557,7 +721,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reconnect => 'Переподключиться';
 
   @override
+  String get refresh => 'Обновить';
+
+  @override
+  String get regex => 'Регулярное выражение';
+
+  @override
+  String get reload => 'Перезагрузить';
+
+  @override
   String get rememberUntilClosed => 'Запомнить, пока nux открыт';
+
+  @override
+  String get removeBookmark => 'Убрать из закладок';
 
   @override
   String get rename => 'Переименовать';
@@ -576,10 +752,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get required => 'Обязательное поле';
 
   @override
+  String get resume => 'Продолжить';
+
+  @override
   String get save => 'Сохранить';
 
   @override
   String get saveAndConnect => 'Сохранить и подключиться';
+
+  @override
+  String get saveAs => 'Сохранить как…';
 
   @override
   String get savePassword => 'Сохранить пароль';
@@ -588,7 +770,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get savePasswordHint => 'Хранится в защищённом хранилище устройства';
 
   @override
+  String savedAs(String name) {
+    return 'Сохранено: $name';
+  }
+
+  @override
   String get searchHosts => 'Поиск хостов';
+
+  @override
+  String get selectAll => 'Выбрать всё';
 
   @override
   String get settings => 'Настройки';
@@ -600,10 +790,31 @@ class AppLocalizationsRu extends AppLocalizations {
   String get show => 'Показать';
 
   @override
+  String get showAsText => 'Показать как текст';
+
+  @override
+  String get showHiddenFiles => 'Показать скрытые файлы';
+
+  @override
+  String get showRendered => 'Показать с оформлением';
+
+  @override
+  String get showSource => 'Показать исходный текст';
+
+  @override
   String get showTabs => 'Показать вкладки';
 
   @override
   String get skipKey => 'Пропустить ключ';
+
+  @override
+  String get sortByDate => 'По дате';
+
+  @override
+  String get sortByName => 'По имени';
+
+  @override
+  String get sortBySize => 'По размеру';
 
   @override
   String get sourceCode => 'Исходный код';
@@ -655,6 +866,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get terminalDisconnected => 'Отключено';
 
   @override
+  String get terminalHere => 'Терминал здесь';
+
+  @override
   String get terminalPressEnter => 'Нажмите Enter, чтобы переподключиться';
 
   @override
@@ -668,6 +882,24 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get themeSystem => 'Как в системе';
+
+  @override
+  String get transferCancelled => 'Отменено — можно продолжить с того же места';
+
+  @override
+  String get transferDownloaded => 'Скачано';
+
+  @override
+  String get transferQueued => 'В очереди';
+
+  @override
+  String get transferUploaded => 'Загружено';
+
+  @override
+  String get transfers => 'Передачи';
+
+  @override
+  String get tryAgain => 'Повторить';
 
   @override
   String get undo => 'Отменить';
@@ -727,6 +959,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Предлагать и предварительные версии. Они могут работать нестабильно.';
 
   @override
+  String get upload => 'Загрузить на сервер';
+
+  @override
   String get useKey => 'Использовать ключ';
 
   @override
@@ -745,4 +980,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get whatsNew => 'Что нового';
+
+  @override
+  String get wrapLines => 'Переносить строки';
 }

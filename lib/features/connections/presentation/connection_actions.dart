@@ -17,6 +17,10 @@ import '../domain/host_key_check.dart';
 void openTerminal(WidgetRef ref, String connectionId) =>
     ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).terminal(connectionId));
 
+/// Opens a file browser tab on [connectionId] (in the home folder).
+void openFiles(WidgetRef ref, String connectionId) =>
+    ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).files(connectionId));
+
 /// Asks for `user@host:port`, saves it as a connection (offering every key) and opens a terminal.
 Future<void> quickConnect(BuildContext context, WidgetRef ref) async {
   final l10n = context.l10n;

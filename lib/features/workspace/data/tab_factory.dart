@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../files/domain/fs_handle.dart';
+import '../../files/presentation/files_tab.dart';
 import '../../terminal/domain/terminal_tab.dart';
+import '../../viewer/presentation/viewer_tab.dart';
 import '../domain/nux_tab.dart';
 import '../presentation/hosts_tab.dart';
 
@@ -12,7 +15,18 @@ class TabFactory {
 
   HostsTab hosts() => HostsTab();
 
-  TerminalTab terminal(String connectionId) => TerminalTab(_ref, connectionId: connectionId);
+  /// A shell on [connectionId], starting in [directory] when given.
+  TerminalTab terminal(String connectionId, {String? directory}) =>
+      TerminalTab(_ref, connectionId: connectionId, directory: directory);
+
+  FilesTab files(String connectionId, {String? path, FsOpener? open}) =>
+      FilesTab(_ref, connectionId: connectionId, path: path, open: open ?? openOverride);
+
+  ViewerTab viewer(String connectionId, String path, {FsOpener? open}) =>
+      ViewerTab(_ref, connectionId: connectionId, path: path, open: open ?? openOverride);
+
+  /// Tests and screenshots: files and viewer tabs use this instead of SFTP.
+  FsOpener? openOverride;
 
   /// Recreates a saved tab; null for unknown kinds (e.g. saved by a newer version).
   NuxTab? restore(Map<String, Object?> json) {
@@ -21,7 +35,11 @@ class TabFactory {
     return switch (json['kind']) {
       HostsTab.kindName => HostsTab(),
       TerminalTab.kindName when id != null && args['connectionId'] is String =>
-        TerminalTab(_ref, connectionId: args['connectionId']! as String, id: id),
+        TerminalTab(_ref, connectionId: args['connectionId']! as String, directory: args['directory'] as String?, id: id),
+      FilesTab.kindName when id != null && args['connectionId'] is String =>
+        FilesTab(_ref, connectionId: args['connectionId']! as String, path: args['path'] as String?, id: id),
+      ViewerTab.kindName when id != null && args['connectionId'] is String && args['path'] is String =>
+        ViewerTab(_ref, connectionId: args['connectionId']! as String, path: args['path']! as String, id: id),
       _ => null,
     };
   }

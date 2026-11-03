@@ -8,7 +8,7 @@ export 'tables.dart' show newId, SyncedTable;
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [AppSettings, Connections, Identities, KnownHosts])
+@DriftDatabase(tables: [AppSettings, Connections, Identities, KnownHosts, Bookmarks])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
@@ -17,7 +17,7 @@ class AppDatabase extends _$AppDatabase {
   // After a schema change: bump this, add the step below, dump the schema and regenerate the
   // migration test helpers (see CLAUDE.md).
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -28,6 +28,7 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(identities);
             await m.createTable(knownHosts);
           }
+          if (from < 3) await m.createTable(bookmarks);
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');

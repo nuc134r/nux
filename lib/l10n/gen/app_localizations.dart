@@ -176,6 +176,24 @@ abstract class AppLocalizations {
   /// **'nux offers the checked keys in order, then the password, then asks the server what else it wants.'**
   String get authenticationHint;
 
+  /// No description provided for @bookmarkFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark this folder'**
+  String get bookmarkFolder;
+
+  /// No description provided for @bookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get bookmarks;
+
+  /// No description provided for @browseFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse files'**
+  String get browseFiles;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -205,6 +223,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check for updates'**
   String get checkForUpdates;
+
+  /// No description provided for @clearFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear finished'**
+  String get clearFinished;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get clearSelection;
 
   /// No description provided for @clipboardEmpty.
   ///
@@ -266,6 +296,12 @@ abstract class AppLocalizations {
   /// **'{name} (copy)'**
   String copyOf(String name);
 
+  /// No description provided for @copyPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy path'**
+  String get copyPath;
+
   /// No description provided for @currentPassphrase.
   ///
   /// In en, this message translates to:
@@ -296,6 +332,24 @@ abstract class AppLocalizations {
   /// **'Delete {name}?'**
   String deleteConnectionTitle(String name);
 
+  /// No description provided for @deleteFileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteFileTitle(String name);
+
+  /// No description provided for @deleteFilesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders are deleted with everything inside. This cannot be undone.'**
+  String get deleteFilesBody;
+
+  /// No description provided for @deleteFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Delete {count} item?} other{Delete {count} items?}}'**
+  String deleteFilesTitle(int count);
+
   /// No description provided for @deleteKeyBody.
   ///
   /// In en, this message translates to:
@@ -325,6 +379,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Disconnect'**
   String get disconnect;
+
+  /// No description provided for @download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get download;
 
   /// No description provided for @duplicate.
   ///
@@ -380,11 +440,71 @@ abstract class AppLocalizations {
   /// **'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.'**
   String get exportPrivateKeyWarning;
 
+  /// No description provided for @fileDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection was lost'**
+  String get fileDisconnected;
+
+  /// No description provided for @fileExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Something with this name already exists'**
+  String get fileExists;
+
+  /// No description provided for @fileNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found'**
+  String get fileNotFound;
+
+  /// No description provided for @filePermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied'**
+  String get filePermissionDenied;
+
+  /// No description provided for @find.
+  ///
+  /// In en, this message translates to:
+  /// **'Find'**
+  String get find;
+
   /// No description provided for @fingerprint.
   ///
   /// In en, this message translates to:
   /// **'Fingerprint'**
   String get fingerprint;
+
+  /// No description provided for @folderEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'This folder is empty'**
+  String get folderEmpty;
+
+  /// No description provided for @folderNotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The folder is not empty'**
+  String get folderNotEmpty;
+
+  /// No description provided for @folderOnlyHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Only {count} hidden item here} other{Only {count} hidden items here}}'**
+  String folderOnlyHidden(int count);
+
+  /// No description provided for @folderPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder'**
+  String get folderPath;
+
+  /// No description provided for @foldersNotDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Folders are not downloaded yet; only the files were queued'**
+  String get foldersNotDownloaded;
 
   /// No description provided for @fontSize.
   ///
@@ -457,6 +577,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide'**
   String get hide;
+
+  /// No description provided for @hideHiddenFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide hidden files'**
+  String get hideHiddenFiles;
 
   /// No description provided for @homeEarly.
   ///
@@ -548,6 +674,12 @@ abstract class AppLocalizations {
   /// **'Hosts'**
   String get hosts;
 
+  /// No description provided for @imageUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'This image could not be decoded'**
+  String get imageUnreadable;
+
   /// No description provided for @importAction.
   ///
   /// In en, this message translates to:
@@ -613,6 +745,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Installing the key on {name}…'**
   String installingKey(String name);
+
+  /// No description provided for @invalidFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Names cannot contain /'**
+  String get invalidFileName;
 
   /// No description provided for @invalidNumber.
   ///
@@ -806,17 +944,53 @@ abstract class AppLocalizations {
   /// **'Licenses'**
   String get licenses;
 
+  /// No description provided for @loadAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Load all'**
+  String get loadAll;
+
+  /// No description provided for @matchCase.
+  ///
+  /// In en, this message translates to:
+  /// **'Match case'**
+  String get matchCase;
+
   /// No description provided for @more.
   ///
   /// In en, this message translates to:
   /// **'More'**
   String get more;
 
+  /// No description provided for @move.
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get move;
+
+  /// No description provided for @moveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to…'**
+  String get moveTo;
+
+  /// No description provided for @nSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} selected} other{{count} selected}}'**
+  String nSelected(int count);
+
   /// No description provided for @nameField.
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get nameField;
+
+  /// No description provided for @newFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'New folder'**
+  String get newFolder;
 
   /// No description provided for @newPassphrase.
   ///
@@ -829,6 +1003,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New tab'**
   String get newTab;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 
   /// No description provided for @noColor.
   ///
@@ -878,6 +1058,18 @@ abstract class AppLocalizations {
   /// **'Open the hosts list or connect to a server.'**
   String get noTabsHint;
 
+  /// No description provided for @noTransfers.
+  ///
+  /// In en, this message translates to:
+  /// **'No transfers'**
+  String get noTransfers;
+
+  /// No description provided for @noWrap.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t wrap lines'**
+  String get noWrap;
+
   /// No description provided for @none.
   ///
   /// In en, this message translates to:
@@ -896,6 +1088,12 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
+  /// No description provided for @open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get open;
+
   /// No description provided for @openReleasePage.
   ///
   /// In en, this message translates to:
@@ -913,6 +1111,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Organize'**
   String get organize;
+
+  /// No description provided for @partiallyLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing the first {loaded} of {total}'**
+  String partiallyLoaded(String loaded, String total);
 
   /// No description provided for @passphrase.
   ///
@@ -980,6 +1184,54 @@ abstract class AppLocalizations {
   /// **'Paste'**
   String get paste;
 
+  /// No description provided for @permExecute.
+  ///
+  /// In en, this message translates to:
+  /// **'Run'**
+  String get permExecute;
+
+  /// No description provided for @permGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get permGroup;
+
+  /// No description provided for @permOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get permOthers;
+
+  /// No description provided for @permOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get permOwner;
+
+  /// No description provided for @permRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get permRead;
+
+  /// No description provided for @permWrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get permWrite;
+
+  /// No description provided for @permissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get permissions;
+
+  /// No description provided for @permissionsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions of {name}'**
+  String permissionsOf(String name);
+
   /// No description provided for @pinTab.
   ///
   /// In en, this message translates to:
@@ -1009,6 +1261,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The page follows your back swipe'**
   String get predictiveBackHint;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
 
   /// No description provided for @protection.
   ///
@@ -1052,11 +1310,35 @@ abstract class AppLocalizations {
   /// **'Reconnect'**
   String get reconnect;
 
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @regex.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular expression'**
+  String get regex;
+
+  /// No description provided for @reload.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get reload;
+
   /// No description provided for @rememberUntilClosed.
   ///
   /// In en, this message translates to:
   /// **'Remember until nux is closed'**
   String get rememberUntilClosed;
+
+  /// No description provided for @removeBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove bookmark'**
+  String get removeBookmark;
 
   /// No description provided for @rename.
   ///
@@ -1088,6 +1370,12 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get required;
 
+  /// No description provided for @resume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -1099,6 +1387,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save and connect'**
   String get saveAndConnect;
+
+  /// No description provided for @saveAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as…'**
+  String get saveAs;
 
   /// No description provided for @savePassword.
   ///
@@ -1112,11 +1406,23 @@ abstract class AppLocalizations {
   /// **'Kept in the device\'s secure storage'**
   String get savePasswordHint;
 
+  /// No description provided for @savedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {name}'**
+  String savedAs(String name);
+
   /// No description provided for @searchHosts.
   ///
   /// In en, this message translates to:
   /// **'Search hosts'**
   String get searchHosts;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get selectAll;
 
   /// No description provided for @settings.
   ///
@@ -1136,6 +1442,30 @@ abstract class AppLocalizations {
   /// **'Show'**
   String get show;
 
+  /// No description provided for @showAsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as text'**
+  String get showAsText;
+
+  /// No description provided for @showHiddenFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hidden files'**
+  String get showHiddenFiles;
+
+  /// No description provided for @showRendered.
+  ///
+  /// In en, this message translates to:
+  /// **'Show formatted'**
+  String get showRendered;
+
+  /// No description provided for @showSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Show source'**
+  String get showSource;
+
   /// No description provided for @showTabs.
   ///
   /// In en, this message translates to:
@@ -1147,6 +1477,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip this key'**
   String get skipKey;
+
+  /// No description provided for @sortByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by date'**
+  String get sortByDate;
+
+  /// No description provided for @sortByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by name'**
+  String get sortByName;
+
+  /// No description provided for @sortBySize.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by size'**
+  String get sortBySize;
 
   /// No description provided for @sourceCode.
   ///
@@ -1226,6 +1574,12 @@ abstract class AppLocalizations {
   /// **'Disconnected'**
   String get terminalDisconnected;
 
+  /// No description provided for @terminalHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal here'**
+  String get terminalHere;
+
   /// No description provided for @terminalPressEnter.
   ///
   /// In en, this message translates to:
@@ -1255,6 +1609,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get themeSystem;
+
+  /// No description provided for @transferCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled — resume continues where it stopped'**
+  String get transferCancelled;
+
+  /// No description provided for @transferDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get transferDownloaded;
+
+  /// No description provided for @transferQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get transferQueued;
+
+  /// No description provided for @transferUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get transferUploaded;
+
+  /// No description provided for @transfers.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers'**
+  String get transfers;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
 
   /// No description provided for @undo.
   ///
@@ -1346,6 +1736,12 @@ abstract class AppLocalizations {
   /// **'Also offer pre-releases. They may be unstable.'**
   String get updatesBetaHint;
 
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
   /// No description provided for @useKey.
   ///
   /// In en, this message translates to:
@@ -1381,6 +1777,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What\'s new'**
   String get whatsNew;
+
+  /// No description provided for @wrapLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap lines'**
+  String get wrapLines;
 }
 
 class _AppLocalizationsDelegate

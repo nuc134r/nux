@@ -6,6 +6,9 @@ import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/settings/data/settings_repository.dart';
 import 'package:nux/features/terminal/domain/terminal_session.dart';
 import 'package:nux/features/terminal/domain/terminal_tab.dart';
+import 'package:nux/features/files/presentation/files_tab.dart';
+import 'package:nux/features/viewer/presentation/viewer_tab.dart';
+import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
 import 'package:nux/features/workspace/presentation/hosts_tab.dart';
 
@@ -55,6 +58,16 @@ void main() {
     final restored = container.read(workspaceProvider);
     expect(restored.tabs.map((t) => t.runtimeType), [HostsTab, TerminalTab]);
     expect(restored.current, isA<TerminalTab>());
+
+    // Files and viewer tabs save their place too.
+    final factory = container.read(tabFactoryProvider);
+    final files = factory.restore({'kind': 'files', 'id': 'f1', 'args': {'connectionId': 'sample', 'path': '/srv'}}) as FilesTab;
+    expect(files.browser.path, '/srv');
+    expect(files.args, {'connectionId': 'sample', 'path': '/srv'});
+    final viewer = factory.restore({'kind': 'viewer', 'id': 'v1', 'args': {'connectionId': 'sample', 'path': '/etc/hosts'}}) as ViewerTab;
+    expect(viewer.title, 'hosts');
+    files.dispose();
+    viewer.dispose();
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });

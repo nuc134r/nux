@@ -162,6 +162,10 @@ class _HostTile extends ConsumerWidget {
             child: ListTile(leading: const Icon(Icons.terminal), title: Text(l10n.openTerminal)),
           ),
           PopupMenuItem(
+            value: () => openFiles(ref, c.id),
+            child: ListTile(leading: const Icon(Icons.folder_outlined), title: Text(l10n.browseFiles)),
+          ),
+          PopupMenuItem(
             value: () => context.push(Routes.connection(c.id)),
             child: ListTile(leading: const Icon(Icons.edit_outlined), title: Text(l10n.edit)),
           ),

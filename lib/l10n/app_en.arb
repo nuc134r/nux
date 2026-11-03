@@ -23,11 +23,16 @@
   "appearance": "Appearance",
   "authentication": "Sign in",
   "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
+  "bookmarkFolder": "Bookmark this folder",
+  "bookmarks": "Bookmarks",
+  "browseFiles": "Browse files",
   "cancel": "Cancel",
   "change": "Change",
   "changelog": "Changelog",
   "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
   "checkForUpdates": "Check for updates",
+  "clearFinished": "Clear finished",
+  "clearSelection": "Clear selection",
   "clipboardEmpty": "The clipboard is empty",
   "close": "Close",
   "closeOtherTabs": "Close other tabs",
@@ -45,6 +50,7 @@
       }
     }
   },
+  "copyPath": "Copy path",
   "currentPassphrase": "Current passphrase",
   "delete": "Delete",
   "deleteConnectionBody": "Its saved password is deleted too. Trusted host keys and SSH keys stay.",
@@ -61,6 +67,23 @@
     "placeholders": {
       "name": {
         "type": "String"
+      }
+    }
+  },
+  "deleteFileTitle": "Delete {name}?",
+  "@deleteFileTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFilesBody": "Folders are deleted with everything inside. This cannot be undone.",
+  "deleteFilesTitle": "{count, plural, one{Delete {count} item?} other{Delete {count} items?}}",
+  "@deleteFilesTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
       }
     }
   },
@@ -90,6 +113,7 @@
     }
   },
   "disconnect": "Disconnect",
+  "download": "Download",
   "duplicate": "Duplicate",
   "duplicateTab": "New terminal on this host",
   "edit": "Edit",
@@ -106,7 +130,24 @@
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
   "exportPrivateKeyWarning": "Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.",
+  "fileDisconnected": "The connection was lost",
+  "fileExists": "Something with this name already exists",
+  "fileNotFound": "Not found",
+  "filePermissionDenied": "Permission denied",
+  "find": "Find",
   "fingerprint": "Fingerprint",
+  "folderEmpty": "This folder is empty",
+  "folderNotEmpty": "The folder is not empty",
+  "folderOnlyHidden": "{count, plural, one{Only {count} hidden item here} other{Only {count} hidden items here}}",
+  "@folderOnlyHidden": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "folderPath": "Folder",
+  "foldersNotDownloaded": "Folders are not downloaded yet; only the files were queued",
   "fontSize": "Font size",
   "forget": "Forget",
   "forgetHostBody": "The next connection will show the server's key and ask you to trust it again.",
@@ -133,6 +174,7 @@
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
   "groupField": "Group",
   "hide": "Hide",
+  "hideHiddenFiles": "Hide hidden files",
   "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
   "homeWelcome": "Welcome to nux",
   "hostField": "Host",
@@ -169,6 +211,7 @@
   },
   "hostKeyUnknownTitle": "New server",
   "hosts": "Hosts",
+  "imageUnreadable": "This image could not be decoded",
   "importAction": "Import",
   "importFormatsHint": "OpenSSH, PEM, PKCS#8 or PuTTY (.ppk)",
   "importFromClipboard": "Paste from clipboard",
@@ -187,6 +230,7 @@
       }
     }
   },
+  "invalidFileName": "Names cannot contain /",
   "invalidNumber": "Enter a number",
   "invalidPort": "1–65535",
   "jumpHost": "Jump host",
@@ -261,10 +305,24 @@
   },
   "later": "Later",
   "licenses": "Licenses",
+  "loadAll": "Load all",
+  "matchCase": "Match case",
   "more": "More",
+  "move": "Move",
+  "moveTo": "Move to…",
+  "nSelected": "{count, plural, one{{count} selected} other{{count} selected}}",
+  "@nSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "nameField": "Name",
+  "newFolder": "New folder",
   "newPassphrase": "New passphrase",
   "newTab": "New tab",
+  "next": "Next",
   "noColor": "No colour",
   "noHosts": "No hosts yet",
   "noHostsHint": "Add a server to connect to, or type user@host to connect right away.",
@@ -273,12 +331,26 @@
   "noPreview": "No preview",
   "noTabs": "No open tabs",
   "noTabsHint": "Open the hosts list or connect to a server.",
+  "noTransfers": "No transfers",
+  "noWrap": "Don't wrap lines",
   "none": "None",
   "notNow": "Not now",
   "ok": "OK",
+  "open": "Open",
   "openReleasePage": "Open release page",
   "openTerminal": "Open terminal",
   "organize": "Organize",
+  "partiallyLoaded": "Showing the first {loaded} of {total}",
+  "@partiallyLoaded": {
+    "placeholders": {
+      "loaded": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "passphrase": "Passphrase",
   "passphraseChanged": "Passphrase changed",
   "passphraseOptionalHint": "Optional. Asked when the key is used.",
@@ -297,11 +369,27 @@
   "passwordKeepHint": "A password is saved. Leave empty to keep it.",
   "passwordWrong": "The server did not accept the password",
   "paste": "Paste",
+  "permExecute": "Run",
+  "permGroup": "Group",
+  "permOthers": "Others",
+  "permOwner": "Owner",
+  "permRead": "Read",
+  "permWrite": "Write",
+  "permissions": "Permissions",
+  "permissionsOf": "Permissions of {name}",
+  "@permissionsOf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "pinTab": "Pin",
   "pinnedTabs": "Pinned",
   "portField": "Port",
   "predictiveBack": "Predictive back gesture",
   "predictiveBackHint": "The page follows your back swipe",
+  "previous": "Previous",
   "protection": "Protection",
   "publicKey": "Public key",
   "qrCode": "QR code",
@@ -309,22 +397,44 @@
   "quickConnectHint": "Saved to hosts, offering all your keys",
   "recommended": "recommended",
   "reconnect": "Reconnect",
+  "refresh": "Refresh",
+  "regex": "Regular expression",
+  "reload": "Reload",
   "rememberUntilClosed": "Remember until nux is closed",
+  "removeBookmark": "Remove bookmark",
   "rename": "Rename",
   "repeatPassphrase": "Repeat passphrase",
   "requireUnlock": "Require device unlock",
   "requireUnlockHint": "Fingerprint, face or screen lock before each use",
   "required": "Required",
+  "resume": "Resume",
   "save": "Save",
   "saveAndConnect": "Save and connect",
+  "saveAs": "Save as…",
   "savePassword": "Save password",
   "savePasswordHint": "Kept in the device's secure storage",
+  "savedAs": "Saved {name}",
+  "@savedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "searchHosts": "Search hosts",
+  "selectAll": "Select all",
   "settings": "Settings",
   "share": "Share",
   "show": "Show",
+  "showAsText": "Show as text",
+  "showHiddenFiles": "Show hidden files",
+  "showRendered": "Show formatted",
+  "showSource": "Show source",
   "showTabs": "Show tabs",
   "skipKey": "Skip this key",
+  "sortByDate": "Sort by date",
+  "sortByName": "Sort by name",
+  "sortBySize": "Sort by size",
   "sourceCode": "Source code",
   "ssh": "SSH",
   "sshAuthFailed": "The server refused the keys and password offered",
@@ -376,11 +486,18 @@
     }
   },
   "terminalDisconnected": "Disconnected",
+  "terminalHere": "Terminal here",
   "terminalPressEnter": "Press Enter to reconnect",
   "theme": "Theme",
   "themeDark": "Dark",
   "themeLight": "Light",
   "themeSystem": "System",
+  "transferCancelled": "Cancelled — resume continues where it stopped",
+  "transferDownloaded": "Downloaded",
+  "transferQueued": "Waiting",
+  "transferUploaded": "Uploaded",
+  "transfers": "Transfers",
+  "tryAgain": "Try again",
   "undo": "Undo",
   "unlockKey": "Unlock {name}",
   "@unlockKey": {
@@ -431,6 +548,7 @@
   "updatesAuto": "Check for updates automatically",
   "updatesBeta": "Beta versions",
   "updatesBetaHint": "Also offer pre-releases. They may be unstable.",
+  "upload": "Upload",
   "useKey": "Use this key",
   "useKeyFor": "Sign in to {name} with this key from now on?",
   "@useKeyFor": {
@@ -443,5 +561,6 @@
   "usedBy": "Used by",
   "usedByNone": "No host uses this key yet",
   "usernameField": "Username",
-  "whatsNew": "What's new"
+  "whatsNew": "What's new",
+  "wrapLines": "Wrap lines"
 }

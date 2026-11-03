@@ -9,10 +9,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nux_backend/nux_backend.dart' show LocalFileSystem;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
 import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/connections/domain/host_key_check.dart';
+import 'package:nux/features/files/domain/fs_handle.dart';
 import 'package:nux/features/settings/data/settings_repository.dart';
 import 'package:nux/features/ssh/domain/ssh_prompter.dart';
 import 'package:nux/features/ssh/presentation/dialog_prompter.dart';
@@ -60,6 +62,24 @@ void main() {
     c.read(workspaceProvider).open(tab);
   }
 
+  /// A small project to browse; the files tab and viewer read it instead of SFTP.
+  Directory sampleProject() {
+    final root = Directory.systemTemp.createTempSync('nux-shot-');
+    Directory('${root.path}/lib/src').createSync(recursive: true);
+    Directory('${root.path}/test').createSync();
+    Directory('${root.path}/.git').createSync();
+    File('${root.path}/README.md').writeAsStringSync('# demo\n\nA sample project.\n');
+    File('${root.path}/pubspec.yaml').writeAsStringSync('name: demo\nenvironment:\n  sdk: ^3.13.0\n');
+    File('${root.path}/.gitignore').writeAsStringSync('build/\n');
+    File('${root.path}/lib/main.dart').writeAsStringSync(_sampleDart);
+    File('${root.path}/deploy.sh').writeAsStringSync('#!/bin/sh\nset -e\nrsync -a build/ server:/srv/demo/\n');
+    return root;
+  }
+
+  Future<void> useLocal(ProviderContainer c, Directory root) async {
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root.path), release: () {});
+  }
+
   final shots = <String, _Shot>{
     'hosts': const _Shot(ThemeMode.dark, Routes.home),
     'terminal': _Shot(ThemeMode.dark, Routes.home, act: terminalTab),
@@ -68,6 +88,16 @@ void main() {
       await settle(tester);
       c.read(workspaceProvider).open(container(c).terminal('sample'), foreground: false);
       c.read(workspaceProvider).gridOpen = true;
+    }),
+    'files': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
+    }),
+    'viewer': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
     }),
     'host_key': _Shot(ThemeMode.light, Routes.home, act: (tester, c) async {
       showDialog<void>(
@@ -129,8 +159,9 @@ void main() {
         if (shot.path != Routes.home) c.read(routerProvider).push(shot.path);
         await settle(tester);
         await shot.act?.call(tester, c);
-        await settle(tester);
-        await settle(tester);
+        for (var i = 0; i < 4; i++) {
+          await settle(tester);
+        }
 
         final boundary = key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
         await tester.runAsync(() async {
@@ -149,6 +180,36 @@ void main() {
 }
 
 TabFactory container(ProviderContainer c) => c.read(tabFactoryProvider);
+
+const _sampleDart = r'''import 'package:flutter/material.dart';
+
+/// Counts taps. The classic, so the colours have something to show.
+void main() => runApp(const CounterApp());
+
+class CounterApp extends StatefulWidget {
+  const CounterApp({super.key});
+
+  @override
+  State<CounterApp> createState() => _CounterAppState();
+}
+
+class _CounterAppState extends State<CounterApp> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(child: Text('Tapped $_count times')),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => setState(() => _count++),
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+}
+''';
 
 class _Shot {
   const _Shot(this.theme, this.path, {this.size = _phone, this.act});

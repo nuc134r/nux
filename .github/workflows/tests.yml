@@ -37,3 +37,33 @@ jobs:
             if grep -q flutter_test "$p/pubspec.yaml"; then (cd "$p" && flutter test); else (cd "$p" && dart test); fi
             echo "::endgroup::"
           done
+
+  # The Android build is only exercised here and in release.yml; a debug arm64 APK is enough to catch
+  # Gradle, manifest and plugin problems on every push.
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - uses: actions/cache@v6
+        with:
+          path: |
+            /usr/local/lib/android/sdk/ndk/28.2.13676358
+            /usr/local/lib/android/sdk/cmake/3.22.1
+          key: android-ndk-28.2.13676358-cmake-3.22.1
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter build apk --debug --target-platform android-arm64

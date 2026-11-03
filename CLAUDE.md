@@ -16,7 +16,11 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
 ## Layout
 - `lib/core/` — db, `SecretStore`, `Log` + `redact`, shared widgets, `app_info.dart` (repo, version, `NUX_UPDATER`)
 - `lib/features/<feature>/{data,domain,presentation}`: workspace (tabs, session restore), connections (hosts,
-  known hosts), identities (SSH keys), ssh (connector, pool, backend, prompts), terminal, settings, updates
+  known hosts), identities (SSH keys), ssh (connector, pool, backend, SFTP, prompts), terminal, files (browser,
+  transfers, bookmarks), viewer, settings, updates
+- File features work on `nux_backend`'s `FileSystem` through an `FsOpener`; tests and screenshots pass a
+  `LocalFileSystem` (`TabFactory.openOverride`). New `FileSystem` implementations must pass
+  `packages/nux_backend/test/file_system_contract.dart`.
 - Tabs are `NuxTab`s (`features/workspace/domain/nux_tab.dart`) created by `TabFactory`; give a new kind a `kindName`,
   `args` and a case in `TabFactory.restore`. Heavy state (sessions) lives in the tab object, not its widget.
 - SSH goes through `SshPool` (one connection per host, shared) → `SshConnector` (jump hosts, keys, password,
@@ -31,6 +35,7 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
 - Everything logged goes through `Log`, which redacts; shared logs also mask hosts.
 - User-data tables use `SyncedTable` (UUID `id`, `createdAt`, `updatedAt`; set `updatedAt` on every write).
 - No hardcoded UI strings: add keys to both ARB files (`test/l10n_test.dart` checks), then `fvm flutter gen-l10n`.
+  `python tool/add_strings.py strings.py` adds many at once (see its docstring); use ICU plurals for counts.
 - After changing tables: `fvm dart run build_runner build`, bump `schemaVersion`, add a migration step, then
   `fvm dart run drift_dev schema dump lib/core/db/database.dart drift_schemas/app/drift_schema_vN.json` and
   `fvm dart run drift_dev schema generate drift_schemas/app test/generated_migrations`.

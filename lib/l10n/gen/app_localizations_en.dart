@@ -54,6 +54,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'nux offers the checked keys in order, then the password, then asks the server what else it wants.';
 
   @override
+  String get bookmarkFolder => 'Bookmark this folder';
+
+  @override
+  String get bookmarks => 'Bookmarks';
+
+  @override
+  String get browseFiles => 'Browse files';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -68,6 +77,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkForUpdates => 'Check for updates';
+
+  @override
+  String get clearFinished => 'Clear finished';
+
+  @override
+  String get clearSelection => 'Clear selection';
 
   @override
   String get clipboardEmpty => 'The clipboard is empty';
@@ -102,6 +117,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get copyPath => 'Copy path';
+
+  @override
   String get currentPassphrase => 'Current passphrase';
 
   @override
@@ -119,6 +137,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String deleteConnectionTitle(String name) {
     return 'Delete $name?';
+  }
+
+  @override
+  String deleteFileTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String get deleteFilesBody =>
+      'Folders are deleted with everything inside. This cannot be undone.';
+
+  @override
+  String deleteFilesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count items?',
+      one: 'Delete $count item?',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -142,6 +180,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disconnect => 'Disconnect';
+
+  @override
+  String get download => 'Download';
 
   @override
   String get duplicate => 'Duplicate';
@@ -174,7 +215,46 @@ class AppLocalizationsEn extends AppLocalizations {
       'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.';
 
   @override
+  String get fileDisconnected => 'The connection was lost';
+
+  @override
+  String get fileExists => 'Something with this name already exists';
+
+  @override
+  String get fileNotFound => 'Not found';
+
+  @override
+  String get filePermissionDenied => 'Permission denied';
+
+  @override
+  String get find => 'Find';
+
+  @override
   String get fingerprint => 'Fingerprint';
+
+  @override
+  String get folderEmpty => 'This folder is empty';
+
+  @override
+  String get folderNotEmpty => 'The folder is not empty';
+
+  @override
+  String folderOnlyHidden(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Only $count hidden items here',
+      one: 'Only $count hidden item here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get folderPath => 'Folder';
+
+  @override
+  String get foldersNotDownloaded =>
+      'Folders are not downloaded yet; only the files were queued';
 
   @override
   String get fontSize => 'Font size';
@@ -217,6 +297,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hide => 'Hide';
+
+  @override
+  String get hideHiddenFiles => 'Hide hidden files';
 
   @override
   String get homeEarly =>
@@ -272,6 +355,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hosts => 'Hosts';
 
   @override
+  String get imageUnreadable => 'This image could not be decoded';
+
+  @override
   String get importAction => 'Import';
 
   @override
@@ -307,6 +393,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String installingKey(String name) {
     return 'Installing the key on $name…';
   }
+
+  @override
+  String get invalidFileName => 'Names cannot contain /';
 
   @override
   String get invalidNumber => 'Enter a number';
@@ -424,16 +513,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get licenses => 'Licenses';
 
   @override
+  String get loadAll => 'Load all';
+
+  @override
+  String get matchCase => 'Match case';
+
+  @override
   String get more => 'More';
 
   @override
+  String get move => 'Move';
+
+  @override
+  String get moveTo => 'Move to…';
+
+  @override
+  String nSelected(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '$count selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get nameField => 'Name';
+
+  @override
+  String get newFolder => 'New folder';
 
   @override
   String get newPassphrase => 'New passphrase';
 
   @override
   String get newTab => 'New tab';
+
+  @override
+  String get next => 'Next';
 
   @override
   String get noColor => 'No colour';
@@ -462,6 +580,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTabsHint => 'Open the hosts list or connect to a server.';
 
   @override
+  String get noTransfers => 'No transfers';
+
+  @override
+  String get noWrap => 'Don\'t wrap lines';
+
+  @override
   String get none => 'None';
 
   @override
@@ -471,6 +595,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
+  String get open => 'Open';
+
+  @override
   String get openReleasePage => 'Open release page';
 
   @override
@@ -478,6 +605,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get organize => 'Organize';
+
+  @override
+  String partiallyLoaded(String loaded, String total) {
+    return 'Showing the first $loaded of $total';
+  }
 
   @override
   String get passphrase => 'Passphrase';
@@ -515,6 +647,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paste => 'Paste';
 
   @override
+  String get permExecute => 'Run';
+
+  @override
+  String get permGroup => 'Group';
+
+  @override
+  String get permOthers => 'Others';
+
+  @override
+  String get permOwner => 'Owner';
+
+  @override
+  String get permRead => 'Read';
+
+  @override
+  String get permWrite => 'Write';
+
+  @override
+  String get permissions => 'Permissions';
+
+  @override
+  String permissionsOf(String name) {
+    return 'Permissions of $name';
+  }
+
+  @override
   String get pinTab => 'Pin';
 
   @override
@@ -528,6 +686,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get predictiveBackHint => 'The page follows your back swipe';
+
+  @override
+  String get previous => 'Previous';
 
   @override
   String get protection => 'Protection';
@@ -551,7 +712,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reconnect => 'Reconnect';
 
   @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get regex => 'Regular expression';
+
+  @override
+  String get reload => 'Reload';
+
+  @override
   String get rememberUntilClosed => 'Remember until nux is closed';
+
+  @override
+  String get removeBookmark => 'Remove bookmark';
 
   @override
   String get rename => 'Rename';
@@ -570,10 +743,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get required => 'Required';
 
   @override
+  String get resume => 'Resume';
+
+  @override
   String get save => 'Save';
 
   @override
   String get saveAndConnect => 'Save and connect';
+
+  @override
+  String get saveAs => 'Save as…';
 
   @override
   String get savePassword => 'Save password';
@@ -582,7 +761,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savePasswordHint => 'Kept in the device\'s secure storage';
 
   @override
+  String savedAs(String name) {
+    return 'Saved $name';
+  }
+
+  @override
   String get searchHosts => 'Search hosts';
+
+  @override
+  String get selectAll => 'Select all';
 
   @override
   String get settings => 'Settings';
@@ -594,10 +781,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get show => 'Show';
 
   @override
+  String get showAsText => 'Show as text';
+
+  @override
+  String get showHiddenFiles => 'Show hidden files';
+
+  @override
+  String get showRendered => 'Show formatted';
+
+  @override
+  String get showSource => 'Show source';
+
+  @override
   String get showTabs => 'Show tabs';
 
   @override
   String get skipKey => 'Skip this key';
+
+  @override
+  String get sortByDate => 'Sort by date';
+
+  @override
+  String get sortByName => 'Sort by name';
+
+  @override
+  String get sortBySize => 'Sort by size';
 
   @override
   String get sourceCode => 'Source code';
@@ -650,6 +858,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get terminalDisconnected => 'Disconnected';
 
   @override
+  String get terminalHere => 'Terminal here';
+
+  @override
   String get terminalPressEnter => 'Press Enter to reconnect';
 
   @override
@@ -663,6 +874,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System';
+
+  @override
+  String get transferCancelled =>
+      'Cancelled — resume continues where it stopped';
+
+  @override
+  String get transferDownloaded => 'Downloaded';
+
+  @override
+  String get transferQueued => 'Waiting';
+
+  @override
+  String get transferUploaded => 'Uploaded';
+
+  @override
+  String get transfers => 'Transfers';
+
+  @override
+  String get tryAgain => 'Try again';
 
   @override
   String get undo => 'Undo';
@@ -721,6 +951,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Also offer pre-releases. They may be unstable.';
 
   @override
+  String get upload => 'Upload';
+
+  @override
   String get useKey => 'Use this key';
 
   @override
@@ -739,4 +972,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whatsNew => 'What\'s new';
+
+  @override
+  String get wrapLines => 'Wrap lines';
 }

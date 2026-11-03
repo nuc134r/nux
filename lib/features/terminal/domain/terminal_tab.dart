@@ -7,19 +7,22 @@ import '../../../core/log/log.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
+import '../../workspace/data/tab_factory.dart';
+import '../../workspace/data/workspace.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../presentation/terminal_view.dart';
 import 'terminal_session.dart';
 
 class TerminalTab extends NuxTab {
-  TerminalTab(Ref ref, {required this.connectionId, String? id})
+  TerminalTab(this._ref, {required this.connectionId, this.directory, String? id})
       : id = id ?? 'terminal:${newId()}',
         session = TerminalSession(
           connectionId: connectionId,
-          pool: ref.read(sshPoolProvider),
-          prompter: () => ref.read(sshPrompterProvider),
-          connections: ref.read(connectionRepositoryProvider),
-          log: ref.read(logProvider),
+          directory: directory,
+          pool: _ref.read(sshPoolProvider),
+          prompter: () => _ref.read(sshPrompterProvider),
+          connections: _ref.read(connectionRepositoryProvider),
+          log: _ref.read(logProvider),
         ) {
     session.addListener(notifyListeners);
   }
@@ -29,14 +32,18 @@ class TerminalTab extends NuxTab {
   @override
   final String id;
 
+  final Ref _ref;
   final String connectionId;
+
+  /// Folder the shell starts in (e.g. "Terminal here" from the file browser).
+  final String? directory;
   final TerminalSession session;
 
   @override
   String get kind => kindName;
 
   @override
-  Map<String, Object?> get args => {'connectionId': connectionId};
+  Map<String, Object?> get args => {'connectionId': connectionId, 'directory': ?directory};
 
   @override
   String get title => session.connection?.name ?? '…';
@@ -68,6 +75,11 @@ class TerminalTab extends NuxTab {
     final l10n = context.l10n;
     final connected = session.state == TerminalState.connected;
     return [
+      TabMenuEntry(
+        icon: Icons.folder_outlined,
+        label: l10n.browseFiles,
+        onSelected: () => _ref.read(workspaceProvider).open(_ref.read(tabFactoryProvider).files(connectionId)),
+      ),
       TabMenuEntry(
         icon: Icons.content_paste,
         label: l10n.paste,
