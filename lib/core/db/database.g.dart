@@ -384,6 +384,17 @@ class $ConnectionsTable extends Connections
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _zerotierNetworkMeta = const VerificationMeta(
+    'zerotierNetwork',
+  );
+  @override
+  late final GeneratedColumn<String> zerotierNetwork = GeneratedColumn<String>(
+    'zerotier_network',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -401,6 +412,7 @@ class $ConnectionsTable extends Connections
     sortOrder,
     keepAliveSeconds,
     lastUsedAt,
+    zerotierNetwork,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -526,6 +538,15 @@ class $ConnectionsTable extends Connections
         ),
       );
     }
+    if (data.containsKey('zerotier_network')) {
+      context.handle(
+        _zerotierNetworkMeta,
+        zerotierNetwork.isAcceptableOrUnknown(
+          data['zerotier_network']!,
+          _zerotierNetworkMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -595,6 +616,10 @@ class $ConnectionsTable extends Connections
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_used_at'],
       ),
+      zerotierNetwork: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}zerotier_network'],
+      ),
     );
   }
 
@@ -626,6 +651,9 @@ class Connection extends DataClass implements Insertable<Connection> {
   final int sortOrder;
   final int keepAliveSeconds;
   final DateTime? lastUsedAt;
+
+  /// Reach the host through this ZeroTier network (16 hex digits) instead of the internet.
+  final String? zerotierNetwork;
   const Connection({
     required this.id,
     required this.createdAt,
@@ -642,6 +670,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     required this.sortOrder,
     required this.keepAliveSeconds,
     this.lastUsedAt,
+    this.zerotierNetwork,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -668,6 +697,9 @@ class Connection extends DataClass implements Insertable<Connection> {
     map['keep_alive_seconds'] = Variable<int>(keepAliveSeconds);
     if (!nullToAbsent || lastUsedAt != null) {
       map['last_used_at'] = Variable<DateTime>(lastUsedAt);
+    }
+    if (!nullToAbsent || zerotierNetwork != null) {
+      map['zerotier_network'] = Variable<String>(zerotierNetwork);
     }
     return map;
   }
@@ -697,6 +729,9 @@ class Connection extends DataClass implements Insertable<Connection> {
       lastUsedAt: lastUsedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastUsedAt),
+      zerotierNetwork: zerotierNetwork == null && nullToAbsent
+          ? const Value.absent()
+          : Value(zerotierNetwork),
     );
   }
 
@@ -721,6 +756,7 @@ class Connection extends DataClass implements Insertable<Connection> {
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       keepAliveSeconds: serializer.fromJson<int>(json['keepAliveSeconds']),
       lastUsedAt: serializer.fromJson<DateTime?>(json['lastUsedAt']),
+      zerotierNetwork: serializer.fromJson<String?>(json['zerotierNetwork']),
     );
   }
   @override
@@ -742,6 +778,7 @@ class Connection extends DataClass implements Insertable<Connection> {
       'sortOrder': serializer.toJson<int>(sortOrder),
       'keepAliveSeconds': serializer.toJson<int>(keepAliveSeconds),
       'lastUsedAt': serializer.toJson<DateTime?>(lastUsedAt),
+      'zerotierNetwork': serializer.toJson<String?>(zerotierNetwork),
     };
   }
 
@@ -761,6 +798,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     int? sortOrder,
     int? keepAliveSeconds,
     Value<DateTime?> lastUsedAt = const Value.absent(),
+    Value<String?> zerotierNetwork = const Value.absent(),
   }) => Connection(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -777,6 +815,9 @@ class Connection extends DataClass implements Insertable<Connection> {
     sortOrder: sortOrder ?? this.sortOrder,
     keepAliveSeconds: keepAliveSeconds ?? this.keepAliveSeconds,
     lastUsedAt: lastUsedAt.present ? lastUsedAt.value : this.lastUsedAt,
+    zerotierNetwork: zerotierNetwork.present
+        ? zerotierNetwork.value
+        : this.zerotierNetwork,
   );
   Connection copyWithCompanion(ConnectionsCompanion data) {
     return Connection(
@@ -805,6 +846,9 @@ class Connection extends DataClass implements Insertable<Connection> {
       lastUsedAt: data.lastUsedAt.present
           ? data.lastUsedAt.value
           : this.lastUsedAt,
+      zerotierNetwork: data.zerotierNetwork.present
+          ? data.zerotierNetwork.value
+          : this.zerotierNetwork,
     );
   }
 
@@ -825,7 +869,8 @@ class Connection extends DataClass implements Insertable<Connection> {
           ..write('color: $color, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('keepAliveSeconds: $keepAliveSeconds, ')
-          ..write('lastUsedAt: $lastUsedAt')
+          ..write('lastUsedAt: $lastUsedAt, ')
+          ..write('zerotierNetwork: $zerotierNetwork')
           ..write(')'))
         .toString();
   }
@@ -847,6 +892,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     sortOrder,
     keepAliveSeconds,
     lastUsedAt,
+    zerotierNetwork,
   );
   @override
   bool operator ==(Object other) =>
@@ -866,7 +912,8 @@ class Connection extends DataClass implements Insertable<Connection> {
           other.color == this.color &&
           other.sortOrder == this.sortOrder &&
           other.keepAliveSeconds == this.keepAliveSeconds &&
-          other.lastUsedAt == this.lastUsedAt);
+          other.lastUsedAt == this.lastUsedAt &&
+          other.zerotierNetwork == this.zerotierNetwork);
 }
 
 class ConnectionsCompanion extends UpdateCompanion<Connection> {
@@ -885,6 +932,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
   final Value<int> sortOrder;
   final Value<int> keepAliveSeconds;
   final Value<DateTime?> lastUsedAt;
+  final Value<String?> zerotierNetwork;
   final Value<int> rowid;
   const ConnectionsCompanion({
     this.id = const Value.absent(),
@@ -902,6 +950,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     this.sortOrder = const Value.absent(),
     this.keepAliveSeconds = const Value.absent(),
     this.lastUsedAt = const Value.absent(),
+    this.zerotierNetwork = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ConnectionsCompanion.insert({
@@ -920,6 +969,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     this.sortOrder = const Value.absent(),
     this.keepAliveSeconds = const Value.absent(),
     this.lastUsedAt = const Value.absent(),
+    this.zerotierNetwork = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -942,6 +992,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     Expression<int>? sortOrder,
     Expression<int>? keepAliveSeconds,
     Expression<DateTime>? lastUsedAt,
+    Expression<String>? zerotierNetwork,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -960,6 +1011,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
       if (sortOrder != null) 'sort_order': sortOrder,
       if (keepAliveSeconds != null) 'keep_alive_seconds': keepAliveSeconds,
       if (lastUsedAt != null) 'last_used_at': lastUsedAt,
+      if (zerotierNetwork != null) 'zerotier_network': zerotierNetwork,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -980,6 +1032,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     Value<int>? sortOrder,
     Value<int>? keepAliveSeconds,
     Value<DateTime?>? lastUsedAt,
+    Value<String?>? zerotierNetwork,
     Value<int>? rowid,
   }) {
     return ConnectionsCompanion(
@@ -998,6 +1051,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
       sortOrder: sortOrder ?? this.sortOrder,
       keepAliveSeconds: keepAliveSeconds ?? this.keepAliveSeconds,
       lastUsedAt: lastUsedAt ?? this.lastUsedAt,
+      zerotierNetwork: zerotierNetwork ?? this.zerotierNetwork,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1050,6 +1104,9 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     if (lastUsedAt.present) {
       map['last_used_at'] = Variable<DateTime>(lastUsedAt.value);
     }
+    if (zerotierNetwork.present) {
+      map['zerotier_network'] = Variable<String>(zerotierNetwork.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1074,6 +1131,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
           ..write('sortOrder: $sortOrder, ')
           ..write('keepAliveSeconds: $keepAliveSeconds, ')
           ..write('lastUsedAt: $lastUsedAt, ')
+          ..write('zerotierNetwork: $zerotierNetwork, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2680,12 +2738,23 @@ class $ForwardRulesTable extends ForwardRules
   late final GeneratedColumn<String> connectionId = GeneratedColumn<String>(
     'connection_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES connections (id) ON DELETE CASCADE',
     ),
+  );
+  static const VerificationMeta _zerotierNetworkMeta = const VerificationMeta(
+    'zerotierNetwork',
+  );
+  @override
+  late final GeneratedColumn<String> zerotierNetwork = GeneratedColumn<String>(
+    'zerotier_network',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _kindMeta = const VerificationMeta('kind');
   @override
@@ -2786,6 +2855,7 @@ class $ForwardRulesTable extends ForwardRules
     createdAt,
     updatedAt,
     connectionId,
+    zerotierNetwork,
     kind,
     label,
     bindHost,
@@ -2834,8 +2904,15 @@ class $ForwardRulesTable extends ForwardRules
           _connectionIdMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_connectionIdMeta);
+    }
+    if (data.containsKey('zerotier_network')) {
+      context.handle(
+        _zerotierNetworkMeta,
+        zerotierNetwork.isAcceptableOrUnknown(
+          data['zerotier_network']!,
+          _zerotierNetworkMeta,
+        ),
+      );
     }
     if (data.containsKey('kind')) {
       context.handle(
@@ -2913,7 +2990,11 @@ class $ForwardRulesTable extends ForwardRules
       connectionId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}connection_id'],
-      )!,
+      ),
+      zerotierNetwork: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}zerotier_network'],
+      ),
       kind: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}kind'],
@@ -2959,9 +3040,14 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
   final String id;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String connectionId;
 
-  /// `local`, `remote` or `dynamic` (see `ForwardKind`).
+  /// The SSH host for local/remote/SOCKS rules; null for ZeroTier rules.
+  final String? connectionId;
+
+  /// The ZeroTier network (16 hex digits) for `zerotierTcp` / `zerotierUdp` rules.
+  final String? zerotierNetwork;
+
+  /// `local`, `remote`, `dynamic`, `zerotierTcp` or `zerotierUdp` (see `ForwardKind`).
   final String kind;
   final String label;
 
@@ -2980,7 +3066,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     required this.id,
     required this.createdAt,
     required this.updatedAt,
-    required this.connectionId,
+    this.connectionId,
+    this.zerotierNetwork,
     required this.kind,
     required this.label,
     required this.bindHost,
@@ -2996,7 +3083,12 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     map['id'] = Variable<String>(id);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
-    map['connection_id'] = Variable<String>(connectionId);
+    if (!nullToAbsent || connectionId != null) {
+      map['connection_id'] = Variable<String>(connectionId);
+    }
+    if (!nullToAbsent || zerotierNetwork != null) {
+      map['zerotier_network'] = Variable<String>(zerotierNetwork);
+    }
     map['kind'] = Variable<String>(kind);
     map['label'] = Variable<String>(label);
     map['bind_host'] = Variable<String>(bindHost);
@@ -3013,7 +3105,12 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       id: Value(id),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
-      connectionId: Value(connectionId),
+      connectionId: connectionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(connectionId),
+      zerotierNetwork: zerotierNetwork == null && nullToAbsent
+          ? const Value.absent()
+          : Value(zerotierNetwork),
       kind: Value(kind),
       label: Value(label),
       bindHost: Value(bindHost),
@@ -3034,7 +3131,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       id: serializer.fromJson<String>(json['id']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      connectionId: serializer.fromJson<String>(json['connectionId']),
+      connectionId: serializer.fromJson<String?>(json['connectionId']),
+      zerotierNetwork: serializer.fromJson<String?>(json['zerotierNetwork']),
       kind: serializer.fromJson<String>(json['kind']),
       label: serializer.fromJson<String>(json['label']),
       bindHost: serializer.fromJson<String>(json['bindHost']),
@@ -3052,7 +3150,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       'id': serializer.toJson<String>(id),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'connectionId': serializer.toJson<String>(connectionId),
+      'connectionId': serializer.toJson<String?>(connectionId),
+      'zerotierNetwork': serializer.toJson<String?>(zerotierNetwork),
       'kind': serializer.toJson<String>(kind),
       'label': serializer.toJson<String>(label),
       'bindHost': serializer.toJson<String>(bindHost),
@@ -3068,7 +3167,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     String? id,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? connectionId,
+    Value<String?> connectionId = const Value.absent(),
+    Value<String?> zerotierNetwork = const Value.absent(),
     String? kind,
     String? label,
     String? bindHost,
@@ -3081,7 +3181,10 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
-    connectionId: connectionId ?? this.connectionId,
+    connectionId: connectionId.present ? connectionId.value : this.connectionId,
+    zerotierNetwork: zerotierNetwork.present
+        ? zerotierNetwork.value
+        : this.zerotierNetwork,
     kind: kind ?? this.kind,
     label: label ?? this.label,
     bindHost: bindHost ?? this.bindHost,
@@ -3099,6 +3202,9 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       connectionId: data.connectionId.present
           ? data.connectionId.value
           : this.connectionId,
+      zerotierNetwork: data.zerotierNetwork.present
+          ? data.zerotierNetwork.value
+          : this.zerotierNetwork,
       kind: data.kind.present ? data.kind.value : this.kind,
       label: data.label.present ? data.label.value : this.label,
       bindHost: data.bindHost.present ? data.bindHost.value : this.bindHost,
@@ -3121,6 +3227,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('connectionId: $connectionId, ')
+          ..write('zerotierNetwork: $zerotierNetwork, ')
           ..write('kind: $kind, ')
           ..write('label: $label, ')
           ..write('bindHost: $bindHost, ')
@@ -3139,6 +3246,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     createdAt,
     updatedAt,
     connectionId,
+    zerotierNetwork,
     kind,
     label,
     bindHost,
@@ -3156,6 +3264,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.connectionId == this.connectionId &&
+          other.zerotierNetwork == this.zerotierNetwork &&
           other.kind == this.kind &&
           other.label == this.label &&
           other.bindHost == this.bindHost &&
@@ -3170,7 +3279,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
   final Value<String> id;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
-  final Value<String> connectionId;
+  final Value<String?> connectionId;
+  final Value<String?> zerotierNetwork;
   final Value<String> kind;
   final Value<String> label;
   final Value<String> bindHost;
@@ -3185,6 +3295,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.connectionId = const Value.absent(),
+    this.zerotierNetwork = const Value.absent(),
     this.kind = const Value.absent(),
     this.label = const Value.absent(),
     this.bindHost = const Value.absent(),
@@ -3199,7 +3310,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.id = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
-    required String connectionId,
+    this.connectionId = const Value.absent(),
+    this.zerotierNetwork = const Value.absent(),
     required String kind,
     this.label = const Value.absent(),
     this.bindHost = const Value.absent(),
@@ -3211,7 +3323,6 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
-       connectionId = Value(connectionId),
        kind = Value(kind),
        bindPort = Value(bindPort);
   static Insertable<ForwardRule> custom({
@@ -3219,6 +3330,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<String>? connectionId,
+    Expression<String>? zerotierNetwork,
     Expression<String>? kind,
     Expression<String>? label,
     Expression<String>? bindHost,
@@ -3234,6 +3346,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (connectionId != null) 'connection_id': connectionId,
+      if (zerotierNetwork != null) 'zerotier_network': zerotierNetwork,
       if (kind != null) 'kind': kind,
       if (label != null) 'label': label,
       if (bindHost != null) 'bind_host': bindHost,
@@ -3250,7 +3363,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Value<String>? id,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
-    Value<String>? connectionId,
+    Value<String?>? connectionId,
+    Value<String?>? zerotierNetwork,
     Value<String>? kind,
     Value<String>? label,
     Value<String>? bindHost,
@@ -3266,6 +3380,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       connectionId: connectionId ?? this.connectionId,
+      zerotierNetwork: zerotierNetwork ?? this.zerotierNetwork,
       kind: kind ?? this.kind,
       label: label ?? this.label,
       bindHost: bindHost ?? this.bindHost,
@@ -3292,6 +3407,9 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     }
     if (connectionId.present) {
       map['connection_id'] = Variable<String>(connectionId.value);
+    }
+    if (zerotierNetwork.present) {
+      map['zerotier_network'] = Variable<String>(zerotierNetwork.value);
     }
     if (kind.present) {
       map['kind'] = Variable<String>(kind.value);
@@ -3330,6 +3448,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('connectionId: $connectionId, ')
+          ..write('zerotierNetwork: $zerotierNetwork, ')
           ..write('kind: $kind, ')
           ..write('label: $label, ')
           ..write('bindHost: $bindHost, ')
@@ -3558,6 +3677,7 @@ typedef $$ConnectionsTableCreateCompanionBuilder =
       Value<int> sortOrder,
       Value<int> keepAliveSeconds,
       Value<DateTime?> lastUsedAt,
+      Value<String?> zerotierNetwork,
       Value<int> rowid,
     });
 typedef $$ConnectionsTableUpdateCompanionBuilder =
@@ -3577,6 +3697,7 @@ typedef $$ConnectionsTableUpdateCompanionBuilder =
       Value<int> sortOrder,
       Value<int> keepAliveSeconds,
       Value<DateTime?> lastUsedAt,
+      Value<String?> zerotierNetwork,
       Value<int> rowid,
     });
 
@@ -3714,6 +3835,11 @@ class $$ConnectionsTableFilterComposer
 
   ColumnFilters<DateTime> get lastUsedAt => $composableBuilder(
     column: $table.lastUsedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3870,6 +3996,11 @@ class $$ConnectionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ConnectionsTableOrderingComposer get jumpHostId {
     final $$ConnectionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3950,6 +4081,11 @@ class $$ConnectionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastUsedAt => $composableBuilder(
     column: $table.lastUsedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
     builder: (column) => column,
   );
 
@@ -4074,6 +4210,7 @@ class $$ConnectionsTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> keepAliveSeconds = const Value.absent(),
                 Value<DateTime?> lastUsedAt = const Value.absent(),
+                Value<String?> zerotierNetwork = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ConnectionsCompanion(
                 id: id,
@@ -4091,6 +4228,7 @@ class $$ConnectionsTableTableManager
                 sortOrder: sortOrder,
                 keepAliveSeconds: keepAliveSeconds,
                 lastUsedAt: lastUsedAt,
+                zerotierNetwork: zerotierNetwork,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4110,6 +4248,7 @@ class $$ConnectionsTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> keepAliveSeconds = const Value.absent(),
                 Value<DateTime?> lastUsedAt = const Value.absent(),
+                Value<String?> zerotierNetwork = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ConnectionsCompanion.insert(
                 id: id,
@@ -4127,6 +4266,7 @@ class $$ConnectionsTableTableManager
                 sortOrder: sortOrder,
                 keepAliveSeconds: keepAliveSeconds,
                 lastUsedAt: lastUsedAt,
+                zerotierNetwork: zerotierNetwork,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -5149,7 +5289,8 @@ typedef $$ForwardRulesTableCreateCompanionBuilder =
       Value<String> id,
       required DateTime createdAt,
       required DateTime updatedAt,
-      required String connectionId,
+      Value<String?> connectionId,
+      Value<String?> zerotierNetwork,
       required String kind,
       Value<String> label,
       Value<String> bindHost,
@@ -5165,7 +5306,8 @@ typedef $$ForwardRulesTableUpdateCompanionBuilder =
       Value<String> id,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
-      Value<String> connectionId,
+      Value<String?> connectionId,
+      Value<String?> zerotierNetwork,
       Value<String> kind,
       Value<String> label,
       Value<String> bindHost,
@@ -5185,9 +5327,9 @@ final class $$ForwardRulesTableReferences
       .connections
       .createAlias('forward_rules__connection_id__connections__id');
 
-  $$ConnectionsTableProcessedTableManager get connectionId {
-    final $_column = $_itemColumn<String>('connection_id')!;
-
+  $$ConnectionsTableProcessedTableManager? get connectionId {
+    final $_column = $_itemColumn<String>('connection_id');
+    if ($_column == null) return null;
     final manager = $$ConnectionsTableTableManager(
       $_db,
       $_db.connections,
@@ -5221,6 +5363,11 @@ class $$ForwardRulesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5312,6 +5459,11 @@ class $$ForwardRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get kind => $composableBuilder(
     column: $table.kind,
     builder: (column) => ColumnOrderings(column),
@@ -5393,6 +5545,11 @@ class $$ForwardRulesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get zerotierNetwork => $composableBuilder(
+    column: $table.zerotierNetwork,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get kind =>
       $composableBuilder(column: $table.kind, builder: (column) => column);
@@ -5477,7 +5634,8 @@ class $$ForwardRulesTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
-                Value<String> connectionId = const Value.absent(),
+                Value<String?> connectionId = const Value.absent(),
+                Value<String?> zerotierNetwork = const Value.absent(),
                 Value<String> kind = const Value.absent(),
                 Value<String> label = const Value.absent(),
                 Value<String> bindHost = const Value.absent(),
@@ -5492,6 +5650,7 @@ class $$ForwardRulesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 connectionId: connectionId,
+                zerotierNetwork: zerotierNetwork,
                 kind: kind,
                 label: label,
                 bindHost: bindHost,
@@ -5507,7 +5666,8 @@ class $$ForwardRulesTableTableManager
                 Value<String> id = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
-                required String connectionId,
+                Value<String?> connectionId = const Value.absent(),
+                Value<String?> zerotierNetwork = const Value.absent(),
                 required String kind,
                 Value<String> label = const Value.absent(),
                 Value<String> bindHost = const Value.absent(),
@@ -5522,6 +5682,7 @@ class $$ForwardRulesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 connectionId: connectionId,
+                zerotierNetwork: zerotierNetwork,
                 kind: kind,
                 label: label,
                 bindHost: bindHost,

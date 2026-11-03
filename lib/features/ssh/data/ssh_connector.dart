@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dartssh2/dartssh2.dart';
+import 'package:zerotier_sockets/zerotier_sockets.dart' show ZeroTierException;
 
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
@@ -62,8 +63,12 @@ class SshConnector {
     required this.knownHosts,
     required this.log,
     this.socketFactory = tcpSocket,
+    this.zerotierSocket,
     this.timeout = const Duration(seconds: 15),
   });
+
+  /// Opens a TCP connection inside a ZeroTier network (for connections with a `zerotierNetwork`).
+  final Future<SSHSocket> Function(String networkId, String host, int port, Duration timeout)? zerotierSocket;
 
   final ConnectionRepository connections;
   final IdentityRepository identities;
@@ -108,13 +113,19 @@ class SshConnector {
         throw SshConnectException(SshFailure.unreachable, '$e');
       }
     } else {
-      log.i('ssh', 'Connecting to ${c.host}:${c.port}');
+      log.i('ssh', 'Connecting to ${c.host}:${c.port}${c.zerotierNetwork == null ? '' : ' over ZeroTier'}');
       try {
-        socket = await socketFactory(c.host, c.port, timeout);
+        final zt = zerotierSocket;
+        final network = c.zerotierNetwork;
+        socket = network != null && zt != null
+            ? await zt(network, c.host, c.port, timeout)
+            : await socketFactory(c.host, c.port, timeout);
       } on SocketException catch (e) {
         throw SshConnectException(SshFailure.unreachable, e.osError?.message ?? e.message);
       } on TimeoutException {
         throw const SshConnectException(SshFailure.unreachable, 'Timed out');
+      } on ZeroTierException catch (e) {
+        throw SshConnectException(SshFailure.unreachable, e.message);
       }
     }
 

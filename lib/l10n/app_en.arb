@@ -201,6 +201,34 @@
       }
     }
   },
+  "explainZeroTierTcp": "Apps on this device connect to localhost:{port} and reach {target} in ZeroTier network {network}. No SSH involved.",
+  "@explainZeroTierTcp": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "network": {
+        "type": "String"
+      }
+    }
+  },
+  "explainZeroTierUdp": "UDP packets sent to localhost:{port} go to {target} in ZeroTier network {network}, and replies come back. Good for games, DNS, VoIP.",
+  "@explainZeroTierUdp": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "network": {
+        "type": "String"
+      }
+    }
+  },
   "exportPassphraseTitle": "Passphrase for the exported key",
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
@@ -396,8 +424,11 @@
     }
   },
   "invalidFileName": "Names cannot contain /",
+  "invalidNetworkId": "A network id is 16 hexadecimal digits",
   "invalidNumber": "Enter a number",
   "invalidPort": "1–65535",
+  "join": "Join",
+  "joinNetwork": "Join a network",
   "jumpHost": "Jump host",
   "jumpHostHint": "Connect through another saved host (like ProxyJump)",
   "keepAlive": "Keep-alive, seconds",
@@ -469,6 +500,7 @@
     }
   },
   "later": "Later",
+  "leave": "Leave",
   "licenses": "Licenses",
   "loadAll": "Load all",
   "matchCase": "Match case",
@@ -570,6 +602,8 @@
   "qrCode": "QR code",
   "quickConnect": "Quick connect",
   "quickConnectHint": "Saved to hosts, offering all your keys",
+  "reachThroughZeroTier": "Reach it through ZeroTier",
+  "reachThroughZeroTierHint": "For hosts with no public address: nux joins the network itself, no VPN app needed",
   "recommended": "recommended",
   "reconnect": "Reconnect",
   "refresh": "Refresh",
@@ -657,6 +691,7 @@
   "targetHost": "Destination",
   "targetHostLocalHint": "As the server sees it: localhost is the server itself",
   "targetHostRemoteHint": "As this device sees it: localhost is this device",
+  "targetHostZeroTierHint": "The ZeroTier address of the device, like 10.147.17.5",
   "terminal": "Terminal",
   "terminalConnecting": "Connecting to {address}…",
   "@terminalConnecting": {
@@ -674,6 +709,8 @@
   "themeDark": "Dark",
   "themeLight": "Light",
   "themeSystem": "System",
+  "throughSsh": "SSH host",
+  "throughZeroTier": "ZeroTier",
   "transferCancelled": "Cancelled — resume continues where it stopped",
   "transferDownloaded": "Downloaded",
   "transferQueued": "Waiting",
@@ -743,6 +780,31 @@
   "usedBy": "Used by",
   "usedByNone": "No host uses this key yet",
   "usernameField": "Username",
+  "viaZeroTier": "ZeroTier {network}",
+  "@viaZeroTier": {
+    "placeholders": {
+      "network": {
+        "type": "String"
+      }
+    }
+  },
   "whatsNew": "What's new",
-  "wrapLines": "Wrap lines"
+  "wrapLines": "Wrap lines",
+  "zerotierNetwork": "ZeroTier network",
+  "ztAbout": "nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.",
+  "ztAccessDenied": "Not authorized: allow this node in the network's controller",
+  "ztAutoStart": "Start with nux",
+  "ztNetworkIdle": "The node is off",
+  "ztNetworks": "Networks",
+  "ztNoNetworks": "No networks yet",
+  "ztNoNetworksHint": "Join one with its 16-digit id from my.zerotier.com or your own controller",
+  "ztNode": "ZeroTier node",
+  "ztNodeIdHint": "This node's id: authorize it in your network's controller",
+  "ztNotFound": "No such network",
+  "ztOffline": "Started, looking for ZeroTier's servers…",
+  "ztOnline": "Online",
+  "ztRequesting": "Waiting for the network's controller (authorize this node there)",
+  "ztStarting": "Starting…",
+  "ztStopped": "Off",
+  "ztWaitingAddress": "Joined, waiting for an address"
 }

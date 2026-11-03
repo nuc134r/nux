@@ -100,8 +100,10 @@ Future<RunningForward> startForward(
         );
         return _DynamicForward(socks, stats);
       } on SocketException catch (e) {
-        throw _bindError(e);
+        throw forwardBindError(e);
       }
+    case ForwardKind.zerotierTcp || ForwardKind.zerotierUdp:
+      throw ArgumentError('ZeroTier forwards do not use SSH');
   }
 }
 
@@ -109,11 +111,12 @@ Future<ServerSocket> _bind(String host, int port) async {
   try {
     return await ServerSocket.bind(host, port);
   } on SocketException catch (e) {
-    throw _bindError(e);
+    throw forwardBindError(e);
   }
 }
 
-ForwardException _bindError(SocketException e) {
+/// A [ForwardException] for a failed local bind.
+ForwardException forwardBindError(SocketException e) {
   final code = e.osError?.errorCode;
   // EADDRINUSE: 98 Linux/Android, 48 macOS, 10048 Windows. EACCES: 13.
   // Dart refuses a second bind in the same process before asking the OS (no error code then).

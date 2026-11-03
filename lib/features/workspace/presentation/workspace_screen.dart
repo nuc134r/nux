@@ -7,6 +7,7 @@ import '../../../app/router.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
+import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/presentation/update_ui.dart';
 import '../data/tab_factory.dart';
@@ -24,6 +25,7 @@ class WorkspaceScreen extends ConsumerWidget {
     if (ref.watch(workspaceReadyProvider).isLoading) return const Scaffold();
     // Rules marked "start with nux" start once the screen (and its dialogs) can be shown.
     ref.watch(forwardingAutoStartProvider);
+    ref.watch(zeroTierAutoStartProvider);
     return TabSwitcher(
             controller: controller,
             headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),

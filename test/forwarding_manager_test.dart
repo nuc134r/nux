@@ -45,6 +45,7 @@ ForwardRule rule(String id, {bool auto = false}) => ForwardRule(
       createdAt: DateTime(2026),
       updatedAt: DateTime(2026),
       connectionId: 'c',
+      zerotierNetwork: null,
       kind: ForwardKind.local.name,
       label: '',
       bindHost: '127.0.0.1',
@@ -71,7 +72,7 @@ void main() {
     startError = null;
     var released = 0;
     manager = ForwardingManager(
-      connect: (id) async {
+      connect: (rule) async {
         if (connectFailures > 0) {
           connectFailures--;
           throw Exception('unreachable');

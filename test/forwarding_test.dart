@@ -135,6 +135,7 @@ void main() {
           createdAt: DateTime(2026),
           updatedAt: DateTime(2026),
           connectionId: conn,
+          zerotierNetwork: null,
           kind: k.name,
           label: '',
           bindHost: host,

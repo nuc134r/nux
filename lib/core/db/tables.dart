@@ -48,6 +48,9 @@ class Connections extends Table with SyncedTable {
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   IntColumn get keepAliveSeconds => integer().withDefault(const Constant(15))();
   DateTimeColumn get lastUsedAt => dateTime().nullable()();
+
+  /// Reach the host through this ZeroTier network (16 hex digits) instead of the internet.
+  TextColumn get zerotierNetwork => text().nullable()();
 }
 
 /// An SSH key. The private key lives in `SecretStore` as `key:<id>` (OpenSSH format, encrypted with
@@ -93,9 +96,13 @@ class Bookmarks extends Table with SyncedTable {
 
 /// A port forwarding rule on a saved connection (like `ssh -L`, `-R` or `-D`).
 class ForwardRules extends Table with SyncedTable {
-  TextColumn get connectionId => text().references(Connections, #id, onDelete: KeyAction.cascade)();
+  /// The SSH host for local/remote/SOCKS rules; null for ZeroTier rules.
+  TextColumn get connectionId => text().nullable().references(Connections, #id, onDelete: KeyAction.cascade)();
 
-  /// `local`, `remote` or `dynamic` (see `ForwardKind`).
+  /// The ZeroTier network (16 hex digits) for `zerotierTcp` / `zerotierUdp` rules.
+  TextColumn get zerotierNetwork => text().nullable()();
+
+  /// `local`, `remote`, `dynamic`, `zerotierTcp` or `zerotierUdp` (see `ForwardKind`).
   TextColumn get kind => text()();
   TextColumn get label => text().withDefault(const Constant(''))();
 

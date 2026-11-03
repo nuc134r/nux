@@ -17,7 +17,7 @@ class AppDatabase extends _$AppDatabase {
   // After a schema change: bump this, add the step below, dump the schema and regenerate the
   // migration test helpers (see CLAUDE.md).
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -30,6 +30,12 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 3) await m.createTable(bookmarks);
           if (from < 4) await m.createTable(forwardRules);
+          if (from >= 4 && from < 5) {
+            // connectionId became nullable (ZeroTier rules have no SSH host): rebuild the table.
+            await m.alterTable(TableMigration(forwardRules, newColumns: [forwardRules.zerotierNetwork]));
+          }
+          // Tables created above already have the newest columns; only older ones need them added.
+          if (from >= 2 && from < 5) await m.addColumn(connections, connections.zerotierNetwork);
         },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');

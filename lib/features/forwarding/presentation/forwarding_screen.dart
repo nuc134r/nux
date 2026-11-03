@@ -26,9 +26,10 @@ class ForwardingScreen extends ConsumerWidget {
         .toList();
     final connections = {for (final c in ref.watch(connectionsProvider).value ?? const <Connection>[]) c.id: c};
     final manager = ref.watch(forwardingManagerProvider);
+    final names = {for (final MapEntry(:key, :value) in connections.entries) key: value.name};
     final byHost = <String, List<ForwardRule>>{};
     for (final r in rules) {
-      byHost.putIfAbsent(r.connectionId, () => []).add(r);
+      byHost.putIfAbsent(forwardVia(l10n, r, names), () => []).add(r);
     }
     return Scaffold(
       appBar: AppBar(
@@ -70,9 +71,9 @@ class ForwardingScreen extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Text(l10n.forwardingBackgroundHint, style: theme.textTheme.bodySmall),
                 ),
-                for (final MapEntry(key: id, value: list) in byHost.entries)
+                for (final MapEntry(key: via, value: list) in byHost.entries)
                   Island(
-                    title: connectionId == null ? connections[id]?.name ?? id : null,
+                    title: connectionId == null ? via : null,
                     children: [for (final r in list) ForwardRuleTile(rule: r)],
                   ),
               ],

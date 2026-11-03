@@ -8,7 +8,17 @@ enum ForwardKind {
   remote,
 
   /// `ssh -D`: a SOCKS5 proxy on this device; apps choose where to go through the server.
-  dynamic;
+  dynamic,
+
+  /// A TCP port on this device reaches a ZeroTier address (no SSH).
+  zerotierTcp,
+
+  /// A UDP port on this device reaches a ZeroTier address (no SSH).
+  zerotierUdp;
+
+  bool get overZeroTier => this == zerotierTcp || this == zerotierUdp;
+
+  bool get udp => this == zerotierUdp;
 
   static ForwardKind parse(String s) => values.asNameMap()[s] ?? local;
 }
@@ -23,6 +33,8 @@ extension ForwardRuleX on ForwardRule {
       ForwardKind.local => '$bind → $targetHost:$targetPort',
       ForwardKind.remote => '$bind ← $targetHost:$targetPort',
       ForwardKind.dynamic => 'SOCKS $bind',
+      ForwardKind.zerotierTcp => '$bind → $targetHost:$targetPort',
+      ForwardKind.zerotierUdp => 'UDP $bind → $targetHost:$targetPort',
     };
   }
 }
@@ -66,6 +78,7 @@ ForwardRule? conflictingRule(ForwardRule rule, Iterable<ForwardRule> others) {
   final onDevice = kind != ForwardKind.remote;
   for (final o in others) {
     if (o.id == rule.id || o.bindPort != rule.bindPort) continue;
+    if (o.forwardKind.udp != kind.udp) continue; // TCP and UDP ports are separate
     final otherOnDevice = o.forwardKind != ForwardKind.remote;
     if (onDevice != otherOnDevice) continue;
     if (!onDevice && o.connectionId != rule.connectionId) continue;

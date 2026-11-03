@@ -12,6 +12,7 @@ import '../features/identities/presentation/identity_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/updates/presentation/version_screen.dart';
 import '../features/workspace/presentation/workspace_screen.dart';
+import '../features/zerotier/presentation/zerotier_screen.dart';
 
 /// The navigator dialogs from background work (SSH prompts) are shown on.
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -33,6 +34,7 @@ abstract final class Routes {
   static String newForward({String? connectionId}) =>
       connectionId == null ? '/forwarding/new' : '/forwarding/new?connection=$connectionId';
   static String forward(String id) => '/forwarding/$id';
+  static const zerotier = '/zerotier';
 
   /// Every screen, with `sample` ids (the smoke test creates rows with those ids).
   static final all = [
@@ -49,6 +51,7 @@ abstract final class Routes {
     forwardingFor('sample'),
     newForward(connectionId: 'sample'),
     forward('sample'),
+    zerotier,
   ];
 }
 
@@ -77,6 +80,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']),
       ),
       GoRoute(path: '/forwarding/:id', builder: (context, state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
+      GoRoute(path: Routes.zerotier, builder: (context, state) => const ZeroTierScreen()),
     ],
   );
   ref.onDispose(router.dispose);

@@ -470,6 +470,18 @@ abstract class AppLocalizations {
   /// **'Programs on {host} connect to its port {port} and reach {target} as seen from this device.'**
   String explainRemote(String host, String port, String target);
 
+  /// No description provided for @explainZeroTierTcp.
+  ///
+  /// In en, this message translates to:
+  /// **'Apps on this device connect to localhost:{port} and reach {target} in ZeroTier network {network}. No SSH involved.'**
+  String explainZeroTierTcp(String port, String target, String network);
+
+  /// No description provided for @explainZeroTierUdp.
+  ///
+  /// In en, this message translates to:
+  /// **'UDP packets sent to localhost:{port} go to {target} in ZeroTier network {network}, and replies come back. Good for games, DNS, VoIP.'**
+  String explainZeroTierUdp(String port, String target, String network);
+
   /// No description provided for @exportPassphraseTitle.
   ///
   /// In en, this message translates to:
@@ -956,6 +968,12 @@ abstract class AppLocalizations {
   /// **'Names cannot contain /'**
   String get invalidFileName;
 
+  /// No description provided for @invalidNetworkId.
+  ///
+  /// In en, this message translates to:
+  /// **'A network id is 16 hexadecimal digits'**
+  String get invalidNetworkId;
+
   /// No description provided for @invalidNumber.
   ///
   /// In en, this message translates to:
@@ -967,6 +985,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1–65535'**
   String get invalidPort;
+
+  /// No description provided for @join.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get join;
+
+  /// No description provided for @joinNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a network'**
+  String get joinNetwork;
 
   /// No description provided for @jumpHost.
   ///
@@ -1141,6 +1171,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Later'**
   String get later;
+
+  /// No description provided for @leave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
 
   /// No description provided for @licenses.
   ///
@@ -1520,6 +1556,18 @@ abstract class AppLocalizations {
   /// **'Saved to hosts, offering all your keys'**
   String get quickConnectHint;
 
+  /// No description provided for @reachThroughZeroTier.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach it through ZeroTier'**
+  String get reachThroughZeroTier;
+
+  /// No description provided for @reachThroughZeroTierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For hosts with no public address: nux joins the network itself, no VPN app needed'**
+  String get reachThroughZeroTierHint;
+
   /// No description provided for @recommended.
   ///
   /// In en, this message translates to:
@@ -1814,6 +1862,12 @@ abstract class AppLocalizations {
   /// **'As this device sees it: localhost is this device'**
   String get targetHostRemoteHint;
 
+  /// No description provided for @targetHostZeroTierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The ZeroTier address of the device, like 10.147.17.5'**
+  String get targetHostZeroTierHint;
+
   /// No description provided for @terminal.
   ///
   /// In en, this message translates to:
@@ -1873,6 +1927,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System'**
   String get themeSystem;
+
+  /// No description provided for @throughSsh.
+  ///
+  /// In en, this message translates to:
+  /// **'SSH host'**
+  String get throughSsh;
+
+  /// No description provided for @throughZeroTier.
+  ///
+  /// In en, this message translates to:
+  /// **'ZeroTier'**
+  String get throughZeroTier;
 
   /// No description provided for @transferCancelled.
   ///
@@ -2036,6 +2102,12 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get usernameField;
 
+  /// No description provided for @viaZeroTier.
+  ///
+  /// In en, this message translates to:
+  /// **'ZeroTier {network}'**
+  String viaZeroTier(String network);
+
   /// No description provided for @whatsNew.
   ///
   /// In en, this message translates to:
@@ -2047,6 +2119,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wrap lines'**
   String get wrapLines;
+
+  /// No description provided for @zerotierNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'ZeroTier network'**
+  String get zerotierNetwork;
+
+  /// No description provided for @ztAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.'**
+  String get ztAbout;
+
+  /// No description provided for @ztAccessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Not authorized: allow this node in the network\'s controller'**
+  String get ztAccessDenied;
+
+  /// No description provided for @ztAutoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with nux'**
+  String get ztAutoStart;
+
+  /// No description provided for @ztNetworkIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'The node is off'**
+  String get ztNetworkIdle;
+
+  /// No description provided for @ztNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'Networks'**
+  String get ztNetworks;
+
+  /// No description provided for @ztNoNetworks.
+  ///
+  /// In en, this message translates to:
+  /// **'No networks yet'**
+  String get ztNoNetworks;
+
+  /// No description provided for @ztNoNetworksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Join one with its 16-digit id from my.zerotier.com or your own controller'**
+  String get ztNoNetworksHint;
+
+  /// No description provided for @ztNode.
+  ///
+  /// In en, this message translates to:
+  /// **'ZeroTier node'**
+  String get ztNode;
+
+  /// No description provided for @ztNodeIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This node\'s id: authorize it in your network\'s controller'**
+  String get ztNodeIdHint;
+
+  /// No description provided for @ztNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No such network'**
+  String get ztNotFound;
+
+  /// No description provided for @ztOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Started, looking for ZeroTier\'s servers…'**
+  String get ztOffline;
+
+  /// No description provided for @ztOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get ztOnline;
+
+  /// No description provided for @ztRequesting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the network\'s controller (authorize this node there)'**
+  String get ztRequesting;
+
+  /// No description provided for @ztStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get ztStarting;
+
+  /// No description provided for @ztStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get ztStopped;
+
+  /// No description provided for @ztWaitingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined, waiting for an address'**
+  String get ztWaitingAddress;
 }
 
 class _AppLocalizationsDelegate

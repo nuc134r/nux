@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:zerotier_sockets/zerotier_sockets.dart';
+
 import '../../../core/log/log.dart';
+import '../../zerotier/data/zerotier_service.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/known_hosts_repository.dart';
 import '../../identities/data/identity_repository.dart';
@@ -14,6 +17,10 @@ final sshConnectorProvider = Provider((ref) => SshConnector(
       identities: ref.watch(identityRepositoryProvider),
       knownHosts: ref.watch(knownHostsRepositoryProvider),
       log: ref.watch(logProvider),
+      zerotierSocket: (network, host, port, timeout) async {
+        await ref.read(zeroTierServiceProvider).ensureNetwork(network);
+        return ZeroTierSshSocket(await ZeroTierSocket.connect(host, port, timeout: timeout));
+      },
     ));
 
 final sshPoolProvider = Provider((ref) {

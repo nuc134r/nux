@@ -115,7 +115,7 @@ void main() {
       );
     }),
     'editor': _Shot(ThemeMode.light, Routes.connection('sample')),
-    'forwarding': _Shot(ThemeMode.dark, Routes.forwarding),
+    'forwarding': const _Shot(ThemeMode.dark, Routes.forwarding),
     'forward_rule': _Shot(ThemeMode.light, Routes.forward('sample')),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),

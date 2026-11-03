@@ -17,7 +17,11 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
 - `lib/core/` — db, `SecretStore`, `Log` + `redact`, shared widgets, `app_info.dart` (repo, version, `NUX_UPDATER`)
 - `lib/features/<feature>/{data,domain,presentation}`: workspace (tabs, session restore), connections (hosts,
   known hosts), identities (SSH keys), ssh (connector, pool, backend, SFTP, prompts), terminal, files (browser,
-  transfers, bookmarks), viewer, forwarding (rules, engine, manager, foreground service), settings, updates
+  transfers, bookmarks), viewer, forwarding (rules, engine, manager, foreground service), zerotier (node
+  service, SSH socket adapter, TCP/UDP forwards), settings, updates
+- ZeroTier comes from `zerotier_sockets` (git dependency): its build hook clones libzt and compiles it with
+  CMake, so builds and `flutter test` need git, CMake and a C++ compiler (the NDK for Android). Never call
+  libzt from widget tests: `@Native` functions load the library on first call; the node is started on demand.
 - File features work on `nux_backend`'s `FileSystem` through an `FsOpener`; tests and screenshots pass a
   `LocalFileSystem` (`TabFactory.openOverride`). New `FileSystem` implementations must pass
   `packages/nux_backend/test/file_system_contract.dart`.

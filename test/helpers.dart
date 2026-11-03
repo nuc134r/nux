@@ -80,7 +80,7 @@ Future<void> insertSamples(AppDatabase db, SecretStore secrets) async {
         id: const Value('sample'),
         createdAt: now,
         updatedAt: now,
-        connectionId: 'sample',
+        connectionId: const Value('sample'),
         kind: 'local',
         label: const Value('Database'),
         bindPort: 15432,

@@ -58,17 +58,23 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Byte counters for SOCKS connections (dartssh2's SOCKS server only reports connections)
 
 ## M4 — ZeroTier (`zerotier_sockets` 2.0, own repo)
-- [ ] Spike: `hook/build.dart` + `native_toolchain_cmake` building libzt 1.8.10 for android-arm64 and linux-x64
-- [ ] Convert to a plain Dart package with native assets; drop the `.aar` and `loader.dart`
-- [ ] ffigen 23 `@Native` bindings
-- [ ] Prebuilt provider: GitHub-release binaries with pinned sha256; `LIBZT_SRC` / toolchain → build from source
-- [ ] CI matrix (android arm64/armv7/x86_64, linux, macos, windows) + check 16 KB `LOAD` alignment
-- [ ] I/O isolate with `zts_bsd_poll`; node events via `NativeCallable.listener`
-- [ ] `ZeroTierServerSocket` (bind/listen/accept)
-- [ ] `ZeroTierDatagramSocket` (UDP sendto/recvfrom)
-- [ ] `dart test` suite on Linux (two nodes in one network, or a local planet)
-- [ ] nux: ZeroTier settings (identity, networks, status), SSH-over-ZT sockets (`SSHSocket` adapter)
-- [ ] nux forwarding modes: ZT TCP, **ZT UDP**, ZT→SSH, inbound ZT→local
+- [x] `hook/build.dart` + `native_toolchain_cmake` build libzt 1.8.10 from a pinned commit (android-arm64 and
+      linux-x64 verified; Android output 16 KB aligned); local checkout via `hooks.user_defines.libzt_src`
+- [x] Plain Dart package with native assets; `.aar`, plugin and `loader.dart` gone
+- [x] ffigen 23 `@Native` bindings
+- [ ] Optional prebuilt provider (release binaries with pinned sha256) to speed up builds
+- [ ] CI matrix for the package (android ABIs, macOS, Windows); it runs `dart test` on Linux now
+- [x] One shared adaptive poller for all sockets (an I/O isolate stays possible later)
+- [ ] Node events from libzt's callback (its message is freed when the C callback returns, so the
+      async `NativeCallable.listener` cannot read it; status is polled instead)
+- [x] `ZeroTierServerSocket` (bind/listen/accept)
+- [x] `ZeroTierDatagramSocket` (UDP sendto/recvfrom)
+- [x] `dart test` on Linux (offline: identity, binding, errors); real traffic opt-in via `test/network_test.dart`
+- [x] nux: ZeroTier screen (node on/off, node id, networks with status and addresses, start with nux)
+- [x] nux: hosts reachable through a ZeroTier network (SSH over a ZeroTier TCP socket), schema v5
+- [x] nux forwarding: ZeroTier TCP and **ZeroTier UDP** (local port ↔ ZeroTier address, no SSH)
+- [ ] Inbound forwarding (ZeroTier peers reach a port on this device) and ZeroTier → SSH chains
+- [ ] Publish zerotier_sockets 2.0 to pub.dev (nux pins a git commit until then)
 
 ## M5 — Editor + workspaces
 - [ ] Workspace = backend + root; recent workspaces; project tree tab

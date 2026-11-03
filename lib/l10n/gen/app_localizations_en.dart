@@ -241,6 +241,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String explainZeroTierTcp(String port, String target, String network) {
+    return 'Apps on this device connect to localhost:$port and reach $target in ZeroTier network $network. No SSH involved.';
+  }
+
+  @override
+  String explainZeroTierUdp(String port, String target, String network) {
+    return 'UDP packets sent to localhost:$port go to $target in ZeroTier network $network, and replies come back. Good for games, DNS, VoIP.';
+  }
+
+  @override
   String get exportPassphraseTitle => 'Passphrase for the exported key';
 
   @override
@@ -547,10 +557,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidFileName => 'Names cannot contain /';
 
   @override
+  String get invalidNetworkId => 'A network id is 16 hexadecimal digits';
+
+  @override
   String get invalidNumber => 'Enter a number';
 
   @override
   String get invalidPort => '1–65535';
+
+  @override
+  String get join => 'Join';
+
+  @override
+  String get joinNetwork => 'Join a network';
 
   @override
   String get jumpHost => 'Jump host';
@@ -657,6 +676,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get later => 'Later';
+
+  @override
+  String get leave => 'Leave';
 
   @override
   String get licenses => 'Licenses';
@@ -866,6 +888,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quickConnectHint => 'Saved to hosts, offering all your keys';
 
   @override
+  String get reachThroughZeroTier => 'Reach it through ZeroTier';
+
+  @override
+  String get reachThroughZeroTierHint =>
+      'For hosts with no public address: nux joins the network itself, no VPN app needed';
+
+  @override
   String get recommended => 'recommended';
 
   @override
@@ -1028,6 +1057,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'As this device sees it: localhost is this device';
 
   @override
+  String get targetHostZeroTierHint =>
+      'The ZeroTier address of the device, like 10.147.17.5';
+
+  @override
   String get terminal => 'Terminal';
 
   @override
@@ -1058,6 +1091,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeSystem => 'System';
+
+  @override
+  String get throughSsh => 'SSH host';
+
+  @override
+  String get throughZeroTier => 'ZeroTier';
 
   @override
   String get transferCancelled =>
@@ -1155,8 +1194,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usernameField => 'Username';
 
   @override
+  String viaZeroTier(String network) {
+    return 'ZeroTier $network';
+  }
+
+  @override
   String get whatsNew => 'What\'s new';
 
   @override
   String get wrapLines => 'Wrap lines';
+
+  @override
+  String get zerotierNetwork => 'ZeroTier network';
+
+  @override
+  String get ztAbout =>
+      'nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.';
+
+  @override
+  String get ztAccessDenied =>
+      'Not authorized: allow this node in the network\'s controller';
+
+  @override
+  String get ztAutoStart => 'Start with nux';
+
+  @override
+  String get ztNetworkIdle => 'The node is off';
+
+  @override
+  String get ztNetworks => 'Networks';
+
+  @override
+  String get ztNoNetworks => 'No networks yet';
+
+  @override
+  String get ztNoNetworksHint =>
+      'Join one with its 16-digit id from my.zerotier.com or your own controller';
+
+  @override
+  String get ztNode => 'ZeroTier node';
+
+  @override
+  String get ztNodeIdHint =>
+      'This node\'s id: authorize it in your network\'s controller';
+
+  @override
+  String get ztNotFound => 'No such network';
+
+  @override
+  String get ztOffline => 'Started, looking for ZeroTier\'s servers…';
+
+  @override
+  String get ztOnline => 'Online';
+
+  @override
+  String get ztRequesting =>
+      'Waiting for the network\'s controller (authorize this node there)';
+
+  @override
+  String get ztStarting => 'Starting…';
+
+  @override
+  String get ztStopped => 'Off';
+
+  @override
+  String get ztWaitingAddress => 'Joined, waiting for an address';
 }

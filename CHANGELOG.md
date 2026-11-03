@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.5.0
+
+- **ZeroTier built in**: nux runs its own ZeroTier node (no VPN permission, no separate app). Join networks by id, see their status and your addresses, and copy the node id to authorize it.
+- Hosts can be reached **through a ZeroTier network**: turn it on in the host's settings, and SSH, files and forwarding go over ZeroTier.
+- **ZeroTier port forwarding** without SSH, for **TCP and UDP**: a port on your phone reaches a device in your ZeroTier network.
+
 ## 0.4.0
 
 - **Port forwarding**: local (`ssh -L`), remote (`ssh -R`) and SOCKS proxy (`ssh -D`) rules per host, with a sentence that explains what each rule does. Turn them on and off from the hosts list, see open connections and traffic, start rules together with nux.

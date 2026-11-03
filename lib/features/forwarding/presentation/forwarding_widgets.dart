@@ -17,13 +17,22 @@ IconData forwardIcon(ForwardKind kind) => switch (kind) {
       ForwardKind.local => Icons.call_made,
       ForwardKind.remote => Icons.call_received,
       ForwardKind.dynamic => Icons.hub_outlined,
+      ForwardKind.zerotierTcp => Icons.lan_outlined,
+      ForwardKind.zerotierUdp => Icons.podcasts,
     };
 
 String forwardKindLabel(AppLocalizations l10n, ForwardKind kind) => switch (kind) {
       ForwardKind.local => l10n.forwardLocal,
       ForwardKind.remote => l10n.forwardRemote,
       ForwardKind.dynamic => l10n.forwardDynamic,
+      ForwardKind.zerotierTcp => 'TCP',
+      ForwardKind.zerotierUdp => 'UDP',
     };
+
+/// Where a rule runs: its SSH host's name, or `ZeroTier <network>`.
+String forwardVia(AppLocalizations l10n, ForwardRule rule, Map<String, String> hostNames) => rule.forwardKind.overZeroTier
+    ? l10n.viaZeroTier(rule.zerotierNetwork ?? '')
+    : hostNames[rule.connectionId] ?? '';
 
 String forwardErrorText(AppLocalizations l10n, Object error, ForwardRule rule) => switch (error) {
       ForwardException(error: ForwardError.portInUse) => l10n.forwardPortInUse(rule.bindPort),

@@ -20,7 +20,8 @@ class ForwardLease {
   final void Function() release;
 }
 
-typedef ForwardConnect = Future<ForwardLease> Function(String connectionId);
+/// Gets what [rule] needs to run: an SSH connection, or a ready ZeroTier network.
+typedef ForwardConnect = Future<ForwardLease> Function(ForwardRule rule);
 typedef ForwardStart = Future<RunningForward> Function(ForwardLease lease, ForwardRule rule, void Function() onChange);
 
 class ForwardStatus {
@@ -98,7 +99,7 @@ class ForwardingManager extends ChangeNotifier {
   Future<void> _run(ForwardRule rule) async {
     final s = status(rule.id);
     try {
-      final lease = await connect(rule.connectionId);
+      final lease = await connect(rule);
       if (!s.on) return lease.release();
       _leases[rule.id] = lease;
       s.running = await startForward(lease, rule, _throttled);

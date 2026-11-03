@@ -13,6 +13,7 @@ import '../../connections/data/connection_repository.dart';
 import '../data/forward_rule_repository.dart';
 import '../data/forwarding_providers.dart';
 import '../domain/forward_rule.dart';
+import '../../zerotier/presentation/zerotier_network_field.dart';
 import 'forwarding_widgets.dart';
 
 /// Adds or edits a forwarding rule, explaining in plain words what it will do.
@@ -36,6 +37,9 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
   final _targetPort = TextEditingController();
   ForwardKind _kind = ForwardKind.local;
   String? _connectionId;
+  String? _network;
+
+  bool get _viaZeroTier => _kind.overZeroTier;
   bool _shared = false;
   bool _autoStart = false;
   bool _loaded = false;
@@ -60,6 +64,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
       if (r != null) {
         _original = r;
         _connectionId = r.connectionId;
+        _network = r.zerotierNetwork;
         _kind = r.forwardKind;
         _label.text = r.label;
         _bindPort.text = '${r.bindPort}';
@@ -86,7 +91,8 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
         id: widget.ruleId ?? '',
         createdAt: DateTime(2000),
         updatedAt: DateTime(2000),
-        connectionId: _connectionId ?? '',
+        connectionId: _viaZeroTier ? null : _connectionId,
+        zerotierNetwork: _viaZeroTier ? _network : null,
         kind: _kind.name,
         label: _label.text.trim(),
         bindHost: _bindHost,
@@ -118,6 +124,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
     final id = await ref.read(forwardRuleRepositoryProvider).save(ForwardRulesCompanion(
           id: _isNew ? const Value.absent() : Value(widget.ruleId!),
           connectionId: Value(draft.connectionId),
+          zerotierNetwork: Value(draft.zerotierNetwork),
           kind: Value(draft.kind),
           label: Value(draft.label),
           bindHost: Value(draft.bindHost),
@@ -153,6 +160,8 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
       ForwardKind.local => _shared ? l10n.explainLocalShared(bind, target, host) : l10n.explainLocal(bind, target, host),
       ForwardKind.remote => l10n.explainRemote(host, bind, target),
       ForwardKind.dynamic => _shared ? l10n.explainDynamicShared(bind, host) : l10n.explainDynamic(bind, host),
+      ForwardKind.zerotierTcp => l10n.explainZeroTierTcp(bind, target, _network ?? '…'),
+      ForwardKind.zerotierUdp => l10n.explainZeroTierUdp(bind, target, _network ?? '…'),
     };
   }
 
@@ -177,17 +186,32 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: connections.any((c) => c.id == _connectionId) ? _connectionId : null,
-                    decoration: InputDecoration(labelText: l10n.hostField),
-                    items: [for (final c in connections) DropdownMenuItem(value: c.id, child: Text(c.name))],
-                    onChanged: (v) => setState(() => _connectionId = v),
-                    validator: (v) => v == null ? l10n.required : null,
+                  SegmentedButton<bool>(
+                    segments: [
+                      ButtonSegment(value: false, icon: const Icon(Icons.dns_outlined), label: Text(l10n.throughSsh)),
+                      ButtonSegment(value: true, icon: const Icon(Icons.lan_outlined), label: Text(l10n.throughZeroTier)),
+                    ],
+                    selected: {_viaZeroTier},
+                    onSelectionChanged: (s) => setState(() => _kind = s.single ? ForwardKind.zerotierTcp : ForwardKind.local),
                   ),
+                  const SizedBox(height: 16),
+                  if (_viaZeroTier)
+                    ZeroTierNetworkField(
+                      initial: _network,
+                      onChanged: (v) => setState(() => _network = v),
+                    )
+                  else
+                    DropdownButtonFormField<String>(
+                      initialValue: connections.any((c) => c.id == _connectionId) ? _connectionId : null,
+                      decoration: InputDecoration(labelText: l10n.hostField),
+                      items: [for (final c in connections) DropdownMenuItem(value: c.id, child: Text(c.name))],
+                      onChanged: (v) => setState(() => _connectionId = v),
+                      validator: (v) => v == null ? l10n.required : null,
+                    ),
                   const SizedBox(height: 16),
                   SegmentedButton<ForwardKind>(
                     segments: [
-                      for (final k in ForwardKind.values)
+                      for (final k in ForwardKind.values.where((k) => k.overZeroTier == _viaZeroTier))
                         ButtonSegment(value: k, icon: Icon(forwardIcon(k)), label: Text(forwardKindLabel(l10n, k))),
                     ],
                     selected: {_kind},
@@ -224,7 +248,11 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                             keyboardType: TextInputType.url,
                             decoration: InputDecoration(
                               labelText: l10n.targetHost,
-                              helperText: _kind == ForwardKind.local ? l10n.targetHostLocalHint : l10n.targetHostRemoteHint,
+                              helperText: switch (_kind) {
+                                ForwardKind.local => l10n.targetHostLocalHint,
+                                ForwardKind.remote => l10n.targetHostRemoteHint,
+                                _ => l10n.targetHostZeroTierHint,
+                              },
                               helperMaxLines: 2,
                             ),
                             validator: (v) => (v ?? '').trim().isEmpty ? l10n.required : null,

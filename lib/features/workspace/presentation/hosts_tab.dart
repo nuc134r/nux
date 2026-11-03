@@ -264,7 +264,7 @@ class _ForwardingToggles extends ConsumerWidget {
             title: Text(l10n.portForwarding, style: Theme.of(context).textTheme.titleSmall),
             trailing: TextButton(onPressed: () => context.push(Routes.forwarding), child: Text(l10n.allRules(rules.length))),
           ),
-          for (final r in rules.take(shown)) ForwardRuleTile(rule: r, connectionName: names[r.connectionId], dense: true),
+          for (final r in rules.take(shown)) ForwardRuleTile(rule: r, connectionName: forwardVia(l10n, r, names), dense: true),
         ],
       ),
     );

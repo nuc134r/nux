@@ -243,6 +243,16 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String explainZeroTierTcp(String port, String target, String network) {
+    return 'Приложения на этом устройстве подключаются к localhost:$port и попадают на $target в сети ZeroTier $network. Без SSH.';
+  }
+
+  @override
+  String explainZeroTierUdp(String port, String target, String network) {
+    return 'UDP-пакеты на localhost:$port уходят на $target в сети ZeroTier $network, ответы возвращаются. Подходит для игр, DNS, VoIP.';
+  }
+
+  @override
   String get exportPassphraseTitle =>
       'Парольная фраза для экспортируемого ключа';
 
@@ -554,10 +564,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invalidFileName => 'Имя не может содержать /';
 
   @override
+  String get invalidNetworkId =>
+      'Идентификатор сети — 16 шестнадцатеричных цифр';
+
+  @override
   String get invalidNumber => 'Введите число';
 
   @override
   String get invalidPort => '1–65535';
+
+  @override
+  String get join => 'Подключиться';
+
+  @override
+  String get joinNetwork => 'Подключиться к сети';
 
   @override
   String get jumpHost => 'Промежуточный хост';
@@ -664,6 +684,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get later => 'Позже';
+
+  @override
+  String get leave => 'Покинуть';
 
   @override
   String get licenses => 'Лицензии';
@@ -877,6 +900,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сохранится в хосты, будут предложены все ваши ключи';
 
   @override
+  String get reachThroughZeroTier => 'Подключаться через ZeroTier';
+
+  @override
+  String get reachThroughZeroTierHint =>
+      'Для хостов без публичного адреса: nux сам подключается к сети, VPN-приложение не нужно';
+
+  @override
   String get recommended => 'рекомендуется';
 
   @override
@@ -1038,6 +1068,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Как его видит это устройство: localhost — это само устройство';
 
   @override
+  String get targetHostZeroTierHint =>
+      'Адрес устройства в ZeroTier, например 10.147.17.5';
+
+  @override
   String get terminal => 'Терминал';
 
   @override
@@ -1068,6 +1102,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get themeSystem => 'Как в системе';
+
+  @override
+  String get throughSsh => 'Через SSH';
+
+  @override
+  String get throughZeroTier => 'ZeroTier';
 
   @override
   String get transferCancelled => 'Отменено — можно продолжить с того же места';
@@ -1165,8 +1205,69 @@ class AppLocalizationsRu extends AppLocalizations {
   String get usernameField => 'Имя пользователя';
 
   @override
+  String viaZeroTier(String network) {
+    return 'ZeroTier $network';
+  }
+
+  @override
   String get whatsNew => 'Что нового';
 
   @override
   String get wrapLines => 'Переносить строки';
+
+  @override
+  String get zerotierNetwork => 'Сеть ZeroTier';
+
+  @override
+  String get ztAbout =>
+      'nux запускает собственный узел ZeroTier, независимый от приложения ZeroTier на телефоне, поэтому ему не нужно разрешение VPN. Сеть доступна только самому nux.';
+
+  @override
+  String get ztAccessDenied =>
+      'Нет доступа: разрешите этот узел в контроллере сети';
+
+  @override
+  String get ztAutoStart => 'Запускать вместе с nux';
+
+  @override
+  String get ztNetworkIdle => 'Узел выключен';
+
+  @override
+  String get ztNetworks => 'Сети';
+
+  @override
+  String get ztNoNetworks => 'Сетей пока нет';
+
+  @override
+  String get ztNoNetworksHint =>
+      'Подключитесь по 16-значному идентификатору из my.zerotier.com или своего контроллера';
+
+  @override
+  String get ztNode => 'Узел ZeroTier';
+
+  @override
+  String get ztNodeIdHint =>
+      'Идентификатор этого узла: разрешите его в контроллере сети';
+
+  @override
+  String get ztNotFound => 'Такой сети нет';
+
+  @override
+  String get ztOffline => 'Запущен, ищет серверы ZeroTier…';
+
+  @override
+  String get ztOnline => 'В сети';
+
+  @override
+  String get ztRequesting =>
+      'Ожидание контроллера сети (разрешите там этот узел)';
+
+  @override
+  String get ztStarting => 'Запуск…';
+
+  @override
+  String get ztStopped => 'Выключен';
+
+  @override
+  String get ztWaitingAddress => 'Подключено, ожидание адреса';
 }

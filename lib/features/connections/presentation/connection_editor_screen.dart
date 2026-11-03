@@ -10,6 +10,7 @@ import '../../../l10n/l10n.dart';
 import '../../identities/data/identity_repository.dart';
 import '../../identities/domain/key_material.dart';
 import '../data/connection_repository.dart';
+import '../../zerotier/presentation/zerotier_network_field.dart';
 import 'connection_actions.dart';
 
 /// Colour tags offered for connections.
@@ -36,6 +37,8 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
   final _keepAlive = TextEditingController(text: '15');
   List<String> _keys = [];
   String? _jumpHostId;
+  String? _zerotierNetwork;
+  bool _viaZeroTier = false;
   int? _color;
   bool _savePassword = false;
   bool _hasSavedPassword = false;
@@ -66,6 +69,8 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
         _keepAlive.text = '${c.keepAliveSeconds}';
         _keys = c.identityIdList;
         _jumpHostId = c.jumpHostId;
+        _zerotierNetwork = c.zerotierNetwork;
+        _viaZeroTier = c.zerotierNetwork != null;
         _color = c.color;
         _savePassword = c.savePassword;
         _hasSavedPassword = c.savePassword && await repo.savedPassword(id) != null;
@@ -98,6 +103,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
       username: Value(_user.text.trim()),
       identityIds: Value(encodeIdentityIds(_keys)),
       jumpHostId: Value(_jumpHostId),
+      zerotierNetwork: Value(_viaZeroTier ? _zerotierNetwork : null),
       groupName: Value(_group.text.trim().isEmpty ? null : _group.text.trim()),
       color: Value(_color),
       keepAliveSeconds: Value(int.tryParse(_keepAlive.text.trim()) ?? 15),
@@ -258,6 +264,18 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
                     ],
                   ),
                   SectionTitle(l10n.advanced),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    secondary: const Icon(Icons.lan_outlined),
+                    value: _viaZeroTier,
+                    onChanged: (v) => setState(() => _viaZeroTier = v),
+                    title: Text(l10n.reachThroughZeroTier),
+                    subtitle: Text(l10n.reachThroughZeroTierHint),
+                  ),
+                  if (_viaZeroTier) ...[
+                    ZeroTierNetworkField(initial: _zerotierNetwork, onChanged: (v) => _zerotierNetwork = v),
+                    const SizedBox(height: 12),
+                  ],
                   DropdownButtonFormField<String?>(
                     initialValue: jumpCandidates.any((c) => c.id == _jumpHostId) ? _jumpHostId : null,
                     decoration: InputDecoration(labelText: l10n.jumpHost, helperText: l10n.jumpHostHint),
