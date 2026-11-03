@@ -33,6 +33,7 @@ jobs:
       - name: Test packages
         run: |
           for p in packages/*/; do
+            [ -d "$p/test" ] || continue  # vendored packages (flterm) carry no tests
             echo "::group::$p"
             if grep -q flutter_test "$p/pubspec.yaml"; then (cd "$p" && flutter test); else (cd "$p" && dart test); fi
             echo "::endgroup::"
