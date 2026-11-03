@@ -48,7 +48,12 @@ class _RelayHandler extends TaskHandler {
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}
 
   @override
-  void onNotificationButtonPressed(String id) => FlutterForegroundTask.sendDataToMain(id);
+  void onNotificationButtonPressed(String id) {
+    FlutterForegroundTask.sendDataToMain(id);
+    // The app may be gone (no one receives the message): the button must work anyway. When the app
+    // is there it closes its connections and finds the service already stopped.
+    if (id == _stopButton) FlutterForegroundTask.stopService();
+  }
 
   @override
   void onNotificationPressed() => FlutterForegroundTask.launchApp();
@@ -69,6 +74,11 @@ class ForegroundServiceKeepAlive implements KeepAlive {
       foregroundTaskOptions: ForegroundTaskOptions(
         eventAction: ForegroundTaskEventAction.nothing(),
         allowWifiLock: true,
+        // Swiping nux out of the recent apps ends its Flutter engine and with it the connections, so the
+        // notification goes too (by default the plugin restarted the service: a notification for
+        // nothing, whose button no one heard).
+        stopWithTask: true,
+        allowAutoRestart: false,
       ),
     );
     FlutterForegroundTask.addTaskDataCallback(_onData);

@@ -5,6 +5,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.2
 
+- The background notification's **Disconnect all** always works, and the notification goes away when you close nux from the recent apps (closing nux ends its connections; the notification used to stay behind with a button that did nothing).
 - **Open terminal here** in the file browser's ⋮ menu: a shell on the same host, in the folder you are looking at.
 
 ## 0.7.1
