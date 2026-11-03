@@ -8,6 +8,7 @@ import 'package:nux/core/db/database.dart';
 import 'package:nux/core/log/log.dart';
 import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/connections/data/connection_repository.dart';
+import 'package:nux/features/connections/data/host_ping.dart';
 import 'package:nux/features/connections/data/known_hosts_repository.dart';
 import 'package:nux/features/connections/domain/host_key_check.dart';
 import 'package:nux/features/identities/data/identity_repository.dart';
@@ -233,6 +234,17 @@ void main() {
     await pumpEventQueue();
     expect(pool.inUseCount, 0);
     expect(service.calls.last, 'stop');
+  });
+
+  test('an open connection is pinged over SSH (no new TCP connection)', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final c = await addConnection(identityId: await identities.add(key, name: 'k'));
+    final lease = await pool.acquire(c, prompter);
+    addTearDown(lease.release);
+    expect(pool.connectedClient(c), same(lease.client));
+    final rtt = await sshPing(lease.client);
+    expect(rtt, isNotNull);
+    expect(rtt!.inSeconds, lessThan(3));
   });
 
   test('concurrent acquires share one connection', () async {

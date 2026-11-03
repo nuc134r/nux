@@ -71,7 +71,7 @@ class _HostsViewState extends ConsumerState<_HostsView> {
   void initState() {
     super.initState();
     // Pings refresh while the list is shown (the tab is unmounted when parked).
-    _ping = Timer.periodic(const Duration(seconds: 20), (_) => ref.invalidate(hostPingProvider));
+    _ping = Timer.periodic(const Duration(seconds: 5), (_) => ref.invalidate(hostPingProvider));
   }
 
   @override
@@ -209,8 +209,8 @@ class _HostTile extends ConsumerWidget {
   }
 }
 
-/// A coloured dot and the round-trip time; grey when it cannot be measured (behind a jump host, or its
-/// ZeroTier network is not up) or while measuring, red when the port does not answer.
+/// A coloured dot and the round-trip time; grey when it cannot be measured (behind a jump host and not
+/// connected, or its ZeroTier network is not up) or while measuring, red when there is no answer.
 class _Ping extends ConsumerWidget {
   const _Ping({required this.connection});
 
@@ -220,13 +220,15 @@ class _Ping extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final c = connection;
-    final ping = c.jumpHostId == null ? ref.watch(hostPingProvider((c.host, c.port, c.zerotierNetwork))) : null;
-    final result = ping?.value;
-    final (Color color, String label) = switch ((ping, result)) {
-      (null, _) || (_, Ping(measured: false)) => (theme.colorScheme.outline, ''),
-      (_, Ping(rtt: null)) => (theme.colorScheme.error, context.l10n.pingFailed),
-      (_, Ping(:final rtt?)) => (pingColor(rtt.inMilliseconds), context.l10n.pingMs(rtt.inMilliseconds)),
-      _ => (theme.colorScheme.outlineVariant, '…'),
+    final ping = ref.watch(hostPingProvider(
+      (id: c.id, host: c.host, port: c.port, network: c.zerotierNetwork, viaJump: c.jumpHostId != null),
+    ));
+    // While a refresh runs the previous result stays shown.
+    final (Color color, String label) = switch (ping.value) {
+      null => (theme.colorScheme.outlineVariant, '…'),
+      Ping(measured: false) => (theme.colorScheme.outline, ''),
+      Ping(rtt: null) => (theme.colorScheme.error, context.l10n.pingFailed),
+      Ping(:final rtt?) => (pingColor(rtt.inMilliseconds), context.l10n.pingMs(rtt.inMilliseconds)),
     };
     return Column(
       mainAxisSize: MainAxisSize.min,

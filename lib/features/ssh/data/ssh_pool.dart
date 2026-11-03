@@ -57,6 +57,9 @@ class SshPool extends ChangeNotifier {
   /// Connected or connecting connection ids.
   Set<String> get active => _entries.keys.toSet();
 
+  /// The open connection to [connectionId], if there is one (not one being set up).
+  SSHClient? connectedClient(String connectionId) => _entries[connectionId]?.client;
+
   /// Open connections that something uses (idle ones close by themselves soon).
   int get inUseCount => _entries.values.where((e) => e.client != null && e.refs > 0).length;
 

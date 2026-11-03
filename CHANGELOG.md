@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.4
+
+- Host pings refresh every 5 seconds. Connected hosts are measured over their SSH session, so hosts behind a jump host show a ping too while connected.
+
 ## 0.7.3
 
 - The host editor has one big **Save** button (no "Save and connect").
