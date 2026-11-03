@@ -78,6 +78,12 @@ or Actions → **Release APK** → Run workflow → version `0.1.0`. The workflo
 builds a universal APK plus one per ABI (`arm64-v8a`, `armeabi-v7a`, `x86_64`) and publishes them.
 The app picks the APK for its ABI.
 
+**Don't push changes to `.github/workflows/` while a release runs.** The publish step creates the tag
+with the workflow's `GITHUB_TOKEN`, and GitHub refuses (`HTTP 403: Resource not accessible by
+integration`) a token without the `workflows` permission when the tagged commit's workflow files differ
+from `main`. App changes are fine: the release tags the commit it built. If it happened, run the
+release again from `main` (its workflows match), or push the tag yourself.
+
 ## F-Droid (later)
 
 Build with `--dart-define=NUX_UPDATER=false`: the GitHub update check, the beta switch and the changelog
