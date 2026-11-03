@@ -23,7 +23,8 @@ class TestSshServer {
     final probe = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     final port = probe.port;
     await probe.close();
-    File('${dir.path}/sshd_config').writeAsStringSync('''
+    final config = File('${dir.path}/sshd_config');
+    final text = '''
 Port $port
 ListenAddress 127.0.0.1
 HostKey ${dir.path}/host_ed25519
@@ -38,7 +39,12 @@ PermitRootLogin yes
 AllowTcpForwarding yes
 Subsystem sftp internal-sftp
 LogLevel ERROR
-''');
+''';
+    // OpenSSH 9.8+ blocks a source address after failed logins, which would lock the remaining tests
+    // out after the wrong-password test. Older servers do not know the option.
+    config.writeAsStringSync('${text}PerSourcePenalties no\n');
+    final check = Process.runSync(sshd, ['-t', '-f', config.path]);
+    if (check.exitCode != 0 && '${check.stderr}'.contains('PerSourcePenalties')) config.writeAsStringSync(text);
     if (Platform.environment['USER'] == 'root' || Process.runSync('id', ['-u']).stdout.toString().trim() == '0') {
       Directory('/run/sshd').createSync(recursive: true);
     }

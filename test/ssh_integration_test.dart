@@ -178,29 +178,6 @@ void main() {
     expect(pool.state(c), SshState.disconnected);
   });
 
-  test('an unknown key is refused by the server, then a dismissed password prompt cancels', () async {
-    if (skip()) return markTestSkipped('sshd not available');
-    final other = await generateKey(KeyAlgorithm.ed25519);
-    final c = await addConnection(identityId: await identities.add(other, name: 'other'));
-    await expectLater(
-      pool.acquire(c, prompter),
-      throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.cancelled)),
-    );
-    expect(prompter.passwordRetries, [false]);
-  });
-
-  test('a wrong password is asked again, then reported as an authentication failure', () async {
-    if (skip()) return markTestSkipped('sshd not available');
-    final other = await generateKey(KeyAlgorithm.ed25519);
-    final c = await addConnection(identityId: await identities.add(other, name: 'other'));
-    prompter.passwordAnswer = 'not-the-password';
-    await expectLater(
-      pool.acquire(c, prompter),
-      throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.authFailed)),
-    );
-    expect(prompter.passwordRetries, [false, true, true]);
-  });
-
   test('passphrase-protected keys ask once when remembered', () async {
     if (skip()) return markTestSkipped('sshd not available');
     final c = await addConnection(identityId: await identities.add(key, name: 'k', passphrase: 'pw'));
@@ -236,5 +213,29 @@ void main() {
     await pumpEventQueue();
     expect(pool.state(c), SshState.connected, reason: 'still leased');
     leases[1].release();
+  });
+
+  // Last: failed logins can make newer sshd versions slow down this address.
+  test('an unknown key is refused by the server, then a dismissed password prompt cancels', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final other = await generateKey(KeyAlgorithm.ed25519);
+    final c = await addConnection(identityId: await identities.add(other, name: 'other'));
+    await expectLater(
+      pool.acquire(c, prompter),
+      throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.cancelled)),
+    );
+    expect(prompter.passwordRetries, [false]);
+  });
+
+  test('a wrong password is asked again, then reported as an authentication failure', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final other = await generateKey(KeyAlgorithm.ed25519);
+    final c = await addConnection(identityId: await identities.add(other, name: 'other'));
+    prompter.passwordAnswer = 'not-the-password';
+    await expectLater(
+      pool.acquire(c, prompter),
+      throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.authFailed)),
+    );
+    expect(prompter.passwordRetries, [false, true, true]);
   });
 }
