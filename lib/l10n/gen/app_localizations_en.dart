@@ -13,6 +13,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
+  String get addForward => 'Add forwarding';
+
+  @override
   String get addHost => 'Add host';
 
   @override
@@ -36,6 +39,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get algRsa => 'For old servers. Generating takes a while on a phone.';
+
+  @override
+  String allRules(int count) {
+    return 'All ($count)';
+  }
 
   @override
   String get appTitle => 'nux';
@@ -179,6 +187,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get devicePort => 'Port on this device';
+
+  @override
   String get disconnect => 'Disconnect';
 
   @override
@@ -194,11 +205,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get editForward => 'Edit forwarding';
+
+  @override
   String get editHost => 'Edit host';
 
   @override
   String errorGeneric(String error) {
     return 'Something went wrong: $error';
+  }
+
+  @override
+  String explainDynamic(String port, String host) {
+    return 'A SOCKS5 proxy on localhost:$port: apps that use it go out to the internet through $host.';
+  }
+
+  @override
+  String explainDynamicShared(String port, String host) {
+    return 'A SOCKS5 proxy on this device\'s port $port, open to your network: everything goes out through $host.';
+  }
+
+  @override
+  String explainLocal(String port, String target, String host) {
+    return 'Apps on this device connect to localhost:$port and reach $target as seen from $host.';
+  }
+
+  @override
+  String explainLocalShared(String port, String target, String host) {
+    return 'Devices on your network connect to this device\'s port $port and reach $target as seen from $host.';
+  }
+
+  @override
+  String explainRemote(String host, String port, String target) {
+    return 'Programs on $host connect to its port $port and reach $target as seen from this device.';
   }
 
   @override
@@ -274,6 +313,116 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String forgotten(String host) {
     return 'Forgot $host';
+  }
+
+  @override
+  String get forwardActive => 'Active';
+
+  @override
+  String forwardActiveConnections(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Active · $count connections so far',
+      one: 'Active · $count connection so far',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String forwardActiveTraffic(int open, String bytesIn, String bytesOut) {
+    return 'Active · $open open · ↓ $bytesIn ↑ $bytesOut';
+  }
+
+  @override
+  String get forwardAutoStart => 'Start when nux starts';
+
+  @override
+  String forwardBindDenied(int port) {
+    return 'This device does not allow listening on port $port';
+  }
+
+  @override
+  String forwardConflict(String name) {
+    return 'Another rule already uses this port: $name';
+  }
+
+  @override
+  String get forwardDynamic => 'SOCKS';
+
+  @override
+  String get forwardDynamicHint =>
+      'A proxy on this device: apps go out to the internet through the server (ssh -D)';
+
+  @override
+  String get forwardFailed => 'Failed';
+
+  @override
+  String get forwardLocal => 'Local';
+
+  @override
+  String get forwardLocalHint =>
+      'A port on this device leads to something only the server can reach, like its database (ssh -L)';
+
+  @override
+  String get forwardLowPort =>
+      'Android apps can only listen on ports 1024 and above';
+
+  @override
+  String get forwardOff => 'Off';
+
+  @override
+  String forwardPortInUse(int port) {
+    return 'Port $port is already in use on this device';
+  }
+
+  @override
+  String forwardReconnecting(int attempt) {
+    return 'Connection lost, reconnecting (attempt $attempt)…';
+  }
+
+  @override
+  String get forwardRemote => 'Remote';
+
+  @override
+  String get forwardRemoteHint =>
+      'A port on the server leads back to something this device can reach, like a dev server on your phone (ssh -R)';
+
+  @override
+  String get forwardRemoteRefused =>
+      'The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)';
+
+  @override
+  String get forwardShared => 'Allow other devices on the network';
+
+  @override
+  String get forwardSharedHint =>
+      'Listens on all interfaces instead of only this device';
+
+  @override
+  String get forwardStarting => 'Starting…';
+
+  @override
+  String forwardingActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count port forwardings active',
+      one: '$count port forwarding active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forwardingBackgroundHint =>
+      'Forwarding keeps running while nux is in the background; a notification shows it. Closing nux from the recent apps stops it.';
+
+  @override
+  String get forwardingChannel => 'Port forwarding';
+
+  @override
+  String forwardingTraffic(String bytesIn, String bytesOut) {
+    return '↓ $bytesIn  ↑ $bytesOut';
   }
 
   @override
@@ -557,6 +706,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noColor => 'No colour';
 
   @override
+  String get noForwards => 'No port forwarding yet';
+
+  @override
   String get noHosts => 'No hosts yet';
 
   @override
@@ -682,6 +834,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get portField => 'Port';
 
   @override
+  String get portForwarding => 'Port forwarding';
+
+  @override
+  String portForwardingOn(String name) {
+    return 'Forwarding · $name';
+  }
+
+  @override
   String get predictiveBack => 'Predictive back gesture';
 
   @override
@@ -772,6 +932,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectAll => 'Select all';
 
   @override
+  String get serverPort => 'Port on the server';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -797,6 +960,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get skipKey => 'Skip this key';
+
+  @override
+  String get socksPortHint =>
+      'Point apps\' SOCKS5 proxy setting at this port (1080 is the usual one)';
 
   @override
   String get sortByDate => 'Sort by date';
@@ -842,9 +1009,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get stopAll => 'Stop all';
+
+  @override
   String tabClosed(String title) {
     return 'Closed $title';
   }
+
+  @override
+  String get targetHost => 'Destination';
+
+  @override
+  String get targetHostLocalHint =>
+      'As the server sees it: localhost is the server itself';
+
+  @override
+  String get targetHostRemoteHint =>
+      'As this device sees it: localhost is this device';
 
   @override
   String get terminal => 'Terminal';
@@ -862,6 +1043,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terminalPressEnter => 'Press Enter to reconnect';
+
+  @override
+  String get theServer => 'the server';
 
   @override
   String get theme => 'Theme';

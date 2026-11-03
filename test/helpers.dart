@@ -76,6 +76,17 @@ Future<void> insertSamples(AppDatabase db, SecretStore secrets) async {
         identityIds: const Value('["sample"]'),
         groupName: const Value('Work'),
       ));
+  await db.into(db.forwardRules).insert(ForwardRulesCompanion.insert(
+        id: const Value('sample'),
+        createdAt: now,
+        updatedAt: now,
+        connectionId: 'sample',
+        kind: 'local',
+        label: const Value('Database'),
+        bindPort: 15432,
+        targetHost: const Value('db.internal.example.com'),
+        targetPort: const Value(5432),
+      ));
   await db.into(db.knownHosts).insert(KnownHostsCompanion.insert(
         createdAt: now,
         updatedAt: now,

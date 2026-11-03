@@ -17,7 +17,7 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
 - `lib/core/` — db, `SecretStore`, `Log` + `redact`, shared widgets, `app_info.dart` (repo, version, `NUX_UPDATER`)
 - `lib/features/<feature>/{data,domain,presentation}`: workspace (tabs, session restore), connections (hosts,
   known hosts), identities (SSH keys), ssh (connector, pool, backend, SFTP, prompts), terminal, files (browser,
-  transfers, bookmarks), viewer, settings, updates
+  transfers, bookmarks), viewer, forwarding (rules, engine, manager, foreground service), settings, updates
 - File features work on `nux_backend`'s `FileSystem` through an `FsOpener`; tests and screenshots pass a
   `LocalFileSystem` (`TabFactory.openOverride`). New `FileSystem` implementations must pass
   `packages/nux_backend/test/file_system_contract.dart`.

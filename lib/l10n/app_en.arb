@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "about": "About",
+  "addForward": "Add forwarding",
   "addHost": "Add host",
   "addKey": "Add key",
   "addressVia": "{address} via {jump}",
@@ -18,6 +19,14 @@
   "algEcdsa": "NIST curves. Use when a server or policy requires ECDSA.",
   "algEd25519": "Small, fast and secure. Supported by every server from the last decade.",
   "algRsa": "For old servers. Generating takes a while on a phone.",
+  "allRules": "All ({count})",
+  "@allRules": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "appTitle": "nux",
   "appVersion": "App version",
   "appearance": "Appearance",
@@ -112,16 +121,82 @@
       }
     }
   },
+  "devicePort": "Port on this device",
   "disconnect": "Disconnect",
   "download": "Download",
   "duplicate": "Duplicate",
   "duplicateTab": "New terminal on this host",
   "edit": "Edit",
+  "editForward": "Edit forwarding",
   "editHost": "Edit host",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
       "error": {
+        "type": "String"
+      }
+    }
+  },
+  "explainDynamic": "A SOCKS5 proxy on localhost:{port}: apps that use it go out to the internet through {host}.",
+  "@explainDynamic": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "explainDynamicShared": "A SOCKS5 proxy on this device's port {port}, open to your network: everything goes out through {host}.",
+  "@explainDynamicShared": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "explainLocal": "Apps on this device connect to localhost:{port} and reach {target} as seen from {host}.",
+  "@explainLocal": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "explainLocalShared": "Devices on your network connect to this device's port {port} and reach {target} as seen from {host}.",
+  "@explainLocalShared": {
+    "placeholders": {
+      "port": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "explainRemote": "Programs on {host} connect to its port {port} and reach {target} as seen from this device.",
+  "@explainRemote": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "port": {
+        "type": "String"
+      },
+      "target": {
         "type": "String"
       }
     }
@@ -163,6 +238,96 @@
   "@forgotten": {
     "placeholders": {
       "host": {
+        "type": "String"
+      }
+    }
+  },
+  "forwardActive": "Active",
+  "forwardActiveConnections": "{count, plural, one{Active · {count} connection so far} other{Active · {count} connections so far}}",
+  "@forwardActiveConnections": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardActiveTraffic": "Active · {open} open · ↓ {bytesIn} ↑ {bytesOut}",
+  "@forwardActiveTraffic": {
+    "placeholders": {
+      "open": {
+        "type": "int"
+      },
+      "bytesIn": {
+        "type": "String"
+      },
+      "bytesOut": {
+        "type": "String"
+      }
+    }
+  },
+  "forwardAutoStart": "Start when nux starts",
+  "forwardBindDenied": "This device does not allow listening on port {port}",
+  "@forwardBindDenied": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardConflict": "Another rule already uses this port: {name}",
+  "@forwardConflict": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "forwardDynamic": "SOCKS",
+  "forwardDynamicHint": "A proxy on this device: apps go out to the internet through the server (ssh -D)",
+  "forwardFailed": "Failed",
+  "forwardLocal": "Local",
+  "forwardLocalHint": "A port on this device leads to something only the server can reach, like its database (ssh -L)",
+  "forwardLowPort": "Android apps can only listen on ports 1024 and above",
+  "forwardOff": "Off",
+  "forwardPortInUse": "Port {port} is already in use on this device",
+  "@forwardPortInUse": {
+    "placeholders": {
+      "port": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardReconnecting": "Connection lost, reconnecting (attempt {attempt})…",
+  "@forwardReconnecting": {
+    "placeholders": {
+      "attempt": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardRemote": "Remote",
+  "forwardRemoteHint": "A port on the server leads back to something this device can reach, like a dev server on your phone (ssh -R)",
+  "forwardRemoteRefused": "The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)",
+  "forwardShared": "Allow other devices on the network",
+  "forwardSharedHint": "Listens on all interfaces instead of only this device",
+  "forwardStarting": "Starting…",
+  "forwardingActive": "{count, plural, one{{count} port forwarding active} other{{count} port forwardings active}}",
+  "@forwardingActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forwardingBackgroundHint": "Forwarding keeps running while nux is in the background; a notification shows it. Closing nux from the recent apps stops it.",
+  "forwardingChannel": "Port forwarding",
+  "forwardingTraffic": "↓ {bytesIn}  ↑ {bytesOut}",
+  "@forwardingTraffic": {
+    "placeholders": {
+      "bytesIn": {
+        "type": "String"
+      },
+      "bytesOut": {
         "type": "String"
       }
     }
@@ -324,6 +489,7 @@
   "newTab": "New tab",
   "next": "Next",
   "noColor": "No colour",
+  "noForwards": "No port forwarding yet",
   "noHosts": "No hosts yet",
   "noHostsHint": "Add a server to connect to, or type user@host to connect right away.",
   "noKeysHint": "Keys let you sign in without a password. Generate one here, or import a key you already use.",
@@ -387,6 +553,15 @@
   "pinTab": "Pin",
   "pinnedTabs": "Pinned",
   "portField": "Port",
+  "portForwarding": "Port forwarding",
+  "portForwardingOn": "Forwarding · {name}",
+  "@portForwardingOn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "predictiveBack": "Predictive back gesture",
   "predictiveBackHint": "The page follows your back swipe",
   "previous": "Previous",
@@ -423,6 +598,7 @@
   },
   "searchHosts": "Search hosts",
   "selectAll": "Select all",
+  "serverPort": "Port on the server",
   "settings": "Settings",
   "share": "Share",
   "show": "Show",
@@ -432,6 +608,7 @@
   "showSource": "Show source",
   "showTabs": "Show tabs",
   "skipKey": "Skip this key",
+  "socksPortHint": "Point apps' SOCKS5 proxy setting at this port (1080 is the usual one)",
   "sortByDate": "Sort by date",
   "sortByName": "Sort by name",
   "sortBySize": "Sort by size",
@@ -468,6 +645,7 @@
       }
     }
   },
+  "stopAll": "Stop all",
   "tabClosed": "Closed {title}",
   "@tabClosed": {
     "placeholders": {
@@ -476,6 +654,9 @@
       }
     }
   },
+  "targetHost": "Destination",
+  "targetHostLocalHint": "As the server sees it: localhost is the server itself",
+  "targetHostRemoteHint": "As this device sees it: localhost is this device",
   "terminal": "Terminal",
   "terminalConnecting": "Connecting to {address}…",
   "@terminalConnecting": {
@@ -488,6 +669,7 @@
   "terminalDisconnected": "Disconnected",
   "terminalHere": "Terminal here",
   "terminalPressEnter": "Press Enter to reconnect",
+  "theServer": "the server",
   "theme": "Theme",
   "themeDark": "Dark",
   "themeLight": "Light",

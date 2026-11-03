@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../features/connections/presentation/connection_editor_screen.dart';
 import '../features/connections/presentation/known_hosts_screen.dart';
+import '../features/forwarding/presentation/forward_rule_editor.dart';
+import '../features/forwarding/presentation/forwarding_screen.dart';
 import '../features/identities/presentation/generate_key_screen.dart';
 import '../features/identities/presentation/identities_screen.dart';
 import '../features/identities/presentation/identity_screen.dart';
@@ -26,9 +28,28 @@ abstract final class Routes {
   static const newKey = '/keys/new';
   static String key(String id) => '/keys/$id';
   static const knownHosts = '/known-hosts';
+  static const forwarding = '/forwarding';
+  static String forwardingFor(String connectionId) => '/forwarding?connection=$connectionId';
+  static String newForward({String? connectionId}) =>
+      connectionId == null ? '/forwarding/new' : '/forwarding/new?connection=$connectionId';
+  static String forward(String id) => '/forwarding/$id';
 
   /// Every screen, with `sample` ids (the smoke test creates rows with those ids).
-  static final all = [home, settings, version, newConnection, connection('sample'), keys, newKey, key('sample'), knownHosts];
+  static final all = [
+    home,
+    settings,
+    version,
+    newConnection,
+    connection('sample'),
+    keys,
+    newKey,
+    key('sample'),
+    knownHosts,
+    forwarding,
+    forwardingFor('sample'),
+    newForward(connectionId: 'sample'),
+    forward('sample'),
+  ];
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -47,6 +68,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.newKey, builder: (context, state) => const GenerateKeyScreen()),
       GoRoute(path: '/keys/:id', builder: (context, state) => IdentityScreen(identityId: state.pathParameters['id']!)),
       GoRoute(path: Routes.knownHosts, builder: (context, state) => const KnownHostsScreen()),
+      GoRoute(
+        path: Routes.forwarding,
+        builder: (context, state) => ForwardingScreen(connectionId: state.uri.queryParameters['connection']),
+      ),
+      GoRoute(
+        path: '/forwarding/new',
+        builder: (context, state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']),
+      ),
+      GoRoute(path: '/forwarding/:id', builder: (context, state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
     ],
   );
   ref.onDispose(router.dispose);

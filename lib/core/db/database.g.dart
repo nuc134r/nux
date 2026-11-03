@@ -2635,6 +2635,715 @@ class BookmarksCompanion extends UpdateCompanion<Bookmark> {
   }
 }
 
+class $ForwardRulesTable extends ForwardRules
+    with TableInfo<$ForwardRulesTable, ForwardRule> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ForwardRulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newId,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _connectionIdMeta = const VerificationMeta(
+    'connectionId',
+  );
+  @override
+  late final GeneratedColumn<String> connectionId = GeneratedColumn<String>(
+    'connection_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES connections (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _bindHostMeta = const VerificationMeta(
+    'bindHost',
+  );
+  @override
+  late final GeneratedColumn<String> bindHost = GeneratedColumn<String>(
+    'bind_host',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('127.0.0.1'),
+  );
+  static const VerificationMeta _bindPortMeta = const VerificationMeta(
+    'bindPort',
+  );
+  @override
+  late final GeneratedColumn<int> bindPort = GeneratedColumn<int>(
+    'bind_port',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetHostMeta = const VerificationMeta(
+    'targetHost',
+  );
+  @override
+  late final GeneratedColumn<String> targetHost = GeneratedColumn<String>(
+    'target_host',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _targetPortMeta = const VerificationMeta(
+    'targetPort',
+  );
+  @override
+  late final GeneratedColumn<int> targetPort = GeneratedColumn<int>(
+    'target_port',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _autoStartMeta = const VerificationMeta(
+    'autoStart',
+  );
+  @override
+  late final GeneratedColumn<bool> autoStart = GeneratedColumn<bool>(
+    'auto_start',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("auto_start" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    connectionId,
+    kind,
+    label,
+    bindHost,
+    bindPort,
+    targetHost,
+    targetPort,
+    autoStart,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'forward_rules';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ForwardRule> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('connection_id')) {
+      context.handle(
+        _connectionIdMeta,
+        connectionId.isAcceptableOrUnknown(
+          data['connection_id']!,
+          _connectionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_connectionIdMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    }
+    if (data.containsKey('bind_host')) {
+      context.handle(
+        _bindHostMeta,
+        bindHost.isAcceptableOrUnknown(data['bind_host']!, _bindHostMeta),
+      );
+    }
+    if (data.containsKey('bind_port')) {
+      context.handle(
+        _bindPortMeta,
+        bindPort.isAcceptableOrUnknown(data['bind_port']!, _bindPortMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bindPortMeta);
+    }
+    if (data.containsKey('target_host')) {
+      context.handle(
+        _targetHostMeta,
+        targetHost.isAcceptableOrUnknown(data['target_host']!, _targetHostMeta),
+      );
+    }
+    if (data.containsKey('target_port')) {
+      context.handle(
+        _targetPortMeta,
+        targetPort.isAcceptableOrUnknown(data['target_port']!, _targetPortMeta),
+      );
+    }
+    if (data.containsKey('auto_start')) {
+      context.handle(
+        _autoStartMeta,
+        autoStart.isAcceptableOrUnknown(data['auto_start']!, _autoStartMeta),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ForwardRule map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ForwardRule(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      connectionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}connection_id'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      bindHost: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bind_host'],
+      )!,
+      bindPort: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bind_port'],
+      )!,
+      targetHost: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_host'],
+      )!,
+      targetPort: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_port'],
+      )!,
+      autoStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}auto_start'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $ForwardRulesTable createAlias(String alias) {
+    return $ForwardRulesTable(attachedDatabase, alias);
+  }
+}
+
+class ForwardRule extends DataClass implements Insertable<ForwardRule> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String connectionId;
+
+  /// `local`, `remote` or `dynamic` (see `ForwardKind`).
+  final String kind;
+  final String label;
+
+  /// Where to listen: on this device for local/dynamic, on the server for remote.
+  final String bindHost;
+  final int bindPort;
+
+  /// Where connections go: seen from the server for local, from this device for remote. Unused for dynamic.
+  final String targetHost;
+  final int targetPort;
+
+  /// Started when nux starts.
+  final bool autoStart;
+  final int sortOrder;
+  const ForwardRule({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.connectionId,
+    required this.kind,
+    required this.label,
+    required this.bindHost,
+    required this.bindPort,
+    required this.targetHost,
+    required this.targetPort,
+    required this.autoStart,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['connection_id'] = Variable<String>(connectionId);
+    map['kind'] = Variable<String>(kind);
+    map['label'] = Variable<String>(label);
+    map['bind_host'] = Variable<String>(bindHost);
+    map['bind_port'] = Variable<int>(bindPort);
+    map['target_host'] = Variable<String>(targetHost);
+    map['target_port'] = Variable<int>(targetPort);
+    map['auto_start'] = Variable<bool>(autoStart);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  ForwardRulesCompanion toCompanion(bool nullToAbsent) {
+    return ForwardRulesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      connectionId: Value(connectionId),
+      kind: Value(kind),
+      label: Value(label),
+      bindHost: Value(bindHost),
+      bindPort: Value(bindPort),
+      targetHost: Value(targetHost),
+      targetPort: Value(targetPort),
+      autoStart: Value(autoStart),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory ForwardRule.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ForwardRule(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      connectionId: serializer.fromJson<String>(json['connectionId']),
+      kind: serializer.fromJson<String>(json['kind']),
+      label: serializer.fromJson<String>(json['label']),
+      bindHost: serializer.fromJson<String>(json['bindHost']),
+      bindPort: serializer.fromJson<int>(json['bindPort']),
+      targetHost: serializer.fromJson<String>(json['targetHost']),
+      targetPort: serializer.fromJson<int>(json['targetPort']),
+      autoStart: serializer.fromJson<bool>(json['autoStart']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'connectionId': serializer.toJson<String>(connectionId),
+      'kind': serializer.toJson<String>(kind),
+      'label': serializer.toJson<String>(label),
+      'bindHost': serializer.toJson<String>(bindHost),
+      'bindPort': serializer.toJson<int>(bindPort),
+      'targetHost': serializer.toJson<String>(targetHost),
+      'targetPort': serializer.toJson<int>(targetPort),
+      'autoStart': serializer.toJson<bool>(autoStart),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  ForwardRule copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? connectionId,
+    String? kind,
+    String? label,
+    String? bindHost,
+    int? bindPort,
+    String? targetHost,
+    int? targetPort,
+    bool? autoStart,
+    int? sortOrder,
+  }) => ForwardRule(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    connectionId: connectionId ?? this.connectionId,
+    kind: kind ?? this.kind,
+    label: label ?? this.label,
+    bindHost: bindHost ?? this.bindHost,
+    bindPort: bindPort ?? this.bindPort,
+    targetHost: targetHost ?? this.targetHost,
+    targetPort: targetPort ?? this.targetPort,
+    autoStart: autoStart ?? this.autoStart,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  ForwardRule copyWithCompanion(ForwardRulesCompanion data) {
+    return ForwardRule(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      connectionId: data.connectionId.present
+          ? data.connectionId.value
+          : this.connectionId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      label: data.label.present ? data.label.value : this.label,
+      bindHost: data.bindHost.present ? data.bindHost.value : this.bindHost,
+      bindPort: data.bindPort.present ? data.bindPort.value : this.bindPort,
+      targetHost: data.targetHost.present
+          ? data.targetHost.value
+          : this.targetHost,
+      targetPort: data.targetPort.present
+          ? data.targetPort.value
+          : this.targetPort,
+      autoStart: data.autoStart.present ? data.autoStart.value : this.autoStart,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ForwardRule(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('connectionId: $connectionId, ')
+          ..write('kind: $kind, ')
+          ..write('label: $label, ')
+          ..write('bindHost: $bindHost, ')
+          ..write('bindPort: $bindPort, ')
+          ..write('targetHost: $targetHost, ')
+          ..write('targetPort: $targetPort, ')
+          ..write('autoStart: $autoStart, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    connectionId,
+    kind,
+    label,
+    bindHost,
+    bindPort,
+    targetHost,
+    targetPort,
+    autoStart,
+    sortOrder,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ForwardRule &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.connectionId == this.connectionId &&
+          other.kind == this.kind &&
+          other.label == this.label &&
+          other.bindHost == this.bindHost &&
+          other.bindPort == this.bindPort &&
+          other.targetHost == this.targetHost &&
+          other.targetPort == this.targetPort &&
+          other.autoStart == this.autoStart &&
+          other.sortOrder == this.sortOrder);
+}
+
+class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> connectionId;
+  final Value<String> kind;
+  final Value<String> label;
+  final Value<String> bindHost;
+  final Value<int> bindPort;
+  final Value<String> targetHost;
+  final Value<int> targetPort;
+  final Value<bool> autoStart;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const ForwardRulesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.connectionId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.label = const Value.absent(),
+    this.bindHost = const Value.absent(),
+    this.bindPort = const Value.absent(),
+    this.targetHost = const Value.absent(),
+    this.targetPort = const Value.absent(),
+    this.autoStart = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ForwardRulesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String connectionId,
+    required String kind,
+    this.label = const Value.absent(),
+    this.bindHost = const Value.absent(),
+    required int bindPort,
+    this.targetHost = const Value.absent(),
+    this.targetPort = const Value.absent(),
+    this.autoStart = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       connectionId = Value(connectionId),
+       kind = Value(kind),
+       bindPort = Value(bindPort);
+  static Insertable<ForwardRule> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? connectionId,
+    Expression<String>? kind,
+    Expression<String>? label,
+    Expression<String>? bindHost,
+    Expression<int>? bindPort,
+    Expression<String>? targetHost,
+    Expression<int>? targetPort,
+    Expression<bool>? autoStart,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (connectionId != null) 'connection_id': connectionId,
+      if (kind != null) 'kind': kind,
+      if (label != null) 'label': label,
+      if (bindHost != null) 'bind_host': bindHost,
+      if (bindPort != null) 'bind_port': bindPort,
+      if (targetHost != null) 'target_host': targetHost,
+      if (targetPort != null) 'target_port': targetPort,
+      if (autoStart != null) 'auto_start': autoStart,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ForwardRulesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? connectionId,
+    Value<String>? kind,
+    Value<String>? label,
+    Value<String>? bindHost,
+    Value<int>? bindPort,
+    Value<String>? targetHost,
+    Value<int>? targetPort,
+    Value<bool>? autoStart,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return ForwardRulesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      connectionId: connectionId ?? this.connectionId,
+      kind: kind ?? this.kind,
+      label: label ?? this.label,
+      bindHost: bindHost ?? this.bindHost,
+      bindPort: bindPort ?? this.bindPort,
+      targetHost: targetHost ?? this.targetHost,
+      targetPort: targetPort ?? this.targetPort,
+      autoStart: autoStart ?? this.autoStart,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (connectionId.present) {
+      map['connection_id'] = Variable<String>(connectionId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (bindHost.present) {
+      map['bind_host'] = Variable<String>(bindHost.value);
+    }
+    if (bindPort.present) {
+      map['bind_port'] = Variable<int>(bindPort.value);
+    }
+    if (targetHost.present) {
+      map['target_host'] = Variable<String>(targetHost.value);
+    }
+    if (targetPort.present) {
+      map['target_port'] = Variable<int>(targetPort.value);
+    }
+    if (autoStart.present) {
+      map['auto_start'] = Variable<bool>(autoStart.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ForwardRulesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('connectionId: $connectionId, ')
+          ..write('kind: $kind, ')
+          ..write('label: $label, ')
+          ..write('bindHost: $bindHost, ')
+          ..write('bindPort: $bindPort, ')
+          ..write('targetHost: $targetHost, ')
+          ..write('targetPort: $targetPort, ')
+          ..write('autoStart: $autoStart, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2643,6 +3352,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $IdentitiesTable identities = $IdentitiesTable(this);
   late final $KnownHostsTable knownHosts = $KnownHostsTable(this);
   late final $BookmarksTable bookmarks = $BookmarksTable(this);
+  late final $ForwardRulesTable forwardRules = $ForwardRulesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2653,6 +3363,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     identities,
     knownHosts,
     bookmarks,
+    forwardRules,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2669,6 +3380,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('bookmarks', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'connections',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('forward_rules', kind: UpdateKind.delete)],
     ),
   ]);
   @override
@@ -2900,6 +3618,24 @@ final class $$ConnectionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ForwardRulesTable, List<ForwardRule>>
+  _forwardRulesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.forwardRules,
+    aliasName: 'connections__id__forward_rules__connection_id',
+  );
+
+  $$ForwardRulesTableProcessedTableManager get forwardRulesRefs {
+    final manager = $$ForwardRulesTableTableManager(
+      $_db,
+      $_db.forwardRules,
+    ).filter((f) => f.connectionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_forwardRulesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ConnectionsTableFilterComposer
@@ -3020,6 +3756,31 @@ class $$ConnectionsTableFilterComposer
           }) => $$BookmarksTableFilterComposer(
             $db: $db,
             $table: $db.bookmarks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> forwardRulesRefs(
+    Expression<bool> Function($$ForwardRulesTableFilterComposer f) f,
+  ) {
+    final $$ForwardRulesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.forwardRules,
+      getReferencedColumn: (t) => t.connectionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ForwardRulesTableFilterComposer(
+            $db: $db,
+            $table: $db.forwardRules,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3239,6 +4000,31 @@ class $$ConnectionsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> forwardRulesRefs<T extends Object>(
+    Expression<T> Function($$ForwardRulesTableAnnotationComposer a) f,
+  ) {
+    final $$ForwardRulesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.forwardRules,
+      getReferencedColumn: (t) => t.connectionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ForwardRulesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.forwardRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ConnectionsTableTableManager
@@ -3254,7 +4040,11 @@ class $$ConnectionsTableTableManager
           $$ConnectionsTableUpdateCompanionBuilder,
           (Connection, $$ConnectionsTableReferences),
           Connection,
-          PrefetchHooks Function({bool jumpHostId, bool bookmarksRefs})
+          PrefetchHooks Function({
+            bool jumpHostId,
+            bool bookmarksRefs,
+            bool forwardRulesRefs,
+          })
         > {
   $$ConnectionsTableTableManager(_$AppDatabase db, $ConnectionsTable table)
     : super(
@@ -3347,66 +4137,94 @@ class $$ConnectionsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({jumpHostId = false, bookmarksRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (bookmarksRefs) db.bookmarks],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (jumpHostId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.jumpHostId,
-                        referencedTable: $$ConnectionsTableReferences
-                            ._jumpHostIdTable(db),
-                        referencedColumn: $$ConnectionsTableReferences
-                            ._jumpHostIdTable(db)
-                            .id,
-                      ) as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                jumpHostId = false,
+                bookmarksRefs = false,
+                forwardRulesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (bookmarksRefs) db.bookmarks,
+                    if (forwardRulesRefs) db.forwardRules,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (jumpHostId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.jumpHostId,
+                            referencedTable: $$ConnectionsTableReferences
+                                ._jumpHostIdTable(db),
+                            referencedColumn: $$ConnectionsTableReferences
+                                ._jumpHostIdTable(db)
+                                .id,
+                          ) as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (bookmarksRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Connection,
+                          $ConnectionsTable,
+                          Bookmark,
+                          $BookmarksTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ConnectionsTableReferences
+                              ._bookmarksRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ConnectionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).bookmarksRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'connection_id',
+                          typedResults: items,
+                        ),
+                      if (forwardRulesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Connection,
+                          $ConnectionsTable,
+                          ForwardRule,
+                          $ForwardRulesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ConnectionsTableReferences
+                              ._forwardRulesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ConnectionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).forwardRulesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'connection_id',
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (bookmarksRefs)
-                    await $_getPrefetchedDataByColumns<
-                      Connection,
-                      $ConnectionsTable,
-                      Bookmark,
-                      $BookmarksTable
-                    >(
-                      currentTable: table,
-                      referencedTable: $$ConnectionsTableReferences
-                          ._bookmarksRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$ConnectionsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).bookmarksRefs,
-                      currentColumn: 'id',
-                      referencedColumn: 'connection_id',
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -3423,7 +4241,11 @@ typedef $$ConnectionsTableProcessedTableManager =
       $$ConnectionsTableUpdateCompanionBuilder,
       (Connection, $$ConnectionsTableReferences),
       Connection,
-      PrefetchHooks Function({bool jumpHostId, bool bookmarksRefs})
+      PrefetchHooks Function({
+        bool jumpHostId,
+        bool bookmarksRefs,
+        bool forwardRulesRefs,
+      })
     >;
 typedef $$IdentitiesTableCreateCompanionBuilder = IdentitiesCompanion Function({
   Value<String> id,
@@ -4322,6 +5144,459 @@ typedef $$BookmarksTableProcessedTableManager =
       Bookmark,
       PrefetchHooks Function({bool connectionId})
     >;
+typedef $$ForwardRulesTableCreateCompanionBuilder =
+    ForwardRulesCompanion Function({
+      Value<String> id,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      required String connectionId,
+      required String kind,
+      Value<String> label,
+      Value<String> bindHost,
+      required int bindPort,
+      Value<String> targetHost,
+      Value<int> targetPort,
+      Value<bool> autoStart,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$ForwardRulesTableUpdateCompanionBuilder =
+    ForwardRulesCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<String> connectionId,
+      Value<String> kind,
+      Value<String> label,
+      Value<String> bindHost,
+      Value<int> bindPort,
+      Value<String> targetHost,
+      Value<int> targetPort,
+      Value<bool> autoStart,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+
+final class $$ForwardRulesTableReferences
+    extends BaseReferences<_$AppDatabase, $ForwardRulesTable, ForwardRule> {
+  $$ForwardRulesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ConnectionsTable _connectionIdTable(_$AppDatabase db) => db
+      .connections
+      .createAlias('forward_rules__connection_id__connections__id');
+
+  $$ConnectionsTableProcessedTableManager get connectionId {
+    final $_column = $_itemColumn<String>('connection_id')!;
+
+    final manager = $$ConnectionsTableTableManager(
+      $_db,
+      $_db.connections,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_connectionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ForwardRulesTableFilterComposer
+    extends Composer<_$AppDatabase, $ForwardRulesTable> {
+  $$ForwardRulesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bindHost => $composableBuilder(
+    column: $table.bindHost,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bindPort => $composableBuilder(
+    column: $table.bindPort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get targetHost => $composableBuilder(
+    column: $table.targetHost,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetPort => $composableBuilder(
+    column: $table.targetPort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get autoStart => $composableBuilder(
+    column: $table.autoStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ConnectionsTableFilterComposer get connectionId {
+    final $$ConnectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.connectionId,
+      referencedTable: $db.connections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ConnectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ForwardRulesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ForwardRulesTable> {
+  $$ForwardRulesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get label => $composableBuilder(
+    column: $table.label,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bindHost => $composableBuilder(
+    column: $table.bindHost,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bindPort => $composableBuilder(
+    column: $table.bindPort,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get targetHost => $composableBuilder(
+    column: $table.targetHost,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetPort => $composableBuilder(
+    column: $table.targetPort,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get autoStart => $composableBuilder(
+    column: $table.autoStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ConnectionsTableOrderingComposer get connectionId {
+    final $$ConnectionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.connectionId,
+      referencedTable: $db.connections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ConnectionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ForwardRulesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ForwardRulesTable> {
+  $$ForwardRulesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get label =>
+      $composableBuilder(column: $table.label, builder: (column) => column);
+
+  GeneratedColumn<String> get bindHost =>
+      $composableBuilder(column: $table.bindHost, builder: (column) => column);
+
+  GeneratedColumn<int> get bindPort =>
+      $composableBuilder(column: $table.bindPort, builder: (column) => column);
+
+  GeneratedColumn<String> get targetHost => $composableBuilder(
+    column: $table.targetHost,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetPort => $composableBuilder(
+    column: $table.targetPort,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get autoStart =>
+      $composableBuilder(column: $table.autoStart, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  $$ConnectionsTableAnnotationComposer get connectionId {
+    final $$ConnectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.connectionId,
+      referencedTable: $db.connections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ConnectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ForwardRulesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ForwardRulesTable,
+          ForwardRule,
+          $$ForwardRulesTableFilterComposer,
+          $$ForwardRulesTableOrderingComposer,
+          $$ForwardRulesTableAnnotationComposer,
+          $$ForwardRulesTableCreateCompanionBuilder,
+          $$ForwardRulesTableUpdateCompanionBuilder,
+          (ForwardRule, $$ForwardRulesTableReferences),
+          ForwardRule,
+          PrefetchHooks Function({bool connectionId})
+        > {
+  $$ForwardRulesTableTableManager(_$AppDatabase db, $ForwardRulesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ForwardRulesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ForwardRulesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ForwardRulesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> connectionId = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> label = const Value.absent(),
+                Value<String> bindHost = const Value.absent(),
+                Value<int> bindPort = const Value.absent(),
+                Value<String> targetHost = const Value.absent(),
+                Value<int> targetPort = const Value.absent(),
+                Value<bool> autoStart = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ForwardRulesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                connectionId: connectionId,
+                kind: kind,
+                label: label,
+                bindHost: bindHost,
+                bindPort: bindPort,
+                targetHost: targetHost,
+                targetPort: targetPort,
+                autoStart: autoStart,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                required String connectionId,
+                required String kind,
+                Value<String> label = const Value.absent(),
+                Value<String> bindHost = const Value.absent(),
+                required int bindPort,
+                Value<String> targetHost = const Value.absent(),
+                Value<int> targetPort = const Value.absent(),
+                Value<bool> autoStart = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ForwardRulesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                connectionId: connectionId,
+                kind: kind,
+                label: label,
+                bindHost: bindHost,
+                bindPort: bindPort,
+                targetHost: targetHost,
+                targetPort: targetPort,
+                autoStart: autoStart,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ForwardRulesTable, ForwardRule>(table),
+                  $$ForwardRulesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({connectionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (connectionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.connectionId,
+                        referencedTable: $$ForwardRulesTableReferences
+                            ._connectionIdTable(db),
+                        referencedColumn: $$ForwardRulesTableReferences
+                            ._connectionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ForwardRulesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ForwardRulesTable,
+      ForwardRule,
+      $$ForwardRulesTableFilterComposer,
+      $$ForwardRulesTableOrderingComposer,
+      $$ForwardRulesTableAnnotationComposer,
+      $$ForwardRulesTableCreateCompanionBuilder,
+      $$ForwardRulesTableUpdateCompanionBuilder,
+      (ForwardRule, $$ForwardRulesTableReferences),
+      ForwardRule,
+      PrefetchHooks Function({bool connectionId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4336,4 +5611,6 @@ class $AppDatabaseManager {
       $$KnownHostsTableTableManager(_db, _db.knownHosts);
   $$BookmarksTableTableManager get bookmarks =>
       $$BookmarksTableTableManager(_db, _db.bookmarks);
+  $$ForwardRulesTableTableManager get forwardRules =>
+      $$ForwardRulesTableTableManager(_db, _db.forwardRules);
 }

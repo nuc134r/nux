@@ -6,6 +6,7 @@ import 'package:tab_switcher/tab_switcher.dart';
 import '../../../app/router.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
+import '../../forwarding/data/forwarding_providers.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/presentation/update_ui.dart';
 import '../data/tab_factory.dart';
@@ -21,6 +22,8 @@ class WorkspaceScreen extends ConsumerWidget {
     final l10n = context.l10n;
     final controller = ref.watch(workspaceProvider);
     if (ref.watch(workspaceReadyProvider).isLoading) return const Scaffold();
+    // Rules marked "start with nux" start once the screen (and its dialogs) can be shown.
+    ref.watch(forwardingAutoStartProvider);
     return TabSwitcher(
             controller: controller,
             headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
@@ -119,6 +122,10 @@ class _Header extends ConsumerWidget {
             PopupMenuItem(
               value: () => quickConnect(context, ref),
               child: ListTile(leading: const Icon(Icons.bolt), title: Text(l10n.quickConnect)),
+            ),
+            PopupMenuItem(
+              value: () => context.push(Routes.forwarding),
+              child: ListTile(leading: const Icon(Icons.swap_horiz), title: Text(l10n.portForwarding)),
             ),
             PopupMenuItem(
               value: () => context.push(Routes.keys),

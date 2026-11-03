@@ -90,3 +90,24 @@ class Bookmarks extends Table with SyncedTable {
   TextColumn get path => text()();
   TextColumn get name => text()();
 }
+
+/// A port forwarding rule on a saved connection (like `ssh -L`, `-R` or `-D`).
+class ForwardRules extends Table with SyncedTable {
+  TextColumn get connectionId => text().references(Connections, #id, onDelete: KeyAction.cascade)();
+
+  /// `local`, `remote` or `dynamic` (see `ForwardKind`).
+  TextColumn get kind => text()();
+  TextColumn get label => text().withDefault(const Constant(''))();
+
+  /// Where to listen: on this device for local/dynamic, on the server for remote.
+  TextColumn get bindHost => text().withDefault(const Constant('127.0.0.1'))();
+  IntColumn get bindPort => integer()();
+
+  /// Where connections go: seen from the server for local, from this device for remote. Unused for dynamic.
+  TextColumn get targetHost => text().withDefault(const Constant(''))();
+  IntColumn get targetPort => integer().withDefault(const Constant(0))();
+
+  /// Started when nux starts.
+  BoolColumn get autoStart => boolean().withDefault(const Constant(false))();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+}

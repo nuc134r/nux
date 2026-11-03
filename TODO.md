@@ -49,10 +49,13 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Large files load the first 2 MB with "Load all"; image, Markdown (rendered/source) and hex views
 
 ## M3 — SSH port forwarding
-- [ ] Rules: local (-L), remote (-R), dynamic SOCKS5 (-D), per connection, auto-start
-- [ ] Android foreground service (flutter_foreground_task 11) in its own isolate; typed messages
-- [ ] Notification with active rules and byte counters; quick toggles in the home screen
-- [ ] Guard against duplicate/conflicting local ports; clear error when a port is taken
+- [x] Rules: local (-L), remote (-R), dynamic SOCKS5 (-D), per connection, auto-start (schema v4)
+- [x] Forwards run on the shared SSH pool in the main isolate (prompts keep working); reconnect with backoff
+- [x] Android foreground service (`specialUse`) keeps the process alive; notification with count, traffic and "Stop all"
+- [x] Quick toggles on the hosts tab; per-host and global forwarding screens; plain-words rule editor
+- [x] Duplicate/conflicting ports refused when saving; clear errors for a taken port, a refused remote bind, ports < 1024
+- [ ] Keep forwarding after nux is swiped out of recents (cached FlutterEngine kept by the service) — needs device testing
+- [ ] Byte counters for SOCKS connections (dartssh2's SOCKS server only reports connections)
 
 ## M4 — ZeroTier (`zerotier_sockets` 2.0, own repo)
 - [ ] Spike: `hook/build.dart` + `native_toolchain_cmake` building libzt 1.8.10 for android-arm64 and linux-x64

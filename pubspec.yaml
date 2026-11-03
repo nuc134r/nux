@@ -3,7 +3,7 @@ description: "SSH/SFTP client, port forwarder and mobile IDE."
 publish_to: 'none'
 
 # The release version comes from the git tag (tool/version.sh); this one is only used for local builds.
-version: 0.3.0+1
+version: 0.4.0+1
 
 environment:
   sdk: ^3.13.7
@@ -47,6 +47,7 @@ dependencies:
   re_editor: ^0.10.0
   re_highlight: ^0.0.3
   flutter_markdown_plus: ^1.0.12
+  flutter_foreground_task: ^11.0.3
 
 dev_dependencies:
   flutter_test:

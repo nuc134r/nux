@@ -9,6 +9,8 @@ import '../../connections/data/connection_repository.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../ssh/data/ssh_pool.dart';
 import '../../ssh/data/ssh_providers.dart';
+import '../../forwarding/data/forward_rule_repository.dart';
+import '../../forwarding/presentation/forwarding_widgets.dart';
 import '../../updates/presentation/update_ui.dart';
 import '../domain/nux_tab.dart';
 
@@ -94,7 +96,7 @@ class _HostsViewState extends ConsumerState<_HostsView> {
                   onChanged: (_) => setState(() {}),
                 ),
               ),
-            if (all.isEmpty) const _Empty(),
+            if (all.isEmpty) const _Empty() else const _ForwardingToggles(),
             for (final (i, c) in shown.indexed) ...[
               if (c.groupName != null && (i == 0 || shown[i - 1].groupName != c.groupName))
                 Padding(
@@ -166,6 +168,10 @@ class _HostTile extends ConsumerWidget {
             child: ListTile(leading: const Icon(Icons.folder_outlined), title: Text(l10n.browseFiles)),
           ),
           PopupMenuItem(
+            value: () => context.push(Routes.forwardingFor(c.id)),
+            child: ListTile(leading: const Icon(Icons.swap_horiz), title: Text(l10n.portForwarding)),
+          ),
+          PopupMenuItem(
             value: () => context.push(Routes.connection(c.id)),
             child: ListTile(leading: const Icon(Icons.edit_outlined), title: Text(l10n.edit)),
           ),
@@ -231,6 +237,34 @@ class _Empty extends ConsumerWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Quick on/off switches for forwarding rules at the top of the hosts list.
+class _ForwardingToggles extends ConsumerWidget {
+  const _ForwardingToggles();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final rules = ref.watch(forwardRulesProvider).value ?? const <ForwardRule>[];
+    if (rules.isEmpty) return const SizedBox.shrink();
+    final names = {for (final c in ref.watch(connectionsProvider).value ?? const <Connection>[]) c.id: c.name};
+    const shown = 4;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          ListTile(
+            dense: true,
+            title: Text(l10n.portForwarding, style: Theme.of(context).textTheme.titleSmall),
+            trailing: TextButton(onPressed: () => context.push(Routes.forwarding), child: Text(l10n.allRules(rules.length))),
+          ),
+          for (final r in rules.take(shown)) ForwardRuleTile(rule: r, connectionName: names[r.connectionId], dense: true),
         ],
       ),
     );

@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// No description provided for @addForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Add forwarding'**
+  String get addForward;
+
   /// No description provided for @addHost.
   ///
   /// In en, this message translates to:
@@ -145,6 +151,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For old servers. Generating takes a while on a phone.'**
   String get algRsa;
+
+  /// No description provided for @allRules.
+  ///
+  /// In en, this message translates to:
+  /// **'All ({count})'**
+  String allRules(int count);
 
   /// No description provided for @appTitle.
   ///
@@ -374,6 +386,12 @@ abstract class AppLocalizations {
   /// **'Deleted {name}'**
   String deleted(String name);
 
+  /// No description provided for @devicePort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port on this device'**
+  String get devicePort;
+
   /// No description provided for @disconnect.
   ///
   /// In en, this message translates to:
@@ -404,6 +422,12 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @editForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit forwarding'**
+  String get editForward;
+
   /// No description provided for @editHost.
   ///
   /// In en, this message translates to:
@@ -415,6 +439,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong: {error}'**
   String errorGeneric(String error);
+
+  /// No description provided for @explainDynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'A SOCKS5 proxy on localhost:{port}: apps that use it go out to the internet through {host}.'**
+  String explainDynamic(String port, String host);
+
+  /// No description provided for @explainDynamicShared.
+  ///
+  /// In en, this message translates to:
+  /// **'A SOCKS5 proxy on this device\'s port {port}, open to your network: everything goes out through {host}.'**
+  String explainDynamicShared(String port, String host);
+
+  /// No description provided for @explainLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Apps on this device connect to localhost:{port} and reach {target} as seen from {host}.'**
+  String explainLocal(String port, String target, String host);
+
+  /// No description provided for @explainLocalShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Devices on your network connect to this device\'s port {port} and reach {target} as seen from {host}.'**
+  String explainLocalShared(String port, String target, String host);
+
+  /// No description provided for @explainRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Programs on {host} connect to its port {port} and reach {target} as seen from this device.'**
+  String explainRemote(String host, String port, String target);
 
   /// No description provided for @exportPassphraseTitle.
   ///
@@ -535,6 +589,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot {host}'**
   String forgotten(String host);
+
+  /// No description provided for @forwardActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get forwardActive;
+
+  /// No description provided for @forwardActiveConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Active · {count} connection so far} other{Active · {count} connections so far}}'**
+  String forwardActiveConnections(int count);
+
+  /// No description provided for @forwardActiveTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'Active · {open} open · ↓ {bytesIn} ↑ {bytesOut}'**
+  String forwardActiveTraffic(int open, String bytesIn, String bytesOut);
+
+  /// No description provided for @forwardAutoStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start when nux starts'**
+  String get forwardAutoStart;
+
+  /// No description provided for @forwardBindDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'This device does not allow listening on port {port}'**
+  String forwardBindDenied(int port);
+
+  /// No description provided for @forwardConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Another rule already uses this port: {name}'**
+  String forwardConflict(String name);
+
+  /// No description provided for @forwardDynamic.
+  ///
+  /// In en, this message translates to:
+  /// **'SOCKS'**
+  String get forwardDynamic;
+
+  /// No description provided for @forwardDynamicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A proxy on this device: apps go out to the internet through the server (ssh -D)'**
+  String get forwardDynamicHint;
+
+  /// No description provided for @forwardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get forwardFailed;
+
+  /// No description provided for @forwardLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get forwardLocal;
+
+  /// No description provided for @forwardLocalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A port on this device leads to something only the server can reach, like its database (ssh -L)'**
+  String get forwardLocalHint;
+
+  /// No description provided for @forwardLowPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Android apps can only listen on ports 1024 and above'**
+  String get forwardLowPort;
+
+  /// No description provided for @forwardOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get forwardOff;
+
+  /// No description provided for @forwardPortInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Port {port} is already in use on this device'**
+  String forwardPortInUse(int port);
+
+  /// No description provided for @forwardReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection lost, reconnecting (attempt {attempt})…'**
+  String forwardReconnecting(int attempt);
+
+  /// No description provided for @forwardRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get forwardRemote;
+
+  /// No description provided for @forwardRemoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A port on the server leads back to something this device can reach, like a dev server on your phone (ssh -R)'**
+  String get forwardRemoteHint;
+
+  /// No description provided for @forwardRemoteRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)'**
+  String get forwardRemoteRefused;
+
+  /// No description provided for @forwardShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow other devices on the network'**
+  String get forwardShared;
+
+  /// No description provided for @forwardSharedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Listens on all interfaces instead of only this device'**
+  String get forwardSharedHint;
+
+  /// No description provided for @forwardStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting…'**
+  String get forwardStarting;
+
+  /// No description provided for @forwardingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} port forwarding active} other{{count} port forwardings active}}'**
+  String forwardingActive(int count);
+
+  /// No description provided for @forwardingBackgroundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding keeps running while nux is in the background; a notification shows it. Closing nux from the recent apps stops it.'**
+  String get forwardingBackgroundHint;
+
+  /// No description provided for @forwardingChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Port forwarding'**
+  String get forwardingChannel;
+
+  /// No description provided for @forwardingTraffic.
+  ///
+  /// In en, this message translates to:
+  /// **'↓ {bytesIn}  ↑ {bytesOut}'**
+  String forwardingTraffic(String bytesIn, String bytesOut);
 
   /// No description provided for @generate.
   ///
@@ -1016,6 +1220,12 @@ abstract class AppLocalizations {
   /// **'No colour'**
   String get noColor;
 
+  /// No description provided for @noForwards.
+  ///
+  /// In en, this message translates to:
+  /// **'No port forwarding yet'**
+  String get noForwards;
+
   /// No description provided for @noHosts.
   ///
   /// In en, this message translates to:
@@ -1250,6 +1460,18 @@ abstract class AppLocalizations {
   /// **'Port'**
   String get portField;
 
+  /// No description provided for @portForwarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Port forwarding'**
+  String get portForwarding;
+
+  /// No description provided for @portForwardingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding · {name}'**
+  String portForwardingOn(String name);
+
   /// No description provided for @predictiveBack.
   ///
   /// In en, this message translates to:
@@ -1424,6 +1646,12 @@ abstract class AppLocalizations {
   /// **'Select all'**
   String get selectAll;
 
+  /// No description provided for @serverPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port on the server'**
+  String get serverPort;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
@@ -1477,6 +1705,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip this key'**
   String get skipKey;
+
+  /// No description provided for @socksPortHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point apps\' SOCKS5 proxy setting at this port (1080 is the usual one)'**
+  String get socksPortHint;
 
   /// No description provided for @sortByDate.
   ///
@@ -1550,11 +1784,35 @@ abstract class AppLocalizations {
   /// **'{error} (through {via})'**
   String sshVia(String error, String via);
 
+  /// No description provided for @stopAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop all'**
+  String get stopAll;
+
   /// No description provided for @tabClosed.
   ///
   /// In en, this message translates to:
   /// **'Closed {title}'**
   String tabClosed(String title);
+
+  /// No description provided for @targetHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get targetHost;
+
+  /// No description provided for @targetHostLocalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'As the server sees it: localhost is the server itself'**
+  String get targetHostLocalHint;
+
+  /// No description provided for @targetHostRemoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'As this device sees it: localhost is this device'**
+  String get targetHostRemoteHint;
 
   /// No description provided for @terminal.
   ///
@@ -1585,6 +1843,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Press Enter to reconnect'**
   String get terminalPressEnter;
+
+  /// No description provided for @theServer.
+  ///
+  /// In en, this message translates to:
+  /// **'the server'**
+  String get theServer;
 
   /// No description provided for @theme.
   ///

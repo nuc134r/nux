@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.4.0
+
+- **Port forwarding**: local (`ssh -L`), remote (`ssh -R`) and SOCKS proxy (`ssh -D`) rules per host, with a sentence that explains what each rule does. Turn them on and off from the hosts list, see open connections and traffic, start rules together with nux.
+- Forwarding keeps running in the background with a notification that shows the traffic and can stop everything. A dropped connection reconnects by itself.
+- A port that is already taken, or a rule that clashes with another one, is explained instead of failing silently.
+
 ## 0.3.0
 
 - **Files**: browse a host's files over SFTP in a tab. Sort, show hidden files, select several, rename, move, delete, change permissions, create folders, bookmark folders, open a terminal in a folder.

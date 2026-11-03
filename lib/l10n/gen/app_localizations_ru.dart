@@ -13,6 +13,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get about => 'О приложении';
 
   @override
+  String get addForward => 'Добавить проброс';
+
+  @override
   String get addHost => 'Добавить хост';
 
   @override
@@ -37,6 +40,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get algRsa =>
       'Для старых серверов. Создание на телефоне занимает время.';
+
+  @override
+  String allRules(int count) {
+    return 'Все ($count)';
+  }
 
   @override
   String get appTitle => 'nux';
@@ -181,6 +189,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get devicePort => 'Порт на этом устройстве';
+
+  @override
   String get disconnect => 'Отключиться';
 
   @override
@@ -196,11 +207,39 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edit => 'Изменить';
 
   @override
+  String get editForward => 'Изменить проброс';
+
+  @override
   String get editHost => 'Изменить хост';
 
   @override
   String errorGeneric(String error) {
     return 'Что-то пошло не так: $error';
+  }
+
+  @override
+  String explainDynamic(String port, String host) {
+    return 'SOCKS5-прокси на localhost:$port: приложения, которые его используют, выходят в интернет через $host.';
+  }
+
+  @override
+  String explainDynamicShared(String port, String host) {
+    return 'SOCKS5-прокси на порту $port этого устройства, доступный вашей сети: всё идёт через $host.';
+  }
+
+  @override
+  String explainLocal(String port, String target, String host) {
+    return 'Приложения на этом устройстве подключаются к localhost:$port и попадают на $target так, как его видит $host.';
+  }
+
+  @override
+  String explainLocalShared(String port, String target, String host) {
+    return 'Устройства в вашей сети подключаются к порту $port этого устройства и попадают на $target так, как его видит $host.';
+  }
+
+  @override
+  String explainRemote(String host, String port, String target) {
+    return 'Программы на $host подключаются к его порту $port и попадают на $target так, как его видит это устройство.';
   }
 
   @override
@@ -278,6 +317,118 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String forgotten(String host) {
     return 'Ключ $host забыт';
+  }
+
+  @override
+  String get forwardActive => 'Работает';
+
+  @override
+  String forwardActiveConnections(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Работает · $count подключений',
+      few: 'Работает · $count подключения',
+      one: 'Работает · $count подключение',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String forwardActiveTraffic(int open, String bytesIn, String bytesOut) {
+    return 'Работает · открыто: $open · ↓ $bytesIn ↑ $bytesOut';
+  }
+
+  @override
+  String get forwardAutoStart => 'Запускать вместе с nux';
+
+  @override
+  String forwardBindDenied(int port) {
+    return 'Это устройство не разрешает слушать порт $port';
+  }
+
+  @override
+  String forwardConflict(String name) {
+    return 'Этот порт уже занят другим правилом: $name';
+  }
+
+  @override
+  String get forwardDynamic => 'SOCKS';
+
+  @override
+  String get forwardDynamicHint =>
+      'Прокси на этом устройстве: приложения выходят в интернет через сервер (ssh -D)';
+
+  @override
+  String get forwardFailed => 'Ошибка';
+
+  @override
+  String get forwardLocal => 'Локальный';
+
+  @override
+  String get forwardLocalHint =>
+      'Порт на этом устройстве ведёт к тому, что доступно только серверу, например к его базе данных (ssh -L)';
+
+  @override
+  String get forwardLowPort =>
+      'Приложения Android могут слушать только порты от 1024';
+
+  @override
+  String get forwardOff => 'Выключен';
+
+  @override
+  String forwardPortInUse(int port) {
+    return 'Порт $port на этом устройстве уже занят';
+  }
+
+  @override
+  String forwardReconnecting(int attempt) {
+    return 'Соединение потеряно, переподключение (попытка $attempt)…';
+  }
+
+  @override
+  String get forwardRemote => 'Удалённый';
+
+  @override
+  String get forwardRemoteHint =>
+      'Порт на сервере ведёт к тому, что доступно этому устройству, например к dev-серверу на телефоне (ssh -R)';
+
+  @override
+  String get forwardRemoteRefused =>
+      'Сервер отказался слушать этот порт (занят или проброс выключен в sshd_config)';
+
+  @override
+  String get forwardShared => 'Разрешить другим устройствам в сети';
+
+  @override
+  String get forwardSharedHint =>
+      'Слушать на всех интерфейсах, а не только на этом устройстве';
+
+  @override
+  String get forwardStarting => 'Запуск…';
+
+  @override
+  String forwardingActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Работают $count пробросов портов',
+      few: 'Работают $count проброса портов',
+      one: 'Работает $count проброс портов',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get forwardingBackgroundHint =>
+      'Проброс продолжает работать, пока nux в фоне; об этом напоминает уведомление. Закрытие nux из списка недавних приложений его останавливает.';
+
+  @override
+  String get forwardingChannel => 'Проброс портов';
+
+  @override
+  String forwardingTraffic(String bytesIn, String bytesOut) {
+    return '↓ $bytesIn  ↑ $bytesOut';
   }
 
   @override
@@ -563,6 +714,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noColor => 'Без цвета';
 
   @override
+  String get noForwards => 'Пробросов портов пока нет';
+
+  @override
   String get noHosts => 'Хостов пока нет';
 
   @override
@@ -690,6 +844,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get portField => 'Порт';
 
   @override
+  String get portForwarding => 'Проброс портов';
+
+  @override
+  String portForwardingOn(String name) {
+    return 'Проброс · $name';
+  }
+
+  @override
   String get predictiveBack => 'Предиктивный жест «назад»';
 
   @override
@@ -781,6 +943,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get selectAll => 'Выбрать всё';
 
   @override
+  String get serverPort => 'Порт на сервере';
+
+  @override
   String get settings => 'Настройки';
 
   @override
@@ -806,6 +971,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get skipKey => 'Пропустить ключ';
+
+  @override
+  String get socksPortHint =>
+      'Укажите этот порт как SOCKS5-прокси в приложениях (обычно 1080)';
 
   @override
   String get sortByDate => 'По дате';
@@ -850,9 +1019,23 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get stopAll => 'Остановить все';
+
+  @override
   String tabClosed(String title) {
     return 'Вкладка «$title» закрыта';
   }
+
+  @override
+  String get targetHost => 'Куда';
+
+  @override
+  String get targetHostLocalHint =>
+      'Как его видит сервер: localhost — это сам сервер';
+
+  @override
+  String get targetHostRemoteHint =>
+      'Как его видит это устройство: localhost — это само устройство';
 
   @override
   String get terminal => 'Терминал';
@@ -870,6 +1053,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get terminalPressEnter => 'Нажмите Enter, чтобы переподключиться';
+
+  @override
+  String get theServer => 'сервер';
 
   @override
   String get theme => 'Тема';
