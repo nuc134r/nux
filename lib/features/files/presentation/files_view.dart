@@ -33,24 +33,27 @@ String relativeTime(BuildContext context, DateTime time, {DateTime? now}) {
     AgeUnit.hours => l10n.hoursAgo(n),
     AgeUnit.yesterday => l10n.yesterday,
     AgeUnit.days => l10n.daysAgo(n),
-    AgeUnit.sameYear => DateFormat.MMMd(locale).format(time),
-    AgeUnit.olderYear => DateFormat.yMMMd(locale).format(time),
+    AgeUnit.sameYear => _formats.putIfAbsent('MMMd $locale', () => DateFormat.MMMd(locale)).format(time),
+    AgeUnit.olderYear => _formats.putIfAbsent('yMMMd $locale', () => DateFormat.yMMMd(locale)).format(time),
   };
 }
 
+/// DateFormat parses its pattern when made: one per format and locale, not one per row.
+final _formats = <String, DateFormat>{};
+
 /// Text for a file operation error.
 String fileErrorText(AppLocalizations l10n, Object e) => switch (e) {
-      SshConnectException() => sshErrorText(l10n, e),
-      BackendException(:final kind, :final message) => switch (kind) {
-          BackendErrorKind.notFound => l10n.fileNotFound,
-          BackendErrorKind.permissionDenied => l10n.filePermissionDenied,
-          BackendErrorKind.alreadyExists => l10n.fileExists,
-          BackendErrorKind.notEmpty => l10n.folderNotEmpty,
-          BackendErrorKind.disconnected => l10n.fileDisconnected,
-          _ => l10n.errorGeneric(message),
-        },
-      _ => l10n.errorGeneric('$e'),
-    };
+  SshConnectException() => sshErrorText(l10n, e),
+  BackendException(:final kind, :final message) => switch (kind) {
+    BackendErrorKind.notFound => l10n.fileNotFound,
+    BackendErrorKind.permissionDenied => l10n.filePermissionDenied,
+    BackendErrorKind.alreadyExists => l10n.fileExists,
+    BackendErrorKind.notEmpty => l10n.folderNotEmpty,
+    BackendErrorKind.disconnected => l10n.fileDisconnected,
+    _ => l10n.errorGeneric(message),
+  },
+  _ => l10n.errorGeneric('$e'),
+};
 
 IconData fileIcon(FileEntry e) {
   if (e.isBrowsable) return e.type == FileType.link ? Icons.folder_special_outlined : Icons.folder;
@@ -75,6 +78,13 @@ class FilesView extends ConsumerStatefulWidget {
 
 class _FilesViewState extends ConsumerState<FilesView> {
   FileBrowser get _b => widget.tab.browser;
+  final _scroll = ScrollController();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -100,8 +110,8 @@ class _FilesViewState extends ConsumerState<FilesView> {
       _entryActions(e);
     } else {
       ref
-            .read(workspaceProvider)
-            .open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path, openerId: widget.tab.id));
+          .read(workspaceProvider)
+          .open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path, openerId: widget.tab.id));
     }
   }
 
@@ -119,16 +129,48 @@ class _FilesViewState extends ConsumerState<FilesView> {
               _EntryDetails(entry: e),
               const Divider(height: 1),
               if (!e.isBrowsable) ...[
-                ListTile(leading: const Icon(Icons.visibility_outlined), title: Text(l10n.open), onTap: () => Navigator.pop(context, 'open')),
-                ListTile(leading: const Icon(Icons.download), title: Text(l10n.download), onTap: () => Navigator.pop(context, 'download')),
+                ListTile(
+                  leading: const Icon(Icons.visibility_outlined),
+                  title: Text(l10n.open),
+                  onTap: () => Navigator.pop(context, 'open'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.download),
+                  title: Text(l10n.download),
+                  onTap: () => Navigator.pop(context, 'download'),
+                ),
               ],
-              ListTile(leading: const Icon(Icons.drive_file_rename_outline), title: Text(l10n.rename), onTap: () => Navigator.pop(context, 'rename')),
-              ListTile(leading: const Icon(Icons.drive_file_move_outline), title: Text(l10n.moveTo), onTap: () => Navigator.pop(context, 'move')),
-              ListTile(leading: const Icon(Icons.lock_outline), title: Text(l10n.permissions), onTap: () => Navigator.pop(context, 'chmod')),
-              ListTile(leading: const Icon(Icons.copy), title: Text(l10n.copyPath), onTap: () => Navigator.pop(context, 'copy')),
+              ListTile(
+                leading: const Icon(Icons.drive_file_rename_outline),
+                title: Text(l10n.rename),
+                onTap: () => Navigator.pop(context, 'rename'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.drive_file_move_outline),
+                title: Text(l10n.moveTo),
+                onTap: () => Navigator.pop(context, 'move'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.lock_outline),
+                title: Text(l10n.permissions),
+                onTap: () => Navigator.pop(context, 'chmod'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: Text(l10n.copyPath),
+                onTap: () => Navigator.pop(context, 'copy'),
+              ),
               if (e.isBrowsable)
-                ListTile(leading: const Icon(Icons.terminal), title: Text(l10n.terminalHere), onTap: () => Navigator.pop(context, 'terminal')),
-              ListTile(leading: const Icon(Icons.delete_outline), title: Text(l10n.delete), onTap: () => Navigator.pop(context, 'delete')),
+                ListTile(
+                  leading: const Icon(Icons.terminal),
+                  title: Text(l10n.terminalHere),
+                  onTap: () => Navigator.pop(context, 'terminal'),
+                ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(l10n.delete),
+                onTap: () => Navigator.pop(context, 'delete'),
+              ),
             ],
           ),
         ),
@@ -143,12 +185,15 @@ class _FilesViewState extends ConsumerState<FilesView> {
       case 'download':
         _download([e]);
       case 'rename':
-        final name = await askText(context,
-            title: l10n.rename,
-            label: l10n.nameField,
-            initial: e.name,
-            selectStem: !e.isBrowsable,
-            validate: (v) => v.contains('/') ? l10n.invalidFileName : (v != e.name && _b.names.contains(v) ? l10n.fileExists : null));
+        final name = await askText(
+          context,
+          title: l10n.rename,
+          label: l10n.nameField,
+          initial: e.name,
+          selectStem: !e.isBrowsable,
+          validate: (v) =>
+              v.contains('/') ? l10n.invalidFileName : (v != e.name && _b.names.contains(v) ? l10n.fileExists : null),
+        );
         if (name != null && name != e.name) await _run(() => _b.rename(e, name));
       case 'move':
         await _move([e.path]);
@@ -159,7 +204,9 @@ class _FilesViewState extends ConsumerState<FilesView> {
         await Clipboard.setData(ClipboardData(text: e.path));
         if (mounted) showSnack(context, l10n.copied);
       case 'terminal':
-        ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).terminal(widget.tab.connectionId, directory: e.path));
+        ref
+            .read(workspaceProvider)
+            .open(ref.read(tabFactoryProvider).terminal(widget.tab.connectionId, directory: e.path));
       case 'delete':
         await _delete([e.path]);
     }
@@ -167,7 +214,13 @@ class _FilesViewState extends ConsumerState<FilesView> {
 
   Future<void> _move(List<String> paths) async {
     final l10n = context.l10n;
-    final target = await askText(context, title: l10n.moveTo, label: l10n.folderPath, initial: _b.path ?? '/', confirm: l10n.move);
+    final target = await askText(
+      context,
+      title: l10n.moveTo,
+      label: l10n.folderPath,
+      initial: _b.path ?? '/',
+      confirm: l10n.move,
+    );
     if (target != null) await _run(() => _b.move(paths, target));
   }
 
@@ -176,7 +229,9 @@ class _FilesViewState extends ConsumerState<FilesView> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(paths.length == 1 ? l10n.deleteFileTitle(posix.basename(paths.single)) : l10n.deleteFilesTitle(paths.length)),
+        title: Text(
+          paths.length == 1 ? l10n.deleteFileTitle(posix.basename(paths.single)) : l10n.deleteFilesTitle(paths.length),
+        ),
         content: Text(l10n.deleteFilesBody),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
@@ -228,29 +283,37 @@ class _FilesViewState extends ConsumerState<FilesView> {
                   child: RefreshIndicator(
                     onRefresh: _b.refresh,
                     child: _b.error != null && entries.isEmpty
-                        ? ListView(children: [_ErrorView(error: _b.error!, onRetry: _b.refresh)])
+                        ? ListView(
+                            children: [_ErrorView(error: _b.error!, onRetry: _b.refresh)],
+                          )
                         : entries.isEmpty && !_b.loading && _b.path != null
-                            ? ListView(children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(32),
-                                  child: Text(
-                                    _b.hiddenCount > 0 ? l10n.folderOnlyHidden(_b.hiddenCount) : l10n.folderEmpty,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ])
-                            : ListView.builder(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                itemCount: entries.length,
-                                itemBuilder: (context, i) => _EntryTile(
-                                  entry: entries[i],
-                                  selecting: _b.selecting,
-                                  selected: _b.selection.contains(entries[i].path),
-                                  onTap: () => _open(entries[i]),
-                                  onLongPress: () => _b.toggleSelected(entries[i]),
-                                  onMore: () => _entryActions(entries[i]),
+                        ? ListView(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(32),
+                                child: Text(
+                                  _b.hiddenCount > 0 ? l10n.folderOnlyHidden(_b.hiddenCount) : l10n.folderEmpty,
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
+                            ],
+                          )
+                        : Scrollbar(
+                            controller: _scroll,
+                            child: ListView.builder(
+                              controller: _scroll,
+                              padding: const EdgeInsets.only(bottom: 16),
+                              itemCount: entries.length,
+                              itemBuilder: (context, i) => _EntryTile(
+                                entry: entries[i],
+                                selecting: _b.selecting,
+                                selected: _b.selection.contains(entries[i].path),
+                                onTap: () => _open(entries[i]),
+                                onLongPress: () => _b.toggleSelected(entries[i]),
+                                onMore: () => _entryActions(entries[i]),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -300,9 +363,21 @@ class _SelectionBar extends StatelessWidget {
           IconButton(tooltip: l10n.clearSelection, icon: const Icon(Icons.close), onPressed: b.clearSelection),
           Expanded(child: Text(l10n.nSelected(b.selection.length))),
           IconButton(tooltip: l10n.selectAll, icon: const Icon(Icons.select_all), onPressed: b.selectAll),
-          IconButton(tooltip: l10n.download, icon: const Icon(Icons.download), onPressed: () => view._download(selected)),
-          IconButton(tooltip: l10n.moveTo, icon: const Icon(Icons.drive_file_move_outline), onPressed: () => view._move(b.selection.toList())),
-          IconButton(tooltip: l10n.delete, icon: const Icon(Icons.delete_outline), onPressed: () => view._delete(b.selection.toList())),
+          IconButton(
+            tooltip: l10n.download,
+            icon: const Icon(Icons.download),
+            onPressed: () => view._download(selected),
+          ),
+          IconButton(
+            tooltip: l10n.moveTo,
+            icon: const Icon(Icons.drive_file_move_outline),
+            onPressed: () => view._move(b.selection.toList()),
+          ),
+          IconButton(
+            tooltip: l10n.delete,
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () => view._delete(b.selection.toList()),
+          ),
         ],
       ),
     );
@@ -380,10 +455,15 @@ class _EntryDetails extends StatelessWidget {
     final e = entry;
     final locale = Localizations.localeOf(context).toLanguageTag();
     final rows = <(String, String)>[
-      if (!e.isBrowsable) (l10n.sizeLabel, '${formatSize(e.size)} (${l10n.bytesCount(NumberFormat.decimalPattern(locale).format(e.size))})'),
+      if (!e.isBrowsable)
+        (
+          l10n.sizeLabel,
+          '${formatSize(e.size)} (${l10n.bytesCount(NumberFormat.decimalPattern(locale).format(e.size))})',
+        ),
       if (e.modified != null) (l10n.modifiedLabel, DateFormat.yMMMd(locale).add_Hms().format(e.modified!)),
       if (e.owner != null) (l10n.ownerLabel, e.group == null ? e.owner! : '${e.owner}:${e.group}'),
-      if (e.mode != null) (l10n.permissions, '${permissionString(e.mode!)}  ${e.mode!.toRadixString(8).padLeft(3, '0')}'),
+      if (e.mode != null)
+        (l10n.permissions, '${permissionString(e.mode!)}  ${e.mode!.toRadixString(8).padLeft(3, '0')}'),
       if (e.linkTarget != null) (l10n.linkTargetLabel, e.linkTarget!),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();
@@ -396,13 +476,21 @@ class _EntryDetails extends StatelessWidget {
         textBaseline: TextBaseline.alphabetic,
         children: [
           for (final (k, v) in rows)
-            TableRow(children: [
-              Padding(padding: const EdgeInsets.only(right: 16, bottom: 4), child: Text(k, style: label)),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: SelectableText(v, style: theme.textTheme.bodyMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
-              ),
-            ]),
+            TableRow(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, bottom: 4),
+                  child: Text(k, style: label),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: SelectableText(
+                    v,
+                    style: theme.textTheme.bodyMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -471,7 +559,11 @@ class _Breadcrumbs extends ConsumerWidget {
                 for (final m in bookmarks)
                   PopupMenuItem(
                     value: m.path,
-                    child: ListTile(leading: const Icon(Icons.folder_outlined), title: Text(m.name), subtitle: Text(m.path)),
+                    child: ListTile(
+                      leading: const Icon(Icons.folder_outlined),
+                      title: Text(m.name),
+                      subtitle: Text(m.path),
+                    ),
                   ),
               ],
             ),

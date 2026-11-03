@@ -3,6 +3,15 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.6
+
+- **Smoother forms**: typing in the port-forwarding editor (or any screen over your tabs) no longer stutters while the keyboard opens; the open terminal behind it was being resized on every frame.
+- **Faster file browser**: large folders open and sort much faster, and folders with many links load in one go.
+- **Big text files** open the first 512 KB right away (Load all for the rest), decode in the background and skip syntax colouring above 1 MB, so opening them no longer freezes the app.
+- **Scrollbars** you can drag in the file browser and in text, Markdown and hex views.
+- Leaving a **ZeroTier** network asks first.
+- The unused "predictive back" setting is gone.
+
 ## 0.7.5
 
 - **Connections survive closing nux**, like Termux: closing nux from the recent apps no longer ends your terminals, file browsers or port forwards while the background notification is there. Opening nux again brings back every tab exactly as you left it. "Disconnect all" in the notification ends everything.

@@ -47,7 +47,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Downloading and uploading whole folders
 - [ ] Receive files shared from other apps (share intent → upload)
 - [x] Read-only code viewer (re_editor): ~45 highlighted languages, line numbers, folding, find, wrap
-- [x] Large files load the first 2 MB with "Load all"; image, Markdown (rendered/source) and hex views
+- [x] Large files load the first 512 KB with "Load all"; image, Markdown (rendered/source) and hex views
 
 ## M3 — SSH port forwarding
 - [x] Rules: local (-L), remote (-R), dynamic SOCKS5 (-D), per connection, auto-start (schema v4)

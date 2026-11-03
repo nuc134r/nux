@@ -561,6 +561,15 @@
   },
   "later": "Later",
   "leave": "Leave",
+  "leaveNetworkBody": "Hosts and forwards that use this network will not connect until you join it again.",
+  "leaveNetworkTitle": "Leave {name}?",
+  "@leaveNetworkTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "licenses": "Licenses",
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
@@ -682,8 +691,6 @@
       }
     }
   },
-  "predictiveBack": "Predictive back gesture",
-  "predictiveBackHint": "The page follows your back swipe",
   "previous": "Previous",
   "protection": "Protection",
   "publicKey": "Public key",

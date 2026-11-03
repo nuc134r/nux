@@ -121,7 +121,21 @@ class ZeroTierScreen extends ConsumerWidget {
                       trailing: FilledButton.tonal(onPressed: () => _join(context, service), child: Text(l10n.join)),
                     ),
                   for (final id in service.networks)
-                    _NetworkTile(id: id, state: service.network(id), running: service.running, onLeave: () => service.leave(id)),
+                    _NetworkTile(id: id, state: service.network(id), running: service.running, onLeave: () async {
+                      final name = service.network(id)?.name;
+                      final ok = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(l10n.leaveNetworkTitle(name ?? id)),
+                          content: Text(l10n.leaveNetworkBody),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+                            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.leave)),
+                          ],
+                        ),
+                      );
+                      if (ok == true) await service.leave(id);
+                    }),
                 ],
               ),
               Padding(

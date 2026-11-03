@@ -50,13 +50,19 @@ class RemoteDocument extends ChangeNotifier {
   String get name => posix.basename(path);
 
   String? _text;
-  String get text => _text ??= utf8.decode(bytes ?? const [], allowMalformed: true);
+  String get text => _text ??= _decode(bytes ?? Uint8List(0));
+
+  static const _decodeInIsolate = 256 << 10;
+
+  /// Over this size syntax highlighting is skipped: it makes scrolling a very large file sluggish.
+  static const highlightLimit = 1 << 20;
 
   /// What [load] reads by default.
   static int limitFor(FileKind kind) => switch (kind) {
         FileKind.image => 32 << 20,
         FileKind.binary || FileKind.archive => 256 << 10,
-        FileKind.text || FileKind.markdown => 2 << 20,
+        // Text lays out line by line in the editor: past ~0.5 MB opening a file stutters on phones.
+        FileKind.text || FileKind.markdown => 512 << 10,
       };
 
   /// Loads the file; [all] ignores the size limit.
@@ -81,7 +87,8 @@ class RemoteDocument extends ChangeNotifier {
         if (out.length >= limit) break;
       }
       bytes = out.takeBytes();
-      _text = null;
+      // Large text is decoded off the UI thread (the getter would do it during the first frame).
+      _text = bytes!.length > _decodeInIsolate ? await compute(_decode, bytes!) : null;
       generation++;
       kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!) ? FileKind.binary : named;
     } catch (e) {
@@ -150,3 +157,5 @@ String hexLine(Uint8List bytes, int offset) {
   final ascii = String.fromCharCodes(row.map((b) => b >= 32 && b < 127 ? b : 46));
   return '${offset.toRadixString(16).padLeft(8, '0')}  $hex |$ascii|';
 }
+
+String _decode(Uint8List bytes) => utf8.decode(bytes, allowMalformed: true);

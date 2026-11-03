@@ -6,7 +6,6 @@ import '../../../core/db/database.dart';
 abstract final class SettingKeys {
   static const themeMode = 'themeMode';
   static const locale = 'locale';
-  static const predictiveBack = 'predictiveBack';
   static const autoUpdateCheck = 'autoUpdateCheck';
   static const betaUpdates = 'betaUpdates';
   static const dismissedUpdate = 'dismissedUpdate';
@@ -42,8 +41,6 @@ class AppSettingsState {
     final code => Locale(code),
   };
 
-  /// Android back-swipe animation that previews the previous page; off until turned on.
-  bool get predictiveBack => values[SettingKeys.predictiveBack] == 'true';
 
   bool get autoUpdateCheck => values[SettingKeys.autoUpdateCheck] != 'false';
 

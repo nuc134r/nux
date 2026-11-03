@@ -5,35 +5,53 @@ enum FileSort { name, size, modified }
 /// Directories first, then by [sort]; names compare case-insensitively with numbers in order
 /// (`file2` before `file10`).
 List<FileEntry> sortEntries(Iterable<FileEntry> entries, {FileSort sort = FileSort.name, bool descending = false, bool showHidden = false}) {
-  final list = entries.where((e) => showHidden || !e.isHidden).toList();
-  int byName(FileEntry a, FileEntry b) => compareNatural(a.name, b.name);
-  list.sort((a, b) {
+  // Keys are made once per entry: a natural comparison per pair (regex, lower-casing, number parsing)
+  // made large folders slow to show.
+  final keyed = [
+    for (final e in entries)
+      if (showHidden || !e.isHidden) (e, NaturalKey(e.name)),
+  ];
+  keyed.sort((x, y) {
+    final a = x.$1, b = y.$1;
     if (a.isBrowsable != b.isBrowsable) return a.isBrowsable ? -1 : 1;
     final c = switch (sort) {
-      FileSort.name => byName(a, b),
+      FileSort.name => x.$2.compareTo(y.$2),
       FileSort.size => a.size.compareTo(b.size),
       FileSort.modified => (a.modified ?? DateTime(0)).compareTo(b.modified ?? DateTime(0)),
     };
-    final r = c == 0 ? byName(a, b) : c;
+    final r = c == 0 ? x.$2.compareTo(y.$2) : c;
     return descending ? -r : r; // folders stay first either way
   });
-  return list;
+  return [for (final k in keyed) k.$1];
 }
 
 /// Case-insensitive comparison where digit runs compare as numbers.
-int compareNatural(String a, String b) {
-  final re = RegExp(r'(\d+)|(\D+)');
-  final pa = re.allMatches(a.toLowerCase()).toList();
-  final pb = re.allMatches(b.toLowerCase()).toList();
-  for (var i = 0; i < pa.length && i < pb.length; i++) {
-    final x = pa[i], y = pb[i];
-    final c = x.group(1) != null && y.group(1) != null
-        ? BigInt.parse(x.group(1)!).compareTo(BigInt.parse(y.group(1)!))
-        : x.group(0)!.compareTo(y.group(0)!);
-    if (c != 0) return c;
+int compareNatural(String a, String b) => NaturalKey(a).compareTo(NaturalKey(b));
+
+/// A name split once into text and number runs, for [compareNatural].
+class NaturalKey implements Comparable<NaturalKey> {
+  NaturalKey(this.name) : _parts = _split(name.toLowerCase());
+
+  final String name;
+  final List<Object> _parts; // String or BigInt
+
+  static final _runs = RegExp(r'(\d+)|(\D+)');
+
+  static List<Object> _split(String s) => [
+        for (final m in _runs.allMatches(s)) m.group(1) != null ? BigInt.parse(m.group(1)!) : m.group(0)!,
+      ];
+
+  @override
+  int compareTo(NaturalKey other) {
+    final pa = _parts, pb = other._parts;
+    for (var i = 0; i < pa.length && i < pb.length; i++) {
+      final x = pa[i], y = pb[i];
+      final c = x is BigInt && y is BigInt ? x.compareTo(y) : x.toString().compareTo(y.toString());
+      if (c != 0) return c;
+    }
+    final c = pa.length.compareTo(pb.length);
+    return c != 0 ? c : name.compareTo(other.name);
   }
-  final c = pa.length.compareTo(pb.length);
-  return c != 0 ? c : a.compareTo(b);
 }
 
 /// `rwxr-xr-x` for the lower 9 bits of [mode].

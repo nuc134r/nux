@@ -776,6 +776,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get leave => 'Покинуть';
 
   @override
+  String get leaveNetworkBody =>
+      'Хосты и перенаправления через эту сеть не будут подключаться, пока вы снова не подключитесь к ней.';
+
+  @override
+  String leaveNetworkTitle(String name) {
+    return 'Покинуть $name?';
+  }
+
+  @override
   String get licenses => 'Лицензии';
 
   @override
@@ -1009,12 +1018,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String portForwardingOn(String name) {
     return 'Проброс · $name';
   }
-
-  @override
-  String get predictiveBack => 'Предиктивный жест «назад»';
-
-  @override
-  String get predictiveBackHint => 'Страница следует за жестом «назад»';
 
   @override
   String get previous => 'Предыдущее';

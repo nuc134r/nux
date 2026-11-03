@@ -164,10 +164,13 @@ class _CodeView extends ConsumerWidget {
     final (editor, finder) = tab.editorFor(doc.generation, text);
     final firstLine = text.substring(0, min(text.length, 120)).split('\n').first;
     final language = languageFor(doc.path) ?? languageFromShebang(firstLine);
-    final mode = language == null ? null : modeFor(language);
+    final mode = language == null || text.length > RemoteDocument.highlightLimit ? null : modeFor(language);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
     return CodeEditor(
+      // Vertical only: horizontal scrolling (no wrap) keeps the default.
+      scrollbarBuilder: (context, child, details) =>
+          details.direction == AxisDirection.down ? Scrollbar(controller: details.controller, child: child) : child,
       controller: editor,
       findController: finder,
       readOnly: !tab.editing,
@@ -271,20 +274,22 @@ class _MarkdownView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final fontSize = watchTextSize(ref, TextSizeKind.editor);
     final base = MarkdownStyleSheet.fromTheme(Theme.of(context));
-    return Markdown(
-      data: text,
-      selectable: true,
-      onTapLink: (text, href, title) {
-        final uri = href == null ? null : Uri.tryParse(href);
-        if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-          launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
-      styleSheet: base.copyWith(
-        code: TextStyle(fontFamily: monoFont, fontSize: fontSize),
-        // fromTheme uses primaryColor, which is nearly the background in dark Material 3.
-        checkbox: base.checkbox?.copyWith(color: Theme.of(context).colorScheme.primary),
-        textScaler: TextScaler.linear(fontSize / TextSizeKind.editor.defaultSize),
+    return Scrollbar(
+      child: Markdown(
+        data: text,
+        selectable: true,
+        onTapLink: (text, href, title) {
+          final uri = href == null ? null : Uri.tryParse(href);
+          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+            launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+        styleSheet: base.copyWith(
+          code: TextStyle(fontFamily: monoFont, fontSize: fontSize),
+          // fromTheme uses primaryColor, which is nearly the background in dark Material 3.
+          checkbox: base.checkbox?.copyWith(color: Theme.of(context).colorScheme.primary),
+          textScaler: TextScaler.linear(fontSize / TextSizeKind.editor.defaultSize),
+        ),
       ),
     );
   }
@@ -320,18 +325,24 @@ class _HexView extends ConsumerWidget {
     final fontSize = watchTextSize(ref, TextSizeKind.editor);
     final bytes = doc.bytes!;
     final lines = (bytes.length / 16).ceil();
+    // Rows are wider than a phone: the vertical bar sits outside the horizontal scroller (it follows the
+    // nested list's notifications) so it stays on screen.
     return Scrollbar(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SizedBox(
-          width: fontSize * 52,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: lines,
-            itemExtent: fontSize * 1.5,
-            itemBuilder: (context, i) => Text(
-              hexLine(bytes, i * 16),
-              style: TextStyle(fontFamily: monoFont, fontSize: fontSize - 1, fontFeatures: noLigatures),
+      notificationPredicate: (n) => n.depth == 1,
+      interactive: false,
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: fontSize * 52,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: lines,
+              itemExtent: fontSize * 1.5,
+              itemBuilder: (context, i) => Text(
+                hexLine(bytes, i * 16),
+                style: TextStyle(fontFamily: monoFont, fontSize: fontSize - 1, fontFeatures: noLigatures),
+              ),
             ),
           ),
         ),

@@ -27,16 +27,19 @@ class SftpFileSystem implements FileSystem {
         final s = await _s;
         final names = await s.listdir(directory);
         final entries = <FileEntry>[];
+        final links = <Future<void>>[];
         for (final n in names) {
           if (n.filename == '.' || n.filename == '..') continue;
           final path = posix.join(directory, n.filename);
           final (owner, group) = ownerFromLongname(n.longname) ?? (n.attr.userID?.toString(), n.attr.groupID?.toString());
-          var entry = _entry(path, n.attr, owner: owner, group: group);
+          final entry = _entry(path, n.attr, owner: owner, group: group);
+          final index = entries.length;
+          entries.add(entry);
           if (entry.type == FileType.link) {
-            // Follow links so "link to a directory" can be browsed; a broken link stays a link.
-            try {
-              final target = await s.stat(path);
-              entry = FileEntry(
+            // Follow links so "link to a directory" can be browsed; a broken link stays a link. All at once:
+            // one round trip each, one after another, made folders with many links slow to open.
+            links.add(s.stat(path).then((target) {
+              entries[index] = FileEntry(
                 path: path,
                 type: FileType.link,
                 size: target.size ?? 0,
@@ -46,10 +49,10 @@ class SftpFileSystem implements FileSystem {
                 owner: entry.owner,
                 group: entry.group,
               );
-            } catch (_) {}
+            }, onError: (Object _) {}));
           }
-          entries.add(entry);
         }
+        await Future.wait(links);
         return entries;
       });
 

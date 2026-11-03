@@ -16,8 +16,8 @@ class NuxApp extends ConsumerWidget {
     return MaterialApp.router(
       onGenerateTitle: (context) => context.l10n.appTitle,
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(Brightness.light, predictiveBack: settings.predictiveBack),
-      darkTheme: buildTheme(Brightness.dark, predictiveBack: settings.predictiveBack),
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
       themeMode: settings.themeMode,
       locale: settings.locale,
       supportedLocales: AppLocalizations.supportedLocales,

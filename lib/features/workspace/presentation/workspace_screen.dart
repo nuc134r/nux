@@ -46,34 +46,36 @@ class WorkspaceScreen extends ConsumerWidget {
     // Open terminals and file browsers keep nux running in the background (with a notification).
     ref.watch(sshKeepAliveProvider);
     ref.watch(backgroundResyncProvider);
-    return TabSwitcher(
-      controller: controller,
-      headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
-      emptyBuilder: (context) => const _NoTabs(),
-      gridFooterBuilder: (context) => const _GridFooter(),
-      stripTrailing: IconButton(
-        tooltip: l10n.newTab,
-        icon: const Icon(Icons.add),
-        onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
-      ),
-      actionsBuilder: (context, tab) => [
-        if (tab is TerminalTab)
-          TabAction(
-            icon: Icons.copy_all,
-            label: l10n.duplicateTab,
-            onSelected: () => openTerminal(ref, tab.connectionId),
-          ),
-      ],
-      strings: TabSwitcherStrings(
-        noTabs: l10n.noTabs,
-        close: l10n.closeTab,
-        closeOthers: l10n.closeOtherTabs,
-        pin: l10n.pinTab,
-        unpin: l10n.unpinTab,
-        pinned: l10n.pinnedTabs,
-        undo: l10n.undo,
-        closed: l10n.tabClosed,
-        noPreview: l10n.noPreview,
+    return _KeyboardOnlyOnTop(
+      child: TabSwitcher(
+        controller: controller,
+        headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
+        emptyBuilder: (context) => const _NoTabs(),
+        gridFooterBuilder: (context) => const _GridFooter(),
+        stripTrailing: IconButton(
+          tooltip: l10n.newTab,
+          icon: const Icon(Icons.add),
+          onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+        ),
+        actionsBuilder: (context, tab) => [
+          if (tab is TerminalTab)
+            TabAction(
+              icon: Icons.copy_all,
+              label: l10n.duplicateTab,
+              onSelected: () => openTerminal(ref, tab.connectionId),
+            ),
+        ],
+        strings: TabSwitcherStrings(
+          noTabs: l10n.noTabs,
+          close: l10n.closeTab,
+          closeOthers: l10n.closeOtherTabs,
+          pin: l10n.pinTab,
+          unpin: l10n.unpinTab,
+          pinned: l10n.pinnedTabs,
+          undo: l10n.undo,
+          closed: l10n.tabClosed,
+          noPreview: l10n.noPreview,
+        ),
       ),
     );
   }
@@ -117,7 +119,9 @@ class _Header extends ConsumerWidget {
         ),
         // Only the tab count and the menu: every action lives in the menu.
         TabCountButton(controller: controller, tooltip: l10n.showTabs),
-        _MenuButton(tab: tab, items: (_) {
+        _MenuButton(
+          tab: tab,
+          items: (_) {
             // Built when the menu opens (fresh state); actions run with the header's context.
             final entries = tab?.menuEntries(context) ?? const <NuxMenuItem>[];
             final sizeKind = tab?.textSizeKind;
@@ -163,7 +167,8 @@ class _Header extends ConsumerWidget {
               const NuxMenuDivider(),
               settings,
             ];
-          }),
+          },
+        ),
         const SizedBox(width: 4),
       ],
     );
@@ -181,10 +186,10 @@ class _MenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final tab = this.tab;
     Widget button(bool badge) => NuxMenuButton(
-          tooltip: context.l10n.more,
-          icon: Badge(isLabelVisible: badge, smallSize: 8, child: const Icon(Icons.more_vert)),
-          items: items,
-        );
+      tooltip: context.l10n.more,
+      icon: Badge(isLabelVisible: badge, smallSize: 8, child: const Icon(Icons.more_vert)),
+      items: items,
+    );
     final changes = tab?.menuBadgeChanges;
     if (tab == null || changes == null) return button(tab?.menuBadge ?? false);
     return ListenableBuilder(listenable: changes, builder: (context, _) => button(tab.menuBadge));
@@ -251,5 +256,21 @@ class _GridFooter extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// Under another screen (an editor, settings) the keyboard must not reach the tabs: each frame of its
+/// animation rebuilt and resized the open terminal (cell metrics, a PTY resize) behind that screen, which
+/// made forms with text fields stutter. The tabs are passed in built, and only see view insets while this
+/// route is on top, so nothing under here rebuilds while covered.
+class _KeyboardOnlyOnTop extends StatelessWidget {
+  const _KeyboardOnlyOnTop({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final covered = !(ModalRoute.of(context)?.isCurrent ?? true);
+    return MediaQuery.removeViewInsets(context: context, removeBottom: covered, child: child);
   }
 }

@@ -1328,6 +1328,18 @@ abstract class AppLocalizations {
   /// **'Leave'**
   String get leave;
 
+  /// No description provided for @leaveNetworkBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosts and forwards that use this network will not connect until you join it again.'**
+  String get leaveNetworkBody;
+
+  /// No description provided for @leaveNetworkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave {name}?'**
+  String leaveNetworkTitle(String name);
+
   /// No description provided for @licenses.
   ///
   /// In en, this message translates to:
@@ -1741,18 +1753,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forwarding · {name}'**
   String portForwardingOn(String name);
-
-  /// No description provided for @predictiveBack.
-  ///
-  /// In en, this message translates to:
-  /// **'Predictive back gesture'**
-  String get predictiveBack;
-
-  /// No description provided for @predictiveBackHint.
-  ///
-  /// In en, this message translates to:
-  /// **'The page follows your back swipe'**
-  String get predictiveBackHint;
 
   /// No description provided for @previous.
   ///

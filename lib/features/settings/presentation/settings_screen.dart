@@ -54,13 +54,6 @@ class SettingsScreen extends ConsumerWidget {
                   if (code != null) await repo.set(SettingKeys.locale, code.isEmpty ? null : code);
                 },
               ),
-              SwitchListTile(
-                secondary: const Icon(Icons.swipe_left_outlined),
-                title: Text(l10n.predictiveBack),
-                subtitle: Text(l10n.predictiveBackHint),
-                value: settings.predictiveBack,
-                onChanged: (v) => repo.set(SettingKeys.predictiveBack, '$v'),
-              ),
             ],
           ),
           Island(

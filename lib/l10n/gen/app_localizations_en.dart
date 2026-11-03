@@ -768,6 +768,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leave => 'Leave';
 
   @override
+  String get leaveNetworkBody =>
+      'Hosts and forwards that use this network will not connect until you join it again.';
+
+  @override
+  String leaveNetworkTitle(String name) {
+    return 'Leave $name?';
+  }
+
+  @override
   String get licenses => 'Licenses';
 
   @override
@@ -998,12 +1007,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String portForwardingOn(String name) {
     return 'Forwarding · $name';
   }
-
-  @override
-  String get predictiveBack => 'Predictive back gesture';
-
-  @override
-  String get predictiveBackHint => 'The page follows your back swipe';
 
   @override
   String get previous => 'Previous';

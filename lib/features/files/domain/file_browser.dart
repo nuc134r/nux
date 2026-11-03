@@ -42,7 +42,10 @@ class FileBrowser extends ChangeNotifier {
   /// Null until the start folder is known.
   String? get path => _path;
 
-  List<FileEntry> get entries => sortEntries(_all, sort: sort, descending: descending, showHidden: showHidden);
+  /// Sorted once per change (every rebuild read it, re-sorting large folders each time).
+  List<FileEntry> get entries =>
+      _sorted ??= sortEntries(_all, sort: sort, descending: descending, showHidden: showHidden);
+  List<FileEntry>? _sorted;
 
   int get hiddenCount => _all.where((e) => e.isHidden).length;
 
@@ -196,6 +199,7 @@ class FileBrowser extends ChangeNotifier {
   }
 
   void _notify() {
+    _sorted = null; // whatever changed (folder, sort, hidden files) may change the order
     if (!_disposed) notifyListeners();
   }
 

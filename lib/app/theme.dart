@@ -8,7 +8,7 @@ const noLigatures = [FontFeature.disable('liga'), FontFeature.disable('calt')];
 
 const _seed = Color(0xFF2E7D6B);
 
-ThemeData buildTheme(Brightness brightness, {bool predictiveBack = false}) {
+ThemeData buildTheme(Brightness brightness) {
   final scheme = ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
   return ThemeData(
     colorScheme: scheme,
@@ -17,13 +17,11 @@ ThemeData buildTheme(Brightness brightness, {bool predictiveBack = false}) {
       color: scheme.surfaceContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-    // Predictive back on Android is a setting (off by default; the manifest enables the callback).
-    pageTransitionsTheme: PageTransitionsTheme(
+    pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android:
-            predictiveBack ? const PredictiveBackPageTransitionsBuilder() : const FadeForwardsPageTransitionsBuilder(),
-        TargetPlatform.windows: const FadeForwardsPageTransitionsBuilder(),
-        TargetPlatform.linux: const FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
       },
     ),
     listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.symmetric(horizontal: 16)),
@@ -38,9 +36,12 @@ ThemeData buildTheme(Brightness brightness, {bool predictiveBack = false}) {
       dismissDirection: DismissDirection.horizontal,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
     ),
+    // Draggable (long lists and files), a bit wider than the default for fingers.
     scrollbarTheme: ScrollbarThemeData(
+      interactive: true,
+      thickness: const WidgetStatePropertyAll(6),
       radius: const Radius.circular(8),
-      thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .2)),
+      thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .3)),
     ),
   );
 }
