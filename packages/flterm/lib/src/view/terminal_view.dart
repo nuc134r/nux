@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart' show kLongPressTimeout, kTouchSlop;
 import 'package:flutter/widgets.dart';
 import 'package:libghostty/libghostty.dart' show GridRef, Position, Selection;
 
@@ -285,50 +286,57 @@ final class _TerminalViewState extends State<TerminalView>
             );
           },
         );
-        return GestureDetector(
-          behavior: .translucent,
-          onTap: widget.showKeyboard ? _attachment.showKeyboard : _attachment.requestFocus,
-          child: ColoredBox(
-            color: _theme.background.withValues(
-              alpha: _theme.backgroundOpacity,
-            ),
-            child: Stack(
-              fit: .expand,
-              children: [
-                Padding(
-                  padding: widget.padding,
-                  child: Focus(
-                    onKeyEvent: _handleKeyEvent,
-                    child: ShortcutScope(
-                      onPaste: _handlePaste,
-                      controller: _controller,
-                      onContentInteraction:
-                          _attachment.interruptRenderHoldForInteraction,
-                      shortcuts: widget.shortcuts,
-                      enableSelectAll: widget.gestureSettings.selectAllShortcut,
-                      child: viewport,
+        // nux patch: a touch tap shows the soft keyboard again after Back hid it. A raw Listener,
+        // because the tap recognizer inside (selection, links) wins the gesture arena.
+        return Listener(
+          onPointerDown: _tapDown,
+          onPointerUp: _tapUp,
+          child: GestureDetector(
+            behavior: .translucent,
+            onTap: _attachment.requestFocus,
+            child: ColoredBox(
+              color: _theme.background.withValues(
+                alpha: _theme.backgroundOpacity,
+              ),
+              child: Stack(
+                fit: .expand,
+                children: [
+                  Padding(
+                    padding: widget.padding,
+                    child: Focus(
+                      onKeyEvent: _handleKeyEvent,
+                      child: ShortcutScope(
+                        onPaste: _handlePaste,
+                        controller: _controller,
+                        onContentInteraction:
+                            _attachment.interruptRenderHoldForInteraction,
+                        shortcuts: widget.shortcuts,
+                        enableSelectAll:
+                            widget.gestureSettings.selectAllShortcut,
+                        child: viewport,
+                      ),
                     ),
                   ),
-                ),
-                if (widget.overlayBuilder case final builder?)
-                  Positioned.fill(
-                    child: ListenableBuilder(
-                      listenable: _overlayChanges,
-                      builder: (context, _) => LayoutBuilder(
-                        builder: (context, constraints) => builder(
-                          context,
-                          TerminalViewGeometry._fromConstraints(
-                            metrics: _metrics,
-                            padding: widget.padding,
-                            constraints: constraints,
-                            committed: _attachment.committedGeometry,
-                            viewportOffset: _controller.scrollbar.offset,
+                  if (widget.overlayBuilder case final builder?)
+                    Positioned.fill(
+                      child: ListenableBuilder(
+                        listenable: _overlayChanges,
+                        builder: (context, _) => LayoutBuilder(
+                          builder: (context, constraints) => builder(
+                            context,
+                            TerminalViewGeometry._fromConstraints(
+                              metrics: _metrics,
+                              padding: widget.padding,
+                              constraints: constraints,
+                              committed: _attachment.committedGeometry,
+                              viewportOffset: _controller.scrollbar.offset,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -459,6 +467,25 @@ final class _TerminalViewState extends State<TerminalView>
     _attachment.addListener(_onControllerChanged);
     _bindViewListenables();
     if (_devicePixelRatio != null) _syncLinkInteraction();
+  }
+
+  Offset? _tapStart;
+  Duration? _tapStartTime;
+
+  void _tapDown(PointerDownEvent e) {
+    if (e.kind != .touch && e.kind != .stylus) return;
+    _tapStart = e.position;
+    _tapStartTime = e.timeStamp;
+  }
+
+  void _tapUp(PointerUpEvent e) {
+    final start = _tapStart;
+    final startTime = _tapStartTime;
+    _tapStart = null;
+    if (start == null || startTime == null || !widget.showKeyboard) return;
+    if ((e.position - start).distance > kTouchSlop) return;
+    if (e.timeStamp - startTime > kLongPressTimeout) return;
+    _attachment.showKeyboard();
   }
 
   CellMetrics _measureMetrics({Uint8List? fontData}) {

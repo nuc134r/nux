@@ -55,6 +55,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Android foreground service (`specialUse`) keeps the process alive; notification with count, traffic and "Stop all"
 - [x] Quick toggles on the hosts tab; per-host and global forwarding screens; plain-words rule editor
 - [x] Duplicate/conflicting ports refused when saving; clear errors for a taken port, a refused remote bind, ports < 1024
+- [x] One foreground service for SSH sessions (terminals, SFTP) and forwards (`KeepAliveHub`), "Disconnect all"
+- [ ] Setting to not keep sessions alive in the background; ask to ignore battery optimisation (Termux-style)
 - [ ] Keep forwarding after nux is swiped out of recents (cached FlutterEngine kept by the service) — needs device testing
 - [ ] Byte counters for SOCKS connections (dartssh2's SOCKS server only reports connections)
 

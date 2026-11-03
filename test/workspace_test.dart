@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flterm/flterm.dart' show TerminalView;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -193,6 +194,27 @@ void main() {
     }
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text('Installing the key on Build server…'), findsNothing);
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('tapping the terminal shows the soft keyboard again', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(container.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
+    await settle(tester);
+    await tester.tap(find.text('Build server'));
+    await settle(tester);
+
+    // As if Back had hidden the keyboard: the terminal keeps focus, so only an explicit show helps.
+    tester.testTextInput.log.clear();
+    await tester.tapAt(tester.getCenter(find.byType(TerminalView)));
+    await tester.pump();
+    expect(tester.testTextInput.log.map((c) => c.method), contains('TextInput.show'));
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);

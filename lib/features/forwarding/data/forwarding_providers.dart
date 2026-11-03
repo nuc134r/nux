@@ -1,6 +1,8 @@
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/background/background_providers.dart';
+import '../../../core/background/keep_alive.dart';
 import '../../../core/log/log.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
@@ -11,10 +13,9 @@ import '../domain/forward_rule.dart';
 import '../domain/forwarder.dart';
 import '../domain/forwarding_manager.dart';
 import 'forward_rule_repository.dart';
-import 'keep_alive.dart';
 
-final keepAliveProvider =
-    Provider<KeepAlive>((ref) => platformKeepAlive(channelName: currentL10n.value.forwardingChannel));
+/// Forwarding's share of the background service (after the SSH sessions in the notification).
+final keepAliveProvider = Provider<KeepAlive>((ref) => ref.watch(keepAliveHubProvider).slot('forwarding', order: 1));
 
 final forwardingManagerProvider = Provider((ref) {
   final pool = ref.read(sshPoolProvider);

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nux/core/background/keep_alive_hub.dart';
 import 'package:nux/core/db/database.dart';
 import 'package:nux/core/log/log.dart';
 import 'package:nux/core/secure/secret_store.dart';
@@ -14,10 +15,12 @@ import 'package:nux/features/identities/domain/key_generator.dart';
 import 'package:nux/features/identities/domain/key_material.dart';
 import 'package:nux/features/ssh/data/ssh_backend.dart';
 import 'package:nux/features/ssh/data/ssh_connector.dart';
+import 'package:nux/features/ssh/data/ssh_keep_alive.dart';
 import 'package:nux/features/ssh/data/ssh_pool.dart';
 import 'package:nux/features/ssh/domain/ssh_prompter.dart';
 
 import 'helpers.dart';
+import 'keep_alive_hub_test.dart' show RecordingKeepAlive;
 import 'ssh_test_server.dart';
 
 class FakePrompter implements SshPrompter {
@@ -201,6 +204,29 @@ void main() {
     final r = await SshBackend(id: target, displayName: 't', client: lease.client).processRunner.run('echo via-jump');
     expect(r.stdout, 'via-jump\n');
     expect(prompter.hostKeys.map((q) => q.host), ['127.0.0.1', 'localhost']);
+  });
+
+  test('connections in use keep the app alive in the background; Disconnect all closes them', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final c = await addConnection(identityId: await identities.add(key, name: 'k'));
+    final service = RecordingKeepAlive();
+    final hub = KeepAliveHub(service, stopLabel: () => 'Disconnect all', idleText: () => '');
+    final keepAlive = SshKeepAlive(pool, hub.slot('ssh'), title: (n) => '$n open', stopLabel: () => 'Disconnect all');
+    addTearDown(keepAlive.dispose);
+
+    final lease = await pool.acquire(c, prompter);
+    final second = await pool.acquire(c, prompter);
+    second.release();
+    lease.release();
+    await pumpEventQueue();
+    expect(service.calls, ['start 1 open |  | Disconnect all', 'stop'], reason: 'one shared connection; idle ones do not count');
+
+    final again = await pool.acquire(c, prompter);
+    service.pressStop();
+    await again.done.timeout(const Duration(seconds: 5));
+    await pumpEventQueue();
+    expect(pool.inUseCount, 0);
+    expect(service.calls.last, 'stop');
   });
 
   test('concurrent acquires share one connection', () async {

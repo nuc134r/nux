@@ -63,6 +63,12 @@ class AppLocalizationsRu extends AppLocalizations {
       'nux предлагает отмеченные ключи по порядку, затем пароль, затем спрашивает сервер, что ещё нужно.';
 
   @override
+  String get backgroundChannel => 'Фоновые подключения';
+
+  @override
+  String get backgroundHint => 'Остаётся на связи, пока nux в фоне';
+
+  @override
   String get bookmarkFolder => 'Добавить папку в закладки';
 
   @override
@@ -215,6 +221,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get disconnect => 'Отключиться';
+
+  @override
+  String get disconnectAll => 'Отключить все';
 
   @override
   String get doneEditing => 'Закончить правку';
@@ -1080,6 +1089,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sshConnectionMissing => 'Этот хост удалён';
+
+  @override
+  String sshConnectionsOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count SSH-подключений',
+      few: '$count SSH-подключения',
+      one: '$count SSH-подключение',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get sshHostKeyRejected => 'Ключу сервера не доверились';

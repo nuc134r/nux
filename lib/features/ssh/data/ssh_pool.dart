@@ -57,6 +57,9 @@ class SshPool extends ChangeNotifier {
   /// Connected or connecting connection ids.
   Set<String> get active => _entries.keys.toSet();
 
+  /// Open connections that something uses (idle ones close by themselves soon).
+  int get inUseCount => _entries.values.where((e) => e.client != null && e.refs > 0).length;
+
   /// Connects (or joins a connection in progress) and takes a lease on it.
   Future<SshLease> acquire(String connectionId, SshPrompter prompter) async {
     var entry = _entries[connectionId];
@@ -77,6 +80,7 @@ class SshPool extends ChangeNotifier {
     }
     entry.refs++;
     entry.idle?.cancel();
+    if (entry.refs == 1 && entry.client != null) _notify();
     try {
       final client = await entry.future;
       return SshLease._(connectionId, client, this);
@@ -91,6 +95,7 @@ class SshPool extends ChangeNotifier {
     if (e == null || e.client != client) return;
     e.refs--;
     if (e.refs <= 0) {
+      _notify();
       e.idle?.cancel();
       e.idle = Timer(idleTimeout, () {
         if (_entries[connectionId] == e && e.refs <= 0) {
@@ -115,6 +120,13 @@ class SshPool extends ChangeNotifier {
   void disconnect(String connectionId) {
     final e = _entries[connectionId];
     e?.client?.close();
+  }
+
+  /// Closes every connection (the background notification's "Disconnect all").
+  void disconnectAll() {
+    for (final e in _entries.values.toList()) {
+      e.client?.close();
+    }
   }
 
   void _notify() {

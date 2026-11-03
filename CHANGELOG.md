@@ -5,6 +5,8 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.1
 
+- **Sessions stay alive in the background**, like in Termux: while a terminal or file browser is connected, nux keeps running with a notification ("2 SSH connections"), so switching apps no longer drops your sessions. The notification's "Disconnect all" closes everything; port forwards share the same notification.
+- Tapping the terminal really brings the keyboard back after Back has hidden it (the 0.7.0 fix did not work on phones).
 - Installing a key on a server shows its progress on the "Install on a server" row; the result comes as a message with a "Use key" button (no more dialog).
 - Messages at the bottom sit just above the edge again, not far up the screen.
 - The file browser tells you when the connection is lost: right away when it closes, or after 20 seconds when the server stops answering (a dropped network). The folder you were in stays visible under a "Reconnect" bar, and an error while opening a folder is now shown even when a folder is already on screen.

@@ -9,6 +9,7 @@ import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
 import '../../settings/presentation/text_size_controls.dart';
+import '../../ssh/data/ssh_providers.dart';
 import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/presentation/update_ui.dart';
@@ -41,6 +42,8 @@ class WorkspaceScreen extends ConsumerWidget {
     // Rules marked "start with nux" start once the screen (and its dialogs) can be shown.
     ref.watch(forwardingAutoStartProvider);
     ref.watch(zeroTierAutoStartProvider);
+    // Open terminals and file browsers keep nux running in the background (with a notification).
+    ref.watch(sshKeepAliveProvider);
     return TabSwitcher(
       controller: controller,
       headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),

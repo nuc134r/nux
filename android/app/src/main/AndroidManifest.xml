@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- Port forwarding keeps running in the background in a foreground service with a notification. -->
+    <!-- SSH sessions, file browsers and port forwards keep running in the background in a foreground
+         service with a notification. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -16,15 +17,15 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
-        <!-- Port forwarding (flutter_foreground_task). specialUse: SSH tunnels fit no other type, and
-             dataSync is limited to 6 hours a day on Android 15+. -->
+        <!-- Background connections (flutter_foreground_task). specialUse: SSH sessions and tunnels fit no
+             other type, and dataSync is limited to 6 hours a day on Android 15+. -->
         <service
             android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
             android:foregroundServiceType="specialUse"
             android:exported="false">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Keeps SSH port forwards the user started open while the app is in the background"/>
+                android:value="Keeps the SSH sessions, file transfers and port forwards the user opened connected while the app is in the background"/>
         </service>
         <meta-data android:name="io.nuc134r.nux.NOTIFICATION_ICON" android:resource="@drawable/ic_stat_notification"/>
         <!-- In-app updates (ota_update). -->

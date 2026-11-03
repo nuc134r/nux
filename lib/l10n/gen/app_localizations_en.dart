@@ -62,6 +62,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'nux offers the checked keys in order, then the password, then asks the server what else it wants.';
 
   @override
+  String get backgroundChannel => 'Background connections';
+
+  @override
+  String get backgroundHint => 'Stays connected while nux is in the background';
+
+  @override
   String get bookmarkFolder => 'Bookmark this folder';
 
   @override
@@ -213,6 +219,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disconnect => 'Disconnect';
+
+  @override
+  String get disconnectAll => 'Disconnect all';
 
   @override
   String get doneEditing => 'Done editing';
@@ -1069,6 +1078,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sshConnectionMissing => 'This host was deleted';
+
+  @override
+  String sshConnectionsOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count SSH connections',
+      one: '1 SSH connection',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get sshHostKeyRejected => 'The server\'s key was not trusted';

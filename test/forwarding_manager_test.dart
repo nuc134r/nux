@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/core/db/database.dart';
 import 'package:nux/core/log/log.dart';
-import 'package:nux/features/forwarding/data/keep_alive.dart';
+import 'package:nux/core/background/keep_alive.dart';
 import 'package:nux/features/forwarding/domain/forward_rule.dart';
 import 'package:nux/features/forwarding/domain/forwarder.dart';
 import 'package:nux/features/forwarding/domain/forwarding_manager.dart';

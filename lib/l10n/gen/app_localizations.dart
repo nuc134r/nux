@@ -188,6 +188,18 @@ abstract class AppLocalizations {
   /// **'nux offers the checked keys in order, then the password, then asks the server what else it wants.'**
   String get authenticationHint;
 
+  /// No description provided for @backgroundChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Background connections'**
+  String get backgroundChannel;
+
+  /// No description provided for @backgroundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Stays connected while nux is in the background'**
+  String get backgroundHint;
+
   /// No description provided for @bookmarkFolder.
   ///
   /// In en, this message translates to:
@@ -433,6 +445,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Disconnect'**
   String get disconnect;
+
+  /// No description provided for @disconnectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect all'**
+  String get disconnectAll;
 
   /// No description provided for @doneEditing.
   ///
@@ -1897,6 +1915,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This host was deleted'**
   String get sshConnectionMissing;
+
+  /// No description provided for @sshConnectionsOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 SSH connection} other{{count} SSH connections}}'**
+  String sshConnectionsOpen(int count);
 
   /// No description provided for @sshHostKeyRejected.
   ///

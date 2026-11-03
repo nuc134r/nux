@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
-import '../data/keep_alive.dart';
+import '../../../core/background/keep_alive.dart';
 import 'forward_rule.dart';
 import 'forwarder.dart';
 

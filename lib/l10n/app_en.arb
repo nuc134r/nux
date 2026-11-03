@@ -32,6 +32,8 @@
   "appearance": "Appearance",
   "authentication": "Sign in",
   "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
+  "backgroundChannel": "Background connections",
+  "backgroundHint": "Stays connected while nux is in the background",
   "bookmarkFolder": "Bookmark this folder",
   "bookmarks": "Bookmarks",
   "browseFiles": "Browse files",
@@ -143,6 +145,7 @@
   },
   "discardMine": "Discard mine",
   "disconnect": "Disconnect",
+  "disconnectAll": "Disconnect all",
   "doneEditing": "Done editing",
   "download": "Download",
   "duplicate": "Duplicate",
@@ -687,6 +690,14 @@
   "sshAuthFailed": "The server refused the keys and password offered",
   "sshCancelled": "Cancelled",
   "sshConnectionMissing": "This host was deleted",
+  "sshConnectionsOpen": "{count, plural, =1{1 SSH connection} other{{count} SSH connections}}",
+  "@sshConnectionsOpen": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "sshHostKeyRejected": "The server's key was not trusted",
   "sshOtherError": "Connection failed: {detail}",
   "@sshOtherError": {
