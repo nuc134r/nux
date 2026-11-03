@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.1
+
+- The file browser tells you when the connection is lost: right away when it closes, or after 20 seconds when the server stops answering (a dropped network). The folder you were in stays visible under a "Reconnect" bar, and an error while opening a folder is now shown even when a folder is already on screen.
+
 ## 0.7.0
 
 - **Text size everywhere**: terminal and files have separate sizes. Change them from a tab's ⋮ menu, by pinching the text with two fingers, or in Settings → Text.

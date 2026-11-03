@@ -10,6 +10,7 @@ FsOpener sshFsOpener(SshPool pool, SshPrompter Function() prompter, String conne
       return FsHandle(
         fs,
         done: lease.done,
+        drop: () => pool.disconnect(connectionId),
         release: () {
           fs.close();
           lease.release();

@@ -9,9 +9,20 @@ import 'fs_handle.dart';
 /// State of one file browser tab: where it is, what is there, what is selected.
 /// Lives in the tab object, so parking the tab keeps the place and the connection.
 class FileBrowser extends ChangeNotifier {
-  FileBrowser({required this._open, this._path, this.sort = FileSort.name, this.showHidden = false});
+  FileBrowser({
+    required this._open,
+    this._path,
+    this.sort = FileSort.name,
+    this.showHidden = false,
+    this.timeout = const Duration(seconds: 20),
+  });
 
   final FsOpener _open;
+
+  /// How long a folder may take to list before the connection is taken for dead (a dropped network
+  /// often leaves the TCP connection open, so requests would wait forever).
+  final Duration timeout;
+  int _generation = 0;
   FsHandle? _handle;
   Future<FsHandle>? _opening;
 
@@ -48,7 +59,13 @@ class FileBrowser extends ChangeNotifier {
       _handle = h;
       _opening = null;
       h.done.whenComplete(() {
-        if (_handle == h) _handle = null;
+        if (_handle != h) return;
+        _handle = null;
+        // Say so right away instead of on the next tap.
+        if (!_disposed && !loading) {
+          error = const BackendException(BackendErrorKind.disconnected, 'Connection closed');
+          _notify();
+        }
       });
       return h;
     }, onError: (Object e) {
@@ -69,22 +86,41 @@ class FileBrowser extends ChangeNotifier {
   Future<void> refresh() => _load(_path);
 
   Future<void> _load(String? target) async {
+    final generation = ++_generation;
     loading = true;
     error = null;
     _notify();
     try {
       final fs = await this.fs;
-      final dir = target ?? await fs.home();
-      final list = await fs.list(dir);
+      final dir = target ?? await fs.home().timeout(timeout);
+      final list = await fs.list(dir).timeout(timeout);
+      if (generation != _generation) return; // a newer navigation won
       if (dir != _path) selection.clear();
       _path = dir;
       _all = list;
+    } on TimeoutException {
+      if (generation != _generation) return;
+      _dropConnection();
+      error = const BackendException(BackendErrorKind.disconnected, 'The server stopped answering');
     } catch (e) {
+      if (generation != _generation) return;
+      if (e is BackendException && e.kind == BackendErrorKind.disconnected) _dropConnection();
       error = e;
     } finally {
-      loading = false;
-      _notify();
+      if (generation == _generation) {
+        loading = false;
+        _notify();
+      }
     }
+  }
+
+  /// Gives up on the current connection; the next request connects again.
+  void _dropConnection() {
+    final h = _handle;
+    _handle = null;
+    if (h == null) return;
+    h.drop?.call();
+    h.release();
   }
 
   void setSort(FileSort s) {

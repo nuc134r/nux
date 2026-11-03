@@ -213,6 +213,8 @@ class _FilesViewState extends ConsumerState<FilesView> {
               children: [
                 _Breadcrumbs(tab: widget.tab),
                 if (_b.loading) const LinearProgressIndicator(minHeight: 2),
+                // The last listing stays visible; say what went wrong above it.
+                if (_b.error != null && entries.isNotEmpty) _ErrorBanner(error: _b.error!, onRetry: _b.refresh),
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: _b.refresh,
@@ -406,6 +408,36 @@ class _Breadcrumbs extends ConsumerWidget {
                   ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.error, required this.onRetry});
+
+  final Object error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    final lost = error is BackendException && (error as BackendException).kind == BackendErrorKind.disconnected;
+    return Material(
+      color: scheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
+        child: Row(
+          children: [
+            Icon(lost ? Icons.link_off : Icons.error_outline, color: scheme.onErrorContainer),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(fileErrorText(l10n, error), style: TextStyle(color: scheme.onErrorContainer)),
+            ),
+            TextButton(onPressed: onRetry, child: Text(lost ? l10n.reconnect : l10n.tryAgain)),
           ],
         ),
       ),
