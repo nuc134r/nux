@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/widgets/nux_menu.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
@@ -63,13 +63,8 @@ class IdentitiesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.keys),
-        actions: [
-          NuxMenuButton(
-            tooltip: l10n.more,
-            items: (_) => [NuxMenuAction(icon: Icons.add, label: l10n.addKey, onSelected: () => _add(context, ref))],
-          ),
-        ],
       ),
+      bottomNavigationBar: AddBar(label: l10n.addKey, onPressed: () => _add(context, ref)),
       body: keys.isEmpty
           ? Center(
               child: Padding(
@@ -82,13 +77,6 @@ class IdentitiesScreen extends ConsumerWidget {
                     Text(l10n.noKeysYet, style: theme.textTheme.titleLarge),
                     const SizedBox(height: 8),
                     Text(l10n.noKeysHint, textAlign: TextAlign.center),
-                    const SizedBox(height: 24),
-                    FilledButton.icon(
-                      icon: const Icon(Icons.auto_awesome),
-                      label: Text(l10n.generateKey),
-                      onPressed: () => context.push(Routes.newKey),
-                    ),
-                    TextButton(onPressed: () => _add(context, ref), child: Text(l10n.importKey)),
                   ],
                 ),
               ),

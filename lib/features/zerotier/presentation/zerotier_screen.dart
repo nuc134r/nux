@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zerotier_sockets/zerotier_sockets.dart';
 
-import '../../../core/widgets/nux_menu.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
@@ -62,15 +61,8 @@ class ZeroTierScreen extends ConsumerWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('ZeroTier'),
-            actions: [
-              NuxMenuButton(
-                tooltip: l10n.more,
-                items: (_) => [
-                  NuxMenuAction(icon: Icons.add, label: l10n.joinNetwork, onSelected: () => _join(context, service)),
-                ],
-              ),
-            ],
           ),
+          bottomNavigationBar: AddBar(label: l10n.joinNetwork, onPressed: () => _join(context, service)),
           body: ListView(
             padding: const EdgeInsets.only(bottom: 16),
             children: [
@@ -118,7 +110,6 @@ class ZeroTierScreen extends ConsumerWidget {
                     ListTile(
                       title: Text(l10n.ztNoNetworks),
                       subtitle: Text(l10n.ztNoNetworksHint),
-                      trailing: FilledButton.tonal(onPressed: () => _join(context, service), child: Text(l10n.join)),
                     ),
                   for (final id in service.networks)
                     _NetworkTile(id: id, state: service.network(id), running: service.running, onLeave: () async {

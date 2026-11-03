@@ -185,7 +185,9 @@ the way and every screen works the same way:
   tab can do is in its menu (`NuxTab.menuEntries`), with **Settings** always last. Over the tab
   overview the bar is plain background, and its menu has New tab and the app-wide screens.
 - **Screens that are not tabs** (Keys, Port forwarding, ZeroTier, …) put their actions in a ⋮ menu in
-  the app bar too (`NuxMenuButton`).
+  the app bar too (`NuxMenuButton`), except **adding**: a screen that lists things has one wide **Add**
+  button at the bottom (`AddBar` in `Scaffold.bottomNavigationBar`), in reach of the thumb and below the
+  list rather than over it. No ⋮ when the menu would be empty.
 - **Menus** are `NuxMenu`: quick to open, grouped with dividers, long option lists in **submenus**
   (Sort ▸, View ▸) with check marks, the current choice shown at the end of the row. A tab can put a dot
   on ⋮ when something needs attention (transfers running).

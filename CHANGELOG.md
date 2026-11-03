@@ -11,6 +11,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Scrollbars** you can drag in the file browser and in text, Markdown and hex views.
 - **Copy and paste**: selecting text in the terminal shows Copy, Paste and Select all; the text editor gets Cut, Copy, Paste and Select all on its selection.
 - Leaving a **ZeroTier** network asks first.
+- **Add buttons** at the bottom of Keys, Port forwarding and ZeroTier, instead of in the ⋮ menu.
 - The unused "predictive back" setting is gone.
 
 ## 0.7.5

@@ -36,19 +36,18 @@ class ForwardingScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(connectionId == null ? l10n.portForwarding : l10n.portForwardingOn(connections[connectionId]?.name ?? '')),
         actions: [
-          NuxMenuButton(
-            tooltip: l10n.more,
-            items: (_) => [
-              NuxMenuAction(
-                icon: Icons.add,
-                label: l10n.addForward,
-                onSelected: () => context.push(Routes.newForward(connectionId: connectionId)),
-              ),
-              if (manager.activeCount > 0)
+          if (manager.activeCount > 0)
+            NuxMenuButton(
+              tooltip: l10n.more,
+              items: (_) => [
                 NuxMenuAction(icon: Icons.stop_circle_outlined, label: l10n.stopAll, onSelected: manager.stopAll),
-            ],
-          ),
+              ],
+            ),
         ],
+      ),
+      bottomNavigationBar: AddBar(
+        label: l10n.addForward,
+        onPressed: () => context.push(Routes.newForward(connectionId: connectionId)),
       ),
       body: rules.isEmpty
           ? ListView(
@@ -64,14 +63,6 @@ class ForwardingScreen extends ConsumerWidget {
                   (Icons.hub_outlined, l10n.forwardDynamic, l10n.forwardDynamicHint),
                 ])
                   ListTile(leading: Icon(icon), title: Text(title), subtitle: Text(text)),
-                const SizedBox(height: 16),
-                Center(
-                  child: FilledButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: Text(l10n.addForward),
-                    onPressed: () => context.push(Routes.newForward(connectionId: connectionId)),
-                  ),
-                ),
               ],
             )
           : ListView(

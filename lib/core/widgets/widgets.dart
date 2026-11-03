@@ -47,3 +47,29 @@ void showSnack(BuildContext context, String text) {
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(text)));
 }
+
+/// The add action of a full screen that lists things (Keys, Port forwarding, ZeroTier): one wide button
+/// at the bottom, in reach of the thumb, instead of a FAB or a ⋮ entry. Goes in `Scaffold.bottomNavigationBar`.
+class AddBar extends StatelessWidget {
+  const AddBar({super.key, required this.label, required this.onPressed, this.icon = Icons.add});
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+        child: FilledButton.tonalIcon(
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+          icon: Icon(icon),
+          label: Text(label),
+          onPressed: onPressed,
+        ),
+      ),
+    );
+  }
+}
