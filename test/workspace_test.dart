@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/app/app.dart';
+import 'package:nux/app/router.dart';
 import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/files/domain/fs_handle.dart';
 import 'package:nux/features/settings/data/settings_repository.dart';
@@ -163,6 +164,35 @@ void main() {
     await settle(tester);
     expect(viewer.editing, isFalse);
     expect(tabs.current, same(viewer));
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('installing a key shows progress on its row, then the result in a snackbar', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(container.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
+    await settle(tester);
+    container.read(routerProvider).push(Routes.key('sample'));
+    await settle(tester);
+
+    await tester.tap(find.text('Install on a server'));
+    await settle(tester);
+    await tester.tap(find.text('Build server'));
+    await tester.pump();
+    expect(find.text('Installing the key on Build server…'), findsOneWidget);
+    expect(find.byType(SnackBar), findsNothing, reason: 'progress is on the row, not in a snackbar');
+
+    // The sample host does not exist: the failure ends up in a snackbar and the row is back.
+    for (var i = 0; i < 30 && find.byType(SnackBar).evaluate().isEmpty; i++) {
+      await settle(tester);
+    }
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text('Installing the key on Build server…'), findsNothing);
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);

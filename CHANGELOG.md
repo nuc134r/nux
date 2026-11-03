@@ -5,6 +5,8 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.7.1
 
+- Installing a key on a server shows its progress on the "Install on a server" row; the result comes as a message with a "Use key" button (no more dialog).
+- Messages at the bottom sit just above the edge again, not far up the screen.
 - The file browser tells you when the connection is lost: right away when it closes, or after 20 seconds when the server stops answering (a dropped network). The folder you were in stays visible under a "Reconnect" bar, and an error while opening a folder is now shown even when a folder is already on screen.
 
 ## 0.7.0

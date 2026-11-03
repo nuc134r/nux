@@ -24,12 +24,12 @@ import '../domain/key_import.dart';
 import '../domain/key_material.dart';
 
 String keyImportErrorText(AppLocalizations l10n, KeyImportException e) => switch (e.error) {
-      KeyImportError.needsPassphrase => l10n.keyNeedsPassphrase,
-      KeyImportError.wrongPassphrase => l10n.passphraseWrong,
-      KeyImportError.publicKeyOnly => l10n.keyIsPublic,
-      KeyImportError.unsupported => l10n.keyUnsupported(e.detail ?? ''),
-      KeyImportError.invalid => l10n.keyInvalid,
-    };
+  KeyImportError.needsPassphrase => l10n.keyNeedsPassphrase,
+  KeyImportError.wrongPassphrase => l10n.passphraseWrong,
+  KeyImportError.publicKeyOnly => l10n.keyIsPublic,
+  KeyImportError.unsupported => l10n.keyUnsupported(e.detail ?? ''),
+  KeyImportError.invalid => l10n.keyInvalid,
+};
 
 /// Imports a private key from a file the user picks.
 Future<void> importKeyFromFile(BuildContext context, WidgetRef ref) async {
@@ -100,9 +100,16 @@ Future<void> importKeyText(BuildContext context, WidgetRef ref, String text, {St
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextField(controller: name, autofocus: true, decoration: InputDecoration(labelText: l10n.nameField)),
+          TextField(
+            controller: name,
+            autofocus: true,
+            decoration: InputDecoration(labelText: l10n.nameField),
+          ),
           const SizedBox(height: 12),
-          Text('${keyTypeLabel(key!.algorithm)} ${key.bits}\n$fingerprint', style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            '${keyTypeLabel(key!.algorithm)} ${key.bits}\n$fingerprint',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           if (passphrase != null) ...[
             const SizedBox(height: 8),
             Text(l10n.importKeyStaysEncrypted, style: Theme.of(context).textTheme.bodySmall),
@@ -122,9 +129,15 @@ Future<void> importKeyText(BuildContext context, WidgetRef ref, String text, {St
   if (context.mounted) context.pushReplacement(Routes.key(id));
 }
 
-/// Appends the key to `~/.ssh/authorized_keys` on a host the user picks (like `ssh-copy-id`),
-/// then offers to use the key for that host.
-Future<void> installKeyOnServer(BuildContext context, WidgetRef ref, Identity identity) async {
+/// Appends the key to `~/.ssh/authorized_keys` on a host the user picks (like `ssh-copy-id`).
+/// [onProgress] gets the host while installing and null when done (the caller shows the progress);
+/// the result is a snackbar, with "Use key" when the host does not use this key yet.
+Future<void> installKeyOnServer(
+  BuildContext context,
+  WidgetRef ref,
+  Identity identity, {
+  void Function(Connection? installingOn)? onProgress,
+}) async {
   final l10n = context.l10n;
   final connections = await ref.read(connectionRepositoryProvider).all();
   if (!context.mounted) return;
@@ -147,42 +160,49 @@ Future<void> installKeyOnServer(BuildContext context, WidgetRef ref, Identity id
 
   final line = identity.publicKey.trim();
   final q = shellQuote(line);
-  final script = 'umask 077; mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && '
+  final script =
+      'umask 077; mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && '
       '(grep -qxF $q ~/.ssh/authorized_keys && echo nux:present || (echo $q >> ~/.ssh/authorized_keys && echo nux:added))';
   final messenger = ScaffoldMessenger.of(context);
-  messenger.showSnackBar(SnackBar(content: Text(l10n.installingKey(target.name))));
+  final connectionRepo = ref.read(connectionRepositoryProvider);
+  onProgress?.call(target);
   try {
     final lease = await ref.read(sshPoolProvider).acquire(target.id, ref.read(sshPrompterProvider));
     try {
-      final result = await SshBackend(id: target.id, displayName: target.name, client: lease.client).processRunner.run(script);
+      final result = await SshBackend(
+        id: target.id,
+        displayName: target.name,
+        client: lease.client,
+      ).processRunner.run(script);
       if (!result.ok) throw SshConnectException(SshFailure.other, result.stderr.trim());
       final already = result.stdout.contains('nux:present');
-      if (!context.mounted) return;
-      messenger.hideCurrentSnackBar();
-      final use = target.identityIdList.firstOrNull == identity.id
-          ? false
-          : await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                icon: const Icon(Icons.check_circle_outline),
-                title: Text(already ? l10n.keyWasInstalled(target.name) : l10n.keyInstalled(target.name)),
-                content: Text(l10n.useKeyFor(target.name)),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.notNow)),
-                  FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.useKey)),
-                ],
-              ),
-            );
-      if (use == true) {
-        await ref.read(connectionRepositoryProvider).preferIdentity(target.id, identity.id);
-        if (context.mounted) showSnack(context, l10n.keyNowUsed(target.name));
-      }
+      final usesIt = target.identityIdList.firstOrNull == identity.id;
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(already ? l10n.keyWasInstalled(target.name) : l10n.keyInstalled(target.name)),
+            duration: const Duration(seconds: 8),
+            action: usesIt
+                ? null
+                : SnackBarAction(
+                    label: l10n.useKey,
+                    onPressed: () async {
+                      await connectionRepo.preferIdentity(target.id, identity.id);
+                      messenger.showSnackBar(SnackBar(content: Text(l10n.keyNowUsed(target.name))));
+                    },
+                  ),
+          ),
+        );
     } finally {
       lease.release();
     }
   } on SshConnectException catch (e) {
-    messenger.hideCurrentSnackBar();
-    if (context.mounted) showSnack(context, sshErrorText(l10n, e));
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(sshErrorText(l10n, e))));
+  } finally {
+    onProgress?.call(null);
   }
 }
 
@@ -232,16 +252,22 @@ Future<void> exportPrivateKey(BuildContext context, WidgetRef ref, Identity iden
   final exportPass = await askNewPassphrase(context, title: l10n.exportPassphraseTitle, required: true);
   if (exportPass == null) return;
   final pem = key.toOpenSsh(passphrase: exportPass);
-  final fileName = 'id_${keyTypeLabel(identity.algorithm).toLowerCase()}_${identity.name.replaceAll(RegExp(r'[^A-Za-z0-9_.-]+'), '_')}';
-  await SharePlus.instance.share(ShareParams(
-    files: [XFile.fromData(Uint8List.fromList(utf8.encode(pem)), mimeType: 'text/plain', name: fileName)],
-    fileNameOverrides: [fileName],
-  ));
+  final fileName =
+      'id_${keyTypeLabel(identity.algorithm).toLowerCase()}_${identity.name.replaceAll(RegExp(r'[^A-Za-z0-9_.-]+'), '_')}';
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [XFile.fromData(Uint8List.fromList(utf8.encode(pem)), mimeType: 'text/plain', name: fileName)],
+      fileNameOverrides: [fileName],
+    ),
+  );
 }
 
 /// Asks for a new passphrase twice. Returns '' when the user chose none (unless [required]).
 Future<String?> askNewPassphrase(BuildContext context, {required String title, bool required = false}) {
-  return showDialog<String>(context: context, builder: (context) => _NewPassphraseDialog(title: title, required: required));
+  return showDialog<String>(
+    context: context,
+    builder: (context) => _NewPassphraseDialog(title: title, required: required),
+  );
 }
 
 class _NewPassphraseDialog extends StatefulWidget {
@@ -285,7 +311,10 @@ class _NewPassphraseDialogState extends State<_NewPassphraseDialog> {
             controller: _a,
             autofocus: true,
             obscureText: true,
-            decoration: InputDecoration(labelText: l10n.newPassphrase, helperText: widget.required ? null : l10n.passphraseOptionalHint),
+            decoration: InputDecoration(
+              labelText: l10n.newPassphrase,
+              helperText: widget.required ? null : l10n.passphraseOptionalHint,
+            ),
           ),
           TextField(
             controller: _b,

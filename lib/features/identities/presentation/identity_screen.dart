@@ -35,7 +35,12 @@ class IdentityScreen extends ConsumerWidget {
     final usedBy = (ref.watch(connectionsProvider).value ?? const <Connection>[])
         .where((c) => c.identityIdList.contains(identity.id))
         .toList();
-    final mono = TextStyle(fontFamily: monoFont, fontSize: 12, color: theme.colorScheme.onSurface, fontFeatures: noLigatures);
+    final mono = TextStyle(
+      fontFamily: monoFont,
+      fontSize: 12,
+      color: theme.colorScheme.onSurface,
+      fontFeatures: noLigatures,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +82,8 @@ class IdentityScreen extends ConsumerWidget {
                   TextButton.icon(
                     icon: const Icon(Icons.share_outlined),
                     label: Text(l10n.share),
-                    onPressed: () => SharePlus.instance.share(ShareParams(text: identity.publicKey, subject: identity.name)),
+                    onPressed: () =>
+                        SharePlus.instance.share(ShareParams(text: identity.publicKey, subject: identity.name)),
                   ),
                   TextButton.icon(
                     icon: const Icon(Icons.qr_code),
@@ -86,12 +92,7 @@ class IdentityScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              ListTile(
-                leading: const Icon(Icons.upload_outlined),
-                title: Text(l10n.installOnServer),
-                subtitle: Text(l10n.installOnServerHint),
-                onTap: () => installKeyOnServer(context, ref, identity),
-              ),
+              _InstallTile(identity: identity),
             ],
           ),
           Island(
@@ -125,7 +126,10 @@ class IdentityScreen extends ConsumerWidget {
                 leading: Icon(identity.encrypted ? Icons.lock_outline : Icons.lock_open),
                 title: Text(identity.encrypted ? l10n.keyHasPassphrase : l10n.keyNoPassphrase),
                 subtitle: Text(l10n.keyStorageHint),
-                trailing: TextButton(onPressed: () => _changePassphrase(context, ref, identity), child: Text(l10n.change)),
+                trailing: TextButton(
+                  onPressed: () => _changePassphrase(context, ref, identity),
+                  child: Text(l10n.change),
+                ),
               ),
               SwitchListTile(
                 secondary: const Icon(Icons.fingerprint),
@@ -149,7 +153,8 @@ class IdentityScreen extends ConsumerWidget {
             title: l10n.usedBy,
             children: [
               if (usedBy.isEmpty) ListTile(title: Text(l10n.usedByNone)),
-              for (final c in usedBy) ListTile(leading: const Icon(Icons.dns_outlined), title: Text(c.name), subtitle: Text(c.address)),
+              for (final c in usedBy)
+                ListTile(leading: const Icon(Icons.dns_outlined), title: Text(c.name), subtitle: Text(c.address)),
             ],
           ),
         ],
@@ -160,17 +165,17 @@ class IdentityScreen extends ConsumerWidget {
   static Uint8List? _blob(String publicLine) => PublicKeyLine.tryParse(publicLine)?.blob;
 
   Future<void> _qr(BuildContext context, Identity identity) => showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(identity.name),
-          content: SizedBox(
-            width: 280,
-            height: 280,
-            child: QrImageView(data: identity.publicKey, backgroundColor: Colors.white),
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.close))],
-        ),
-      );
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(identity.name),
+      content: SizedBox(
+        width: 280,
+        height: 280,
+        child: QrImageView(data: identity.publicKey, backgroundColor: Colors.white),
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.close))],
+    ),
+  );
 
   Future<void> _rename(BuildContext context, IdentityRepository repo, Identity identity) async {
     final l10n = context.l10n;
@@ -190,7 +195,12 @@ class IdentityScreen extends ConsumerWidget {
     if (name != null && name.trim().isNotEmpty) await repo.update(identity.id, name: name.trim());
   }
 
-  Future<void> _delete(BuildContext context, IdentityRepository repo, Identity identity, List<Connection> usedBy) async {
+  Future<void> _delete(
+    BuildContext context,
+    IdentityRepository repo,
+    Identity identity,
+    List<Connection> usedBy,
+  ) async {
     final l10n = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
@@ -237,5 +247,44 @@ class IdentityScreen extends ConsumerWidget {
     } on KeyImportException catch (e) {
       if (context.mounted) showSnack(context, keyImportErrorText(l10n, e));
     }
+  }
+}
+
+/// "Install on a server": shows the progress itself while the key is being installed.
+class _InstallTile extends ConsumerStatefulWidget {
+  const _InstallTile({required this.identity});
+
+  final Identity identity;
+
+  @override
+  ConsumerState<_InstallTile> createState() => _InstallTileState();
+}
+
+class _InstallTileState extends ConsumerState<_InstallTile> {
+  Connection? _installingOn;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final host = _installingOn;
+    return ListTile(
+      leading: host == null
+          ? const Icon(Icons.upload_outlined)
+          : const SizedBox.square(
+              dimension: 24,
+              child: Padding(padding: EdgeInsets.all(2), child: CircularProgressIndicator(strokeWidth: 2.5)),
+            ),
+      title: Text(l10n.installOnServer),
+      subtitle: Text(host == null ? l10n.installOnServerHint : l10n.installingKey(host.name)),
+      enabled: host == null,
+      onTap: () => installKeyOnServer(
+        context,
+        ref,
+        widget.identity,
+        onProgress: (c) {
+          if (mounted) setState(() => _installingOn = c);
+        },
+      ),
+    );
   }
 }
