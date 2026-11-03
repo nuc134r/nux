@@ -56,9 +56,11 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Quick toggles on the hosts tab; per-host and global forwarding screens; plain-words rule editor
 - [x] Duplicate/conflicting ports refused when saving; clear errors for a taken port, a refused remote bind, ports < 1024
 - [x] One foreground service for SSH sessions (terminals, SFTP) and forwards (`KeepAliveHub`), "Disconnect all"
-- [ ] Setting to not keep sessions alive in the background; ask to ignore battery optimisation (Termux-style)
-- [ ] Keep sessions and forwards after nux is swiped out of recents, like Termux (a FlutterEngine owned by the
-      service instead of the activity); until then the service stops with the app (`stopWithTask`)
+- [x] Ask once to ignore battery optimisation (Termux-style); Settings → Background connections shows both permissions
+- [ ] Setting to not keep sessions alive in the background
+- [x] Keep sessions and forwards after nux is swiped out of recents, like Termux: one cached FlutterEngine
+      (`NuxEngine.kt`) that the activity borrows and does not destroy; the service no longer stops with the task
+- [ ] Device-test the cached engine: swipe away, reopen, notification tap, Disconnect all, low memory, updates
 - [ ] Byte counters for SOCKS connections (dartssh2's SOCKS server only reports connections)
 
 ## M4 — ZeroTier (`zerotier_sockets` 2.0, own repo)

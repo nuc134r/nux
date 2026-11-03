@@ -93,6 +93,20 @@ Termux is "SSH to localhost" plus a guided setup (install `openssh`, generate a 
 into Drift. They go into `flutter_secure_storage` and Drift keeps only a reference id.
 Rows have UUID `id`, `createdAt`, `updatedAt` (as in garage2) so backup/merge works later.
 
+### Background connections (Android)
+
+- **One engine for the whole process.** `NuxEngine.kt` creates the Flutter engine on the application
+  context and keeps it in `FlutterEngineCache`; `MainActivity` borrows it (`getCachedEngineId`,
+  `shouldDestroyEngineWithHost = false`), as audio_service does for background playback. Closing nux from
+  the recent apps destroys the activity only: Dart, the SSH pool, forwards and the ZeroTier node keep
+  running, and reopening nux attaches the same engine (tabs as they were).
+- **A foreground service keeps the process alive** while something is connected (`KeepAliveHub`: SSH
+  sessions and forwards share one notification with "Disconnect all"; `stopWithTask` off). Starts can be
+  refused (Android 12+ while in the background): they are logged and retried on every update and when the
+  app comes back.
+- Rejected: running SSH and forwarding in the service's own isolate (lamp_studio did that for forwards):
+  no prompts there, secrets copied across isolates, terminals would still die, and two copies of the logic.
+
 ## 4. ZeroTier: `zerotier_sockets` 2.0
 
 What exists today (1.1.0): a Flutter plugin that ships a prebuilt `libzt.aar` (libzt, 4 ABIs) and opens it

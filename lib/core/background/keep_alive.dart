@@ -82,10 +82,11 @@ class ForegroundServiceKeepAlive implements KeepAlive {
         eventAction: ForegroundTaskEventAction.nothing(),
         allowWakeLock: true,
         allowWifiLock: true,
-        // Swiping nux out of the recent apps ends its Flutter engine and with it the connections, so the
-        // notification goes too (by default the plugin restarted the service: a notification for
-        // nothing, whose button no one heard).
-        stopWithTask: true,
+        // The service outlives the activity: the Flutter engine with every connection belongs to the
+        // process, not the screen (android/.../NuxEngine.kt), so closing nux from the recent apps keeps
+        // them running. No restart by the plugin if the system kills the process: the connections died
+        // with it, and a service without them would be a notification for nothing.
+        stopWithTask: false,
         allowAutoRestart: false,
       ),
     );

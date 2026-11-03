@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.5
+
+- **Connections survive closing nux**, like Termux: closing nux from the recent apps no longer ends your terminals, file browsers or port forwards while the background notification is there. Opening nux again brings back every tab exactly as you left it. "Disconnect all" in the notification ends everything.
+
 ## 0.7.4
 
 - **More reliable background connections**: when Android refuses to start the background service (it does that while nux is in the background), nux notices, keeps trying, and starts it as soon as you come back, so the notification and your forwards no longer disappear for good.
