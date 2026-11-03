@@ -141,6 +141,12 @@ void main() {
     expect(ok.exitCode, 0);
     final fail = await backend.processRunner.run('exit 3');
     expect(fail.exitCode, 3);
+    // stdin is empty: a command that reads it ends instead of waiting.
+    final cat = await backend.processRunner.run('cat; echo done').timeout(const Duration(seconds: 5));
+    expect(cat.stdout, 'done\n');
+    for (var i = 0; i < 20; i++) {
+      expect((await backend.processRunner.run('exit 7')).exitCode, 7, reason: 'the exit status is never lost');
+    }
     final cd = await backend.processRunner.run('pwd', workingDirectory: '/tmp', environment: {'GREETING': "it's"});
     expect(cd.stdout.trim(), '/tmp');
     expect((await backend.processRunner.run(r'echo "$GREETING"', environment: {'GREETING': "it's"})).stdout, "it's\n");

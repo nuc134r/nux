@@ -63,8 +63,11 @@ class SshProcessRunner implements ProcessRunner {
 
   @override
   Future<CommandResult> run(String command, {String? workingDirectory, Map<String, String>? environment}) async {
-    final session = await _client.execute(wrapCommand(command, workingDirectory: workingDirectory, environment: environment));
-    await session.stdin.close();
+    // stdin is /dev/null on the server rather than closed here: once our EOF is sent, dartssh2 closes
+    // the channel itself as soon as the server's EOF arrives, which can drop the exit status that follows.
+    // `sh -c ... </dev/null` reads the same in sh, bash, zsh and fish login shells.
+    final script = wrapCommand(command, workingDirectory: workingDirectory, environment: environment);
+    final session = await _client.execute('sh -c ${shellQuote(script)} </dev/null');
     final out = session.stdout.cast<List<int>>().transform(utf8.decoder).join();
     final err = session.stderr.cast<List<int>>().transform(utf8.decoder).join();
     final results = await Future.wait([out, err]);
