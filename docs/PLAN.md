@@ -150,6 +150,15 @@ copy (it has `tab_switcher_tab_list_item.dart`). Merge both into **tab_switcher 
 - go_router handles only things that are not tabs (settings, editing a connection, onboarding). Opening a file
   is a **command**, not a route.
 
+### Web browser tab
+
+A `browser` tab kind (WebView: `webview_flutter` on Android, `flutter_inappwebview` if desktop needs it):
+address bar in the header, back/forward/reload in the tab menu, page title and favicon as the tab's title and
+icon, restored with its URL. Its main use is reaching what nux forwards: "Open in browser tab" on a running
+local forward (`http://127.0.0.1:<port>`), a SOCKS forward (-D) used as the WebView's proxy where the platform
+allows it (Android `ProxyController`), web UIs on ZeroTier addresses, and later the VS Code server (§9).
+Plain browsing works too; downloads go to the transfers list, links to other apps open outside.
+
 ## 6. Terminal
 
 **Choice: `flterm`** (Flutter widget over Ghostty's `libghostty-vt`, active, all platforms, native assets),
@@ -261,7 +270,7 @@ See [`TODO.md`](../TODO.md) for the checklist. Order:
 | M6 | Git | status/diff/stage/commit/branch/push/pull/log/conflicts |
 | M7 | Backends | Termux guided setup, local mode with git2dart |
 | M8 | LSP | diagnostics → completion → navigation |
-| M9 | Polish / research | VS Code via WebView, tablets/desktop, tree-sitter |
+| M9 | Polish / research | web browser tab, VS Code via WebView, tablets/desktop, tree-sitter |
 
 M4 can run in parallel with M2–M3 because it lives in its own repo.
 

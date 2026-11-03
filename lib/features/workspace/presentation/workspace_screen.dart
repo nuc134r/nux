@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 
 import '../../../app/router.dart';
+import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
+import '../../settings/presentation/text_size_controls.dart';
 import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/presentation/update_ui.dart';
@@ -40,35 +42,35 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(forwardingAutoStartProvider);
     ref.watch(zeroTierAutoStartProvider);
     return TabSwitcher(
-            controller: controller,
-            headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
-            emptyBuilder: (context) => const _NoTabs(),
-            gridFooterBuilder: (context) => const _GridFooter(),
-            stripTrailing: IconButton(
-              tooltip: l10n.newTab,
-              icon: const Icon(Icons.add),
-              onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
-            ),
-            actionsBuilder: (context, tab) => [
-              if (tab is TerminalTab)
-                TabAction(
-                  icon: Icons.copy_all,
-                  label: l10n.duplicateTab,
-                  onSelected: () => openTerminal(ref, tab.connectionId),
-                ),
-            ],
-            strings: TabSwitcherStrings(
-              noTabs: l10n.noTabs,
-              close: l10n.closeTab,
-              closeOthers: l10n.closeOtherTabs,
-              pin: l10n.pinTab,
-              unpin: l10n.unpinTab,
-              pinned: l10n.pinnedTabs,
-              undo: l10n.undo,
-              closed: l10n.tabClosed,
-              noPreview: l10n.noPreview,
-            ),
-          );
+      controller: controller,
+      headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
+      emptyBuilder: (context) => const _NoTabs(),
+      gridFooterBuilder: (context) => const _GridFooter(),
+      stripTrailing: IconButton(
+        tooltip: l10n.newTab,
+        icon: const Icon(Icons.add),
+        onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+      ),
+      actionsBuilder: (context, tab) => [
+        if (tab is TerminalTab)
+          TabAction(
+            icon: Icons.copy_all,
+            label: l10n.duplicateTab,
+            onSelected: () => openTerminal(ref, tab.connectionId),
+          ),
+      ],
+      strings: TabSwitcherStrings(
+        noTabs: l10n.noTabs,
+        close: l10n.closeTab,
+        closeOthers: l10n.closeOtherTabs,
+        pin: l10n.pinTab,
+        unpin: l10n.unpinTab,
+        pinned: l10n.pinnedTabs,
+        undo: l10n.undo,
+        closed: l10n.tabClosed,
+        noPreview: l10n.noPreview,
+      ),
+    );
   }
 }
 
@@ -123,34 +125,47 @@ class _Header extends ConsumerWidget {
             onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
           ),
         TabCountButton(controller: controller, tooltip: l10n.showTabs),
-        PopupMenuButton<VoidCallback>(
+        NuxMenuButton(
           tooltip: l10n.more,
-          onSelected: (action) => action(),
-          itemBuilder: (context) => [
-            for (final e in entries)
-              PopupMenuItem(value: e.onSelected, enabled: e.enabled, child: ListTile(leading: Icon(e.icon), title: Text(e.label))),
-            if (entries.isNotEmpty) const PopupMenuDivider(),
-            PopupMenuItem(
-              value: () => controller.open(ref.read(tabFactoryProvider).hosts()),
-              child: ListTile(leading: const Icon(Icons.dns_outlined), title: Text(l10n.hosts)),
-            ),
-            PopupMenuItem(
-              value: () => quickConnect(context, ref),
-              child: ListTile(leading: const Icon(Icons.bolt), title: Text(l10n.quickConnect)),
-            ),
-            PopupMenuItem(
-              value: () => context.push(Routes.forwarding),
-              child: ListTile(leading: const Icon(Icons.swap_horiz), title: Text(l10n.portForwarding)),
-            ),
-            PopupMenuItem(
-              value: () => context.push(Routes.keys),
-              child: ListTile(leading: const Icon(Icons.key), title: Text(l10n.keys)),
-            ),
-            PopupMenuItem(
-              value: () => context.push(Routes.settings),
-              child: ListTile(leading: const Icon(Icons.settings_outlined), title: Text(l10n.settings)),
-            ),
-          ],
+          items: (context) {
+            final sizeKind = tab?.textSizeKind;
+            final settings = NuxMenuAction(
+              icon: Icons.settings_outlined,
+              label: l10n.settings,
+              onSelected: () => context.push(Routes.settings),
+            );
+            if (tab != null) {
+              return [
+                if (sizeKind != null) textSizeMenuItem(sizeKind),
+                if (sizeKind != null && entries.isNotEmpty) const NuxMenuDivider(),
+                for (final e in entries)
+                  NuxMenuAction(icon: e.icon, label: e.label, onSelected: e.onSelected, enabled: e.enabled),
+                const NuxMenuDivider(),
+                settings,
+              ];
+            }
+            return [
+              NuxMenuAction(
+                icon: Icons.dns_outlined,
+                label: l10n.hosts,
+                onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+              ),
+              NuxMenuAction(icon: Icons.bolt, label: l10n.quickConnect, onSelected: () => quickConnect(context, ref)),
+              NuxMenuAction(
+                icon: Icons.swap_horiz,
+                label: l10n.portForwarding,
+                onSelected: () => context.push(Routes.forwarding),
+              ),
+              NuxMenuAction(icon: Icons.key, label: l10n.keys, onSelected: () => context.push(Routes.keys)),
+              NuxMenuAction(
+                icon: Icons.lan_outlined,
+                label: 'ZeroTier',
+                onSelected: () => context.push(Routes.zerotier),
+              ),
+              const NuxMenuDivider(),
+              settings,
+            ];
+          },
         ),
         const SizedBox(width: 4),
       ],

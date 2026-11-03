@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_editor/re_editor.dart';
 import 'package:re_highlight/styles/atom-one-dark.dart';
 import 'package:re_highlight/styles/atom-one-light.dart';
@@ -12,6 +13,8 @@ import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/presentation/files_view.dart' show fileErrorText;
+import '../../settings/data/settings_repository.dart';
+import '../../settings/presentation/text_size_controls.dart';
 import '../domain/languages.dart';
 import '../domain/remote_document.dart';
 import 'viewer_tab.dart';
@@ -110,9 +113,18 @@ class _ViewerViewState extends State<ViewerView> {
             Expanded(
               child: switch (doc.kind) {
                 FileKind.image => _ImageView(doc: doc),
-                FileKind.markdown when widget.tab.rendered => _MarkdownView(text: doc.text),
-                FileKind.binary || FileKind.archive => _HexView(doc: doc),
-                _ => _CodeView(tab: widget.tab),
+                FileKind.markdown when widget.tab.rendered => PinchTextSize(
+                  kind: TextSizeKind.editor,
+                  child: _MarkdownView(text: doc.text),
+                ),
+                FileKind.binary || FileKind.archive => PinchTextSize(
+                  kind: TextSizeKind.editor,
+                  child: _HexView(doc: doc),
+                ),
+                _ => PinchTextSize(
+                  kind: TextSizeKind.editor,
+                  child: _CodeView(tab: widget.tab),
+                ),
               },
             ),
           ],
@@ -122,13 +134,14 @@ class _ViewerViewState extends State<ViewerView> {
   }
 }
 
-class _CodeView extends StatelessWidget {
+class _CodeView extends ConsumerWidget {
   const _CodeView({required this.tab});
 
   final ViewerTab tab;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fontSize = watchTextSize(ref, TextSizeKind.editor);
     final doc = tab.document;
     final text = doc.text;
     final (editor, finder) = tab.editorFor(doc.generation, text);
@@ -146,7 +159,7 @@ class _CodeView extends StatelessWidget {
       wordWrap: tab.wrap,
       style: CodeEditorStyle(
         fontFamily: monoFont,
-        fontSize: 13,
+        fontSize: fontSize,
         backgroundColor: scheme.surface,
         textColor: scheme.onSurface,
         codeTheme: mode == null
@@ -182,7 +195,11 @@ class FindBar extends StatelessWidget implements PreferredSizeWidget {
     if (value == null) return const SizedBox.shrink();
     final l10n = context.l10n;
     final result = value.result;
-    final count = result == null ? '' : result.matches.isEmpty ? '0/0' : '${result.index + 1}/${result.matches.length}';
+    final count = result == null
+        ? ''
+        : result.matches.isEmpty
+        ? '0/0'
+        : '${result.index + 1}/${result.matches.length}';
     return Material(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
       child: Padding(
@@ -198,10 +215,28 @@ class FindBar extends StatelessWidget implements PreferredSizeWidget {
                 onSubmitted: (_) => controller.nextMatch(),
               ),
             ),
-            IconButton(tooltip: l10n.matchCase, isSelected: value.option.caseSensitive, icon: const Icon(Icons.text_fields), onPressed: controller.toggleCaseSensitive),
-            IconButton(tooltip: l10n.regex, isSelected: value.option.regex, icon: const Icon(Icons.data_object), onPressed: controller.toggleRegex),
-            IconButton(tooltip: l10n.previous, icon: const Icon(Icons.keyboard_arrow_up), onPressed: controller.previousMatch),
-            IconButton(tooltip: l10n.next, icon: const Icon(Icons.keyboard_arrow_down), onPressed: controller.nextMatch),
+            IconButton(
+              tooltip: l10n.matchCase,
+              isSelected: value.option.caseSensitive,
+              icon: const Icon(Icons.text_fields),
+              onPressed: controller.toggleCaseSensitive,
+            ),
+            IconButton(
+              tooltip: l10n.regex,
+              isSelected: value.option.regex,
+              icon: const Icon(Icons.data_object),
+              onPressed: controller.toggleRegex,
+            ),
+            IconButton(
+              tooltip: l10n.previous,
+              icon: const Icon(Icons.keyboard_arrow_up),
+              onPressed: controller.previousMatch,
+            ),
+            IconButton(
+              tooltip: l10n.next,
+              icon: const Icon(Icons.keyboard_arrow_down),
+              onPressed: controller.nextMatch,
+            ),
             IconButton(tooltip: l10n.close, icon: const Icon(Icons.close), onPressed: controller.close),
           ],
         ),
@@ -210,13 +245,14 @@ class FindBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class _MarkdownView extends StatelessWidget {
+class _MarkdownView extends ConsumerWidget {
   const _MarkdownView({required this.text});
 
   final String text;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fontSize = watchTextSize(ref, TextSizeKind.editor);
     return Markdown(
       data: text,
       selectable: true,
@@ -227,7 +263,8 @@ class _MarkdownView extends StatelessWidget {
         }
       },
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-        code: const TextStyle(fontFamily: monoFont, fontSize: 13),
+        code: TextStyle(fontFamily: monoFont, fontSize: fontSize),
+        textScaler: TextScaler.linear(fontSize / TextSizeKind.editor.defaultSize),
       ),
     );
   }
@@ -253,27 +290,28 @@ class _ImageView extends StatelessWidget {
   }
 }
 
-class _HexView extends StatelessWidget {
+class _HexView extends ConsumerWidget {
   const _HexView({required this.doc});
 
   final RemoteDocument doc;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fontSize = watchTextSize(ref, TextSizeKind.editor);
     final bytes = doc.bytes!;
     final lines = (bytes.length / 16).ceil();
     return Scrollbar(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: SizedBox(
-          width: 640,
+          width: fontSize * 52,
           child: ListView.builder(
             padding: const EdgeInsets.all(12),
             itemCount: lines,
-            itemExtent: 18,
+            itemExtent: fontSize * 1.5,
             itemBuilder: (context, i) => Text(
               hexLine(bytes, i * 16),
-              style: const TextStyle(fontFamily: monoFont, fontSize: 12, fontFeatures: noLigatures),
+              style: TextStyle(fontFamily: monoFont, fontSize: fontSize - 1, fontFeatures: noLigatures),
             ),
           ),
         ),

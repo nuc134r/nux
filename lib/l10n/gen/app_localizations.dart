@@ -470,6 +470,12 @@ abstract class AppLocalizations {
   /// **'Edit host'**
   String get editHost;
 
+  /// No description provided for @editorFontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'File text size'**
+  String get editorFontSize;
+
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
@@ -1202,6 +1208,12 @@ abstract class AppLocalizations {
   /// **'System'**
   String get languageSystem;
 
+  /// No description provided for @largerText.
+  ///
+  /// In en, this message translates to:
+  /// **'Larger text'**
+  String get largerText;
+
   /// No description provided for @lastSeen.
   ///
   /// In en, this message translates to:
@@ -1814,6 +1826,12 @@ abstract class AppLocalizations {
   /// **'Skip this key'**
   String get skipKey;
 
+  /// No description provided for @smallerText.
+  ///
+  /// In en, this message translates to:
+  /// **'Smaller text'**
+  String get smallerText;
+
   /// No description provided for @socksPortHint.
   ///
   /// In en, this message translates to:
@@ -1952,17 +1970,47 @@ abstract class AppLocalizations {
   /// **'Disconnected'**
   String get terminalDisconnected;
 
+  /// No description provided for @terminalFontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal text size'**
+  String get terminalFontSize;
+
   /// No description provided for @terminalHere.
   ///
   /// In en, this message translates to:
   /// **'Terminal here'**
   String get terminalHere;
 
+  /// No description provided for @terminalLineSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal line spacing'**
+  String get terminalLineSpacing;
+
   /// No description provided for @terminalPressEnter.
   ///
   /// In en, this message translates to:
   /// **'Press Enter to reconnect'**
   String get terminalPressEnter;
+
+  /// No description provided for @text.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get text;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text size'**
+  String get textSize;
+
+  /// No description provided for @textSizeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.'**
+  String get textSizeHint;
 
   /// No description provided for @theServer.
   ///

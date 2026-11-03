@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../settings/data/settings_repository.dart';
+
 import 'package:tab_switcher/tab_switcher.dart';
 
 /// An entry in a tab's "more" menu in the header.
@@ -27,6 +30,9 @@ abstract class NuxTab extends SwitcherTab {
 
   /// Entries of the header's "more" menu for this tab.
   List<TabMenuEntry> menuEntries(BuildContext context) => const [];
+
+  /// The text size the menu's stepper (and pinching) changes, if the tab shows such text.
+  TextSizeKind? get textSizeKind => null;
 
   Map<String, Object?> toJson() => {'kind': kind, 'id': id, 'args': args};
 }

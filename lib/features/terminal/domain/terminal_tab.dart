@@ -9,6 +9,7 @@ import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../workspace/data/tab_factory.dart';
 import '../../workspace/data/workspace.dart';
+import '../../settings/data/settings_repository.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../presentation/terminal_view.dart';
 import 'terminal_session.dart';
@@ -69,6 +70,9 @@ class TerminalTab extends NuxTab {
 
   @override
   Widget buildContent(BuildContext context) => TerminalTabView(tab: this);
+
+  @override
+  TextSizeKind? get textSizeKind => TextSizeKind.terminal;
 
   @override
   List<TabMenuEntry> menuEntries(BuildContext context) {

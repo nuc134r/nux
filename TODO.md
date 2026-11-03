@@ -32,7 +32,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Known hosts: TOFU dialog with fingerprint, changed-key and new-key-type warnings, manage list
 - [ ] Spike on a real mid-range phone: flterm vs xterm2 (htop, vim, tmux, emoji, CJK, 10 MB `cat`)
 - [x] Terminal tab: flterm view, extra-keys bar with sticky Ctrl/Alt, font size setting, paste/copy all, URL links
-- [ ] Terminal: pinch to zoom, volume keys as modifiers, copy mode with handles, open file paths in an editor tab (M5)
+- [x] Terminal: pinch to zoom, text size and line spacing from the menu and settings, tap shows the keyboard
+- [ ] Terminal: volume keys as modifiers, copy mode with handles, open file paths in an editor tab (M5)
 - [ ] Move a tab to another group from its menu
 - [x] Connection pool (shared per host, idle grace period), reconnect banner and "Enter to reconnect", keep-alive
 - [x] SSH integration tests against a throwaway local sshd (TOFU, exec, pty, changed key, jump host)
@@ -104,6 +105,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Diagnostics, hover, completion, definition, references, rename, format, code actions
 
 ## M9 — Polish / research
+- [ ] Web browser tab (PLAN §5): address bar, back/forward/reload, restore URL, downloads to transfers
+- [ ] "Open in browser tab" on local forwards; SOCKS (-D) forward as the WebView proxy (Android `ProxyController`)
 - [ ] VS Code: `code-server`/`openvscode-server` through a forward in a WebView tab
 - [ ] Tablet / desktop layouts, hardware keyboard shortcuts
 - [ ] tree-sitter highlighting and outline

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../settings/data/settings_repository.dart';
+import '../../settings/presentation/text_size_controls.dart';
 import '../../ssh/presentation/ssh_errors.dart';
 import '../domain/terminal_session.dart';
 import '../domain/terminal_tab.dart';
@@ -41,10 +42,16 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
       pressEnter: l10n.terminalPressEnter,
       failure: (e) => sshErrorText(l10n, e),
     );
-    final fontSize = ref.watch(appSettingsProvider.select((s) => s.value?.terminalFontSize ?? 14));
+    final fontSize = watchTextSize(ref, TextSizeKind.terminal);
+    final lineHeight = ref.watch(
+      appSettingsProvider.select((s) => s.value?.terminalLineHeight ?? AppSettingsState.defaultTerminalLineHeight),
+    );
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final theme = (dark ? TerminalTheme.dark() : TerminalTheme.light())
-        .copyWith(fontFamily: 'JetBrains Mono', fontSize: fontSize);
+    final theme = (dark ? TerminalTheme.dark() : TerminalTheme.light()).copyWith(
+      fontFamily: 'JetBrains Mono',
+      fontSize: fontSize,
+      lineHeight: lineHeight,
+    );
     return ListenableBuilder(
       listenable: _session,
       builder: (context, _) => Column(
@@ -61,17 +68,20 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
             ),
           if (_session.state == TerminalState.connecting) const LinearProgressIndicator(minHeight: 2),
           Expanded(
-            child: TerminalView(
-              controller: _session.terminal,
-              theme: theme,
-              autofocus: true,
-              linkSettings: LinkSettings(
-                onActivate: (link) {
-                  final uri = link.uri;
-                  if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-                    launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                },
+            child: PinchTextSize(
+              kind: TextSizeKind.terminal,
+              child: TerminalView(
+                controller: _session.terminal,
+                theme: theme,
+                autofocus: true,
+                linkSettings: LinkSettings(
+                  onActivate: (link) {
+                    final uri = link.uri;
+                    if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+                      launchUrl(uri, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                ),
               ),
             ),
           ),

@@ -12,6 +12,7 @@ environment:
 workspace:
   - packages/nux_backend
   - packages/tab_switcher
+  - packages/flterm
 
 dependencies:
   flutter:
@@ -38,9 +39,10 @@ dependencies:
   zerotier_sockets:
     git:
       url: https://github.com/nuc134r/zerotier_sockets_flutter.git
-      ref: 87c6cb9938db87b93892d58dcb64bbe8c480642f
+      ref: 6243945ea31a23ffbcd4e4a61237efa23e04fc40
   dartssh2: ^4.1.0
-  flterm: ^0.0.6
+  flterm:
+    path: packages/flterm
   pointycastle: ^4.0.0
   pinenacl: ^0.6.0
   asn1lib: ^1.6.8

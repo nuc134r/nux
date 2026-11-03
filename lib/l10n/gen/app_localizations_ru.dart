@@ -235,6 +235,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get editHost => 'Изменить хост';
 
   @override
+  String get editorFontSize => 'Размер текста в файлах';
+
+  @override
   String errorGeneric(String error) {
     return 'Что-то пошло не так: $error';
   }
@@ -703,6 +706,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageSystem => 'Как в системе';
 
   @override
+  String get largerText => 'Крупнее';
+
+  @override
   String lastSeen(String date) {
     return 'Последний раз: $date';
   }
@@ -1039,6 +1045,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get skipKey => 'Пропустить ключ';
 
   @override
+  String get smallerText => 'Мельче';
+
+  @override
   String get socksPortHint =>
       'Укажите этот порт как SOCKS5-прокси в приложениях (обычно 1080)';
 
@@ -1122,10 +1131,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get terminalDisconnected => 'Отключено';
 
   @override
+  String get terminalFontSize => 'Размер текста в терминале';
+
+  @override
   String get terminalHere => 'Терминал здесь';
 
   @override
+  String get terminalLineSpacing => 'Межстрочный интервал в терминале';
+
+  @override
   String get terminalPressEnter => 'Нажмите Enter, чтобы переподключиться';
+
+  @override
+  String get text => 'Текст';
+
+  @override
+  String get textSize => 'Размер текста';
+
+  @override
+  String get textSizeHint =>
+      'Также в меню ⋮ вкладки или щипком двумя пальцами по тексту.';
 
   @override
   String get theServer => 'сервер';

@@ -53,7 +53,17 @@ class SshConnectException implements Exception {
 }
 
 /// Formats dartssh2's raw SHA-256 host key fingerprint like OpenSSH does.
-String formatHostFingerprint(Uint8List sha256) => 'SHA256:${base64.encode(sha256).replaceAll('=', '')}';
+/// The OpenSSH-style `SHA256:<base64>` fingerprint. dartssh2 passes it UTF-8 encoded; raw digest bytes
+/// are formatted too.
+String formatHostFingerprint(Uint8List fingerprint) {
+  final text = utf8.decode(fingerprint, allowMalformed: true);
+  if (text.startsWith('SHA256:')) return text;
+  return 'SHA256:${base64.encode(fingerprint).replaceAll('=', '')}';
+}
+
+/// How nux 0.6 and earlier stored fingerprints (the text above base64-encoded once more); such entries
+/// are upgraded when the host presents the same key.
+String legacyHostFingerprint(Uint8List fingerprint) => 'SHA256:${base64.encode(fingerprint).replaceAll('=', '')}';
 
 /// Connects and authenticates SSH clients for saved connections.
 class SshConnector {
@@ -77,6 +87,9 @@ class SshConnector {
   final SshSocketFactory socketFactory;
   final Duration timeout;
 
+  /// How many times a rejected password is asked for again before giving up.
+  static const maxPasswordAttempts = 3;
+
   /// Keys unlocked with "remember until the app closes", by identity id.
   final Map<String, KeyMaterial> _unlocked = {};
 
@@ -98,48 +111,62 @@ class SshConnector {
     if (seen.contains(id)) throw SshConnectException(SshFailure.other, 'Jump hosts form a loop at ${c.name}');
 
     SSHClient? jump;
-    late SSHSocket socket;
     if (c.jumpHostId != null) {
       try {
         jump = await _connect(c.jumpHostId!, prompter, {...seen, id});
       } on SshConnectException catch (e) {
         throw SshConnectException(e.failure, e.message, via: e.via ?? (await connections.get(c.jumpHostId!))?.name);
       }
-      log.i('ssh', 'Forwarding to ${c.host}:${c.port} through jump host');
-      try {
-        socket = await jump.forwardLocal(c.host, c.port).timeout(timeout);
-      } catch (e) {
-        jump.close();
-        throw SshConnectException(SshFailure.unreachable, '$e');
-      }
-    } else {
-      log.i('ssh', 'Connecting to ${c.host}:${c.port}${c.zerotierNetwork == null ? '' : ' over ZeroTier'}');
-      try {
-        final zt = zerotierSocket;
-        final network = c.zerotierNetwork;
-        socket = network != null && zt != null
-            ? await zt(network, c.host, c.port, timeout)
-            : await socketFactory(c.host, c.port, timeout);
-      } on SocketException catch (e) {
-        throw SshConnectException(SshFailure.unreachable, e.osError?.message ?? e.message);
-      } on TimeoutException {
-        throw const SshConnectException(SshFailure.unreachable, 'Timed out');
-      } on ZeroTierException catch (e) {
-        throw SshConnectException(SshFailure.unreachable, e.message);
-      }
     }
 
+    // dartssh2 sends a password once per connection, so a rejected one is retried on a new connection.
     try {
-      final client = await _authenticate(c, socket, prompter);
-      unawaited(client.done.whenComplete(() => jump?.close()));
-      return client;
+      for (var attempt = 1;; attempt++) {
+        final socket = await _openSocket(c, jump);
+        try {
+          final client = await _authenticate(c, socket, prompter, retry: attempt > 1);
+          final j = jump;
+          unawaited(client.done.whenComplete(() => j?.close()));
+          return client;
+        } on _PasswordRejected {
+          log.w('ssh', 'Password rejected (attempt $attempt)');
+          if (attempt >= maxPasswordAttempts) {
+            throw const SshConnectException(SshFailure.authFailed, 'Wrong password');
+          }
+        }
+      }
     } catch (_) {
       jump?.close();
       rethrow;
     }
   }
 
-  Future<SSHClient> _authenticate(Connection c, SSHSocket socket, SshPrompter prompter) async {
+  Future<SSHSocket> _openSocket(Connection c, SSHClient? jump) async {
+    if (jump != null) {
+      log.i('ssh', 'Forwarding to ${c.host}:${c.port} through jump host');
+      try {
+        return await jump.forwardLocal(c.host, c.port).timeout(timeout);
+      } catch (e) {
+        throw SshConnectException(SshFailure.unreachable, '$e');
+      }
+    }
+    log.i('ssh', 'Connecting to ${c.host}:${c.port}${c.zerotierNetwork == null ? '' : ' over ZeroTier'}');
+    try {
+      final zt = zerotierSocket;
+      final network = c.zerotierNetwork;
+      return network != null && zt != null
+          ? await zt(network, c.host, c.port, timeout)
+          : await socketFactory(c.host, c.port, timeout);
+    } on SocketException catch (e) {
+      throw SshConnectException(SshFailure.unreachable, e.osError?.message ?? e.message);
+    } on TimeoutException {
+      throw const SshConnectException(SshFailure.unreachable, 'Timed out');
+    } on ZeroTierException catch (e) {
+      throw SshConnectException(SshFailure.unreachable, e.message);
+    }
+  }
+
+  Future<SSHClient> _authenticate(Connection c, SSHSocket socket, SshPrompter prompter, {required bool retry}) async {
     final keys = <SSHKeyPair>[];
     try {
       for (final identityId in c.identityIdList) {
@@ -152,7 +179,9 @@ class SshConnector {
     }
 
     SshFailure? hostKeyFailure;
-    var passwordAttempts = 0;
+    var cancelled = false;
+    var passwordSent = false;
+    var storedPasswordSent = false;
     SecretAnswer? typedPassword;
     final address = c.address;
 
@@ -163,7 +192,12 @@ class SshConnector {
       keepAliveInterval: c.keepAliveSeconds > 0 ? Duration(seconds: c.keepAliveSeconds) : null,
       onVerifyHostKey: (type, fingerprint) async {
         final fp = formatHostFingerprint(fingerprint);
-        final status = await knownHosts.check(c.host, c.port, type, fp);
+        var status = await knownHosts.check(c.host, c.port, type, fp);
+        if (status != HostKeyStatus.trusted &&
+            await knownHosts.check(c.host, c.port, type, legacyHostFingerprint(fingerprint)) == HostKeyStatus.trusted) {
+          await knownHosts.trust(c.host, c.port, type, fp);
+          status = HostKeyStatus.trusted;
+        }
         if (status == HostKeyStatus.trusted) {
           await knownHosts.touch(c.host, c.port, type);
           return true;
@@ -186,24 +220,31 @@ class SshConnector {
         return true;
       },
       onPasswordRequest: () async {
-        passwordAttempts++;
-        if (passwordAttempts == 1) {
-          final saved = c.savePassword ? await connections.savedPassword(c.id) : null;
-          if (saved != null) return saved;
-          final session = _sessionPasswords[c.id];
-          if (session != null) return session;
+        if (!retry) {
+          final stored = (c.savePassword ? await connections.savedPassword(c.id) : null) ?? _sessionPasswords[c.id];
+          if (stored != null) {
+            passwordSent = storedPasswordSent = true;
+            return stored;
+          }
         }
-        typedPassword = await prompter.password(connectionName: c.name, address: address, retry: passwordAttempts > 1);
-        return typedPassword?.value;
+        typedPassword = await prompter.password(connectionName: c.name, address: address, retry: retry);
+        if (typedPassword == null) {
+          cancelled = true;
+          return null;
+        }
+        passwordSent = true;
+        return typedPassword!.value;
       },
       onUserInfoRequest: (request) async {
         if (request.prompts.isEmpty) return const [];
-        return prompter.keyboardInteractive(
+        final answers = await prompter.keyboardInteractive(
           address: address,
           name: request.name,
           instruction: request.instruction,
           prompts: [for (final p in request.prompts) KeyboardInteractivePrompt(p.promptText, echo: p.echo)],
         );
+        if (answers == null) cancelled = true;
+        return answers;
       },
     );
 
@@ -213,7 +254,12 @@ class SshConnector {
       client.close();
       if (hostKeyFailure != null) throw const SshConnectException(SshFailure.hostKeyRejected, 'Host key not trusted');
       if (e is SSHAuthError) {
-        throw SshConnectException(passwordAttempts > 0 && typedPassword == null ? SshFailure.cancelled : SshFailure.authFailed, e.toString());
+        if (cancelled) throw SshConnectException(SshFailure.cancelled, e.toString());
+        if (passwordSent) {
+          if (storedPasswordSent) _sessionPasswords.remove(c.id);
+          throw const _PasswordRejected();
+        }
+        throw SshConnectException(SshFailure.authFailed, e.toString());
       }
       if (e is TimeoutException) throw const SshConnectException(SshFailure.unreachable, 'Timed out');
       throw SshConnectException(SshFailure.other, e.toString());
@@ -256,4 +302,9 @@ class SshConnector {
       }
     }
   }
+}
+
+/// The server rejected the password; [SshConnector] asks again on a new connection.
+class _PasswordRejected implements Exception {
+  const _PasswordRejected();
 }

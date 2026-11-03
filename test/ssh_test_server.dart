@@ -2,6 +2,7 @@ import 'dart:io';
 
 /// A throwaway OpenSSH server on 127.0.0.1 for integration tests: its own host key, config and
 /// authorized_keys in a temp dir. Null when sshd is not installed.
+/// Passwords are offered but never match (the test user has no usable password).
 class TestSshServer {
   TestSshServer._(this.dir, this.port, this._process);
 
@@ -29,7 +30,7 @@ HostKey ${dir.path}/host_ed25519
 PidFile ${dir.path}/sshd.pid
 AuthorizedKeysFile ${dir.path}/authorized_keys
 PubkeyAuthentication yes
-PasswordAuthentication no
+PasswordAuthentication yes
 KbdInteractiveAuthentication no
 UsePAM no
 StrictModes no

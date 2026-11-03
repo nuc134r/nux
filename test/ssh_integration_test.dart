@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
@@ -24,6 +25,8 @@ class FakePrompter implements SshPrompter {
   bool trust = true;
   String? passphraseAnswer;
   int passphraseAsked = 0;
+  String? passwordAnswer;
+  final passwordRetries = <bool>[];
 
   @override
   Future<bool> confirmHostKey(HostKeyQuestion q) async {
@@ -32,7 +35,10 @@ class FakePrompter implements SshPrompter {
   }
 
   @override
-  Future<SecretAnswer?> password({required String connectionName, required String address, required bool retry}) async => null;
+  Future<SecretAnswer?> password({required String connectionName, required String address, required bool retry}) async {
+    passwordRetries.add(retry);
+    return passwordAnswer == null ? null : SecretAnswer(passwordAnswer!, remember: false);
+  }
 
   @override
   Future<SecretAnswer?> passphrase({required String identityName, required bool retry}) async {
@@ -145,6 +151,19 @@ void main() {
     expect(out.toString(), contains('term=xterm-256color cols=100'));
   });
 
+  test('host fingerprints match ssh-keygen, and entries from older versions are upgraded', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final r = Process.runSync('ssh-keygen', ['-l', '-E', 'sha256', '-f', '${server!.dir.path}/host_ed25519.pub']);
+    final expected = (r.stdout as String).split(' ')[1];
+    final legacy = legacyHostFingerprint(Uint8List.fromList(utf8.encode(expected)));
+    await known.trust('127.0.0.1', server!.port, 'ssh-ed25519', legacy);
+    final c = await addConnection(identityId: await identities.add(key, name: 'k'));
+    final lease = await pool.acquire(c, prompter);
+    lease.release();
+    expect(prompter.hostKeys, isEmpty);
+    expect((await known.forHost('127.0.0.1', server!.port)).single.fingerprint, expected);
+  });
+
   test('a changed host key is reported and can be refused', () async {
     if (skip()) return markTestSkipped('sshd not available');
     final c = await addConnection(identityId: await identities.add(key, name: 'k'));
@@ -159,14 +178,27 @@ void main() {
     expect(pool.state(c), SshState.disconnected);
   });
 
-  test('an unknown key is refused by the server', () async {
+  test('an unknown key is refused by the server, then a dismissed password prompt cancels', () async {
     if (skip()) return markTestSkipped('sshd not available');
     final other = await generateKey(KeyAlgorithm.ed25519);
     final c = await addConnection(identityId: await identities.add(other, name: 'other'));
     await expectLater(
       pool.acquire(c, prompter),
+      throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.cancelled)),
+    );
+    expect(prompter.passwordRetries, [false]);
+  });
+
+  test('a wrong password is asked again, then reported as an authentication failure', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final other = await generateKey(KeyAlgorithm.ed25519);
+    final c = await addConnection(identityId: await identities.add(other, name: 'other'));
+    prompter.passwordAnswer = 'not-the-password';
+    await expectLater(
+      pool.acquire(c, prompter),
       throwsA(isA<SshConnectException>().having((e) => e.failure, 'failure', SshFailure.authFailed)),
     );
+    expect(prompter.passwordRetries, [false, true, true]);
   });
 
   test('passphrase-protected keys ask once when remembered', () async {

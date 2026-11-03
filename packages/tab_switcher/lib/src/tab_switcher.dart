@@ -62,6 +62,7 @@ class TabSwitcher extends StatefulWidget {
     this.headerHeight = kToolbarHeight,
     this.wideBreakpoint = 840,
     this.previewPixelRatio = .5,
+    this.headerColor,
   });
 
   final TabSwitcherController controller;
@@ -85,6 +86,10 @@ class TabSwitcher extends StatefulWidget {
 
   /// Scale of preview images relative to the screen.
   final double previewPixelRatio;
+
+  /// The header's background; defaults to the colour scheme's `surfaceContainer`, set apart from the
+  /// tab content by a hairline.
+  final Color? headerColor;
 
   @override
   State<TabSwitcher> createState() => _TabSwitcherState();
@@ -274,6 +279,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
             _Header(
               height: widget.headerHeight,
               topPadding: wide && !_c.isEmpty ? 0 : media.padding.top,
+              color: widget.headerColor,
               onSwipeDown: () => _c.gridOpen = true,
               child: grid || wide
                   ? widget.headerBuilder(context, grid ? null : _c.current)
@@ -289,6 +295,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
                       },
                       child: PageView.builder(
                         controller: _pages,
+                        physics: const SnappyPageScrollPhysics(),
                         itemCount: _c.length,
                         itemBuilder: (context, i) => widget.headerBuilder(context, _c.tabs[i]),
                       ),
@@ -344,11 +351,36 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 }
 
+/// Page physics that settle quickly: a stiff, critically damped spring, and short flicks already
+/// change the page.
+class SnappyPageScrollPhysics extends PageScrollPhysics {
+  const SnappyPageScrollPhysics({super.parent});
+
+  @override
+  SnappyPageScrollPhysics applyTo(ScrollPhysics? ancestor) => SnappyPageScrollPhysics(parent: buildParent(ancestor));
+
+  @override
+  SpringDescription get spring => SpringDescription.withDampingRatio(mass: .5, stiffness: 600, ratio: 1);
+
+  @override
+  double get minFlingVelocity => 150;
+
+  @override
+  double get minFlingDistance => 8;
+}
+
 class _Header extends StatelessWidget {
-  const _Header({required this.height, required this.topPadding, required this.onSwipeDown, required this.child});
+  const _Header({
+    required this.height,
+    required this.topPadding,
+    required this.color,
+    required this.onSwipeDown,
+    required this.child,
+  });
 
   final double height;
   final double topPadding;
+  final Color? color;
   final VoidCallback onSwipeDown;
   final Widget child;
 
@@ -356,7 +388,8 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      color: theme.appBarTheme.backgroundColor ?? theme.colorScheme.surface,
+      color: color ?? theme.colorScheme.surfaceContainer,
+      shape: Border(bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: .5)),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onVerticalDragEnd: (d) {

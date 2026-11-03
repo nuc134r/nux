@@ -149,6 +149,7 @@
   "edit": "Edit",
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
+  "editorFontSize": "File text size",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
@@ -512,6 +513,7 @@
   "knownHostsHint": "Keys of servers you trusted. nux warns when a server presents a different key.",
   "language": "Language",
   "languageSystem": "System",
+  "largerText": "Larger text",
   "lastSeen": "Last seen {date}",
   "@lastSeen": {
     "placeholders": {
@@ -673,6 +675,7 @@
   "showSource": "Show source",
   "showTabs": "Show tabs",
   "skipKey": "Skip this key",
+  "smallerText": "Smaller text",
   "socksPortHint": "Point apps' SOCKS5 proxy setting at this port (1080 is the usual one)",
   "sortByDate": "Sort by date",
   "sortByName": "Sort by name",
@@ -734,8 +737,13 @@
     }
   },
   "terminalDisconnected": "Disconnected",
+  "terminalFontSize": "Terminal text size",
   "terminalHere": "Terminal here",
+  "terminalLineSpacing": "Terminal line spacing",
   "terminalPressEnter": "Press Enter to reconnect",
+  "text": "Text",
+  "textSize": "Text size",
+  "textSizeHint": "Also from a tab's ⋮ menu, or pinch the text with two fingers.",
   "theServer": "the server",
   "theme": "Theme",
   "themeDark": "Dark",

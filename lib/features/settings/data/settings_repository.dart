@@ -11,6 +11,22 @@ abstract final class SettingKeys {
   static const betaUpdates = 'betaUpdates';
   static const dismissedUpdate = 'dismissedUpdate';
   static const terminalFontSize = 'terminalFontSize';
+  static const terminalLineHeight = 'terminalLineHeight';
+  static const editorFontSize = 'editorFontSize';
+}
+
+/// Text that has its own size setting, changed in Settings, from a tab's menu or by pinching.
+enum TextSizeKind {
+  terminal(SettingKeys.terminalFontSize, 14),
+  editor(SettingKeys.editorFontSize, 13);
+
+  const TextSizeKind(this.key, this.defaultSize);
+
+  final String key;
+  final double defaultSize;
+
+  static const double min = 6;
+  static const double max = 32;
 }
 
 class AppSettingsState {
@@ -22,9 +38,9 @@ class AppSettingsState {
 
   /// Null means "follow the system".
   Locale? get locale => switch (values[SettingKeys.locale]) {
-        null || '' => null,
-        final code => Locale(code),
-      };
+    null || '' => null,
+    final code => Locale(code),
+  };
 
   /// Android back-swipe animation that previews the previous page; off until turned on.
   bool get predictiveBack => values[SettingKeys.predictiveBack] == 'true';
@@ -34,7 +50,18 @@ class AppSettingsState {
   /// Offer pre-releases too.
   bool get betaUpdates => values[SettingKeys.betaUpdates] == 'true';
 
-  double get terminalFontSize => (double.tryParse(values[SettingKeys.terminalFontSize] ?? '') ?? 14).clamp(8, 32);
+  double textSize(TextSizeKind kind) =>
+      (double.tryParse(values[kind.key] ?? '') ?? kind.defaultSize).clamp(TextSizeKind.min, TextSizeKind.max);
+
+  double get terminalFontSize => textSize(TextSizeKind.terminal);
+
+  double get editorFontSize => textSize(TextSizeKind.editor);
+
+  /// Terminal row height as a multiple of the font's natural line height; denser than the font by default.
+  double get terminalLineHeight =>
+      (double.tryParse(values[SettingKeys.terminalLineHeight] ?? '') ?? defaultTerminalLineHeight).clamp(.8, 1.6);
+
+  static const defaultTerminalLineHeight = .9;
 
   /// Release version the user chose "Later" for; not offered again.
   String? get dismissedUpdate => values[SettingKeys.dismissedUpdate];
@@ -45,10 +72,8 @@ class SettingsRepository {
 
   final AppDatabase _db;
 
-  Stream<AppSettingsState> watch() => _db
-      .select(_db.appSettings)
-      .watch()
-      .map((rows) => AppSettingsState({for (final r in rows) r.key: r.value}));
+  Stream<AppSettingsState> watch() =>
+      _db.select(_db.appSettings).watch().map((rows) => AppSettingsState({for (final r in rows) r.key: r.value}));
 
   Future<AppSettingsState> load() async =>
       AppSettingsState({for (final r in await _db.select(_db.appSettings).get()) r.key: r.value});
@@ -63,5 +88,10 @@ class SettingsRepository {
 }
 
 final settingsRepositoryProvider = Provider((ref) => SettingsRepository(ref.watch(appDatabaseProvider)));
+
+extension TextSizeSetting on SettingsRepository {
+  Future<void> setTextSize(TextSizeKind kind, double size) =>
+      set(kind.key, size.clamp(TextSizeKind.min, TextSizeKind.max).toStringAsFixed(1));
+}
 
 final appSettingsProvider = StreamProvider<AppSettingsState>((ref) => ref.watch(settingsRepositoryProvider).watch());

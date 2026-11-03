@@ -3,6 +3,17 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.7.0
+
+- **Text size everywhere**: terminal and files have separate sizes. Change them from a tab's ⋮ menu, by pinching the text with two fingers, or in Settings → Text.
+- **Denser terminal** by default, with adjustable line spacing in Settings → Text.
+- A **new ⋮ menu** that opens instantly: in a tab it shows that tab's actions and Settings; in the tab overview it leads to hosts, quick connect, port forwarding, keys, ZeroTier and settings.
+- The tab header now stands apart from the tab's content, and swiping between tabs is quicker.
+- Tapping the terminal brings the keyboard back after Back has hidden it.
+- A wrong password now says so (instead of "Cancelled") and nux asks for it again.
+- Turning ZeroTier off really stops it. Connections and forwards no longer start it again until you turn it back on.
+- Host key fingerprints now look like OpenSSH's (`ssh-keygen -l`), so you can compare them with the server's. Hosts you already trusted stay trusted.
+
 ## 0.6.0
 
 - **Edit files**: open a file, tap the pencil, change it and save. If someone changed the file on the server meanwhile, nux asks whether to overwrite it or take their version. Undo and redo are in the menu; tabs with unsaved changes show a dot and ask before closing.

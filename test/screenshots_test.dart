@@ -99,6 +99,13 @@ void main() {
       await useLocal(c, root);
       c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
     }),
+    'menu': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
+      await settle(tester);
+      await tester.tap(find.byTooltip('More'));
+    }),
     'host_key': _Shot(ThemeMode.light, Routes.home, act: (tester, c) async {
       showDialog<void>(
         context: rootNavigatorKey.currentContext!,

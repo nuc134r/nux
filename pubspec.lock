@@ -369,14 +369,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  flterm:
-    dependency: "direct main"
-    description:
-      name: flterm
-      sha256: "8f3203d57ee9063e83cbc0244ee26cc3206fbe01b43ba327f554600da5f0a9d1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -1462,11 +1454,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "87c6cb9938db87b93892d58dcb64bbe8c480642f"
-      resolved-ref: "87c6cb9938db87b93892d58dcb64bbe8c480642f"
+      ref: "6243945ea31a23ffbcd4e4a61237efa23e04fc40"
+      resolved-ref: "6243945ea31a23ffbcd4e4a61237efa23e04fc40"
       url: "https://github.com/nuc134r/zerotier_sockets_flutter.git"
     source: git
-    version: "2.0.0-dev.1"
+    version: "2.0.0-dev.2"
 sdks:
   dart: ">=3.13.7 <4.0.0"
   flutter: ">=3.47.0"

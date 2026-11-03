@@ -90,22 +90,42 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           Island(
-            title: l10n.terminal,
+            title: l10n.text,
             children: [
-              ListTile(
-                leading: const Icon(Icons.format_size),
-                title: Text(l10n.fontSize),
-                subtitle: Slider(
-                  value: settings.terminalFontSize,
-                  min: 8,
-                  max: 24,
-                  divisions: 16,
-                  label: settings.terminalFontSize.round().toString(),
-                  onChanged: (v) => repo.set(SettingKeys.terminalFontSize, v.round().toString()),
-                ),
-                trailing: Text(
-                  '${settings.terminalFontSize.round()}',
-                  style: TextStyle(fontFamily: 'JetBrains Mono', fontSize: settings.terminalFontSize),
+              _SliderTile(
+                icon: Icons.terminal,
+                title: l10n.terminalFontSize,
+                value: settings.terminalFontSize,
+                min: TextSizeKind.min,
+                max: 24,
+                label: (v) => '${v.round()}',
+                onChanged: (v) => repo.setTextSize(TextSizeKind.terminal, v.roundToDouble()),
+              ),
+              _SliderTile(
+                icon: Icons.format_line_spacing,
+                title: l10n.terminalLineSpacing,
+                value: settings.terminalLineHeight,
+                min: .8,
+                max: 1.6,
+                divisions: 16,
+                label: (v) => '${(v * 100).round()}%',
+                onChanged: (v) => repo.set(SettingKeys.terminalLineHeight, v.toStringAsFixed(2)),
+              ),
+              _SliderTile(
+                icon: Icons.description_outlined,
+                title: l10n.editorFontSize,
+                value: settings.editorFontSize,
+                min: TextSizeKind.min,
+                max: 24,
+                label: (v) => '${v.round()}',
+                onChanged: (v) => repo.setTextSize(TextSizeKind.editor, v.roundToDouble()),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Text(
+                  l10n.textSizeHint,
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ),
             ],
@@ -162,4 +182,44 @@ Future<T?> _choose<T>(BuildContext context, String title, Map<T, String> options
       ],
     ),
   );
+}
+
+class _SliderTile extends StatelessWidget {
+  const _SliderTile({
+    required this.icon,
+    required this.title,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.label,
+    required this.onChanged,
+    this.divisions,
+  });
+
+  final IconData icon;
+  final String title;
+  final double value;
+  final double min;
+  final double max;
+  final int? divisions;
+  final String Function(double v) label;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final v = value.clamp(min, max).toDouble();
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Slider(
+        value: v,
+        min: min,
+        max: max,
+        divisions: divisions ?? (max - min).round(),
+        label: label(v),
+        onChanged: onChanged,
+      ),
+      trailing: SizedBox(width: 44, child: Text(label(v), textAlign: TextAlign.end)),
+    );
+  }
 }

@@ -28,6 +28,10 @@ class ZeroTierService extends ChangeNotifier {
   bool _starting = false;
   bool _disposed = false;
 
+  /// The user turned the node off: connections and forwards do not start it again by themselves.
+  bool _turnedOff = false;
+  Completer<void> _stopped = Completer<void>();
+
   /// Networks the user joined (16 hex digits), in the order joined.
   List<String> networks = [];
   bool autoStart = false;
@@ -35,6 +39,9 @@ class ZeroTierService extends ChangeNotifier {
   bool get running => _node.running;
   bool get starting => _starting;
   ZeroTierNodeState? get state => _state;
+
+  /// Completes when the running node stops.
+  Future<void> get stopped => _stopped.future;
 
   ZeroTierNetworkState? network(String id) => _state?.networks.where((n) => n.idHex == id).firstOrNull;
 
@@ -52,6 +59,7 @@ class ZeroTierService extends ChangeNotifier {
   }
 
   Future<void> start() async {
+    _turnedOff = false;
     if (_node.running || _starting) return;
     _starting = true;
     _notify();
@@ -62,7 +70,8 @@ class ZeroTierService extends ChangeNotifier {
         _node.initStorage(dir.path);
         _storageSet = true;
       }
-      _node.start();
+      await _node.start();
+      if (_stopped.isCompleted) _stopped = Completer<void>();
       for (final n in networks) {
         _node.join(parseNetworkId(n)!);
       }
@@ -77,13 +86,17 @@ class ZeroTierService extends ChangeNotifier {
     }
   }
 
+  /// Turns the node off until [start] is called again.
   Future<void> stop() async {
-    await _watch?.cancel();
+    _turnedOff = true;
+    unawaited(_watch?.cancel());
     _watch = null;
-    _node.stop();
+    final stopping = _node.stop();
     _state = null;
+    if (!_stopped.isCompleted) _stopped.complete();
     _log.i('zerotier', 'Node stopped');
     _notify();
+    await stopping;
   }
 
   Future<void> join(String id) async {
@@ -103,7 +116,9 @@ class ZeroTierService extends ChangeNotifier {
   }
 
   /// Starts the node, joins [id] if needed and waits until the network has an address.
+  /// Fails when the user turned ZeroTier off.
   Future<void> ensureNetwork(String id, {Duration timeout = const Duration(seconds: 60)}) async {
+    if (_turnedOff) throw ZeroTierException('ZeroTier is turned off');
     await join(id);
     await start();
     try {

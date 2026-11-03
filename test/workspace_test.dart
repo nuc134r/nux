@@ -71,4 +71,49 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });
+
+  testWidgets('the ⋮ menu: tab entries and Settings in a tab, app screens in the grid, text size', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final container = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(container.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const NuxApp()));
+    await settle(tester);
+
+    await tester.tap(find.text('Build server'));
+    await settle(tester);
+    expect(container.read(workspaceProvider).current, isA<TerminalTab>());
+
+    await tester.tap(find.byTooltip('More'));
+    await settle(tester);
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Port forwarding'), findsNothing);
+    expect(find.text('Text size'), findsOneWidget);
+    expect(find.text('14'), findsOneWidget);
+    // A real tap leaves an ink animation running, which starves flterm's idle-priority task under the
+    // test clock (pump never returns); press the button directly.
+    tester.widget<IconButton>(find.ancestor(of: find.byIcon(Icons.add), matching: find.byType(IconButton)).last).onPressed!();
+    await settle(tester);
+    final settings = await tester.runAsync(() => container.read(settingsRepositoryProvider).load());
+    expect(settings!.terminalFontSize, 15);
+    expect(find.text('15'), findsOneWidget, reason: 'the menu stays open and updates');
+    await tester.tapAt(const Offset(10, 500)); // the barrier
+    await settle(tester);
+    expect(find.text('Text size'), findsNothing);
+
+    container.read(workspaceProvider).gridOpen = true;
+    await settle(tester);
+    await tester.tap(find.byTooltip('More'));
+    await settle(tester);
+    for (final label in ['Hosts', 'Quick connect', 'Port forwarding', 'Keys', 'ZeroTier', 'Settings']) {
+      expect(find.descendant(of: find.byType(Material).last, matching: find.text(label)), findsOneWidget, reason: label);
+    }
+    await tester.tap(find.text('ZeroTier').last);
+    await settle(tester);
+    expect(find.text('Start with nux'), findsWidgets);
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
 }

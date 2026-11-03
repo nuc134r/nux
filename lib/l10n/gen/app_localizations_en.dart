@@ -233,6 +233,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editHost => 'Edit host';
 
   @override
+  String get editorFontSize => 'File text size';
+
+  @override
   String errorGeneric(String error) {
     return 'Something went wrong: $error';
   }
@@ -695,6 +698,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystem => 'System';
 
   @override
+  String get largerText => 'Larger text';
+
+  @override
   String lastSeen(String date) {
     return 'Last seen $date';
   }
@@ -1027,6 +1033,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipKey => 'Skip this key';
 
   @override
+  String get smallerText => 'Smaller text';
+
+  @override
   String get socksPortHint =>
       'Point apps\' SOCKS5 proxy setting at this port (1080 is the usual one)';
 
@@ -1111,10 +1120,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get terminalDisconnected => 'Disconnected';
 
   @override
+  String get terminalFontSize => 'Terminal text size';
+
+  @override
   String get terminalHere => 'Terminal here';
 
   @override
+  String get terminalLineSpacing => 'Terminal line spacing';
+
+  @override
   String get terminalPressEnter => 'Press Enter to reconnect';
+
+  @override
+  String get text => 'Text';
+
+  @override
+  String get textSize => 'Text size';
+
+  @override
+  String get textSizeHint =>
+      'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.';
 
   @override
   String get theServer => 'the server';

@@ -12,6 +12,7 @@ import '../../files/domain/file_listing.dart';
 import '../../files/domain/fs_handle.dart';
 import '../../files/presentation/transfers_sheet.dart';
 import '../../ssh/data/ssh_providers.dart';
+import '../../settings/data/settings_repository.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../domain/remote_document.dart';
 import 'viewer_view.dart';
@@ -161,6 +162,9 @@ class ViewerTab extends NuxTab {
         ),
     ];
   }
+
+  @override
+  TextSizeKind? get textSizeKind => TextSizeKind.editor;
 
   @override
   List<TabMenuEntry> menuEntries(BuildContext context) {

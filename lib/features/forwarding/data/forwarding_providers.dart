@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,9 +22,9 @@ final forwardingManagerProvider = Provider((ref) {
     connect: (rule) async {
       final network = rule.zerotierNetwork;
       if (rule.forwardKind.overZeroTier && network != null) {
-        await ref.read(zeroTierServiceProvider).ensureNetwork(network);
-        // The node stays up while the app runs; nothing to release.
-        return ForwardLease(client: network, done: Completer<void>().future, release: () {});
+        final zerotier = ref.read(zeroTierServiceProvider);
+        await zerotier.ensureNetwork(network);
+        return ForwardLease(client: network, done: zerotier.stopped, release: () {});
       }
       final lease = await pool.acquire(rule.connectionId!, ref.read(sshPrompterProvider));
       return ForwardLease(client: lease.client, done: lease.done, release: lease.release);
