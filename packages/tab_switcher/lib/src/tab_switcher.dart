@@ -201,13 +201,19 @@ class _TabSwitcherState extends State<TabSwitcher> {
   void _capture(String id) {
     final tab = _c.find<SwitcherTab>((t) => t.id == id);
     final boundary = _boundaries[id]?.currentContext?.findRenderObject();
-    if (tab == null || boundary is! RenderRepaintBoundary || !boundary.hasSize || boundary.debugNeedsPaint) return;
-    // toImage takes the layer now and rasterizes it later, so this is still the picture of the tab
-    // being left even though the next frame shows another one.
-    boundary.toImage(pixelRatio: View.of(context).devicePixelRatio * widget.previewScale).then(
-      (image) => _c.setPreview(tab, image),
-      onError: (Object _) {}, // not painted yet (opened and left in the same frame): keep the old preview
-    );
+    if (tab == null || boundary is! RenderRepaintBoundary || !boundary.attached || !boundary.hasSize) return;
+    // An unpainted boundary has no layer and toImage throws at once (in release builds too: the old
+    // `debugNeedsPaint` guard only worked in debug builds), so the call is guarded instead.
+    try {
+      // toImage takes the layer now and rasterizes it later, so this is still the picture of the tab
+      // being left even though the next frame shows another one.
+      boundary.toImage(pixelRatio: View.of(context).devicePixelRatio * widget.previewScale).then(
+        (image) => _c.setPreview(tab, image),
+        onError: (Object _) {}, // keep the old preview
+      );
+    } catch (_) {
+      // A preview is never worth failing a tab switch over (this runs before the switch is shown).
+    }
   }
 
   /// Whether [tab] may close (asks when it has unsaved changes).

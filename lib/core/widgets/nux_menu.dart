@@ -102,6 +102,10 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
   final List<NuxMenuItem> Function(BuildContext context) items;
   final CapturedThemes capturedThemes;
 
+  /// Built once, when the menu opens: layout runs again (resizes, the closing animation), and the
+  /// builder may use a context that is gone by then (a drawer that closed under the menu).
+  List<NuxMenuItem>? _built;
+
   @override
   final String barrierLabel;
 
@@ -148,7 +152,7 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
                             ? anchor.top - media.padding.top - 8
                             : constraints.maxHeight - top - media.padding.bottom - 8,
                       ),
-                      child: _MenuPanel(items: items(context)),
+                      child: _MenuPanel(items: _built ??= items(context)),
                     ),
                   ),
                 ),
