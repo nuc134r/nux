@@ -1022,6 +1022,12 @@ abstract class AppLocalizations {
   /// **'Generating an RSA key. This can take a minute on a phone.'**
   String get generatingRsa;
 
+  /// No description provided for @goToLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to line'**
+  String get goToLine;
+
   /// No description provided for @groupField.
   ///
   /// In en, this message translates to:
@@ -1478,6 +1484,12 @@ abstract class AppLocalizations {
   /// **'Line endings'**
   String get lineEndings;
 
+  /// No description provided for @lineField.
+  ///
+  /// In en, this message translates to:
+  /// **'Line (1–{count})'**
+  String lineField(int count);
+
   /// No description provided for @linkTargetLabel.
   ///
   /// In en, this message translates to:
@@ -1591,6 +1603,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No colour'**
   String get noColor;
+
+  /// No description provided for @noDifferences.
+  ///
+  /// In en, this message translates to:
+  /// **'No differences'**
+  String get noDifferences;
 
   /// No description provided for @noForwards.
   ///
@@ -1777,6 +1795,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connections from LAN'**
   String get otherDevices;
+
+  /// No description provided for @outdent.
+  ///
+  /// In en, this message translates to:
+  /// **'Outdent'**
+  String get outdent;
 
   /// No description provided for @overwrite.
   ///
@@ -2090,6 +2114,24 @@ abstract class AppLocalizations {
   /// **'Repeat passphrase'**
   String get repeatPassphrase;
 
+  /// No description provided for @replace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replace;
+
+  /// No description provided for @replaceAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace all'**
+  String get replaceAll;
+
+  /// No description provided for @replaceWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace with'**
+  String get replaceWith;
+
   /// No description provided for @requireUnlock.
   ///
   /// In en, this message translates to:
@@ -2198,6 +2240,12 @@ abstract class AppLocalizations {
   /// **'Port on the server'**
   String get serverPort;
 
+  /// No description provided for @serverVsYours.
+  ///
+  /// In en, this message translates to:
+  /// **'Server → yours'**
+  String get serverVsYours;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
@@ -2233,6 +2281,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show as text'**
   String get showAsText;
+
+  /// No description provided for @showChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Show changes'**
+  String get showChanges;
 
   /// No description provided for @showHiddenFiles.
   ///

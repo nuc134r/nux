@@ -611,6 +611,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Generating an RSA key. This can take a minute on a phone.';
 
   @override
+  String get goToLine => 'Go to line';
+
+  @override
   String get groupField => 'Group';
 
   @override
@@ -875,6 +878,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lineEndings => 'Line endings';
 
   @override
+  String lineField(int count) {
+    return 'Line (1–$count)';
+  }
+
+  @override
   String get linkTargetLabel => 'Points to';
 
   @override
@@ -940,6 +948,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noColor => 'No colour';
+
+  @override
+  String get noDifferences => 'No differences';
 
   @override
   String get noForwards => 'No port forwarding yet';
@@ -1039,6 +1050,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get otherDevices => 'Connections from LAN';
+
+  @override
+  String get outdent => 'Outdent';
 
   @override
   String get overwrite => 'Overwrite';
@@ -1218,6 +1232,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeatPassphrase => 'Repeat passphrase';
 
   @override
+  String get replace => 'Replace';
+
+  @override
+  String get replaceAll => 'Replace all';
+
+  @override
+  String get replaceWith => 'Replace with';
+
+  @override
   String get requireUnlock => 'Require device unlock';
 
   @override
@@ -1285,6 +1308,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverPort => 'Port on the server';
 
   @override
+  String get serverVsYours => 'Server → yours';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -1302,6 +1328,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showAsText => 'Show as text';
+
+  @override
+  String get showChanges => 'Show changes';
 
   @override
   String get showHiddenFiles => 'Show hidden files';

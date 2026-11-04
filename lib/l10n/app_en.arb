@@ -468,6 +468,7 @@
   "generateKeyHint": "A new key pair made on this device",
   "generating": "Generating…",
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
+  "goToLine": "Go to line",
   "groupField": "Group",
   "hiddenFiles": "Hidden files",
   "hide": "Hide",
@@ -628,6 +629,14 @@
   },
   "licenses": "Licenses",
   "lineEndings": "Line endings",
+  "lineField": "Line (1–{count})",
+  "@lineField": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
   "logEmpty": "The log is empty",
@@ -661,6 +670,7 @@
   "next": "Next",
   "noChanges": "No changes",
   "noColor": "No colour",
+  "noDifferences": "No differences",
   "noForwards": "No port forwarding yet",
   "noHosts": "No hosts yet",
   "noHostsHint": "Add a server to connect to, or type user@host to connect right away.",
@@ -692,6 +702,7 @@
   "openWorkspace": "Open",
   "organize": "Organize",
   "otherDevices": "Connections from LAN",
+  "outdent": "Outdent",
   "overwrite": "Overwrite",
   "ownerLabel": "Owner",
   "partiallyLoaded": "Showing the first {loaded} of {total}",
@@ -796,6 +807,9 @@
   "removeBookmark": "Remove bookmark",
   "rename": "Rename",
   "repeatPassphrase": "Repeat passphrase",
+  "replace": "Replace",
+  "replaceAll": "Replace all",
+  "replaceWith": "Replace with",
   "requireUnlock": "Require device unlock",
   "requireUnlockHint": "Fingerprint, face or screen lock before each use",
   "required": "Required",
@@ -838,12 +852,14 @@
   },
   "selectAll": "Select all",
   "serverPort": "Port on the server",
+  "serverVsYours": "Server → yours",
   "settings": "Settings",
   "share": "Share",
   "shareLog": "Share log",
   "shareLogHint": "What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden",
   "show": "Show",
   "showAsText": "Show as text",
+  "showChanges": "Show changes",
   "showHiddenFiles": "Show hidden files",
   "showRendered": "Show formatted",
   "showSource": "Show source",

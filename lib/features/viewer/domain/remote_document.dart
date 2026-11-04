@@ -174,6 +174,17 @@ class RemoteDocument extends ChangeNotifier {
     }
   }
 
+  /// The file's current text on the server (read in this document's encoding), to compare with.
+  Future<String> fetchRemoteText() async {
+    final handle = await _open();
+    try {
+      final bytes = await handle.fs.readBytes(path);
+      return decodeText(bytes, encoding: encoding).text;
+    } finally {
+      handle.release();
+    }
+  }
+
   /// Shows a binary-looking file as text anyway.
   void showAsText() {
     forceText = true;

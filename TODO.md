@@ -88,11 +88,12 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Workspace = host + folder with its own tabs (kept alive when switching); ☰ drawer on the tab overview with the
   workspace card, project tree and git status (Version control); Open as workspace from the file browser
 - [x] Encoding (detect, reopen with, save with) and line endings (LF/CRLF/CR) in the editor
-- [ ] Edit mode: undo/redo, auto-indent, brackets, find/replace, go to line, save, save-as-root (`sudo tee`)
-- [ ] Remote change detection (mtime/hash) with a reload/overwrite/diff choice
+- [x] Edit mode: undo/redo, auto-indent, bracket pairs (re_editor), find and replace, go to line, editor key bar
+- [ ] Save as root (`sudo tee`)
+- [x] Remote change detection (size/mtime) with a reload / overwrite / show-changes (line diff) choice
 - [x] Quick open (fuzzy, `git ls-files` or `find`), search in files (`rg`, else `grep`, over exec) opening at the line
 - [ ] Search: Dart fallback for the local backend; replace in files
-- [ ] Cursor ergonomics: keybar swipe, symbol palette, big handles
+- [ ] Cursor ergonomics: keybar swipe, big handles
 
 ## M6 — Git
 - [ ] `GitRepo` port; CLI implementation (porcelain v2) for SSH/Termux

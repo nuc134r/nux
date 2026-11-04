@@ -3,6 +3,13 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.5
+
+- **Find and replace** in the editor (⋮ → Replace while editing, or the ⇄ button in the find bar), with match case and regex.
+- **Go to line** (⋮ → Go to line).
+- **An editor key bar** while editing: Tab and outdent, arrows, Home/End, undo/redo, and the symbols code needs ({} () [] <> ; : = " ' ` / \ | & …).
+- **Changed on the server?** Saving a file someone else changed now offers Show changes: a line diff of the server's copy against yours, then Overwrite or Discard mine.
+
 ## 0.9.4
 
 - **Home tab**: the hosts tab is now Home, with Hosts and Workspaces pages (swipe or tap the bar). On Workspaces, tap one to open, rename or delete it; ⋮ has Add host and New workspace.

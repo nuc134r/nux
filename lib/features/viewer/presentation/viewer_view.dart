@@ -17,6 +17,7 @@ import '../../files/presentation/files_view.dart' show fileErrorText;
 import '../../settings/data/settings_repository.dart';
 import '../../settings/presentation/text_size_controls.dart';
 import '../domain/languages.dart';
+import '../domain/line_diff.dart';
 import '../domain/remote_document.dart';
 import 'viewer_tab.dart';
 
@@ -46,7 +47,7 @@ class _ViewerViewState extends State<ViewerView> {
       if (mounted) showSnack(context, l10n.savedFile(_doc.name));
     } on RemoteChangedException {
       if (!mounted) return;
-      final choice = await showDialog<String>(
+      var choice = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
           icon: const Icon(Icons.sync_problem),
@@ -54,11 +55,22 @@ class _ViewerViewState extends State<ViewerView> {
           content: Text(l10n.changedOnServerBody(_doc.name)),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            TextButton(onPressed: () => Navigator.pop(context, 'diff'), child: Text(l10n.showChanges)),
             TextButton(onPressed: () => Navigator.pop(context, 'reload'), child: Text(l10n.discardMine)),
             FilledButton(onPressed: () => Navigator.pop(context, 'overwrite'), child: Text(l10n.overwrite)),
           ],
         ),
       );
+      if (choice == 'diff' && mounted) {
+        final theirs = await _doc.fetchRemoteText();
+        if (!mounted) return;
+        choice = await showDialog<String>(
+          context: context,
+          builder: (_) => Dialog.fullscreen(
+            child: DiffView(oldText: theirs, newText: widget.tab.editedText ?? _doc.text),
+          ),
+        );
+      }
       if (choice == 'overwrite') {
         await widget.tab.save(force: true);
         if (mounted) showSnack(context, l10n.savedFile(_doc.name));
@@ -172,7 +184,7 @@ class _CodeView extends ConsumerWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
     final editing = tab.editing;
-    return CodeEditor(
+    final codeEditor = CodeEditor(
       // Long press / selection: Cut, Copy, Paste, Select all (re_editor has no menu of its own).
       toolbarController: MobileSelectionToolbarController(
         builder: ({required context, required anchors, required controller, required onDismiss, required onRefresh}) {
@@ -230,19 +242,191 @@ class _CodeView extends ConsumerWidget {
           DefaultCodeChunkIndicator(width: 16, controller: chunkController, notifier: notifier),
         ],
       ),
-      findBuilder: (context, controller, readOnly) => FindBar(controller: controller),
+      findBuilder: (context, controller, readOnly) => FindBar(controller: controller, editing: !readOnly),
+    );
+    // The same tree in both modes (the editor must not be rebuilt when editing starts).
+    return Column(
+      children: [
+        Expanded(child: codeEditor),
+        if (editing) EditorKeyBar(editor: editor),
+      ],
+    );
+  }
+}
+
+/// Keys a phone keyboard lacks for code, under the editor while editing: indent, cursor, undo, symbols.
+class EditorKeyBar extends StatelessWidget {
+  const EditorKeyBar({super.key, required this.editor});
+
+  final CodeLineEditingController editor;
+
+  static const _symbols = [
+    '{',
+    '}',
+    '(',
+    ')',
+    '[',
+    ']',
+    '<',
+    '>',
+    ';',
+    ':',
+    '=',
+    '"',
+    "'",
+    '`',
+    '/',
+    '\\',
+    '|',
+    '&',
+    '!',
+    '?',
+    '-',
+    '_',
+    '+',
+    '*',
+    '#',
+    r'$',
+    '%',
+    '@',
+    '~',
+    '^',
+    '.',
+    ',',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    Widget key(Widget child, VoidCallback onTap, {String? tooltip}) => Tooltip(
+      message: tooltip ?? '',
+      child: InkWell(
+        onTap: onTap,
+        child: SizedBox(width: 40, height: 40, child: Center(child: child)),
+      ),
+    );
+    Widget icon(IconData i, VoidCallback onTap, String tooltip) =>
+        key(Icon(i, size: 20, color: scheme.onSurfaceVariant), onTap, tooltip: tooltip);
+    return Material(
+      color: scheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 40,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              icon(Icons.keyboard_tab, editor.applyIndent, 'Tab'),
+              icon(Icons.format_indent_decrease, editor.applyOutdent, l10n.outdent),
+              icon(Icons.keyboard_arrow_left, () => editor.moveCursor(AxisDirection.left), '←'),
+              icon(Icons.keyboard_arrow_up, () => editor.moveCursor(AxisDirection.up), '↑'),
+              icon(Icons.keyboard_arrow_down, () => editor.moveCursor(AxisDirection.down), '↓'),
+              icon(Icons.keyboard_arrow_right, () => editor.moveCursor(AxisDirection.right), '→'),
+              icon(Icons.first_page, editor.moveCursorToLineStart, 'Home'),
+              icon(Icons.last_page, editor.moveCursorToLineEnd, 'End'),
+              icon(Icons.undo, editor.undo, l10n.undoEdit),
+              icon(Icons.redo, editor.redo, l10n.redoEdit),
+              VerticalDivider(width: 9, indent: 8, endIndent: 8, color: scheme.outlineVariant),
+              for (final s in _symbols)
+                key(
+                  Text(
+                    s,
+                    style: TextStyle(fontFamily: monoFont, fontSize: 17, color: scheme.onSurface),
+                  ),
+                  () => editor.replaceSelection(s),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// What changed from [oldText] to [newText], as hunks of removed / added lines with a little context.
+/// Closes with 'reload' (keep the old) or 'overwrite' (keep the new).
+class DiffView extends StatelessWidget {
+  const DiffView({super.key, required this.oldText, required this.newText});
+
+  final String oldText;
+  final String newText;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final hunks = diffHunks(diffLines(oldText, newText));
+    final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.serverVsYours),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, 'reload'), child: Text(l10n.discardMine)),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: FilledButton(onPressed: () => Navigator.pop(context, 'overwrite'), child: Text(l10n.overwrite)),
+          ),
+        ],
+      ),
+      body: hunks.isEmpty
+          ? Center(child: Text(l10n.noDifferences))
+          : ListView.builder(
+              itemCount: hunks.length,
+              itemBuilder: (context, i) {
+                final line = hunks[i];
+                if (line == null) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Center(
+                      child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant)),
+                    ),
+                  );
+                }
+                final (bg, sign) = switch (line.kind) {
+                  DiffKind.removed => (scheme.errorContainer.withValues(alpha: .5), '-'),
+                  DiffKind.added => (Colors.green.withValues(alpha: .18), '+'),
+                  DiffKind.same => (Colors.transparent, ' '),
+                };
+                return Container(
+                  color: bg,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 40,
+                        child: Text(
+                          '${line.newLine ?? line.oldLine}',
+                          textAlign: TextAlign.right,
+                          style: mono?.copyWith(color: scheme.onSurfaceVariant),
+                        ),
+                      ),
+                      SizedBox(width: 18, child: Text(' $sign', style: mono)),
+                      Expanded(child: Text(line.text, style: mono)),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }
 
 /// Search box over the code (re_editor's find, without replace in the viewer).
 class FindBar extends StatelessWidget implements PreferredSizeWidget {
-  const FindBar({super.key, required this.controller});
+  const FindBar({super.key, required this.controller, this.editing = false});
 
   final CodeFindController controller;
 
+  /// Replace is offered only while editing.
+  final bool editing;
+
+  bool get _replacing => editing && (controller.value?.replaceMode ?? false);
+
   @override
-  Size get preferredSize => Size(double.infinity, controller.value == null ? 0 : 52);
+  Size get preferredSize => Size(double.infinity, controller.value == null ? 0 : (_replacing ? 104 : 52));
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +439,7 @@ class FindBar extends StatelessWidget implements PreferredSizeWidget {
         : result.matches.isEmpty
         ? '0/0'
         : '${result.index + 1}/${result.matches.length}';
-    return Material(
+    final bar = Material(
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -292,9 +476,43 @@ class FindBar extends StatelessWidget implements PreferredSizeWidget {
               icon: const Icon(Icons.keyboard_arrow_down),
               onPressed: controller.nextMatch,
             ),
+            if (editing)
+              IconButton(
+                tooltip: l10n.replace,
+                isSelected: _replacing,
+                icon: const Icon(Icons.find_replace),
+                onPressed: controller.toggleMode,
+              ),
             IconButton(tooltip: l10n.close, icon: const Icon(Icons.close), onPressed: controller.close),
           ],
         ),
+      ),
+    );
+    if (!_replacing) return bar;
+    return Material(
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          bar,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller.replaceInputController,
+                    focusNode: controller.replaceInputFocusNode,
+                    decoration: InputDecoration(isDense: true, hintText: l10n.replaceWith),
+                    onSubmitted: (_) => controller.replaceMatch(),
+                  ),
+                ),
+                TextButton(onPressed: controller.replaceMatch, child: Text(l10n.replace)),
+                TextButton(onPressed: controller.replaceAllMatches, child: Text(l10n.replaceAll)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

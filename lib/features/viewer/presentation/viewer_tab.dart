@@ -13,6 +13,7 @@ import '../../files/data/files_providers.dart';
 import '../../files/data/ssh_fs.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/domain/fs_handle.dart';
+import '../../files/presentation/file_dialogs.dart';
 import '../../files/presentation/transfers_sheet.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../settings/data/settings_repository.dart';
@@ -160,6 +161,27 @@ class ViewerTab extends NuxTab {
     if (await tabs.close(this) && opener != null) tabs.select(opener);
   }
 
+  /// Asks for a line number and puts the cursor there.
+  Future<void> goToLine(BuildContext context) async {
+    final editor = _editor;
+    if (editor == null) return;
+    final l10n = context.l10n;
+    final count = editor.lineCount;
+    final answer = await askText(
+      context,
+      title: l10n.goToLine,
+      label: l10n.lineField(count),
+      validate: (v) {
+        final n = int.tryParse(v.trim());
+        return n == null || n < 1 || n > count ? l10n.lineField(count) : null;
+      },
+    );
+    final line = int.tryParse(answer?.trim() ?? '');
+    if (line == null) return;
+    editor.selection = CodeLineSelection.collapsed(index: line - 1, offset: 0);
+    editor.makeCursorCenterIfInvisible();
+  }
+
   /// Saves; called by the view, which handles [RemoteChangedException].
   Future<void> save({bool force = false}) async {
     final text = _editor?.text ?? document.text;
@@ -239,6 +261,10 @@ class ViewerTab extends NuxTab {
       ] else if (canEdit)
         NuxMenuAction(icon: Icons.edit_outlined, label: l10n.edit, onSelected: () => setEditing(true)),
       if (shownAsText) NuxMenuAction(icon: Icons.search, label: l10n.find, onSelected: () => _finder?.findMode()),
+      if (editing)
+        NuxMenuAction(icon: Icons.find_replace, label: l10n.replace, onSelected: () => _finder?.replaceMode()),
+      if (shownAsText && _editor != null)
+        NuxMenuAction(icon: Icons.format_list_numbered, label: l10n.goToLine, onSelected: () => goToLine(context)),
       if (document.kind == FileKind.markdown)
         NuxMenuAction(
           icon: rendered ? Icons.code : Icons.article_outlined,

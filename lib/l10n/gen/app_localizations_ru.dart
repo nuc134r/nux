@@ -624,6 +624,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Создание RSA-ключа. На телефоне это может занять минуту.';
 
   @override
+  String get goToLine => 'Перейти к строке';
+
+  @override
   String get groupField => 'Группа';
 
   @override
@@ -889,6 +892,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lineEndings => 'Концы строк';
 
   @override
+  String lineField(int count) {
+    return 'Строка (1–$count)';
+  }
+
+  @override
   String get linkTargetLabel => 'Ссылается на';
 
   @override
@@ -955,6 +963,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noColor => 'Без цвета';
+
+  @override
+  String get noDifferences => 'Различий нет';
 
   @override
   String get noForwards => 'Пробросов портов пока нет';
@@ -1054,6 +1065,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get otherDevices => 'Подключения из LAN';
+
+  @override
+  String get outdent => 'Уменьшить отступ';
 
   @override
   String get overwrite => 'Перезаписать';
@@ -1237,6 +1251,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repeatPassphrase => 'Повторите парольную фразу';
 
   @override
+  String get replace => 'Заменить';
+
+  @override
+  String get replaceAll => 'Заменить все';
+
+  @override
+  String get replaceWith => 'Заменить на';
+
+  @override
   String get requireUnlock => 'Требовать разблокировку устройства';
 
   @override
@@ -1306,6 +1329,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get serverPort => 'Порт на сервере';
 
   @override
+  String get serverVsYours => 'Сервер → ваше';
+
+  @override
   String get settings => 'Настройки';
 
   @override
@@ -1323,6 +1349,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showAsText => 'Показать как текст';
+
+  @override
+  String get showChanges => 'Показать изменения';
 
   @override
   String get showHiddenFiles => 'Показать скрытые файлы';
