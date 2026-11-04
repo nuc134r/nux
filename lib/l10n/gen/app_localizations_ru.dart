@@ -683,6 +683,19 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get gitSignInBody =>
+      'Удалённый репозиторий просит имя и пароль. На GitHub, GitLab и подобных вместо пароля используйте токен доступа.';
+
+  @override
+  String gitSignInTitle(String remote) {
+    return 'Вход в $remote';
+  }
+
+  @override
+  String get gitSignInWrong =>
+      'Удалённый репозиторий их не принял. Попробуйте ещё раз.';
+
+  @override
   String get goToLine => 'Перейти к строке';
 
   @override
@@ -1177,6 +1190,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пароль сохранён. Оставьте пустым, чтобы не менять.';
 
   @override
+  String get passwordOrToken => 'Пароль или токен';
+
+  @override
   String get passwordWrong => 'Сервер не принял пароль';
 
   @override
@@ -1331,6 +1347,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reload => 'Перезагрузить';
 
   @override
+  String get rememberForWorkspace => 'Запомнить для этой рабочей области';
+
+  @override
   String get rememberUntilClosed => 'Запомнить, пока nux открыт';
 
   @override
@@ -1456,6 +1475,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get showTabs => 'Показать вкладки';
+
+  @override
+  String get signIn => 'Войти';
 
   @override
   String get sizeLabel => 'Размер';
@@ -1609,6 +1631,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get textSizeHint =>
       'Также в меню ⋮ вкладки или щипком двумя пальцами по тексту.';
+
+  @override
+  String get theRemote => 'удалённый репозиторий';
 
   @override
   String get theServer => 'сервер';

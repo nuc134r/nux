@@ -43,9 +43,7 @@ class TabSet {
 /// Pinned tabs always come first. The order of [tabs] is the order shown to the user; the
 /// most-recently-used order decides which tab becomes current after a close and which tabs stay live.
 class TabSwitcherController extends ChangeNotifier {
-  TabSwitcherController({this.keepAlive = 3, this.undoDepth = 10})
-      : assert(keepAlive >= 0),
-        assert(undoDepth >= 0);
+  TabSwitcherController({this.keepAlive = 3, this.undoDepth = 10}) : assert(keepAlive >= 0), assert(undoDepth >= 0);
 
   /// How many background tabs stay mounted besides the current one.
   final int keepAlive;

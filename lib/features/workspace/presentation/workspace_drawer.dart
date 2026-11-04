@@ -17,6 +17,7 @@ import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../data/workspace_access.dart';
 import '../data/workspace_repository.dart';
+import '../../../core/secure/secret_store.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
 import 'git_panel.dart';
@@ -179,7 +180,21 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   Workspace get ws => widget.workspace;
 
   /// git in the workspace folder, once connected.
-  GitRepo? get _repo => _access == null ? null : GitRepo(_access!.runner, ws.rootPath);
+  GitRepo? get _repo => _access == null
+      ? null
+      : GitRepo(
+          _access!.runner,
+          ws.rootPath,
+          credentials: _gitCredentials,
+          askCredentials: (remote, {required retry}) async {
+            final c = await askGitCredentials(context, ref, ws, remote, retry: retry);
+            if (c != null) _gitCredentials = c;
+            return c;
+          },
+        );
+
+  /// Remembered (in the secret store) or given this session, for fetch / pull / push.
+  GitCredentials? _gitCredentials;
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
   Set<String> get _expanded => _state.expanded.putIfAbsent(ws.id, () => {});
 
@@ -230,6 +245,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
       final access = await ref.read(workspaceOpenerProvider)(ws.connectionId);
       if (!mounted) return access.release();
       _access = access;
+      _gitCredentials = await loadGitCredentials(ref, ws.id);
       await Future.wait([_list(ws.rootPath).then((_) => _reveal()), for (final d in _expanded) _list(d), _loadGit()]);
     } catch (e) {
       if (mounted) setState(() => _error = e);
@@ -688,5 +704,81 @@ Future<void> deleteWorkspace(BuildContext context, WidgetRef ref, Workspace ws) 
       ],
     ),
   );
-  if (ok == true) await ref.read(workspaceSwitcherProvider).delete(ws.id);
+  if (ok != true) return;
+  await ref.read(secretStoreProvider).delete(_gitSecretId(ws.id)); // its git credentials go too
+  await ref.read(workspaceSwitcherProvider).delete(ws.id);
+}
+
+String _gitSecretId(String workspaceId) => 'git:$workspaceId';
+
+/// Credentials remembered for workspace [id] (secret store: `git:<id>`), if any.
+Future<GitCredentials?> loadGitCredentials(WidgetRef ref, String id) async {
+  final saved = await ref.read(secretStoreProvider).read(_gitSecretId(id));
+  if (saved == null) return null;
+  final i = saved.indexOf('\n');
+  return i < 0 ? null : (username: saved.substring(0, i), password: saved.substring(i + 1));
+}
+
+/// Asks for a username and password (or token) for [remote]; remembered for the workspace if asked.
+Future<GitCredentials?> askGitCredentials(
+  BuildContext context,
+  WidgetRef ref,
+  Workspace ws,
+  String? remote, {
+  required bool retry,
+}) async {
+  if (!context.mounted) return null;
+  final l10n = context.l10n;
+  final user = TextEditingController();
+  final pass = TextEditingController();
+  var remember = true;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) => AlertDialog(
+        title: Text(l10n.gitSignInTitle(remote ?? l10n.theRemote)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(retry ? l10n.gitSignInWrong : l10n.gitSignInBody),
+            const SizedBox(height: 12),
+            TextField(
+              controller: user,
+              autofocus: true,
+              autocorrect: false,
+              decoration: InputDecoration(labelText: l10n.usernameField),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: pass,
+              obscureText: true,
+              autocorrect: false,
+              enableSuggestions: false,
+              decoration: InputDecoration(labelText: l10n.passwordOrToken),
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: remember,
+              onChanged: (v) => setState(() => remember = v ?? false),
+              title: Text(l10n.rememberForWorkspace),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.signIn)),
+        ],
+      ),
+    ),
+  );
+  final c = (username: user.text.trim(), password: pass.text);
+  user.dispose();
+  pass.dispose();
+  if (ok != true || c.username.isEmpty) return null;
+  final store = ref.read(secretStoreProvider);
+  remember
+      ? await store.write(_gitSecretId(ws.id), '${c.username}\n${c.password}')
+      : await store.delete(_gitSecretId(ws.id));
+  return c;
 }

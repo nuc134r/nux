@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -208,10 +209,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
     try {
       // toImage takes the layer now and rasterizes it later, so this is still the picture of the tab
       // being left even though the next frame shows another one.
-      boundary.toImage(pixelRatio: View.of(context).devicePixelRatio * widget.previewScale).then(
-        (image) => _c.setPreview(tab, image),
-        onError: (Object _) {}, // keep the old preview
-      );
+      boundary
+          .toImage(pixelRatio: View.of(context).devicePixelRatio * widget.previewScale)
+          .then(
+            (image) => _c.setPreview(tab, image),
+            onError: (Object _) {}, // keep the old preview
+          );
     } catch (_) {
       // A preview is never worth failing a tab switch over (this runs before the switch is shown).
     }
@@ -227,10 +230,15 @@ class _TabSwitcherState extends State<TabSwitcher> {
     if (!await _c.close(tab, force: force)) return;
     messenger
       ?..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text(widget.strings.closed(title)),
-        action: SnackBarAction(label: widget.strings.undo, onPressed: _c.reopenClosed),
-      ));
+      ..showSnackBar(
+        SnackBar(
+          // With an action Flutter keeps a snackbar until it is used; Undo is only worth a few seconds.
+          persist: false,
+          duration: const Duration(seconds: 5),
+          content: Text(widget.strings.closed(title)),
+          action: SnackBarAction(label: widget.strings.undo, onPressed: _c.reopenClosed),
+        ),
+      );
   }
 
   Future<void> _showMenu(SwitcherTab tab) async {
@@ -494,7 +502,10 @@ class _Body extends StatelessWidget {
                       offset: (i - page) * width,
                       visible: !hidden && (i == current || i == neighbour),
                       active: !hidden && i == current,
-                      child: RepaintBoundary(key: boundaryFor(tab.id), child: Builder(builder: tab.buildContent)),
+                      child: RepaintBoundary(
+                        key: boundaryFor(tab.id),
+                        child: Builder(builder: tab.buildContent),
+                      ),
                     ),
                   ),
               if (!hidden && neighbour >= 0 && neighbour < tabs.length && !live.contains(tabs[neighbour].id))
@@ -555,7 +566,10 @@ class _Preview extends StatelessWidget {
       return ColoredBox(
         color: theme.colorScheme.surfaceContainerHighest,
         child: Center(
-          child: Text(noPreview, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          child: Text(
+            noPreview,
+            style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
         ),
       );
     }
@@ -587,10 +601,26 @@ class _TabGrid extends StatefulWidget {
   State<_TabGrid> createState() => _TabGridState();
 }
 
-/// Opens scrolled so the current tab's card is in view (the grid is built afresh each time it opens).
-class _TabGridState extends State<_TabGrid> {
-  final _scroll = ScrollController();
-  final _currentKey = GlobalKey();
+/// The grid of cards. Laid out here (not by a sliver grid) so cards can animate: closing one slides the
+/// others to their new spots, a swiped card rides above its neighbours, and opening the grid zooms out
+/// from the current tab while picking a card zooms into it. Opens scrolled to the current tab.
+class _TabGridState extends State<_TabGrid> with SingleTickerProviderStateMixin {
+  static const _pad = 12.0, _gap = 12.0, _headerHeight = 40.0, _aspect = .72;
+
+  ScrollController? _scroll;
+
+  /// 1: the plain grid; 0: zoomed into [_focus] (the card fills the screen width).
+  late final AnimationController _zoom = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 260),
+    value: 1,
+  );
+  String? _focus;
+
+  /// The card being swiped (drawn above the others).
+  String? _dragging;
+  bool _opening = true;
+  bool _picking = false;
 
   TabSwitcherController get controller => widget.controller;
   TabSwitcherStrings get strings => widget.strings;
@@ -598,30 +628,15 @@ class _TabGridState extends State<_TabGrid> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
+    _focus = controller.current?.id;
+    if (_focus != null) _zoom.value = 0;
   }
 
   @override
   void dispose() {
-    _scroll.dispose();
+    _zoom.dispose();
+    _scroll?.dispose();
     super.dispose();
-  }
-
-  /// Jumps near the current card by its row (cards are laid out lazily), then lines it up exactly.
-  void _reveal() {
-    if (!mounted || !_scroll.hasClients) return;
-    final width = context.size?.width ?? 0;
-    final columns = (width / 220).floor().clamp(2, 6);
-    final cardHeight = (width - 24 - 12 * (columns - 1)) / columns / .72 + 12;
-    final index = _sections().values.expand((l) => l).toList().indexOf(controller.current!);
-    if (index < 0) return;
-    final position = _scroll.position;
-    final row = index ~/ columns;
-    _scroll.jumpTo((row * cardHeight - position.viewportDimension / 4).clamp(0, position.maxScrollExtent));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final card = _currentKey.currentContext;
-      if (card != null && card.mounted) Scrollable.ensureVisible(card, alignment: .3);
-    });
   }
 
   /// Sections: pinned first, then each group in order of first appearance, then the rest.
@@ -637,61 +652,247 @@ class _TabGridState extends State<_TabGrid> {
     return sections;
   }
 
+  /// Picks a card: zooms into it, then shows its tab.
+  Future<void> _open(SwitcherTab tab) async {
+    // A tap during the opening zoom still picks the card (it takes over from that zoom); a second
+    // tap while zooming in is ignored.
+    if (_picking) return;
+    _picking = true;
+    _zoom.stop();
+    setState(() => _focus = tab.id);
+    await _zoom.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInCubic);
+    if (mounted) controller.select(tab);
+  }
+
   @override
   Widget build(BuildContext context) {
     final sections = _sections();
     final theme = Theme.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns = (constraints.maxWidth / 220).floor().clamp(2, 6);
-        return CustomScrollView(
-          controller: _scroll,
-          slivers: [
-            for (final MapEntry(key: title, value: list) in sections.entries) ...[
-              if (sections.length > 1 || title != null)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-                    child: Text(title ?? '', style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary)),
+        final width = constraints.maxWidth;
+        final columns = (width / 220).floor().clamp(2, 6);
+        final cardW = (width - 2 * _pad - _gap * (columns - 1)) / columns;
+        final cardH = cardW / _aspect;
+        final showHeaders = sections.length > 1 || sections.keys.any((k) => k != null);
+        final rects = <String, Rect>{};
+        final headers = <(double, String)>[];
+        var y = 0.0;
+        for (final MapEntry(key: title, value: list) in sections.entries) {
+          if (showHeaders) {
+            headers.add((y, title ?? ''));
+            y += _headerHeight;
+          }
+          for (final (i, t) in list.indexed) {
+            rects[t.id] = Rect.fromLTWH(
+              _pad + (i % columns) * (cardW + _gap),
+              y + _pad + (i ~/ columns) * (cardH + _gap),
+              cardW,
+              cardH,
+            );
+          }
+          final rows = (list.length + columns - 1) ~/ columns;
+          y += 2 * _pad + rows * (cardH + _gap) - _gap;
+        }
+        final total = y;
+        final viewport = constraints.maxHeight;
+        // Created once the layout is known, already scrolled so the current card is in view.
+        final current = controller.current;
+        _scroll ??= ScrollController(
+          initialScrollOffset: current == null || rects[current.id] == null
+              ? 0
+              : (rects[current.id]!.top - viewport / 4).clamp(0, math.max(0, total - viewport)).toDouble(),
+        );
+        if (_opening) {
+          _opening = false;
+          if (_focus != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => _zoom.animateTo(1, curve: Curves.easeOutCubic));
+          }
+        }
+
+        final tabs = [for (final list in sections.values) ...list];
+        // The swiped card last, so it is painted over its neighbours.
+        tabs.sort((a, b) => (a.id == _dragging ? 1 : 0) - (b.id == _dragging ? 1 : 0));
+        final grid = SizedBox(
+          height: total,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              for (final (top, title) in headers)
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  top: top + 16,
+                  child: Text(title, style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.primary)),
+                ),
+              for (final t in tabs)
+                AnimatedPositioned.fromRect(
+                  key: ValueKey(t.id),
+                  rect: rects[t.id]!,
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutCubic,
+                  child: _SwipeCard(
+                    width: cardW,
+                    enabled: !controller.isPinned(t),
+                    onDragStart: () => setState(() => _dragging = t.id),
+                    onDragEnd: () => setState(() => _dragging = null),
+                    mayClose: () => widget.mayClose(t),
+                    onDismissed: () => widget.onDismissed(t),
+                    child: _TabCard(
+                      tab: t,
+                      current: t == current,
+                      pinned: controller.isPinned(t),
+                      preview: controller.preview(t),
+                      noPreview: strings.noPreview,
+                      closeTooltip: strings.close,
+                      onTap: () => _open(t),
+                      onClose: () => widget.onClose(t),
+                      onMenu: () => widget.onMenu(t),
+                    ),
                   ),
                 ),
-              SliverPadding(
-                padding: const EdgeInsets.all(12),
-                sliver: SliverGrid.count(
-                  crossAxisCount: columns,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: .72,
-                  children: [
-                    for (final t in list)
-                      _TabCard(
-                        key: t == controller.current ? _currentKey : ValueKey(t.id),
-                        tab: t,
-                        current: t == controller.current,
-                        pinned: controller.isPinned(t),
-                        preview: controller.preview(t),
-                        noPreview: strings.noPreview,
-                        closeTooltip: strings.close,
-                        onTap: () => controller.select(t),
-                        onClose: () => widget.onClose(t),
-                        mayClose: () => widget.mayClose(t),
-                        onDismissed: () => widget.onDismissed(t),
-                        onMenu: () => widget.onMenu(t),
-                      ),
-                  ],
-                ),
-              ),
             ],
-          ],
+          ),
+        );
+        return AnimatedBuilder(
+          animation: _zoom,
+          child: SingleChildScrollView(controller: _scroll, child: grid),
+          builder: (context, child) {
+            final t = _zoom.value;
+            final focus = rects[_focus];
+            if (t >= 1 || focus == null || !(_scroll?.hasClients ?? false) && t >= 1) return child!;
+            // Zoomed around the focused card: at 0 it fills the width, centred in the screen.
+            final offset = _scroll!.hasClients ? _scroll!.offset : _scroll!.initialScrollOffset;
+            final r = focus.translate(0, -offset);
+            final full = width / r.width;
+            final scale = ui.lerpDouble(full, 1, t)!;
+            final dx = ui.lerpDouble(width / 2 - r.center.dx * full, 0, t)!;
+            final dy = ui.lerpDouble(viewport / 2 - r.center.dy * full, 0, t)!;
+            return ClipRect(
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..translateByDouble(dx, dy, 0, 1)
+                  ..scaleByDouble(scale, scale, 1, 1),
+                child: child,
+              ),
+            );
+          },
         );
       },
     );
   }
 }
 
+/// A card that can be swiped sideways to close: it fades as it goes and casts a shadow over the cards it
+/// crosses; past the closing point a haptic tick says "let go to close".
+class _SwipeCard extends StatefulWidget {
+  const _SwipeCard({
+    required this.width,
+    required this.enabled,
+    required this.onDragStart,
+    required this.onDragEnd,
+    required this.mayClose,
+    required this.onDismissed,
+    required this.child,
+  });
+
+  /// The card's width (known from the grid's layout).
+  final double width;
+  final bool enabled;
+  final VoidCallback onDragStart;
+  final VoidCallback onDragEnd;
+  final Future<bool> Function() mayClose;
+  final VoidCallback onDismissed;
+  final Widget child;
+
+  @override
+  State<_SwipeCard> createState() => _SwipeCardState();
+}
+
+class _SwipeCardState extends State<_SwipeCard> with SingleTickerProviderStateMixin {
+  late final AnimationController _settle = AnimationController(vsync: this, duration: const Duration(milliseconds: 220))
+    ..addListener(() => setState(() => _dx = _settleTween.evaluate(_settle)));
+  Tween<double> _settleTween = Tween(begin: 0, end: 0);
+  double _dx = 0;
+  bool _armed = false;
+
+  @override
+  void dispose() {
+    _settle.dispose();
+    super.dispose();
+  }
+
+  double get _width => widget.width;
+  double get _threshold => _width * .4;
+
+  Future<void> _animateTo(double target) {
+    _settleTween = Tween(begin: _dx, end: target);
+    return _settle.forward(from: 0);
+  }
+
+  void _update(DragUpdateDetails d) {
+    setState(() => _dx += d.delta.dx);
+    final armed = _dx.abs() >= _threshold;
+    if (armed != _armed) {
+      _armed = armed;
+      // A tick where letting go starts closing the tab (and a lighter one when it no longer would).
+      armed ? HapticFeedback.mediumImpact() : HapticFeedback.selectionClick();
+    }
+  }
+
+  Future<void> _end(DragEndDetails d) async {
+    final v = d.primaryVelocity ?? 0;
+    final flung = v.abs() > 900 && v.sign == _dx.sign;
+    if ((_armed || flung) && await widget.mayClose()) {
+      await _animateTo(_dx.sign * _width * 1.4);
+      _armed = false;
+      widget.onDismissed();
+      widget.onDragEnd();
+      return;
+    }
+    _armed = false;
+    await _animateTo(0);
+    if (mounted) widget.onDragEnd();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.enabled) return widget.child;
+    final progress = (_dx.abs() / (_width * 1.2)).clamp(0.0, 1.0);
+    return GestureDetector(
+      onHorizontalDragStart: (_) {
+        _settle.stop();
+        widget.onDragStart();
+      },
+      onHorizontalDragUpdate: _update,
+      onHorizontalDragEnd: _end,
+      child: Transform.translate(
+        offset: Offset(_dx, 0),
+        child: Opacity(
+          opacity: 1 - progress * .85,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: progress == 0
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: .35 * math.min(1, progress * 3)),
+                        blurRadius: 18,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+            ),
+            child: widget.child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _TabCard extends StatelessWidget {
   const _TabCard({
-    super.key,
     required this.tab,
     required this.current,
     required this.pinned,
@@ -700,8 +901,6 @@ class _TabCard extends StatelessWidget {
     required this.closeTooltip,
     required this.onTap,
     required this.onClose,
-    required this.mayClose,
-    required this.onDismissed,
     required this.onMenu,
   });
 
@@ -713,8 +912,6 @@ class _TabCard extends StatelessWidget {
   final String closeTooltip;
   final VoidCallback onTap;
   final VoidCallback onClose;
-  final Future<bool> Function() mayClose;
-  final VoidCallback onDismissed;
   final VoidCallback onMenu;
 
   @override
@@ -741,7 +938,12 @@ class _TabCard extends StatelessWidget {
                   Icon(pinned ? Icons.push_pin : tab.icon ?? Icons.tab, size: 16),
                   const SizedBox(width: 6),
                   Expanded(
-                    child: Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelLarge),
+                    child: Text(
+                      tab.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelLarge,
+                    ),
                   ),
                   if (tab.hasUnsavedChanges) Icon(Icons.circle, size: 8, color: scheme.tertiary),
                   IconButton(
@@ -783,14 +985,7 @@ class _TabCard extends StatelessWidget {
         ),
       ),
     );
-    if (pinned) return card;
-    return Dismissible(
-      key: ValueKey('dismiss-${tab.id}'),
-      // Unsaved changes are confirmed before the card goes, so a refused close leaves it in place.
-      confirmDismiss: (_) => mayClose(),
-      onDismissed: (_) => onDismissed(),
-      child: card,
-    );
+    return card;
   }
 }
 

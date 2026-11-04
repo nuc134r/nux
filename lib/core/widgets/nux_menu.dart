@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 /// An entry of a [NuxMenuButton] menu.
@@ -127,7 +129,11 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
       LayoutBuilder(
         builder: (context, constraints) {
           final media = MediaQuery.of(context);
-          final right = (constraints.maxWidth - anchor.right + 4).clamp(8.0, constraints.maxWidth);
+          // Aligned to the anchor's right edge, but never past the left edge of the screen (a narrow
+          // anchor on the left, like the branch line in the drawer, would push it off).
+          final double right = (constraints.maxWidth - anchor.right + 4)
+              .clamp(8.0, math.max(8.0, constraints.maxWidth - menuWidth - 8))
+              .toDouble();
           // Beside a list item: below it, or above it when it sits in the lower part of the screen.
           final above = beside && anchor.bottom > constraints.maxHeight * .55;
           final top = beside ? anchor.bottom + 4 : anchor.top + 4;

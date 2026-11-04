@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/features/viewer/domain/line_diff.dart';
 import 'package:nux/features/workspace/domain/git_repo.dart';
 import 'package:nux/features/workspace/domain/git_status.dart';
+import 'package:nux_backend/nux_backend.dart';
 
 import 'local_runner.dart';
 
@@ -88,4 +91,72 @@ void main() {
     expect(File('${dir.path}/b.txt').existsSync(), isTrue);
     await git.push();
   });
+
+  test('credentials reach git through stdin, not the command line', () async {
+    final command = GitRepo.withCredentialsCommand(dir.path, 'credential fill');
+    expect(command, isNot(contains('s3cret')));
+    final p = await LocalRunner().start(command);
+    final out = p.stdout.map(String.fromCharCodes).join();
+    p.stdin.add('me\ns3cret\nprotocol=https\nhost=example.com\n\n'.codeUnits);
+    await p.stdin.close();
+    expect(await out, allOf(contains('username=me'), contains('password=s3cret')));
+  });
+
+  test('a fetch that needs credentials asks for them once and retries with them', () async {
+    final runner = _AuthRunner();
+    String? askedFor;
+    final repo = GitRepo(runner, '/repo', askCredentials: (remote, {required retry}) async {
+      askedFor = remote;
+      return (username: 'me', password: 'tok');
+    });
+    await repo.fetch();
+    expect(askedFor, 'https://example.com');
+    expect(runner.stdin, 'me\ntok\n');
+    expect(repo.credentials?.username, 'me', reason: 'kept for the next fetch');
+  });
+}
+
+/// Fails without credentials like git over HTTPS does; succeeds when they come through stdin.
+class _AuthRunner implements ProcessRunner {
+  String stdin = '';
+
+  @override
+  Future<CommandResult> run(String command, {String? workingDirectory, Map<String, String>? environment}) async =>
+      const CommandResult(
+        exitCode: 128,
+        stdout: '',
+        stderr: "fatal: could not read Username for 'https://example.com': terminal prompts disabled",
+      );
+
+  @override
+  Future<RunningProcess> start(String command, {String? workingDirectory, Map<String, String>? environment}) async =>
+      _FakeProcess(this);
+}
+
+class _FakeProcess implements RunningProcess {
+  _FakeProcess(this.runner);
+
+  final _AuthRunner runner;
+  final _in = StreamController<List<int>>();
+
+  @override
+  StreamSink<List<int>> get stdin {
+    _in.stream.listen((d) => runner.stdin += String.fromCharCodes(d));
+    return _in.sink;
+  }
+
+  @override
+  Stream<Uint8List> get stdout => const Stream.empty();
+
+  @override
+  Stream<Uint8List> get stderr => const Stream.empty();
+
+  @override
+  Future<int?> get exitCode async {
+    await Future<void>.delayed(Duration.zero);
+    return 0;
+  }
+
+  @override
+  void kill() {}
 }

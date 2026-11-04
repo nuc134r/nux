@@ -670,6 +670,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get gitSignInBody =>
+      'The remote asks for a username and password. On GitHub, GitLab and similar, use an access token as the password.';
+
+  @override
+  String gitSignInTitle(String remote) {
+    return 'Sign in to $remote';
+  }
+
+  @override
+  String get gitSignInWrong => 'The remote did not accept these. Try again.';
+
+  @override
   String get goToLine => 'Go to line';
 
   @override
@@ -1160,6 +1172,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordKeepHint => 'A password is saved. Leave empty to keep it.';
 
   @override
+  String get passwordOrToken => 'Password or token';
+
+  @override
   String get passwordWrong => 'The server did not accept the password';
 
   @override
@@ -1312,6 +1327,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reload => 'Reload';
 
   @override
+  String get rememberForWorkspace => 'Remember for this workspace';
+
+  @override
   String get rememberUntilClosed => 'Remember until nux is closed';
 
   @override
@@ -1435,6 +1453,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showTabs => 'Show tabs';
+
+  @override
+  String get signIn => 'Sign in';
 
   @override
   String get sizeLabel => 'Size';
@@ -1588,6 +1609,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get textSizeHint =>
       'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.';
+
+  @override
+  String get theRemote => 'the remote';
 
   @override
   String get theServer => 'the server';

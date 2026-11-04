@@ -303,40 +303,45 @@ class EditorKeyBar extends StatelessWidget {
       message: tooltip ?? '',
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(width: 40, height: 40, child: Center(child: child)),
+        // Never takes focus: the editor keeps it (and the keyboard stays up).
+        canRequestFocus: false,
+        child: SizedBox(width: 42, height: 48, child: Center(child: child)),
       ),
     );
     Widget icon(IconData i, VoidCallback onTap, String tooltip) =>
         key(Icon(i, size: 20, color: scheme.onSurfaceVariant), onTap, tooltip: tooltip);
-    return Material(
-      color: scheme.surfaceContainer,
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 40,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              icon(Icons.keyboard_tab, editor.applyIndent, 'Tab'),
-              icon(Icons.format_indent_decrease, editor.applyOutdent, l10n.outdent),
-              icon(Icons.keyboard_arrow_left, () => editor.moveCursor(AxisDirection.left), '←'),
-              icon(Icons.keyboard_arrow_up, () => editor.moveCursor(AxisDirection.up), '↑'),
-              icon(Icons.keyboard_arrow_down, () => editor.moveCursor(AxisDirection.down), '↓'),
-              icon(Icons.keyboard_arrow_right, () => editor.moveCursor(AxisDirection.right), '→'),
-              icon(Icons.first_page, editor.moveCursorToLineStart, 'Home'),
-              icon(Icons.last_page, editor.moveCursorToLineEnd, 'End'),
-              icon(Icons.undo, editor.undo, l10n.undoEdit),
-              icon(Icons.redo, editor.redo, l10n.redoEdit),
-              VerticalDivider(width: 9, indent: 8, endIndent: 8, color: scheme.outlineVariant),
-              for (final s in _symbols)
-                key(
-                  Text(
-                    s,
-                    style: TextStyle(fontFamily: monoFont, fontSize: 17, color: scheme.onSurface),
+    // Inside the editor's tap region: a tap here must not count as "outside" and close the keyboard.
+    return CodeEditorTapRegion(
+      child: Material(
+        color: scheme.surfaceContainer,
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 48,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                icon(Icons.keyboard_tab, editor.applyIndent, 'Tab'),
+                icon(Icons.format_indent_decrease, editor.applyOutdent, l10n.outdent),
+                icon(Icons.keyboard_arrow_left, () => editor.moveCursor(AxisDirection.left), '←'),
+                icon(Icons.keyboard_arrow_up, () => editor.moveCursor(AxisDirection.up), '↑'),
+                icon(Icons.keyboard_arrow_down, () => editor.moveCursor(AxisDirection.down), '↓'),
+                icon(Icons.keyboard_arrow_right, () => editor.moveCursor(AxisDirection.right), '→'),
+                icon(Icons.first_page, editor.moveCursorToLineStart, 'Home'),
+                icon(Icons.last_page, editor.moveCursorToLineEnd, 'End'),
+                icon(Icons.undo, editor.undo, l10n.undoEdit),
+                icon(Icons.redo, editor.redo, l10n.redoEdit),
+                VerticalDivider(width: 9, indent: 8, endIndent: 8, color: scheme.outlineVariant),
+                for (final s in _symbols)
+                  key(
+                    Text(
+                      s,
+                      style: TextStyle(fontFamily: monoFont, fontSize: 17, color: scheme.onSurface),
+                    ),
+                    () => editor.replaceSelection(s),
                   ),
-                  () => editor.replaceSelection(s),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -390,7 +395,9 @@ class DiffLinesView extends StatelessWidget {
         if (line == null) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Center(child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant))),
+            child: Center(
+              child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant)),
+            ),
           );
         }
         final (bg, sign) = switch (line.kind) {

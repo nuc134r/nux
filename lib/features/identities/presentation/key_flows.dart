@@ -183,6 +183,7 @@ Future<void> installKeyOnServer(
           SnackBar(
             content: Text(already ? l10n.keyWasInstalled(target.name) : l10n.keyInstalled(target.name)),
             duration: const Duration(seconds: 8),
+            persist: false,
             action: usesIt
                 ? null
                 : SnackBarAction(

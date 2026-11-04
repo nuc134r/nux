@@ -154,6 +154,8 @@ Future<void> installUpdate(BuildContext context, WidgetRef ref, Release release)
 void _failed(BuildContext context, Release release, String error) {
   final l10n = context.l10n;
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    persist: false,
+    duration: const Duration(seconds: 8),
     content: Text(l10n.updateFailed(error)),
     action: release.pageUrl.isEmpty
         ? null

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:nux_backend/nux_backend.dart';
 
 import '../../viewer/domain/line_diff.dart';
@@ -5,7 +7,13 @@ import 'git_status.dart';
 
 /// A git command that did not succeed; [output] is what git said.
 class GitException implements Exception {
-  const GitException(this.command, this.output, {this.diverged = false, this.noUpstream = false});
+  const GitException(
+    this.command,
+    this.output, {
+    this.diverged = false,
+    this.noUpstream = false,
+    this.needsCredentials = false,
+  });
 
   final String command;
   final String output;
@@ -16,30 +24,81 @@ class GitException implements Exception {
   /// `push` has nowhere to go yet (the branch has no upstream).
   final bool noUpstream;
 
+  /// The remote wanted a username and password (or they were wrong).
+  final bool needsCredentials;
+
+  /// Where the credentials are for, from git's message (`https://example.com`), if it said.
+  String? get remote => RegExp(r"for '([^']+)'").firstMatch(output)?.group(1);
+
   @override
   String toString() => output.trim().isEmpty ? 'git $command failed' : output.trim();
 }
 
-/// git in a workspace folder, run as commands on its host. Never prompts: a remote that needs a password
-/// it does not have fails at once instead of hanging.
+typedef GitCredentials = ({String username, String password});
+
+/// git in a workspace folder, run as commands on its host. Never prompts on the host: a remote that needs
+/// a password fails at once (instead of hanging); [askCredentials] is then asked and the command retried
+/// with them, passed through stdin to a one-off credential helper (never in a command line or a file).
 class GitRepo {
-  GitRepo(this._runner, this.folder);
+  GitRepo(this._runner, this.folder, {this.credentials, this.askCredentials});
 
   final ProcessRunner _runner;
   final String folder;
 
-  Future<String> _git(String args, {bool okOnOne = false}) async {
-    final r = await _runner.run(
-      'cd ${shellQuote(folder)} && GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND="ssh -o BatchMode=yes" git $args',
-    );
+  /// Used for fetch, pull and push when set (e.g. remembered for the workspace).
+  GitCredentials? credentials;
+
+  /// Asked when the remote wants credentials; null cancels.
+  final Future<GitCredentials?> Function(String? remote, {required bool retry})? askCredentials;
+
+  static const _env = 'GIT_TERMINAL_PROMPT=0 GIT_SSH_COMMAND="ssh -o BatchMode=yes"';
+
+  /// A credential helper answering from two variables the command reads from stdin first.
+  static final _helper = shellQuote(
+    '!f() { test "\$1" = get && printf "username=%s\\npassword=%s\\n" "\$NUX_GIT_USER" "\$NUX_GIT_PASS"; }; f',
+  );
+
+  /// The command that runs `git args` with credentials read from the first two lines of stdin.
+  static String withCredentialsCommand(String folder, String args) =>
+      'cd ${shellQuote(folder)} && IFS= read -r NUX_GIT_USER && IFS= read -r NUX_GIT_PASS && '
+      'export NUX_GIT_USER NUX_GIT_PASS && $_env git -c credential.helper= -c credential.helper=$_helper $args';
+
+  Future<String> _git(String args, {bool okOnOne = false, bool network = false}) async {
+    final creds = network ? credentials : null;
+    final r = creds == null
+        ? await _runner.run('cd ${shellQuote(folder)} && $_env git $args')
+        : await _runWithCredentials(args, creds);
     if (r.ok || (okOnOne && r.exitCode == 1)) return r.stdout;
     final out = '${r.stderr}\n${r.stdout}';
-    throw GitException(
+    final error = GitException(
       args.split(' ').first,
       out,
       diverged: out.contains('diverging branches') || out.contains('Not possible to fast-forward'),
       noUpstream: out.contains('has no upstream branch'),
+      needsCredentials:
+          out.contains('could not read Username') ||
+          out.contains('could not read Password') ||
+          out.contains('Authentication failed') ||
+          out.contains('Invalid username or password'),
     );
+    final ask = askCredentials;
+    if (network && error.needsCredentials && ask != null) {
+      final given = await ask(error.remote, retry: creds != null);
+      if (given != null) {
+        credentials = given;
+        return _git(args, okOnOne: okOnOne, network: true);
+      }
+    }
+    throw error;
+  }
+
+  Future<CommandResult> _runWithCredentials(String args, GitCredentials c) async {
+    final p = await _runner.start(withCredentialsCommand(folder, args));
+    final out = p.stdout.cast<List<int>>().transform(utf8.decoder).join();
+    final err = p.stderr.cast<List<int>>().transform(utf8.decoder).join();
+    p.stdin.add(utf8.encode('${c.username}\n${c.password}\n'));
+    final results = await Future.wait([out, err]);
+    return CommandResult(exitCode: await p.exitCode, stdout: results[0], stderr: results[1]);
   }
 
   String _paths(Iterable<String> paths) => paths.map(shellQuote).join(' ');
@@ -88,17 +147,18 @@ class GitRepo {
 
   Future<void> createBranch(String name) => _git('switch -q -c ${shellQuote(name)}');
 
-  Future<void> fetch() => _git('fetch -q --all --prune');
+  Future<void> fetch() => _git('fetch -q --all --prune', network: true);
 
   /// Fast-forward only, unless [rebase] says how to combine diverged branches (true: rebase, false: merge).
   Future<void> pull({bool? rebase}) => _git(switch (rebase) {
     null => 'pull -q --no-rebase --ff-only',
     true => 'pull -q --rebase',
     false => 'pull -q --no-rebase --no-edit',
-  });
+  }, network: true);
 
   /// Pushes the current branch; [setUpstream] publishes a new branch to origin.
-  Future<void> push({bool setUpstream = false}) => _git(setUpstream ? 'push -q -u origin HEAD' : 'push -q');
+  Future<void> push({bool setUpstream = false}) =>
+      _git(setUpstream ? 'push -q -u origin HEAD' : 'push -q', network: true);
 }
 
 /// The lines of a unified diff (`git diff`), with null between hunks. Headers are skipped.

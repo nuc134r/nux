@@ -502,6 +502,16 @@
       }
     }
   },
+  "gitSignInBody": "The remote asks for a username and password. On GitHub, GitLab and similar, use an access token as the password.",
+  "gitSignInTitle": "Sign in to {remote}",
+  "@gitSignInTitle": {
+    "placeholders": {
+      "remote": {
+        "type": "String"
+      }
+    }
+  },
+  "gitSignInWrong": "The remote did not accept these. Try again.",
   "goToLine": "Go to line",
   "groupField": "Group",
   "hiddenFiles": "Hidden files",
@@ -768,6 +778,7 @@
     }
   },
   "passwordKeepHint": "A password is saved. Leave empty to keep it.",
+  "passwordOrToken": "Password or token",
   "passwordWrong": "The server did not accept the password",
   "paste": "Paste",
   "permExecute": "Run",
@@ -854,6 +865,7 @@
   "refresh": "Refresh",
   "regex": "Regular expression",
   "reload": "Reload",
+  "rememberForWorkspace": "Remember for this workspace",
   "rememberUntilClosed": "Remember until nux is closed",
   "removeBookmark": "Remove bookmark",
   "rename": "Rename",
@@ -915,6 +927,7 @@
   "showRendered": "Show formatted",
   "showSource": "Show source",
   "showTabs": "Show tabs",
+  "signIn": "Sign in",
   "sizeLabel": "Size",
   "skipKey": "Skip this key",
   "smallerText": "Smaller text",
@@ -1003,6 +1016,7 @@
   "text": "Text",
   "textSize": "Text size",
   "textSizeHint": "Also from a tab's ⋮ menu, or pinch the text with two fingers.",
+  "theRemote": "the remote",
   "theServer": "the server",
   "theme": "Theme",
   "themeDark": "Dark",

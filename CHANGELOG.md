@@ -3,6 +3,14 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.7
+
+- **The tab overview moves**: closing a tab slides the others into their new places; a card swiped away fades as it goes, rides above its neighbours with a shadow, and a haptic tick marks the point where letting go closes it. Opening the overview zooms out from the tab you were on, and picking a card zooms into it.
+- **Git sign-in**: a fetch, pull or push that needs a username and password now asks for them (an access token works as the password), optionally remembered for the workspace. They reach git through its input, never a command line or a file on the server.
+- The editor key bar no longer closes the keyboard, and it is a little taller.
+- The branch menu (and every menu) stays on screen.
+- The "Tab closed" snackbar (and others with a button) goes away by itself.
+
 ## 0.9.6
 
 - **Find and replace** in the editor (⋮ → Replace while editing, or the ⇄ button in the find bar), with match case and regex.

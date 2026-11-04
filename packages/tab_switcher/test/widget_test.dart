@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 
@@ -44,18 +45,18 @@ void main() {
     expect(find.text('2'), findsOneWidget);
 
     await tester.tap(find.byType(TabCountButton));
-    await tester.pump();
+    await tester.pumpAndSettle(); // the grid zooms out from the current tab
     expect(c.gridOpen, isTrue);
     expect(find.text('grid'), findsOneWidget);
     expect(find.text('Tab a'), findsOneWidget);
 
     await tester.tap(find.text('Tab a'));
-    await tester.pump();
+    await tester.pumpAndSettle(); // the card zooms in, then the tab shows
     expect(c.current?.id, 'a');
     expect(c.gridOpen, isFalse);
 
     c.gridOpen = true;
-    await tester.pump();
+    await tester.pumpAndSettle();
     await tester.tap(find.descendant(of: find.ancestor(of: find.text('Tab b'), matching: find.byType(Row)).first, matching: find.byIcon(Icons.close)));
     await tester.pumpAndSettle();
     expect(c.length, 1);
@@ -160,6 +161,10 @@ void main() {
       c.gridOpen = true;
       await tester.pumpAndSettle();
       await tester.tap(find.text('Tab $id').last);
+      // The card zooms in first; the tab (and its header) shows when that ends.
+      await tester.pump(); // the zoom starts
+      await tester.pump(const Duration(milliseconds: 250)); // and ends
+      await tester.pump();
       for (var i = 0; i < 6; i++) {
         await tester.pump(const Duration(milliseconds: 16));
         expect(tester.getTopLeft(find.text('header $id')).dx, 0, reason: 'frame $i: the header is in place at once');
@@ -192,5 +197,46 @@ void main() {
     expect(card, findsWidgets);
     final y = tester.getCenter(card.first).dy;
     expect(y, inInclusiveRange(0, tester.view.physicalSize.height / tester.view.devicePixelRatio));
+  });
+
+  testWidgets('swiping: a haptic at the closing point, the card above its neighbours, the rest slide in', (tester) async {
+    final haptics = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'HapticFeedback.vibrate') haptics.add(call.arguments as String);
+      return null;
+    });
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    for (final id in ['a', 'b', 'c']) {
+      c.open(CounterTab(id), foreground: false, index: c.length);
+    }
+    c.gridOpen = true;
+    await tester.pumpWidget(app(c));
+    await tester.pumpAndSettle();
+    final cStart = tester.getTopLeft(find.text('Tab c'));
+
+    final drag = await tester.startGesture(tester.getCenter(find.text('Tab a')));
+    await drag.moveBy(const Offset(30, 0));
+    await tester.pump();
+    // The dragged card is painted last (on top of the card to its right).
+    final stack = tester.widget<Stack>(find.ancestor(of: find.text('Tab a'), matching: find.byType(Stack)).first);
+    expect((stack.children.last.key! as ValueKey).value, 'a');
+    expect(haptics, isEmpty);
+    await drag.moveBy(const Offset(300, 0));
+    await tester.pump();
+    expect(haptics, ['HapticFeedbackType.mediumImpact'], reason: 'past the closing point');
+    await drag.up();
+    await tester.pump(); // the fly-off starts
+    await tester.pump(const Duration(milliseconds: 300)); // and ends: the tab closes
+    await tester.pump();
+    expect(c.tabs.map((t) => t.id), ['b', 'c']);
+
+    // c moves to b's old spot, animated.
+    await tester.pump(const Duration(milliseconds: 100));
+    final cMid = tester.getTopLeft(find.text('Tab c'));
+    await tester.pumpAndSettle();
+    final cEnd = tester.getTopLeft(find.text('Tab c'));
+    expect(cEnd, isNot(cStart));
+    expect(cMid, isNot(cEnd), reason: 'still on its way after 100 ms');
   });
 }

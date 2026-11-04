@@ -1124,6 +1124,24 @@ abstract class AppLocalizations {
   /// **'git {command}: {message}'**
   String gitFailed(String command, String message);
 
+  /// No description provided for @gitSignInBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The remote asks for a username and password. On GitHub, GitLab and similar, use an access token as the password.'**
+  String get gitSignInBody;
+
+  /// No description provided for @gitSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to {remote}'**
+  String gitSignInTitle(String remote);
+
+  /// No description provided for @gitSignInWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'The remote did not accept these. Try again.'**
+  String get gitSignInWrong;
+
   /// No description provided for @goToLine.
   ///
   /// In en, this message translates to:
@@ -1988,6 +2006,12 @@ abstract class AppLocalizations {
   /// **'A password is saved. Leave empty to keep it.'**
   String get passwordKeepHint;
 
+  /// No description provided for @passwordOrToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Password or token'**
+  String get passwordOrToken;
+
   /// No description provided for @passwordWrong.
   ///
   /// In en, this message translates to:
@@ -2252,6 +2276,12 @@ abstract class AppLocalizations {
   /// **'Reload'**
   String get reload;
 
+  /// No description provided for @rememberForWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember for this workspace'**
+  String get rememberForWorkspace;
+
   /// No description provided for @rememberUntilClosed.
   ///
   /// In en, this message translates to:
@@ -2473,6 +2503,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show tabs'**
   String get showTabs;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signIn;
 
   /// No description provided for @sizeLabel.
   ///
@@ -2731,6 +2767,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.'**
   String get textSizeHint;
+
+  /// No description provided for @theRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'the remote'**
+  String get theRemote;
 
   /// No description provided for @theServer.
   ///
