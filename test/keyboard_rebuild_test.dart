@@ -20,7 +20,7 @@ void main() {
     await settle(tester);
     c.read(workspaceProvider).open(c.read(tabFactoryProvider).terminal('sample'));
     await settle(tester);
-    c.read(routerProvider).push(Routes.newForward());
+    c.read(routerProvider).push(Routes.newForward('sample'));
     await settle(tester);
     var rebuilt = 0;
     final types = <String>{};

@@ -142,7 +142,9 @@ void main() {
       );
     }),
     'editor': _Shot(ThemeMode.light, Routes.connection('sample')),
-    'forwarding': const _Shot(ThemeMode.dark, Routes.forwarding),
+    'forwarding': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      await tester.tap(find.byTooltip('Forwardings'));
+    }),
     'forward_rule': _Shot(ThemeMode.light, Routes.forward('sample')),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),

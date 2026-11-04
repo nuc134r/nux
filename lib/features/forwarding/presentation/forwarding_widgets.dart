@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
+import '../../../app/theme.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
@@ -13,27 +14,6 @@ import '../domain/forward_rule.dart';
 import '../domain/forwarder.dart';
 import '../domain/forwarding_manager.dart';
 
-IconData forwardIcon(ForwardKind kind) => switch (kind) {
-      ForwardKind.local => Icons.call_made,
-      ForwardKind.remote => Icons.call_received,
-      ForwardKind.dynamic => Icons.hub_outlined,
-      ForwardKind.zerotierTcp => Icons.lan_outlined,
-      ForwardKind.zerotierUdp => Icons.podcasts,
-    };
-
-String forwardKindLabel(AppLocalizations l10n, ForwardKind kind) => switch (kind) {
-      ForwardKind.local => l10n.forwardLocal,
-      ForwardKind.remote => l10n.forwardRemote,
-      ForwardKind.dynamic => l10n.forwardDynamic,
-      ForwardKind.zerotierTcp => 'TCP',
-      ForwardKind.zerotierUdp => 'UDP',
-    };
-
-/// Where a rule runs: its SSH host's name, or `ZeroTier <network>`.
-String forwardVia(AppLocalizations l10n, ForwardRule rule, Map<String, String> hostNames) => rule.forwardKind.overZeroTier
-    ? l10n.viaZeroTier(rule.zerotierNetwork ?? '')
-    : hostNames[rule.connectionId] ?? '';
-
 String forwardErrorText(AppLocalizations l10n, Object error, ForwardRule rule) => switch (error) {
       ForwardException(error: ForwardError.portInUse) => l10n.forwardPortInUse(rule.bindPort),
       ForwardException(error: ForwardError.bindDenied) => l10n.forwardBindDenied(rule.bindPort),
@@ -43,72 +23,207 @@ String forwardErrorText(AppLocalizations l10n, Object error, ForwardRule rule) =
       _ => l10n.errorGeneric('$error'),
     };
 
-/// One line about what a rule is doing right now.
-String forwardStatusText(AppLocalizations l10n, ForwardStatus s, ForwardRule rule) {
-  final stats = s.stats;
-  return switch (s.state) {
-    ForwardState.stopped => l10n.forwardOff,
-    ForwardState.starting => l10n.forwardStarting,
-    ForwardState.active when stats != null && rule.forwardKind == ForwardKind.dynamic =>
-      l10n.forwardActiveConnections(stats.connections),
-    ForwardState.active when stats != null =>
-      l10n.forwardActiveTraffic(stats.open, formatSize(stats.bytesIn), formatSize(stats.bytesOut)),
-    ForwardState.active => l10n.forwardActive,
-    ForwardState.reconnecting => l10n.forwardReconnecting(s.attempt),
-    ForwardState.failed => s.error == null ? l10n.forwardFailed : forwardErrorText(l10n, s.error!, rule),
-  };
+/// A host's forwardings, shown under its tile: no background, one row each, then "Add forwarding".
+class HostForwardings extends StatelessWidget {
+  const HostForwardings({super.key, required this.host, required this.rules});
+
+  final Connection host;
+  final List<ForwardRule> rules;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 2, 12, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final r in rules) ...[
+            ForwardingRow(rule: r),
+            Divider(height: 1, color: scheme.outlineVariant.withValues(alpha: .5)),
+          ],
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(context.l10n.addForward),
+              onPressed: () => context.push(Routes.newForward(host.id)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-/// A rule with an on/off switch; tap to edit.
-class ForwardRuleTile extends ConsumerWidget {
-  const ForwardRuleTile({super.key, required this.rule, this.connectionName, this.dense = false});
+/// `Database` / `8080 → 8020 [TCP] [UDP]` with a switch, and traffic chips while it runs. Tap to edit.
+class ForwardingRow extends ConsumerWidget {
+  const ForwardingRow({super.key, required this.rule});
 
   final ForwardRule rule;
-  final String? connectionName;
-  final bool dense;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final manager = ref.watch(forwardingManagerProvider);
-    final scheme = Theme.of(context).colorScheme;
+    final name = rule.label.isNotEmpty
+        ? rule.label
+        : rule.forwardKind == ForwardKind.dynamic
+            ? null
+            : wellKnownPorts[rule.targetPort];
+    final mono = theme.textTheme.bodyMedium?.copyWith(
+      fontFamily: monoFont,
+      fontFeatures: noLigatures,
+      color: name == null ? scheme.onSurface : scheme.onSurfaceVariant,
+    );
     return ListenableBuilder(
       listenable: manager,
       builder: (context, _) {
         final s = manager.status(rule.id);
-        final title = rule.label.isNotEmpty ? rule.label : rule.describe();
-        final service = wellKnownPorts[rule.forwardKind == ForwardKind.remote ? rule.bindPort : rule.targetPort];
-        final details = [
-          if (rule.label.isNotEmpty) rule.describe(),
-          ?connectionName,
-          if (rule.label.isEmpty && service != null && rule.forwardKind != ForwardKind.dynamic) service,
-        ].join(' · ');
-        return ListTile(
-          dense: dense,
-          leading: Icon(
-            forwardIcon(rule.forwardKind),
-            color: switch (s.state) {
-              ForwardState.active => Colors.green,
-              ForwardState.failed => scheme.error,
-              ForwardState.starting || ForwardState.reconnecting => Colors.amber,
-              _ => null,
-            },
-          ),
-          title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-          subtitle: Text(
-            [if (details.isNotEmpty) details, forwardStatusText(l10n, s, rule)].join('\n'),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: s.state == ForwardState.failed ? TextStyle(color: scheme.error) : null,
-          ),
-          isThreeLine: details.isNotEmpty,
-          trailing: Switch(
-            value: s.on,
-            onChanged: (v) => v ? manager.start(rule) : manager.stop(rule.id),
-          ),
+        final stats = s.stats;
+        final note = switch (s.state) {
+          ForwardState.starting => l10n.forwardStarting,
+          ForwardState.reconnecting => l10n.forwardReconnecting(s.attempt),
+          ForwardState.failed => s.error == null ? l10n.forwardFailed : forwardErrorText(l10n, s.error!, rule),
+          _ => null,
+        };
+        return InkWell(
           onTap: () => context.push(Routes.forward(rule.id)),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 0, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (name != null)
+                            Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleSmall),
+                          Wrap(
+                            spacing: 6,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(rule.describe(), style: mono),
+                              if (rule.udp) ...[
+                                if (rule.tcp) const _Badge('TCP'),
+                                const _Badge('UDP'),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(value: s.on, onChanged: (v) => v ? manager.start(rule) : manager.stop(rule.id)),
+                  ],
+                ),
+                if (note != null)
+                  Text(
+                    note,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: s.state == ForwardState.failed ? scheme.error : scheme.onSurfaceVariant,
+                    ),
+                  )
+                else if (s.state == ForwardState.active && stats != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        _Chip(l10n.forwardConnections(rule.forwardKind == ForwardKind.dynamic ? stats.connections : stats.open)),
+                        _Chip('↓ ${formatSize(stats.bytesIn)}'),
+                        _Chip('↑ ${formatSize(stats.bytesOut)}'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         );
       },
+    );
+  }
+}
+
+/// Under a closed host whose forwardings run: how many and the traffic. Null when none runs.
+Widget? forwardingsPeek(BuildContext context, ForwardingManager manager, List<ForwardRule> rules, VoidCallback onTap) {
+  final on = rules.where((r) => manager.status(r.id).on).toList();
+  if (on.isEmpty) return null;
+  final theme = Theme.of(context);
+  final scheme = theme.colorScheme;
+  var bytesIn = 0, bytesOut = 0;
+  for (final r in on) {
+    bytesIn += manager.status(r.id).stats?.bytesIn ?? 0;
+    bytesOut += manager.status(r.id).stats?.bytesOut ?? 0;
+  }
+  final failed = on.any((r) => manager.status(r.id).state != ForwardState.active);
+  final muted = theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+  return Material(
+    color: scheme.surfaceContainerHigh,
+    child: InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(color: failed ? Colors.amber : Colors.green, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 8),
+            Text(context.l10n.forwardingsOn(on.length), style: theme.textTheme.bodySmall),
+            const SizedBox(width: 12),
+            Text('↓ ${formatSize(bytesIn)}', style: muted),
+            const SizedBox(width: 10),
+            Text('↑ ${formatSize(bytesOut)}', style: muted),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      decoration: BoxDecoration(color: scheme.secondaryContainer, borderRadius: BorderRadius.circular(4)),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: .4, color: scheme.onSecondaryContainer),
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(text, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
     );
   }
 }

@@ -2822,6 +2822,32 @@ class $ForwardRulesTable extends ForwardRules
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _tcpMeta = const VerificationMeta('tcp');
+  @override
+  late final GeneratedColumn<bool> tcp = GeneratedColumn<bool>(
+    'tcp',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("tcp" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _udpMeta = const VerificationMeta('udp');
+  @override
+  late final GeneratedColumn<bool> udp = GeneratedColumn<bool>(
+    'udp',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("udp" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _autoStartMeta = const VerificationMeta(
     'autoStart',
   );
@@ -2862,6 +2888,8 @@ class $ForwardRulesTable extends ForwardRules
     bindPort,
     targetHost,
     targetPort,
+    tcp,
+    udp,
     autoStart,
     sortOrder,
   ];
@@ -2954,6 +2982,18 @@ class $ForwardRulesTable extends ForwardRules
         targetPort.isAcceptableOrUnknown(data['target_port']!, _targetPortMeta),
       );
     }
+    if (data.containsKey('tcp')) {
+      context.handle(
+        _tcpMeta,
+        tcp.isAcceptableOrUnknown(data['tcp']!, _tcpMeta),
+      );
+    }
+    if (data.containsKey('udp')) {
+      context.handle(
+        _udpMeta,
+        udp.isAcceptableOrUnknown(data['udp']!, _udpMeta),
+      );
+    }
     if (data.containsKey('auto_start')) {
       context.handle(
         _autoStartMeta,
@@ -3019,6 +3059,14 @@ class $ForwardRulesTable extends ForwardRules
         DriftSqlType.int,
         data['${effectivePrefix}target_port'],
       )!,
+      tcp: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}tcp'],
+      )!,
+      udp: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}udp'],
+      )!,
       autoStart: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}auto_start'],
@@ -3041,13 +3089,13 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  /// The SSH host for local/remote/SOCKS rules; null for ZeroTier rules.
+  /// The host the rule belongs to (null only in rules made before 0.8, which the v6 migration fixes).
   final String? connectionId;
 
-  /// The ZeroTier network (16 hex digits) for `zerotierTcp` / `zerotierUdp` rules.
+  /// Unused since v6 (the host's network is used); kept so older rows can be migrated.
   final String? zerotierNetwork;
 
-  /// `local`, `remote`, `dynamic`, `zerotierTcp` or `zerotierUdp` (see `ForwardKind`).
+  /// `local`, `remote` or `dynamic` (see `ForwardKind`); `zerotierTcp` / `zerotierUdp` before v6.
   final String kind;
   final String label;
 
@@ -3058,6 +3106,10 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
   /// Where connections go: seen from the server for local, from this device for remote. Unused for dynamic.
   final String targetHost;
   final int targetPort;
+
+  /// Carry TCP and/or UDP. UDP only goes directly over ZeroTier (to a host on a ZeroTier network).
+  final bool tcp;
+  final bool udp;
 
   /// Started when nux starts.
   final bool autoStart;
@@ -3074,6 +3126,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     required this.bindPort,
     required this.targetHost,
     required this.targetPort,
+    required this.tcp,
+    required this.udp,
     required this.autoStart,
     required this.sortOrder,
   });
@@ -3095,6 +3149,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     map['bind_port'] = Variable<int>(bindPort);
     map['target_host'] = Variable<String>(targetHost);
     map['target_port'] = Variable<int>(targetPort);
+    map['tcp'] = Variable<bool>(tcp);
+    map['udp'] = Variable<bool>(udp);
     map['auto_start'] = Variable<bool>(autoStart);
     map['sort_order'] = Variable<int>(sortOrder);
     return map;
@@ -3117,6 +3173,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       bindPort: Value(bindPort),
       targetHost: Value(targetHost),
       targetPort: Value(targetPort),
+      tcp: Value(tcp),
+      udp: Value(udp),
       autoStart: Value(autoStart),
       sortOrder: Value(sortOrder),
     );
@@ -3139,6 +3197,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       bindPort: serializer.fromJson<int>(json['bindPort']),
       targetHost: serializer.fromJson<String>(json['targetHost']),
       targetPort: serializer.fromJson<int>(json['targetPort']),
+      tcp: serializer.fromJson<bool>(json['tcp']),
+      udp: serializer.fromJson<bool>(json['udp']),
       autoStart: serializer.fromJson<bool>(json['autoStart']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
     );
@@ -3158,6 +3218,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       'bindPort': serializer.toJson<int>(bindPort),
       'targetHost': serializer.toJson<String>(targetHost),
       'targetPort': serializer.toJson<int>(targetPort),
+      'tcp': serializer.toJson<bool>(tcp),
+      'udp': serializer.toJson<bool>(udp),
       'autoStart': serializer.toJson<bool>(autoStart),
       'sortOrder': serializer.toJson<int>(sortOrder),
     };
@@ -3175,6 +3237,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     int? bindPort,
     String? targetHost,
     int? targetPort,
+    bool? tcp,
+    bool? udp,
     bool? autoStart,
     int? sortOrder,
   }) => ForwardRule(
@@ -3191,6 +3255,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     bindPort: bindPort ?? this.bindPort,
     targetHost: targetHost ?? this.targetHost,
     targetPort: targetPort ?? this.targetPort,
+    tcp: tcp ?? this.tcp,
+    udp: udp ?? this.udp,
     autoStart: autoStart ?? this.autoStart,
     sortOrder: sortOrder ?? this.sortOrder,
   );
@@ -3215,6 +3281,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       targetPort: data.targetPort.present
           ? data.targetPort.value
           : this.targetPort,
+      tcp: data.tcp.present ? data.tcp.value : this.tcp,
+      udp: data.udp.present ? data.udp.value : this.udp,
       autoStart: data.autoStart.present ? data.autoStart.value : this.autoStart,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
     );
@@ -3234,6 +3302,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           ..write('bindPort: $bindPort, ')
           ..write('targetHost: $targetHost, ')
           ..write('targetPort: $targetPort, ')
+          ..write('tcp: $tcp, ')
+          ..write('udp: $udp, ')
           ..write('autoStart: $autoStart, ')
           ..write('sortOrder: $sortOrder')
           ..write(')'))
@@ -3253,6 +3323,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     bindPort,
     targetHost,
     targetPort,
+    tcp,
+    udp,
     autoStart,
     sortOrder,
   );
@@ -3271,6 +3343,8 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           other.bindPort == this.bindPort &&
           other.targetHost == this.targetHost &&
           other.targetPort == this.targetPort &&
+          other.tcp == this.tcp &&
+          other.udp == this.udp &&
           other.autoStart == this.autoStart &&
           other.sortOrder == this.sortOrder);
 }
@@ -3287,6 +3361,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
   final Value<int> bindPort;
   final Value<String> targetHost;
   final Value<int> targetPort;
+  final Value<bool> tcp;
+  final Value<bool> udp;
   final Value<bool> autoStart;
   final Value<int> sortOrder;
   final Value<int> rowid;
@@ -3302,6 +3378,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.bindPort = const Value.absent(),
     this.targetHost = const Value.absent(),
     this.targetPort = const Value.absent(),
+    this.tcp = const Value.absent(),
+    this.udp = const Value.absent(),
     this.autoStart = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3318,6 +3396,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     required int bindPort,
     this.targetHost = const Value.absent(),
     this.targetPort = const Value.absent(),
+    this.tcp = const Value.absent(),
+    this.udp = const Value.absent(),
     this.autoStart = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3337,6 +3417,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Expression<int>? bindPort,
     Expression<String>? targetHost,
     Expression<int>? targetPort,
+    Expression<bool>? tcp,
+    Expression<bool>? udp,
     Expression<bool>? autoStart,
     Expression<int>? sortOrder,
     Expression<int>? rowid,
@@ -3353,6 +3435,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       if (bindPort != null) 'bind_port': bindPort,
       if (targetHost != null) 'target_host': targetHost,
       if (targetPort != null) 'target_port': targetPort,
+      if (tcp != null) 'tcp': tcp,
+      if (udp != null) 'udp': udp,
       if (autoStart != null) 'auto_start': autoStart,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (rowid != null) 'rowid': rowid,
@@ -3371,6 +3455,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Value<int>? bindPort,
     Value<String>? targetHost,
     Value<int>? targetPort,
+    Value<bool>? tcp,
+    Value<bool>? udp,
     Value<bool>? autoStart,
     Value<int>? sortOrder,
     Value<int>? rowid,
@@ -3387,6 +3473,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       bindPort: bindPort ?? this.bindPort,
       targetHost: targetHost ?? this.targetHost,
       targetPort: targetPort ?? this.targetPort,
+      tcp: tcp ?? this.tcp,
+      udp: udp ?? this.udp,
       autoStart: autoStart ?? this.autoStart,
       sortOrder: sortOrder ?? this.sortOrder,
       rowid: rowid ?? this.rowid,
@@ -3429,6 +3517,12 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     if (targetPort.present) {
       map['target_port'] = Variable<int>(targetPort.value);
     }
+    if (tcp.present) {
+      map['tcp'] = Variable<bool>(tcp.value);
+    }
+    if (udp.present) {
+      map['udp'] = Variable<bool>(udp.value);
+    }
     if (autoStart.present) {
       map['auto_start'] = Variable<bool>(autoStart.value);
     }
@@ -3455,6 +3549,8 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
           ..write('bindPort: $bindPort, ')
           ..write('targetHost: $targetHost, ')
           ..write('targetPort: $targetPort, ')
+          ..write('tcp: $tcp, ')
+          ..write('udp: $udp, ')
           ..write('autoStart: $autoStart, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
@@ -5297,6 +5393,8 @@ typedef $$ForwardRulesTableCreateCompanionBuilder =
       required int bindPort,
       Value<String> targetHost,
       Value<int> targetPort,
+      Value<bool> tcp,
+      Value<bool> udp,
       Value<bool> autoStart,
       Value<int> sortOrder,
       Value<int> rowid,
@@ -5314,6 +5412,8 @@ typedef $$ForwardRulesTableUpdateCompanionBuilder =
       Value<int> bindPort,
       Value<String> targetHost,
       Value<int> targetPort,
+      Value<bool> tcp,
+      Value<bool> udp,
       Value<bool> autoStart,
       Value<int> sortOrder,
       Value<int> rowid,
@@ -5398,6 +5498,16 @@ class $$ForwardRulesTableFilterComposer
 
   ColumnFilters<int> get targetPort => $composableBuilder(
     column: $table.targetPort,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get tcp => $composableBuilder(
+    column: $table.tcp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get udp => $composableBuilder(
+    column: $table.udp,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5494,6 +5604,16 @@ class $$ForwardRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get tcp => $composableBuilder(
+    column: $table.tcp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get udp => $composableBuilder(
+    column: $table.udp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get autoStart => $composableBuilder(
     column: $table.autoStart,
     builder: (column) => ColumnOrderings(column),
@@ -5573,6 +5693,12 @@ class $$ForwardRulesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<bool> get tcp =>
+      $composableBuilder(column: $table.tcp, builder: (column) => column);
+
+  GeneratedColumn<bool> get udp =>
+      $composableBuilder(column: $table.udp, builder: (column) => column);
+
   GeneratedColumn<bool> get autoStart =>
       $composableBuilder(column: $table.autoStart, builder: (column) => column);
 
@@ -5642,6 +5768,8 @@ class $$ForwardRulesTableTableManager
                 Value<int> bindPort = const Value.absent(),
                 Value<String> targetHost = const Value.absent(),
                 Value<int> targetPort = const Value.absent(),
+                Value<bool> tcp = const Value.absent(),
+                Value<bool> udp = const Value.absent(),
                 Value<bool> autoStart = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -5657,6 +5785,8 @@ class $$ForwardRulesTableTableManager
                 bindPort: bindPort,
                 targetHost: targetHost,
                 targetPort: targetPort,
+                tcp: tcp,
+                udp: udp,
                 autoStart: autoStart,
                 sortOrder: sortOrder,
                 rowid: rowid,
@@ -5674,6 +5804,8 @@ class $$ForwardRulesTableTableManager
                 required int bindPort,
                 Value<String> targetHost = const Value.absent(),
                 Value<int> targetPort = const Value.absent(),
+                Value<bool> tcp = const Value.absent(),
+                Value<bool> udp = const Value.absent(),
                 Value<bool> autoStart = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -5689,6 +5821,8 @@ class $$ForwardRulesTableTableManager
                 bindPort: bindPort,
                 targetHost: targetHost,
                 targetPort: targetPort,
+                tcp: tcp,
+                udp: udp,
                 autoStart: autoStart,
                 sortOrder: sortOrder,
                 rowid: rowid,

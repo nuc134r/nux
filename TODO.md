@@ -53,7 +53,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Rules: local (-L), remote (-R), dynamic SOCKS5 (-D), per connection, auto-start (schema v4)
 - [x] Forwards run on the shared SSH pool in the main isolate (prompts keep working); reconnect with backoff
 - [x] Android foreground service (`specialUse`) keeps the process alive; notification with count, traffic and "Stop all"
-- [x] Quick toggles on the hosts tab; per-host and global forwarding screens; plain-words rule editor
+- [x] Forwardings under their host in the hosts tab (slide out, peek while running); compact editor with
+  port suggestions; TCP+UDP in one forwarding (ZeroTier hosts)
 - [x] Duplicate/conflicting ports refused when saving; clear errors for a taken port, a refused remote bind, ports < 1024
 - [x] One foreground service for SSH sessions (terminals, SFTP) and forwards (`KeepAliveHub`), "Disconnect all"
 - [x] Ask once to ignore battery optimisation (Termux-style); Settings → Background connections shows both permissions

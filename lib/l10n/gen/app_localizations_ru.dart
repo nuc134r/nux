@@ -236,6 +236,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get descending => 'По убыванию';
 
   @override
+  String destinationFrom(String host) {
+    return 'Куда (со стороны $host)';
+  }
+
+  @override
+  String get destinationHere => 'Куда (на этом устройстве)';
+
+  @override
   String get devicePort => 'Порт на этом устройстве';
 
   @override
@@ -433,6 +441,19 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String forwardConnections(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count соединения',
+      many: '$count соединений',
+      few: '$count соединения',
+      one: '$count соединение',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get forwardDynamic => 'SOCKS';
 
   @override
@@ -441,6 +462,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get forwardFailed => 'Ошибка';
+
+  @override
+  String get forwardHereToThere => 'Сюда → туда';
 
   @override
   String get forwardLocal => 'Локальный';
@@ -488,6 +512,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forwardStarting => 'Запуск…';
 
   @override
+  String get forwardThereToHere => 'Туда → сюда';
+
+  @override
   String forwardingActive(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -509,6 +536,22 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String forwardingTraffic(String bytesIn, String bytesOut) {
     return '↓ $bytesIn  ↑ $bytesOut';
+  }
+
+  @override
+  String get forwardings => 'Пробросы';
+
+  @override
+  String forwardingsOn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count проброса включено',
+      many: '$count пробросов включено',
+      few: '$count проброса включено',
+      one: '$count проброс включён',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -832,6 +875,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nameField => 'Название';
 
   @override
+  String get nameOptional => 'Название (необязательно)';
+
+  @override
   String get newFolder => 'Новая папка';
 
   @override
@@ -921,6 +967,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get organize => 'Упорядочить';
 
   @override
+  String get otherDevices => 'Другие устройства';
+
+  @override
   String get overwrite => 'Перезаписать';
 
   @override
@@ -995,6 +1044,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get pickProtocol => 'Выберите TCP, UDP или оба';
+
+  @override
   String get pinTab => 'Закрепить';
 
   @override
@@ -1018,6 +1070,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String portForwardingOn(String name) {
     return 'Проброс · $name';
   }
+
+  @override
+  String get portHere => 'Порт здесь';
+
+  @override
+  String portOnHost(String host) {
+    return 'Порт на $host';
+  }
+
+  @override
+  String get portSuggested => 'Предложен: не занят другими пробросами';
 
   @override
   String get previous => 'Предыдущее';
@@ -1233,6 +1296,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get startWithNux => 'Запуск вместе с nux';
+
+  @override
   String get stopAll => 'Остановить все';
 
   @override
@@ -1334,6 +1400,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get tryAgain => 'Повторить';
+
+  @override
+  String udpNeedsHostItself(String host) {
+    return 'UDP идёт напрямую через ZeroTier, поэтому только на порт самого $host';
+  }
 
   @override
   String get undo => 'Отменить';

@@ -55,6 +55,37 @@ abstract class RunningForward {
   Future<void> close();
 }
 
+/// Several forwards run as one rule (TCP and UDP on the same port); traffic is added up.
+class CombinedForward implements RunningForward {
+  CombinedForward(this.parts);
+
+  final List<RunningForward> parts;
+
+  @override
+  ForwardStats get stats {
+    final sum = ForwardStats();
+    for (final p in parts) {
+      sum
+        ..bytesIn += p.stats.bytesIn
+        ..bytesOut += p.stats.bytesOut
+        ..connections += p.stats.connections
+        ..open += p.stats.open
+        ..failed += p.stats.failed;
+    }
+    return sum;
+  }
+
+  @override
+  int get port => parts.first.port;
+
+  @override
+  Future<void> close() async {
+    for (final p in parts) {
+      await p.close();
+    }
+  }
+}
+
 /// Starts a forward of [kind] on an authenticated [client]. [onChange] is called on traffic and
 /// connection changes (callers throttle their UI updates).
 Future<RunningForward> startForward(
@@ -102,8 +133,6 @@ Future<RunningForward> startForward(
       } on SocketException catch (e) {
         throw forwardBindError(e);
       }
-    case ForwardKind.zerotierTcp || ForwardKind.zerotierUdp:
-      throw ArgumentError('ZeroTier forwards do not use SSH');
   }
 }
 

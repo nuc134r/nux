@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../features/connections/presentation/connection_editor_screen.dart';
 import '../features/connections/presentation/known_hosts_screen.dart';
 import '../features/forwarding/presentation/forward_rule_editor.dart';
-import '../features/forwarding/presentation/forwarding_screen.dart';
 import '../features/identities/presentation/generate_key_screen.dart';
 import '../features/identities/presentation/identities_screen.dart';
 import '../features/identities/presentation/identity_screen.dart';
@@ -29,10 +28,8 @@ abstract final class Routes {
   static const newKey = '/keys/new';
   static String key(String id) => '/keys/$id';
   static const knownHosts = '/known-hosts';
-  static const forwarding = '/forwarding';
-  static String forwardingFor(String connectionId) => '/forwarding?connection=$connectionId';
-  static String newForward({String? connectionId}) =>
-      connectionId == null ? '/forwarding/new' : '/forwarding/new?connection=$connectionId';
+  /// Forwardings belong to a host: they are listed under it in the hosts tab.
+  static String newForward(String connectionId) => '/forwarding/new?connection=$connectionId';
   static String forward(String id) => '/forwarding/$id';
   static const zerotier = '/zerotier';
 
@@ -47,9 +44,7 @@ abstract final class Routes {
     newKey,
     key('sample'),
     knownHosts,
-    forwarding,
-    forwardingFor('sample'),
-    newForward(connectionId: 'sample'),
+    newForward('sample'),
     forward('sample'),
     zerotier,
   ];
@@ -72,12 +67,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/keys/:id', builder: (context, state) => IdentityScreen(identityId: state.pathParameters['id']!)),
       GoRoute(path: Routes.knownHosts, builder: (context, state) => const KnownHostsScreen()),
       GoRoute(
-        path: Routes.forwarding,
-        builder: (context, state) => ForwardingScreen(connectionId: state.uri.queryParameters['connection']),
-      ),
-      GoRoute(
         path: '/forwarding/new',
-        builder: (context, state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']),
+        builder: (context, state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']!),
       ),
       GoRoute(path: '/forwarding/:id', builder: (context, state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
       GoRoute(path: Routes.zerotier, builder: (context, state) => const ZeroTierScreen()),

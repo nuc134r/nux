@@ -72,12 +72,6 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.knownHosts),
               ),
               ListTile(
-                leading: const Icon(Icons.swap_horiz),
-                title: Text(l10n.portForwarding),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push(Routes.forwarding),
-              ),
-              ListTile(
                 leading: const Icon(Icons.lan_outlined),
                 title: const Text('ZeroTier'),
                 trailing: const Icon(Icons.chevron_right),

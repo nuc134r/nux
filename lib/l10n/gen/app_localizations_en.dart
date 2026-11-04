@@ -234,6 +234,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get descending => 'Descending';
 
   @override
+  String destinationFrom(String host) {
+    return 'Destination (from $host)';
+  }
+
+  @override
+  String get destinationHere => 'Destination (on this device)';
+
+  @override
   String get devicePort => 'Port on this device';
 
   @override
@@ -424,7 +432,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String forwardConflict(String name) {
-    return 'Another rule already uses this port: $name';
+    return 'Another forwarding already uses this port: $name';
+  }
+
+  @override
+  String forwardConnections(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count connections',
+      one: '$count connection',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -436,6 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forwardFailed => 'Failed';
+
+  @override
+  String get forwardHereToThere => 'Here → there';
 
   @override
   String get forwardLocal => 'Local';
@@ -483,6 +505,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forwardStarting => 'Starting…';
 
   @override
+  String get forwardThereToHere => 'There → here';
+
+  @override
   String forwardingActive(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -503,6 +528,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String forwardingTraffic(String bytesIn, String bytesOut) {
     return '↓ $bytesIn  ↑ $bytesOut';
+  }
+
+  @override
+  String get forwardings => 'Forwardings';
+
+  @override
+  String forwardingsOn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count forwardings on',
+      one: '$count forwarding on',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -769,7 +808,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get leaveNetworkBody =>
-      'Hosts and forwards that use this network will not connect until you join it again.';
+      'Hosts and forwardings that use this network will not connect until you join it again.';
 
   @override
   String leaveNetworkTitle(String name) {
@@ -821,6 +860,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nameField => 'Name';
+
+  @override
+  String get nameOptional => 'Name (optional)';
 
   @override
   String get newFolder => 'New folder';
@@ -912,6 +954,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get organize => 'Organize';
 
   @override
+  String get otherDevices => 'Other devices';
+
+  @override
   String get overwrite => 'Overwrite';
 
   @override
@@ -984,6 +1029,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pickProtocol => 'Pick TCP, UDP or both';
+
+  @override
   String get pinTab => 'Pin';
 
   @override
@@ -1007,6 +1055,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String portForwardingOn(String name) {
     return 'Forwarding · $name';
   }
+
+  @override
+  String get portHere => 'Port here';
+
+  @override
+  String portOnHost(String host) {
+    return 'Port on $host';
+  }
+
+  @override
+  String get portSuggested => 'Suggested: not used by other forwardings';
 
   @override
   String get previous => 'Previous';
@@ -1221,6 +1280,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get startWithNux => 'Start with nux';
+
+  @override
   String get stopAll => 'Stop all';
 
   @override
@@ -1323,6 +1385,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tryAgain => 'Try again';
+
+  @override
+  String udpNeedsHostItself(String host) {
+    return 'UDP goes straight over ZeroTier, so only to a port of $host itself';
+  }
 
   @override
   String get undo => 'Undo';

@@ -96,13 +96,13 @@ class Bookmarks extends Table with SyncedTable {
 
 /// A port forwarding rule on a saved connection (like `ssh -L`, `-R` or `-D`).
 class ForwardRules extends Table with SyncedTable {
-  /// The SSH host for local/remote/SOCKS rules; null for ZeroTier rules.
+  /// The host the rule belongs to (null only in rules made before 0.8, which the v6 migration fixes).
   TextColumn get connectionId => text().nullable().references(Connections, #id, onDelete: KeyAction.cascade)();
 
-  /// The ZeroTier network (16 hex digits) for `zerotierTcp` / `zerotierUdp` rules.
+  /// Unused since v6 (the host's network is used); kept so older rows can be migrated.
   TextColumn get zerotierNetwork => text().nullable()();
 
-  /// `local`, `remote`, `dynamic`, `zerotierTcp` or `zerotierUdp` (see `ForwardKind`).
+  /// `local`, `remote` or `dynamic` (see `ForwardKind`); `zerotierTcp` / `zerotierUdp` before v6.
   TextColumn get kind => text()();
   TextColumn get label => text().withDefault(const Constant(''))();
 
@@ -113,6 +113,10 @@ class ForwardRules extends Table with SyncedTable {
   /// Where connections go: seen from the server for local, from this device for remote. Unused for dynamic.
   TextColumn get targetHost => text().withDefault(const Constant(''))();
   IntColumn get targetPort => integer().withDefault(const Constant(0))();
+
+  /// Carry TCP and/or UDP. UDP only goes directly over ZeroTier (to a host on a ZeroTier network).
+  BoolColumn get tcp => boolean().withDefault(const Constant(true))();
+  BoolColumn get udp => boolean().withDefault(const Constant(false))();
 
   /// Started when nux starts.
   BoolColumn get autoStart => boolean().withDefault(const Constant(false))();

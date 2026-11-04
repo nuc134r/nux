@@ -464,6 +464,18 @@ abstract class AppLocalizations {
   /// **'Descending'**
   String get descending;
 
+  /// No description provided for @destinationFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination (from {host})'**
+  String destinationFrom(String host);
+
+  /// No description provided for @destinationHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination (on this device)'**
+  String get destinationHere;
+
   /// No description provided for @devicePort.
   ///
   /// In en, this message translates to:
@@ -755,8 +767,14 @@ abstract class AppLocalizations {
   /// No description provided for @forwardConflict.
   ///
   /// In en, this message translates to:
-  /// **'Another rule already uses this port: {name}'**
+  /// **'Another forwarding already uses this port: {name}'**
   String forwardConflict(String name);
+
+  /// No description provided for @forwardConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} connection} other{{count} connections}}'**
+  String forwardConnections(int count);
 
   /// No description provided for @forwardDynamic.
   ///
@@ -775,6 +793,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed'**
   String get forwardFailed;
+
+  /// No description provided for @forwardHereToThere.
+  ///
+  /// In en, this message translates to:
+  /// **'Here → there'**
+  String get forwardHereToThere;
 
   /// No description provided for @forwardLocal.
   ///
@@ -848,6 +872,12 @@ abstract class AppLocalizations {
   /// **'Starting…'**
   String get forwardStarting;
 
+  /// No description provided for @forwardThereToHere.
+  ///
+  /// In en, this message translates to:
+  /// **'There → here'**
+  String get forwardThereToHere;
+
   /// No description provided for @forwardingActive.
   ///
   /// In en, this message translates to:
@@ -871,6 +901,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'↓ {bytesIn}  ↑ {bytesOut}'**
   String forwardingTraffic(String bytesIn, String bytesOut);
+
+  /// No description provided for @forwardings.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwardings'**
+  String get forwardings;
+
+  /// No description provided for @forwardingsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} forwarding on} other{{count} forwardings on}}'**
+  String forwardingsOn(int count);
 
   /// No description provided for @generate.
   ///
@@ -1331,7 +1373,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaveNetworkBody.
   ///
   /// In en, this message translates to:
-  /// **'Hosts and forwards that use this network will not connect until you join it again.'**
+  /// **'Hosts and forwardings that use this network will not connect until you join it again.'**
   String get leaveNetworkBody;
 
   /// No description provided for @leaveNetworkTitle.
@@ -1411,6 +1453,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name'**
   String get nameField;
+
+  /// No description provided for @nameOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (optional)'**
+  String get nameOptional;
 
   /// No description provided for @newFolder.
   ///
@@ -1580,6 +1628,12 @@ abstract class AppLocalizations {
   /// **'Organize'**
   String get organize;
 
+  /// No description provided for @otherDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Other devices'**
+  String get otherDevices;
+
   /// No description provided for @overwrite.
   ///
   /// In en, this message translates to:
@@ -1712,6 +1766,12 @@ abstract class AppLocalizations {
   /// **'Permissions of {name}'**
   String permissionsOf(String name);
 
+  /// No description provided for @pickProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick TCP, UDP or both'**
+  String get pickProtocol;
+
   /// No description provided for @pinTab.
   ///
   /// In en, this message translates to:
@@ -1753,6 +1813,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forwarding · {name}'**
   String portForwardingOn(String name);
+
+  /// No description provided for @portHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Port here'**
+  String get portHere;
+
+  /// No description provided for @portOnHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Port on {host}'**
+  String portOnHost(String host);
+
+  /// No description provided for @portSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested: not used by other forwardings'**
+  String get portSuggested;
 
   /// No description provided for @previous.
   ///
@@ -2132,6 +2210,12 @@ abstract class AppLocalizations {
   /// **'{error} (through {via})'**
   String sshVia(String error, String via);
 
+  /// No description provided for @startWithNux.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with nux'**
+  String get startWithNux;
+
   /// No description provided for @stopAll.
   ///
   /// In en, this message translates to:
@@ -2317,6 +2401,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get tryAgain;
+
+  /// No description provided for @udpNeedsHostItself.
+  ///
+  /// In en, this message translates to:
+  /// **'UDP goes straight over ZeroTier, so only to a port of {host} itself'**
+  String udpNeedsHostItself(String host);
 
   /// No description provided for @undo.
   ///

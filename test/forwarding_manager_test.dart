@@ -52,6 +52,8 @@ ForwardRule rule(String id, {bool auto = false}) => ForwardRule(
       bindPort: 8080,
       targetHost: 'db',
       targetPort: 5432,
+      tcp: true,
+      udp: false,
       autoStart: auto,
       sortOrder: 0,
     );

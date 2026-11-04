@@ -130,7 +130,9 @@ void main() {
   });
 
   test('conflicts', () {
-    ForwardRule rule(String id, String conn, ForwardKind k, int port, {String host = '127.0.0.1'}) => ForwardRule(
+    ForwardRule rule(String id, String conn, ForwardKind k, int port,
+            {String host = '127.0.0.1', String target = 'db', bool tcp = true, bool udp = false}) =>
+        ForwardRule(
           id: id,
           createdAt: DateTime(2026),
           updatedAt: DateTime(2026),
@@ -140,8 +142,10 @@ void main() {
           label: '',
           bindHost: host,
           bindPort: port,
-          targetHost: 'db',
+          targetHost: target,
           targetPort: 5432,
+          tcp: tcp,
+          udp: udp,
           autoStart: false,
           sortOrder: 0,
         );
@@ -154,5 +158,50 @@ void main() {
         reason: 'different servers');
     expect(a.describe(), '8080 → db:5432');
     expect(rule('x', 'c', ForwardKind.dynamic, 1080).describe(), 'SOCKS 1080');
+    expect(rule('x', 'c', ForwardKind.local, 8080, target: 'localhost').describe(), '8080 → 5432');
+    expect(rule('x', 'c', ForwardKind.local, 1234, host: '0.0.0.0', target: 'other').describe(), '::1234 → other:5432');
+    expect(rule('x', 'c', ForwardKind.remote, 1234, target: 'localhost').describe(), '1234 ← 5432');
+    // TCP and UDP ports are separate.
+    final udp = rule('u', 'c2', ForwardKind.local, 8080, tcp: false, udp: true);
+    expect(conflictingRule(udp, [a]), isNull);
+    expect(conflictingRule(rule('b', 'c2', ForwardKind.local, 8080, udp: true), [udp])?.id, 'u');
+  });
+
+  test('a host on ZeroTier is reached directly when the rule goes to the host itself', () {
+    ForwardRule rule(ForwardKind k, String target) => ForwardRule(
+          id: 'r',
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
+          connectionId: 'h',
+          kind: k.name,
+          label: '',
+          bindHost: '127.0.0.1',
+          bindPort: 8080,
+          targetHost: target,
+          targetPort: 80,
+          tcp: true,
+          udp: false,
+          autoStart: false,
+          sortOrder: 0,
+        );
+    Connection host(String? network) => Connection(
+          id: 'h',
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
+          name: 'NAS',
+          host: '192.0.2.10',
+          port: 22,
+          username: 'me',
+          identityIds: '[]',
+          savePassword: false,
+          sortOrder: 0,
+          keepAliveSeconds: 15,
+          zerotierNetwork: network,
+        );
+    const net = 'a1b2c3d4e5f60708';
+    expect(rule(ForwardKind.local, 'localhost').routeVia(host(net)), ForwardRoute.zeroTier);
+    expect(rule(ForwardKind.local, 'other').routeVia(host(net)), ForwardRoute.ssh);
+    expect(rule(ForwardKind.remote, 'localhost').routeVia(host(net)), ForwardRoute.ssh);
+    expect(rule(ForwardKind.local, 'localhost').routeVia(host(null)), ForwardRoute.ssh);
   });
 }

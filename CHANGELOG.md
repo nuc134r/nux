@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.8.0
+
+- **Forwardings live under their host.** The ⇄ button at the end of a host tile slides its forwardings out: each shows its ports, a switch and, while on, connections and traffic. When they are hidden and some run, a strip under the host shows how many and how much traffic. The separate Port forwarding screen is gone.
+- **A simpler forwarding editor**: the host is the one you opened it from; Here → there / There → here / SOCKS; one-tap destination ports (PostgreSQL, MySQL, Redis, HTTP, SSH); the port here is suggested for you; one line shows where traffic goes; options are two chips.
+- **TCP and UDP in one forwarding** for hosts on a ZeroTier network. Your existing ZeroTier forwardings move under the host with that address (a host is added when there is none).
+
 ## 0.7.6
 
 - **Smoother forms**: typing in the port-forwarding editor (or any screen over your tabs) no longer stutters while the keyboard opens; the open terminal behind it was being resized on every frame.

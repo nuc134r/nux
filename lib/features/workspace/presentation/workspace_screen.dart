@@ -153,11 +153,6 @@ class _Header extends ConsumerWidget {
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
               ),
               NuxMenuAction(icon: Icons.bolt, label: l10n.quickConnect, onSelected: () => quickConnect(context, ref)),
-              NuxMenuAction(
-                icon: Icons.swap_horiz,
-                label: l10n.portForwarding,
-                onSelected: () => context.push(Routes.forwarding),
-              ),
               NuxMenuAction(icon: Icons.key, label: l10n.keys, onSelected: () => context.push(Routes.keys)),
               NuxMenuAction(
                 icon: Icons.lan_outlined,

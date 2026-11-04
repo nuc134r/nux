@@ -184,7 +184,7 @@ the way and every screen works the same way:
 - **A tab's header** holds the title, the **tab count** button and **⋮**, nothing else. Everything the
   tab can do is in its menu (`NuxTab.menuEntries`), with **Settings** always last. Over the tab
   overview the bar is plain background, and its menu has New tab and the app-wide screens.
-- **Screens that are not tabs** (Keys, Port forwarding, ZeroTier, …) put their actions in a ⋮ menu in
+- **Screens that are not tabs** (Keys, ZeroTier, …) put their actions in a ⋮ menu in
   the app bar too (`NuxMenuButton`), except **adding**: a screen that lists things has one wide **Add**
   button at the bottom (`AddBar` in `Scaffold.bottomNavigationBar`), in reach of the thumb and below the
   list rather than over it. No ⋮ when the menu would be empty.
@@ -193,6 +193,11 @@ the way and every screen works the same way:
   on ⋮ when something needs attention (transfers running).
 - **List items** open their own menu when tapped, beside the item (hosts: SSH and SFTP first); no
   per-row ⋮ where a tap can do it.
+- **Forwardings belong to hosts**: no separate screen. The ⇄ button at the end of a host tile slides
+  its forwardings out below it (no background, rows with a switch, traffic chips while on, "Add
+  forwarding" last); while they are hidden and some run, a strip under the tile shows how many and the
+  traffic. The editor inherits "through" from the host: a host on a ZeroTier network is reached
+  directly (TCP and/or UDP) when the forwarding goes to the host itself, anything else goes over SSH.
 - **Empty states** may have buttons in the content (Add host, Generate key): that is where the eye is
   when there is nothing else, and they disappear once there is something to show.
 - Results and errors are **snackbars** (low, swipe to dismiss); progress is shown **where the action
