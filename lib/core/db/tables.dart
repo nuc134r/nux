@@ -122,3 +122,13 @@ class ForwardRules extends Table with SyncedTable {
   BoolColumn get autoStart => boolean().withDefault(const Constant(false))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 }
+
+/// A project: a folder on a host. Each workspace keeps its own set of tabs.
+class Workspaces extends Table with SyncedTable {
+  TextColumn get name => text()();
+  TextColumn get connectionId => text().references(Connections, #id, onDelete: KeyAction.cascade)();
+
+  /// The project's folder on the host (absolute).
+  TextColumn get rootPath => text()();
+  DateTimeColumn get lastOpenedAt => dateTime().nullable()();
+}

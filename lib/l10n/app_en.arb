@@ -70,6 +70,7 @@
   "close": "Close",
   "closeOtherTabs": "Close other tabs",
   "closeTab": "Close tab",
+  "closeWorkspace": "Close workspace",
   "connect": "Connect",
   "connected": "Connected",
   "continueAction": "Continue",
@@ -85,6 +86,7 @@
     }
   },
   "copyPath": "Copy path",
+  "create": "Create",
   "currentPassphrase": "Current passphrase",
   "daysAgo": "{count} d ago",
   "@daysAgo": {
@@ -146,6 +148,16 @@
       }
     }
   },
+  "deleteWorkspace": "Delete workspace",
+  "deleteWorkspaceBody": "Its tabs are closed. Files on the host are not touched.",
+  "deleteWorkspaceTitle": "Delete {name}?",
+  "@deleteWorkspaceTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "deleted": "Deleted {name}",
   "@deleted": {
     "placeholders": {
@@ -164,6 +176,7 @@
     }
   },
   "destinationHere": "Destination (on this device)",
+  "detachedHead": "detached HEAD",
   "devicePort": "Port on this device",
   "discard": "Discard",
   "discardChangesBody": "The changes you made have not been saved.",
@@ -186,6 +199,7 @@
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
   "editorFontSize": "File text size",
+  "emptyFolder": "Empty folder",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
@@ -286,6 +300,7 @@
       }
     }
   },
+  "explorer": "Explorer",
   "exportPassphraseTitle": "Passphrase for the exported key",
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
@@ -297,6 +312,7 @@
   "find": "Find",
   "fingerprint": "Fingerprint",
   "folderEmpty": "This folder is empty",
+  "folderField": "Folder",
   "folderNotEmpty": "The folder is not empty",
   "folderOnlyHidden": "{count, plural, one{Only {count} hidden item here} other{Only {count} hidden items here}}",
   "@folderOnlyHidden": {
@@ -628,7 +644,9 @@
   "newFolder": "New folder",
   "newPassphrase": "New passphrase",
   "newTab": "New tab",
+  "newWorkspace": "New workspace",
   "next": "Next",
+  "noChanges": "No changes",
   "noColor": "No colour",
   "noForwards": "No port forwarding yet",
   "noHosts": "No hosts yet",
@@ -639,8 +657,11 @@
   "noTabs": "No open tabs",
   "noTabsHint": "Open the hosts list or connect to a server.",
   "noTransfers": "No transfers",
+  "noWorkspace": "No workspace",
+  "noWorkspaceHint": "A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.",
   "noWrap": "Don't wrap lines",
   "none": "None",
+  "notGitRepo": "Not a git repository",
   "notNow": "Not now",
   "notificationsBlocked": "Turn them on in Android settings: Apps → nux → Notifications",
   "notificationsLabel": "Notifications",
@@ -648,6 +669,8 @@
   "notificationsOn": "Allowed: the notification shows what keeps running",
   "ok": "OK",
   "open": "Open",
+  "openAsWorkspace": "Open as workspace",
+  "openInFileBrowser": "Open in file browser",
   "openLinkQuestion": "Open this link?",
   "openReleasePage": "Open release page",
   "openTerminal": "Open terminal",
@@ -843,6 +866,7 @@
   "startWithNux": "Auto start",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
+  "switchWorkspace": "Switch workspace",
   "tabClosed": "Closed {title}",
   "@tabClosed": {
     "placeholders": {
@@ -965,6 +989,7 @@
   "usedBy": "Used by",
   "usedByNone": "No host uses this key yet",
   "usernameField": "Username",
+  "versionControl": "Version control",
   "viaZeroTier": "ZeroTier {network}",
   "@viaZeroTier": {
     "placeholders": {
@@ -975,6 +1000,7 @@
   },
   "viewMenu": "View",
   "whatsNew": "What's new",
+  "workspaces": "Workspaces",
   "wrapLines": "Wrap lines",
   "yesterday": "yesterday",
   "zerotierNetwork": "ZeroTier network",

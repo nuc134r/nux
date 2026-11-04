@@ -85,7 +85,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## M5 — Editor + workspaces
 - [x] Editing: edit mode in the viewer, save with remote-change detection (overwrite / discard mine), undo/redo, "•" in the tab title, close guard for unsaved changes
-- [ ] Workspace = backend + root; recent workspaces; project tree tab
+- [x] Workspace = host + folder with its own tabs (kept alive when switching); ☰ drawer on the tab overview with the
+  workspace card, project tree and git status (Version control); Open as workspace from the file browser
 - [ ] Edit mode: undo/redo, auto-indent, brackets, find/replace, go to line, save, save-as-root (`sudo tee`)
 - [ ] Remote change detection (mtime/hash) with a reload/overwrite/diff choice
 - [ ] Quick open (fuzzy), search in files (`rg`/`grep` over exec; Dart fallback locally)

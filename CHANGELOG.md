@@ -3,8 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
-## 0.8.1
+## 0.9.0
 
+- **Workspaces**: a folder on a host with its own tabs. Open one from a file browser (⋮ → Open as workspace) or from ☰ on the tab overview. Switching workspaces swaps all tabs; the others keep running in the background and come back as you left them, also after a restart.
+- **The workspace drawer** (☰ on the tab overview): the workspace, its branch, the project tree with changed files marked, and Version control with the list of changes. Tap a file to open it; long-press a folder to open it in a file browser or a terminal.
 - Forwarding options read "Connections from LAN" and "Auto start".
 
 ## 0.8.0

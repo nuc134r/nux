@@ -198,6 +198,12 @@ the way and every screen works the same way:
   forwarding" last); while they are hidden and some run, a strip under the tile shows how many and the
   traffic. The editor inherits "through" from the host: a host on a ZeroTier network is reached
   directly (TCP and/or UDP) when the forwarding goes to the host itself, anything else goes over SSH.
+- **Workspaces** (a folder on a host) each keep their own tabs; switching swaps the whole set and the
+  other workspaces' tabs stay alive in the background. ☰ on the tab overview (only there) opens the
+  drawer: the workspace card (name, host · folder, branch; ⋮ to switch, rename, close, delete), the
+  project tree (changed files coloured with a letter, changed folders dotted; long-press a folder for
+  file browser / terminal), and Explorer / Version control at the bottom (git status; staging, diffs and
+  commits come with M6). A folder becomes a workspace from the file browser's ⋮ → Open as workspace.
 - **Empty states** may have buttons in the content (Add host, Generate key): that is where the eye is
   when there is nothing else, and they disappear once there is something to show.
 - Results and errors are **snackbars** (low, swipe to dismiss); progress is shown **where the action

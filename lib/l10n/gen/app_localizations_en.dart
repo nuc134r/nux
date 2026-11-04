@@ -141,6 +141,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closeTab => 'Close tab';
 
   @override
+  String get closeWorkspace => 'Close workspace';
+
+  @override
   String get connect => 'Connect';
 
   @override
@@ -165,6 +168,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copyPath => 'Copy path';
+
+  @override
+  String get create => 'Create';
 
   @override
   String get currentPassphrase => 'Current passphrase';
@@ -226,6 +232,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get deleteWorkspace => 'Delete workspace';
+
+  @override
+  String get deleteWorkspaceBody =>
+      'Its tabs are closed. Files on the host are not touched.';
+
+  @override
+  String deleteWorkspaceTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
   String deleted(String name) {
     return 'Deleted $name';
   }
@@ -240,6 +258,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get destinationHere => 'Destination (on this device)';
+
+  @override
+  String get detachedHead => 'detached HEAD';
 
   @override
   String get devicePort => 'Port on this device';
@@ -289,6 +310,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editorFontSize => 'File text size';
 
   @override
+  String get emptyFolder => 'Empty folder';
+
+  @override
   String errorGeneric(String error) {
     return 'Something went wrong: $error';
   }
@@ -329,6 +353,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get explorer => 'Explorer';
+
+  @override
   String get exportPassphraseTitle => 'Passphrase for the exported key';
 
   @override
@@ -361,6 +388,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get folderEmpty => 'This folder is empty';
+
+  @override
+  String get folderField => 'Folder';
 
   @override
   String get folderNotEmpty => 'The folder is not empty';
@@ -874,7 +904,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newTab => 'New tab';
 
   @override
+  String get newWorkspace => 'New workspace';
+
+  @override
   String get next => 'Next';
+
+  @override
+  String get noChanges => 'No changes';
 
   @override
   String get noColor => 'No colour';
@@ -909,10 +945,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTransfers => 'No transfers';
 
   @override
+  String get noWorkspace => 'No workspace';
+
+  @override
+  String get noWorkspaceHint =>
+      'A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.';
+
+  @override
   String get noWrap => 'Don\'t wrap lines';
 
   @override
   String get none => 'None';
+
+  @override
+  String get notGitRepo => 'Not a git repository';
 
   @override
   String get notNow => 'Not now';
@@ -937,6 +983,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get open => 'Open';
+
+  @override
+  String get openAsWorkspace => 'Open as workspace';
+
+  @override
+  String get openInFileBrowser => 'Open in file browser';
 
   @override
   String get openLinkQuestion => 'Open this link?';
@@ -1289,6 +1341,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stopEditing => 'Stop editing';
 
   @override
+  String get switchWorkspace => 'Switch workspace';
+
+  @override
   String tabClosed(String title) {
     return 'Closed $title';
   }
@@ -1471,6 +1526,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usernameField => 'Username';
 
   @override
+  String get versionControl => 'Version control';
+
+  @override
   String viaZeroTier(String network) {
     return 'ZeroTier $network';
   }
@@ -1480,6 +1538,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whatsNew => 'What\'s new';
+
+  @override
+  String get workspaces => 'Workspaces';
 
   @override
   String get wrapLines => 'Wrap lines';

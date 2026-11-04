@@ -9,7 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nux_backend/nux_backend.dart' show FileEntry, FileSystem, LocalFileSystem;
+import 'package:nux_backend/nux_backend.dart' show CommandResult, FileEntry, FileSystem, LocalFileSystem, ProcessRunner, RunningProcess;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
 import 'package:nux/core/secure/secret_store.dart';
@@ -21,6 +21,8 @@ import 'package:nux/features/ssh/presentation/dialog_prompter.dart';
 import 'package:nux/features/terminal/domain/terminal_session.dart';
 import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
+import 'package:nux/features/workspace/data/workspace_access.dart';
+import 'package:nux/features/workspace/data/workspace_repository.dart';
 
 import 'helpers.dart';
 
@@ -89,6 +91,23 @@ void main() {
       await tester.tap(find.text('Build server'));
     }),
     'terminal': _Shot(ThemeMode.dark, Routes.home, act: terminalTab),
+    'workspace': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      addTearDown(() => root.deleteSync(recursive: true));
+      await useLocal(c, root);
+      _workspaceRoot = root.path;
+      final id = (await tester.runAsync(
+        () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
+      ))!;
+      await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
+      await settle(tester);
+      c.read(workspaceProvider).gridOpen = true;
+      await settle(tester);
+      await tester.tap(find.byTooltip('Workspaces'));
+      await settle(tester);
+      await settle(tester);
+      await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.text('lib')));
+    }),
     'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       await terminalTab(tester, c);
       await settle(tester);
@@ -170,7 +189,14 @@ void main() {
         if (phone) tester.view.padding = FakeViewPadding(top: _statusBar * dpr, bottom: 16 * dpr);
         addTearDown(tester.view.reset);
 
-        final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+        final c = ProviderContainer(
+          overrides: [
+            ...testOverrides(db: db, secrets: secrets),
+            workspaceOpenerProvider.overrideWithValue(
+              (id) async => WorkspaceAccess(fs: LocalFileSystem(_workspaceRoot), runner: _FakeGit(), release: () {}),
+            ),
+          ],
+        );
         addTearDown(c.dispose);
         final key = GlobalKey();
         await tester.pumpWidget(
@@ -336,4 +362,22 @@ class _Owned implements FileSystem {
   Future<void> delete(String path, {bool recursive = false}) => _fs.delete(path, recursive: recursive);
   @override
   Future<void> setMode(String path, int mode) => _fs.setMode(path, mode);
+}
+
+/// The folder the workspace drawer shows in screenshots.
+String _workspaceRoot = '/';
+
+/// A git status with a branch and two changes, without running git.
+class _FakeGit implements ProcessRunner {
+  @override
+  Future<CommandResult> run(String command, {String? workingDirectory, Map<String, String>? environment}) async =>
+      CommandResult(
+        exitCode: 0,
+        stdout: '$_workspaceRoot\n## main...origin/main [ahead 1]\x00 M lib/main.dart\x00?? deploy.sh\x00',
+        stderr: '',
+      );
+
+  @override
+  Future<RunningProcess> start(String command, {String? workingDirectory, Map<String, String>? environment}) =>
+      throw UnimplementedError();
 }

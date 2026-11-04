@@ -13,6 +13,31 @@ class ClosedTab {
   final bool pinned;
 }
 
+/// A whole set of tabs taken out of a [TabSwitcherController] with [TabSwitcherController.detach]: the
+/// tabs stay alive (not disposed) until the set is attached again or [dispose]d.
+class TabSet {
+  TabSet._(this.tabs, this._mru, this._pinned, this._previews, this._closed, this.gridOpen);
+
+  final List<SwitcherTab> tabs;
+  final List<String> _mru;
+  final Set<String> _pinned;
+  final Map<String, ui.Image> _previews;
+  final List<ClosedTab> _closed;
+  final bool gridOpen;
+
+  void dispose() {
+    for (final t in tabs) {
+      t.dispose();
+    }
+    for (final c in _closed) {
+      c.tab.dispose();
+    }
+    for (final p in _previews.values) {
+      p.dispose();
+    }
+  }
+}
+
 /// Opens, selects and closes tabs; remembers which ones are live.
 ///
 /// Pinned tabs always come first. The order of [tabs] is the order shown to the user; the
@@ -193,6 +218,51 @@ class TabSwitcherController extends ChangeNotifier {
     _tabs
       ..removeAt(from)
       ..insert(to, tab);
+    notifyListeners();
+  }
+
+  /// Takes every tab out (without disposing them), leaving the controller empty, e.g. to show another
+  /// workspace's tabs. [attach] puts them back as they were.
+  TabSet detach() {
+    for (final t in _tabs) {
+      t.removeListener(notifyListeners);
+    }
+    final set = TabSet._([..._tabs], [..._mru], {..._pinned}, {..._previews}, [..._closed], _gridOpen);
+    _tabs.clear();
+    _mru.clear();
+    _pinned.clear();
+    _previews.clear();
+    _closed.clear();
+    _gridOpen = false;
+    notifyListeners();
+    return set;
+  }
+
+  /// Replaces the (empty) controller's tabs with [set], as detached. Any tabs still open are disposed.
+  void attach(TabSet set) {
+    for (final t in _tabs) {
+      t.removeListener(notifyListeners);
+      t.dispose();
+    }
+    _tabs
+      ..clear()
+      ..addAll(set.tabs);
+    _mru
+      ..clear()
+      ..addAll(set._mru);
+    _pinned
+      ..clear()
+      ..addAll(set._pinned);
+    _previews
+      ..clear()
+      ..addAll(set._previews);
+    _closed
+      ..clear()
+      ..addAll(set._closed);
+    _gridOpen = set.gridOpen;
+    for (final t in _tabs) {
+      t.addListener(notifyListeners);
+    }
     notifyListeners();
   }
 

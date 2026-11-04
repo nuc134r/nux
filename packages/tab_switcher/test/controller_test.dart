@@ -112,4 +112,25 @@ void main() {
     a.notifyListeners();
     expect(n, 1);
   });
+
+  test('detach takes a whole set out alive; attach brings it back as it was', () {
+    final a = CounterTab('a'), b = CounterTab('b');
+    c.open(a);
+    c.open(b);
+    c.setPinned(b, true);
+    c.select(a);
+    final set = c.detach();
+    expect(c.isEmpty, isTrue);
+    expect(a.disposed || b.disposed, isFalse);
+
+    c.open(CounterTab('x'));
+    c.attach(set);
+    expect(ids(), ['b', 'a']);
+    expect(c.current, a);
+    expect(c.isPinned(b), isTrue);
+    var notified = 0;
+    c.addListener(() => notified++);
+    a.notifyListeners();
+    expect(notified, 1, reason: 'attached tabs are listened to again');
+  });
 }

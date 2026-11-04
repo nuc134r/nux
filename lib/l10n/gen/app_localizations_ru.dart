@@ -142,6 +142,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get closeTab => 'Закрыть вкладку';
 
   @override
+  String get closeWorkspace => 'Закрыть рабочую область';
+
+  @override
   String get connect => 'Подключиться';
 
   @override
@@ -166,6 +169,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copyPath => 'Копировать путь';
+
+  @override
+  String get create => 'Создать';
 
   @override
   String get currentPassphrase => 'Текущая парольная фраза';
@@ -228,6 +234,18 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get deleteWorkspace => 'Удалить рабочую область';
+
+  @override
+  String get deleteWorkspaceBody =>
+      'Её вкладки закроются. Файлы на хосте не меняются.';
+
+  @override
+  String deleteWorkspaceTitle(String name) {
+    return 'Удалить $name?';
+  }
+
+  @override
   String deleted(String name) {
     return 'Удалено: $name';
   }
@@ -242,6 +260,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get destinationHere => 'Куда (на этом устройстве)';
+
+  @override
+  String get detachedHead => 'отсоединённый HEAD';
 
   @override
   String get devicePort => 'Порт на этом устройстве';
@@ -291,6 +312,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get editorFontSize => 'Размер текста в файлах';
 
   @override
+  String get emptyFolder => 'Пустая папка';
+
+  @override
   String errorGeneric(String error) {
     return 'Что-то пошло не так: $error';
   }
@@ -331,6 +355,9 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get explorer => 'Проводник';
+
+  @override
   String get exportPassphraseTitle =>
       'Парольная фраза для экспортируемого ключа';
 
@@ -364,6 +391,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get folderEmpty => 'Папка пуста';
+
+  @override
+  String get folderField => 'Папка';
 
   @override
   String get folderNotEmpty => 'Папка не пуста';
@@ -887,7 +917,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get newTab => 'Новая вкладка';
 
   @override
+  String get newWorkspace => 'Новая рабочая область';
+
+  @override
   String get next => 'Следующее';
+
+  @override
+  String get noChanges => 'Изменений нет';
 
   @override
   String get noColor => 'Без цвета';
@@ -922,10 +958,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noTransfers => 'Передач нет';
 
   @override
+  String get noWorkspace => 'Без рабочей области';
+
+  @override
+  String get noWorkspaceHint =>
+      'Рабочая область — папка на хосте со своими вкладками, деревом проекта и статусом git. Откройте её из файлового менеджера (⋮ → Открыть как рабочую область) или добавьте здесь.';
+
+  @override
   String get noWrap => 'Не переносить строки';
 
   @override
   String get none => 'Нет';
+
+  @override
+  String get notGitRepo => 'Не git-репозиторий';
 
   @override
   String get notNow => 'Не сейчас';
@@ -950,6 +996,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get open => 'Открыть';
+
+  @override
+  String get openAsWorkspace => 'Открыть как рабочую область';
+
+  @override
+  String get openInFileBrowser => 'Открыть в файловом менеджере';
 
   @override
   String get openLinkQuestion => 'Открыть ссылку?';
@@ -1305,6 +1357,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get stopEditing => 'Закончить правку';
 
   @override
+  String get switchWorkspace => 'Сменить рабочую область';
+
+  @override
   String tabClosed(String title) {
     return 'Вкладка «$title» закрыта';
   }
@@ -1487,6 +1542,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get usernameField => 'Имя пользователя';
 
   @override
+  String get versionControl => 'Контроль версий';
+
+  @override
   String viaZeroTier(String network) {
     return 'ZeroTier $network';
   }
@@ -1496,6 +1554,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get whatsNew => 'Что нового';
+
+  @override
+  String get workspaces => 'Рабочие области';
 
   @override
   String get wrapLines => 'Переносить строки';

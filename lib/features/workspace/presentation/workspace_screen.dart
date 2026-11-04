@@ -17,6 +17,10 @@ import '../../updates/presentation/update_ui.dart';
 import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../domain/nux_tab.dart';
+import 'workspace_drawer.dart';
+
+/// The scaffold holding the workspace drawer (tabs have scaffolds of their own).
+final _scaffold = GlobalKey<ScaffoldState>();
 
 /// The home screen: every open tab, Chrome style.
 class WorkspaceScreen extends ConsumerWidget {
@@ -47,34 +51,40 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(sshKeepAliveProvider);
     ref.watch(backgroundResyncProvider);
     return _KeyboardOnlyOnTop(
-      child: TabSwitcher(
-        controller: controller,
-        headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
-        emptyBuilder: (context) => const _NoTabs(),
-        gridFooterBuilder: (context) => const _GridFooter(),
-        stripTrailing: IconButton(
-          tooltip: l10n.newTab,
-          icon: const Icon(Icons.add),
-          onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
-        ),
-        actionsBuilder: (context, tab) => [
-          if (tab is TerminalTab)
-            TabAction(
-              icon: Icons.copy_all,
-              label: l10n.duplicateTab,
-              onSelected: () => openTerminal(ref, tab.connectionId),
-            ),
-        ],
-        strings: TabSwitcherStrings(
-          noTabs: l10n.noTabs,
-          close: l10n.closeTab,
-          closeOthers: l10n.closeOtherTabs,
-          pin: l10n.pinTab,
-          unpin: l10n.unpinTab,
-          pinned: l10n.pinnedTabs,
-          undo: l10n.undo,
-          closed: l10n.tabClosed,
-          noPreview: l10n.noPreview,
+      child: Scaffold(
+        key: _scaffold,
+        // Opened with ☰ on the tab overview only: an edge swipe would fight terminals and editors.
+        drawer: const WorkspaceDrawer(),
+        drawerEnableOpenDragGesture: false,
+        body: TabSwitcher(
+          controller: controller,
+          headerBuilder: (context, tab) => _Header(controller: controller, tab: tab as NuxTab?),
+          emptyBuilder: (context) => const _NoTabs(),
+          gridFooterBuilder: (context) => const _GridFooter(),
+          stripTrailing: IconButton(
+            tooltip: l10n.newTab,
+            icon: const Icon(Icons.add),
+            onPressed: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+          ),
+          actionsBuilder: (context, tab) => [
+            if (tab is TerminalTab)
+              TabAction(
+                icon: Icons.copy_all,
+                label: l10n.duplicateTab,
+                onSelected: () => openTerminal(ref, tab.connectionId),
+              ),
+          ],
+          strings: TabSwitcherStrings(
+            noTabs: l10n.noTabs,
+            close: l10n.closeTab,
+            closeOthers: l10n.closeOtherTabs,
+            pin: l10n.pinTab,
+            unpin: l10n.unpinTab,
+            pinned: l10n.pinnedTabs,
+            undo: l10n.undo,
+            closed: l10n.tabClosed,
+            noPreview: l10n.noPreview,
+          ),
         ),
       ),
     );
@@ -92,9 +102,18 @@ class _Header extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final tab = this.tab;
+    final workspace = tab == null ? ref.watch(workspaceSwitcherProvider) : null;
     return Row(
       children: [
-        const SizedBox(width: 16),
+        if (workspace != null)
+          // Over the tab overview: ☰ opens the workspace (project tree, git).
+          IconButton(
+            tooltip: l10n.workspaces,
+            icon: const Icon(Icons.menu),
+            onPressed: () => _scaffold.currentState?.openDrawer(),
+          )
+        else
+          const SizedBox(width: 16),
         if (tab != null) ...[
           Icon(tab.icon ?? Icons.tab, size: 20, color: tab.color ?? theme.colorScheme.onSurfaceVariant),
           const SizedBox(width: 12),
@@ -104,7 +123,17 @@ class _Header extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Over the tab grid the bar is just background: no title.
+              // Over the tab grid: only the workspace's name, quietly.
+              if (workspace != null)
+                ListenableBuilder(
+                  listenable: workspace,
+                  builder: (context, _) => Text(
+                    workspace.current?.name ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  ),
+                ),
               if (tab != null)
                 Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
               if (tab?.subtitle case final subtitle?)

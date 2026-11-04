@@ -332,6 +332,12 @@ abstract class AppLocalizations {
   /// **'Close tab'**
   String get closeTab;
 
+  /// No description provided for @closeWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Close workspace'**
+  String get closeWorkspace;
+
   /// No description provided for @connect.
   ///
   /// In en, this message translates to:
@@ -379,6 +385,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy path'**
   String get copyPath;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
 
   /// No description provided for @currentPassphrase.
   ///
@@ -452,6 +464,24 @@ abstract class AppLocalizations {
   /// **'The private key is erased from this device and removed from these hosts: {names}. Unless you have a copy, it cannot be recovered.'**
   String deleteKeyUsed(String names);
 
+  /// No description provided for @deleteWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete workspace'**
+  String get deleteWorkspace;
+
+  /// No description provided for @deleteWorkspaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its tabs are closed. Files on the host are not touched.'**
+  String get deleteWorkspaceBody;
+
+  /// No description provided for @deleteWorkspaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteWorkspaceTitle(String name);
+
   /// No description provided for @deleted.
   ///
   /// In en, this message translates to:
@@ -475,6 +505,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Destination (on this device)'**
   String get destinationHere;
+
+  /// No description provided for @detachedHead.
+  ///
+  /// In en, this message translates to:
+  /// **'detached HEAD'**
+  String get detachedHead;
 
   /// No description provided for @devicePort.
   ///
@@ -566,6 +602,12 @@ abstract class AppLocalizations {
   /// **'File text size'**
   String get editorFontSize;
 
+  /// No description provided for @emptyFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty folder'**
+  String get emptyFolder;
+
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
@@ -613,6 +655,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'UDP packets sent to localhost:{port} go to {target} in ZeroTier network {network}, and replies come back. Good for games, DNS, VoIP.'**
   String explainZeroTierUdp(String port, String target, String network);
+
+  /// No description provided for @explorer.
+  ///
+  /// In en, this message translates to:
+  /// **'Explorer'**
+  String get explorer;
 
   /// No description provided for @exportPassphraseTitle.
   ///
@@ -679,6 +727,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This folder is empty'**
   String get folderEmpty;
+
+  /// No description provided for @folderField.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder'**
+  String get folderField;
 
   /// No description provided for @folderNotEmpty.
   ///
@@ -1478,11 +1532,23 @@ abstract class AppLocalizations {
   /// **'New tab'**
   String get newTab;
 
+  /// No description provided for @newWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'New workspace'**
+  String get newWorkspace;
+
   /// No description provided for @next.
   ///
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @noChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'No changes'**
+  String get noChanges;
 
   /// No description provided for @noColor.
   ///
@@ -1544,6 +1610,18 @@ abstract class AppLocalizations {
   /// **'No transfers'**
   String get noTransfers;
 
+  /// No description provided for @noWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'No workspace'**
+  String get noWorkspace;
+
+  /// No description provided for @noWorkspaceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.'**
+  String get noWorkspaceHint;
+
   /// No description provided for @noWrap.
   ///
   /// In en, this message translates to:
@@ -1555,6 +1633,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None'**
   String get none;
+
+  /// No description provided for @notGitRepo.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a git repository'**
+  String get notGitRepo;
 
   /// No description provided for @notNow.
   ///
@@ -1597,6 +1681,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get open;
+
+  /// No description provided for @openAsWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Open as workspace'**
+  String get openAsWorkspace;
+
+  /// No description provided for @openInFileBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in file browser'**
+  String get openInFileBrowser;
 
   /// No description provided for @openLinkQuestion.
   ///
@@ -2228,6 +2324,12 @@ abstract class AppLocalizations {
   /// **'Stop editing'**
   String get stopEditing;
 
+  /// No description provided for @switchWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch workspace'**
+  String get switchWorkspace;
+
   /// No description provided for @tabClosed.
   ///
   /// In en, this message translates to:
@@ -2540,6 +2642,12 @@ abstract class AppLocalizations {
   /// **'Username'**
   String get usernameField;
 
+  /// No description provided for @versionControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Version control'**
+  String get versionControl;
+
   /// No description provided for @viaZeroTier.
   ///
   /// In en, this message translates to:
@@ -2557,6 +2665,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What\'s new'**
   String get whatsNew;
+
+  /// No description provided for @workspaces.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspaces'**
+  String get workspaces;
 
   /// No description provided for @wrapLines.
   ///

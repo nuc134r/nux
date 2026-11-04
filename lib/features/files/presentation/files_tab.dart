@@ -12,6 +12,7 @@ import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../workspace/data/workspace.dart';
+import '../../workspace/data/workspace_repository.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../data/files_providers.dart';
 import '../data/ssh_fs.dart';
@@ -26,12 +27,12 @@ import 'transfers_sheet.dart';
 class FilesTab extends NuxTab {
   /// [open] replaces SFTP (tests and screenshots browse a local folder).
   FilesTab(Ref ref, {required this.connectionId, String? path, String? id, FsOpener? open})
-      : _ref = ref,
-        id = id ?? 'files:${newId()}',
-        browser = FileBrowser(
-          open: open ?? sshFsOpener(ref.read(sshPoolProvider), () => ref.read(sshPrompterProvider), connectionId),
-          path: path,
-        ) {
+    : _ref = ref,
+      id = id ?? 'files:${newId()}',
+      browser = FileBrowser(
+        open: open ?? sshFsOpener(ref.read(sshPoolProvider), () => ref.read(sshPrompterProvider), connectionId),
+        path: path,
+      ) {
     browser.addListener(notifyListeners);
     _sub = ref.read(connectionRepositoryProvider).watch(connectionId).listen((c) {
       connection = c;
@@ -70,7 +71,6 @@ class FilesTab extends NuxTab {
   @override
   IconData get icon => Icons.folder_outlined;
 
-
   @override
   Color? get color => connection?.color == null ? null : Color(connection!.color!);
 
@@ -83,15 +83,27 @@ class FilesTab extends NuxTab {
   @override
   Listenable get menuBadgeChanges => _transfers;
 
+  /// Makes this folder a workspace and opens it (its own tabs; this one stays where it was).
+  Future<void> _openAsWorkspace(String path) async {
+    final id = await _ref
+        .read(workspaceRepositoryProvider)
+        .create(
+          name: posix.basename(path).isEmpty ? path : posix.basename(path),
+          connectionId: connectionId,
+          rootPath: path,
+        );
+    await _ref.read(workspaceSwitcherProvider).switchTo(id);
+  }
+
   @override
   List<NuxMenuItem> menuEntries(BuildContext context) {
     final l10n = context.l10n;
     final b = browser;
     String sortName(FileSort s) => switch (s) {
-          FileSort.name => l10n.sortName,
-          FileSort.size => l10n.sortSize,
-          FileSort.modified => l10n.sortModified,
-        };
+      FileSort.name => l10n.sortName,
+      FileSort.size => l10n.sortSize,
+      FileSort.modified => l10n.sortModified,
+    };
     final transfers = _transfers;
     return [
       NuxMenuAction(
@@ -99,9 +111,14 @@ class FilesTab extends NuxTab {
         label: l10n.openTerminalHere,
         enabled: b.path != null,
         // Built directly: this tab's ref belongs to the tab factory, which cannot read itself.
-        onSelected: () => _ref
-            .read(workspaceProvider)
-            .open(TerminalTab(_ref, connectionId: connectionId, directory: b.path)),
+        onSelected: () =>
+            _ref.read(workspaceProvider).open(TerminalTab(_ref, connectionId: connectionId, directory: b.path)),
+      ),
+      NuxMenuAction(
+        icon: Icons.folder_special_outlined,
+        label: l10n.openAsWorkspace,
+        enabled: b.path != null,
+        onSelected: () => _openAsWorkspace(b.path!),
       ),
       NuxMenuAction(
         icon: Icons.create_new_folder_outlined,
@@ -124,8 +141,18 @@ class FilesTab extends NuxTab {
           for (final s in FileSort.values)
             NuxMenuAction(icon: null, label: sortName(s), checked: s == b.sort, onSelected: () => b.sortBy(s)),
           const NuxMenuDivider(),
-          NuxMenuAction(icon: null, label: l10n.ascending, checked: !b.descending, onSelected: () => b.setDescending(false)),
-          NuxMenuAction(icon: null, label: l10n.descending, checked: b.descending, onSelected: () => b.setDescending(true)),
+          NuxMenuAction(
+            icon: null,
+            label: l10n.ascending,
+            checked: !b.descending,
+            onSelected: () => b.setDescending(false),
+          ),
+          NuxMenuAction(
+            icon: null,
+            label: l10n.descending,
+            checked: b.descending,
+            onSelected: () => b.setDescending(true),
+          ),
         ],
       ),
       NuxMenuSubmenu(

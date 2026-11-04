@@ -35,12 +35,24 @@ class TabFactory {
     final args = (json['args'] as Map?)?.cast<String, Object?>() ?? const {};
     return switch (json['kind']) {
       HostsTab.kindName => HostsTab(),
-      TerminalTab.kindName when id != null && args['connectionId'] is String =>
-        TerminalTab(_ref, connectionId: args['connectionId']! as String, directory: args['directory'] as String?, id: id),
-      FilesTab.kindName when id != null && args['connectionId'] is String =>
-        FilesTab(_ref, connectionId: args['connectionId']! as String, path: args['path'] as String?, id: id),
-      ViewerTab.kindName when id != null && args['connectionId'] is String && args['path'] is String =>
-        ViewerTab(_ref, connectionId: args['connectionId']! as String, path: args['path']! as String, id: id),
+      TerminalTab.kindName when id != null && args['connectionId'] is String => TerminalTab(
+        _ref,
+        connectionId: args['connectionId']! as String,
+        directory: args['directory'] as String?,
+        id: id,
+      ),
+      FilesTab.kindName when id != null && args['connectionId'] is String => FilesTab(
+        _ref,
+        connectionId: args['connectionId']! as String,
+        path: args['path'] as String?,
+        id: id,
+      ),
+      ViewerTab.kindName when id != null && args['connectionId'] is String && args['path'] is String => ViewerTab(
+        _ref,
+        connectionId: args['connectionId']! as String,
+        path: args['path']! as String,
+        id: id,
+      ),
       _ => null,
     };
   }
