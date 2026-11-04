@@ -180,6 +180,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get currentPassphrase => 'Текущая парольная фраза';
 
   @override
+  String get currentWorkspace => 'Открыта сейчас';
+
+  @override
   String daysAgo(int count) {
     return '$count дн. назад';
   }
@@ -633,6 +636,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hideHiddenFiles => 'Скрыть скрытые файлы';
 
   @override
+  String get home => 'Главная';
+
+  @override
   String get homeEarly =>
       'SSH, SFTP, проброс портов и редактор кода уже в пути. Эта ранняя сборка настраивает обновления, чтобы новые функции приходили к вам сразу.';
 
@@ -1039,6 +1045,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openTerminalHere => 'Открыть терминал здесь';
+
+  @override
+  String get openWorkspace => 'Открыть';
 
   @override
   String get organize => 'Упорядочить';

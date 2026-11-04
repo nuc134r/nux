@@ -179,6 +179,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentPassphrase => 'Current passphrase';
 
   @override
+  String get currentWorkspace => 'Open now';
+
+  @override
   String daysAgo(int count) {
     return '$count d ago';
   }
@@ -620,6 +623,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hideHiddenFiles => 'Hide hidden files';
 
   @override
+  String get home => 'Home';
+
+  @override
   String get homeEarly =>
       'SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.';
 
@@ -1024,6 +1030,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openTerminalHere => 'Open terminal here';
+
+  @override
+  String get openWorkspace => 'Open';
 
   @override
   String get organize => 'Organize';

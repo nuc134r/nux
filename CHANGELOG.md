@@ -5,6 +5,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.9.4
 
+- **Home tab**: the hosts tab is now Home, with Hosts and Workspaces pages (swipe or tap the bar). On Workspaces, tap one to open, rename or delete it; ⋮ has Add host and New workspace.
 - **Workspace tree**: long-press any file or folder for its details (size, date, owner, permissions) and Open, Open in file browser, Open terminal here, Copy path.
 - The tab's icon in the header opens the workspace drawer.
 - The tab overview opens scrolled to the tab you were on.

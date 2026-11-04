@@ -198,6 +198,8 @@ the way and every screen works the same way:
   forwarding" last); while they are hidden and some run, a strip under the tile shows how many and the
   traffic. The editor inherits "through" from the host: a host on a ZeroTier network is reached
   directly (TCP and/or UDP) when the forwarding goes to the host itself, anything else goes over SSH.
+- **Home** is the first tab: Hosts and Workspaces pages (a tab bar inside the tab); each workspace
+  opens from there or from the drawer.
 - **Workspaces** (a folder on a host) each keep their own tabs; switching swaps the whole set and the
   other workspaces' tabs stay alive in the background. ☰ on the tab overview (only there) opens the
   drawer: the workspace card (name, host · folder, branch; ⋮ to switch, rename, close, delete), the

@@ -402,34 +402,15 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
         ],
       ),
       NuxMenuAction(icon: Icons.refresh, label: l10n.refresh, onSelected: _refresh),
-      NuxMenuAction(icon: Icons.edit_outlined, label: l10n.rename, onSelected: () => _rename(context)),
+      NuxMenuAction(icon: Icons.edit_outlined, label: l10n.rename, onSelected: () => renameWorkspace(context, ref, ws)),
       NuxMenuAction(icon: Icons.close, label: l10n.closeWorkspace, onSelected: () => switcher.switchTo(null)),
       const NuxMenuDivider(),
-      NuxMenuAction(icon: Icons.delete_outline, label: l10n.deleteWorkspace, onSelected: () => _delete(context)),
-    ];
-  }
-
-  Future<void> _rename(BuildContext context) async {
-    final name = await askText(context, title: context.l10n.rename, label: context.l10n.nameField, initial: ws.name);
-    if (name == null || name.trim().isEmpty) return;
-    await ref.read(workspaceRepositoryProvider).rename(ws.id, name.trim());
-    await ref.read(workspaceSwitcherProvider).refresh();
-  }
-
-  Future<void> _delete(BuildContext context) async {
-    final l10n = context.l10n;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deleteWorkspaceTitle(ws.name)),
-        content: Text(l10n.deleteWorkspaceBody),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.delete)),
-        ],
+      NuxMenuAction(
+        icon: Icons.delete_outline,
+        label: l10n.deleteWorkspace,
+        onSelected: () => deleteWorkspace(context, ref, ws),
       ),
-    );
-    if (ok == true) await ref.read(workspaceSwitcherProvider).delete(ws.id);
+    ];
   }
 
   Widget _tree(BuildContext context) {
@@ -748,4 +729,28 @@ Future<void> newWorkspace(BuildContext context, WidgetRef ref, {String? connecti
       .read(workspaceRepositoryProvider)
       .create(name: name.text.trim(), connectionId: host!, rootPath: posix.normalize(folder.text.trim()));
   await ref.read(workspaceSwitcherProvider).switchTo(id);
+}
+
+Future<void> renameWorkspace(BuildContext context, WidgetRef ref, Workspace ws) async {
+  final name = await askText(context, title: context.l10n.rename, label: context.l10n.nameField, initial: ws.name);
+  if (name == null || name.trim().isEmpty) return;
+  await ref.read(workspaceRepositoryProvider).rename(ws.id, name.trim());
+  await ref.read(workspaceSwitcherProvider).refresh();
+}
+
+/// Deletes [ws] after asking (its tabs close; files on the host are not touched).
+Future<void> deleteWorkspace(BuildContext context, WidgetRef ref, Workspace ws) async {
+  final l10n = context.l10n;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.deleteWorkspaceTitle(ws.name)),
+      content: Text(l10n.deleteWorkspaceBody),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.delete)),
+      ],
+    ),
+  );
+  if (ok == true) await ref.read(workspaceSwitcherProvider).delete(ws.id);
 }

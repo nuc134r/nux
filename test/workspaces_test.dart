@@ -142,4 +142,29 @@ void main() {
     expect(tabs.tabs.whereType<ViewerTab>(), isEmpty);
     expect(tabs.tabs.whereType<TerminalTab>().single, same(terminal));
   });
+
+  testWidgets('Home lists the workspaces on its second page and opens one', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-home-').resolveSymbolicLinksSync();
+    addTearDown(() => Directory(root).deleteSync(recursive: true));
+    final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(c.dispose);
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root), release: () {});
+    final id = await tester.runAsync(
+      () => c.read(workspaceRepositoryProvider).create(name: 'Site', connectionId: 'sample', rootPath: root),
+    );
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    expect(find.text('Home'), findsWidgets);
+    await tester.tap(find.text('Workspaces'));
+    await settle(tester);
+    await tester.tap(find.text('Site'));
+    await settle(tester);
+    await tester.tap(find.text('Open'));
+    await settle(tester);
+    expect(c.read(workspaceSwitcherProvider).currentId, id);
+    expect(c.read(workspaceProvider).tabs.single, isA<FilesTab>());
+  });
 }

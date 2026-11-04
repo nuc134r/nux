@@ -89,6 +89,7 @@
   "copyPath": "Copy path",
   "create": "Create",
   "currentPassphrase": "Current passphrase",
+  "currentWorkspace": "Open now",
   "daysAgo": "{count} d ago",
   "@daysAgo": {
     "placeholders": {
@@ -471,6 +472,7 @@
   "hiddenFiles": "Hidden files",
   "hide": "Hide",
   "hideHiddenFiles": "Hide hidden files",
+  "home": "Home",
   "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
   "homeWelcome": "Welcome to nux",
   "hostField": "Host",
@@ -687,6 +689,7 @@
   "openReleasePage": "Open release page",
   "openTerminal": "Open terminal",
   "openTerminalHere": "Open terminal here",
+  "openWorkspace": "Open",
   "organize": "Organize",
   "otherDevices": "Connections from LAN",
   "overwrite": "Overwrite",

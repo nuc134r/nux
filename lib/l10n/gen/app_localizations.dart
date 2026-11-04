@@ -404,6 +404,12 @@ abstract class AppLocalizations {
   /// **'Current passphrase'**
   String get currentPassphrase;
 
+  /// No description provided for @currentWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Open now'**
+  String get currentWorkspace;
+
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:
@@ -1039,6 +1045,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide hidden files'**
   String get hideHiddenFiles;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
 
   /// No description provided for @homeEarly.
   ///
@@ -1747,6 +1759,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open terminal here'**
   String get openTerminalHere;
+
+  /// No description provided for @openWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openWorkspace;
 
   /// No description provided for @organize.
   ///

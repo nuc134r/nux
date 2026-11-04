@@ -129,7 +129,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.byTooltip('More'));
     await settle(tester);
-    for (final label in ['Hosts', 'Keys', 'ZeroTier', 'Settings']) {
+    for (final label in ['Home', 'Keys', 'ZeroTier', 'Settings']) {
       expect(find.descendant(of: find.byType(Material).last, matching: find.text(label)), findsOneWidget, reason: label);
     }
     await tester.tap(find.text('ZeroTier').last);

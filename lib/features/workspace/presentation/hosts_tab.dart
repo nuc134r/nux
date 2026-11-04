@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/host_ping.dart';
@@ -17,9 +18,13 @@ import '../../forwarding/data/forward_rule_repository.dart';
 import '../../forwarding/data/forwarding_providers.dart';
 import '../../forwarding/presentation/forwarding_widgets.dart';
 import '../../updates/presentation/update_ui.dart';
+import '../data/workspace.dart';
+import '../data/workspace_repository.dart';
 import '../domain/nux_tab.dart';
+import 'workspace_drawer.dart' show deleteWorkspace, newWorkspace, renameWorkspace;
 
-/// The saved hosts. There is one at most (opening it again selects it).
+/// Home: the saved hosts and the workspaces, on two pages. There is one at most (opening it again selects
+/// it); its kind stays `hosts` so saved sessions restore it.
 class HostsTab extends NuxTab {
   HostsTab() {
     currentL10n.addListener(notifyListeners);
@@ -34,10 +39,13 @@ class HostsTab extends NuxTab {
   String get kind => kindName;
 
   @override
-  String get title => currentL10n.value.hosts;
+  String get title => currentL10n.value.home;
 
   @override
-  IconData get icon => Icons.dns_outlined;
+  IconData get icon => Icons.home_outlined;
+
+  /// The page shown: 0 hosts, 1 workspaces (kept while the tab is parked).
+  int page = 0;
 
   /// Hosts whose forwardings are shown.
   final openForwardings = ValueNotifier<Set<String>>(const {});
@@ -49,18 +57,194 @@ class HostsTab extends NuxTab {
   }
 
   @override
-  Widget buildContent(BuildContext context) => _HostsView(tab: this);
+  Widget buildContent(BuildContext context) => _HomeView(tab: this);
 
   @override
   List<NuxMenuItem> menuEntries(BuildContext context) => [
     NuxMenuAction(icon: Icons.add, label: context.l10n.addHost, onSelected: () => context.push(Routes.newConnection)),
+    NuxMenuAction(
+      icon: Icons.create_new_folder_outlined,
+      label: context.l10n.newWorkspace,
+      onSelected: () => _newWorkspace?.call(),
+    ),
   ];
+
+  /// Set by the view (it has the WidgetRef the dialog needs).
+  VoidCallback? _newWorkspace;
 
   @override
   void dispose() {
     currentL10n.removeListener(notifyListeners);
     openForwardings.dispose();
     super.dispose();
+  }
+}
+
+/// Hosts | Workspaces, swiped or picked in the bar.
+class _HomeView extends ConsumerStatefulWidget {
+  const _HomeView({required this.tab});
+
+  final HostsTab tab;
+
+  @override
+  ConsumerState<_HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<_HomeView> with SingleTickerProviderStateMixin {
+  late final TabController _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = TabController(length: 2, vsync: this, initialIndex: widget.tab.page)
+      ..addListener(() => widget.tab.page = _pages.index);
+    widget.tab._newWorkspace = () => newWorkspace(context, ref);
+  }
+
+  @override
+  void dispose() {
+    widget.tab._newWorkspace = null;
+    _pages.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      children: [
+        TabBar(
+          controller: _pages,
+          tabs: [
+            Tab(text: l10n.hosts),
+            Tab(text: l10n.workspaces),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _pages,
+            children: [
+              _HostsView(tab: widget.tab),
+              const _WorkspacesView(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The workspaces as tiles; tap one for Open / Rename / Delete.
+class _WorkspacesView extends ConsumerWidget {
+  const _WorkspacesView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final all = ref.watch(workspacesProvider).value ?? const <Workspace>[];
+    final hosts = {for (final c in ref.watch(connectionsProvider).value ?? const <Connection>[]) c.id: c.name};
+    final switcher = ref.watch(workspaceSwitcherProvider);
+    return ListenableBuilder(
+      listenable: switcher,
+      builder: (context, _) => ListView(
+        padding: const EdgeInsets.only(top: 8, bottom: 16),
+        children: [
+          if (all.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+              child: Column(
+                children: [
+                  Icon(Icons.folder_special_outlined, size: 56, color: scheme.primary),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.noWorkspaceHint,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    icon: const Icon(Icons.add),
+                    label: Text(l10n.newWorkspace),
+                    onPressed: () => newWorkspace(context, ref),
+                  ),
+                ],
+              ),
+            ),
+          for (final w in all)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+              child: Material(
+                color: w.id == switcher.currentId ? scheme.secondaryContainer : scheme.surfaceContainer,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                clipBehavior: Clip.antiAlias,
+                child: Builder(
+                  builder: (tileContext) => InkWell(
+                    onTap: () => showNuxMenu(
+                      tileContext,
+                      beside: true,
+                      (_) => [
+                        NuxMenuAction(
+                          icon: Icons.open_in_new,
+                          label: l10n.openWorkspace,
+                          enabled: w.id != switcher.currentId,
+                          onSelected: () => switcher.switchTo(w.id),
+                        ),
+                        NuxMenuAction(
+                          icon: Icons.edit_outlined,
+                          label: l10n.rename,
+                          onSelected: () => renameWorkspace(context, ref, w),
+                        ),
+                        const NuxMenuDivider(),
+                        NuxMenuAction(
+                          icon: Icons.delete_outline,
+                          label: l10n.deleteWorkspace,
+                          onSelected: () => deleteWorkspace(context, ref, w),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                      child: Row(
+                        children: [
+                          Icon(Icons.folder_special_outlined, color: scheme.primary),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  w.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                                StartEllipsisText(
+                                  '${hosts[w.connectionId] ?? ''} · ${w.rootPath}',
+                                  style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (w.id == switcher.currentId)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Text(
+                                l10n.currentWorkspace,
+                                style: theme.textTheme.labelMedium?.copyWith(color: scheme.primary),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 

@@ -206,8 +206,8 @@ class _Header extends ConsumerWidget {
               const NuxMenuDivider(),
               if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
               NuxMenuAction(
-                icon: Icons.dns_outlined,
-                label: l10n.hosts,
+                icon: Icons.home_outlined,
+                label: l10n.home,
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
               ),
               NuxMenuAction(icon: Icons.key, label: l10n.keys, onSelected: () => context.push(Routes.keys)),
@@ -278,8 +278,8 @@ class _NoTabs extends ConsumerWidget {
                     ),
                     const SizedBox(height: 24),
                     FilledButton.tonalIcon(
-                      icon: const Icon(Icons.dns_outlined),
-                      label: Text(l10n.hosts),
+                      icon: const Icon(Icons.home_outlined),
+                      label: Text(l10n.home),
                       onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
                     ),
                   ],
@@ -311,8 +311,8 @@ class _GridFooter extends ConsumerWidget {
           alignment: WrapAlignment.center,
           children: [
             FilledButton.tonalIcon(
-              icon: const Icon(Icons.dns_outlined),
-              label: Text(l10n.hosts),
+              icon: const Icon(Icons.home_outlined),
+              label: Text(l10n.home),
               onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
             ),
           ],
