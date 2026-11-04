@@ -81,6 +81,12 @@ class BrowserTab extends NuxTab {
   IconData get icon => Icons.public;
 
   @override
+  void Function(BuildContext context)? get onHeaderTap => (context) async {
+    final typed = await askAddress(context, initial: _url);
+    if (typed != null) go(typed);
+  };
+
+  @override
   Widget buildContent(BuildContext context) => _BrowserView(tab: this);
 
   @override
@@ -123,9 +129,6 @@ class _BrowserView extends StatefulWidget {
 }
 
 class _BrowserViewState extends State<_BrowserView> {
-  late final _address = TextEditingController(text: widget.tab.url);
-  final _focus = FocusNode();
-
   @override
   void initState() {
     super.initState();
@@ -135,21 +138,14 @@ class _BrowserViewState extends State<_BrowserView> {
   @override
   void dispose() {
     widget.tab.removeListener(_changed);
-    _address.dispose();
-    _focus.dispose();
     super.dispose();
   }
 
-  void _changed() {
-    // The address follows the page, except while it is being edited.
-    if (!_focus.hasFocus && _address.text != widget.tab.url) _address.text = widget.tab.url;
-    setState(() {});
-  }
+  void _changed() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final scheme = Theme.of(context).colorScheme;
     final tab = widget.tab;
     final c = tab.controller;
     final active = TabSwitcher.isActive(context);
@@ -162,31 +158,6 @@ class _BrowserViewState extends State<_BrowserView> {
       },
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
-            child: TextField(
-              controller: _address,
-              focusNode: _focus,
-              autocorrect: false,
-              keyboardType: TextInputType.url,
-              textInputAction: TextInputAction.go,
-              autofocus: tab.url.isEmpty,
-              onTap: () => _address.selection = TextSelection(baseOffset: 0, extentOffset: _address.text.length),
-              onSubmitted: (v) {
-                if (v.trim().isEmpty) return;
-                _focus.unfocus();
-                tab.go(v);
-              },
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: l10n.addressHint,
-                prefixIcon: const Icon(Icons.public, size: 18),
-                filled: true,
-                fillColor: scheme.surfaceContainerHigh,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
-              ),
-            ),
-          ),
           SizedBox(
             height: 2,
             child: tab.progress < 100 ? LinearProgressIndicator(value: tab.progress / 100, minHeight: 2) : null,
@@ -202,3 +173,31 @@ class _BrowserViewState extends State<_BrowserView> {
 
 /// Opens [url] in a new browser tab.
 void openBrowserTab(TabSwitcherController tabs, String url) => tabs.open(BrowserTab(url: url));
+
+/// Asks for an address (or words to search); null when cancelled.
+Future<String?> askAddress(BuildContext context, {String initial = ''}) async {
+  final l10n = context.l10n;
+  final text = TextEditingController(text: initial)
+    ..selection = TextSelection(baseOffset: 0, extentOffset: initial.length);
+  final result = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.browser),
+      content: TextField(
+        controller: text,
+        autofocus: true,
+        autocorrect: false,
+        keyboardType: TextInputType.url,
+        textInputAction: TextInputAction.go,
+        decoration: InputDecoration(hintText: l10n.addressHint, prefixIcon: const Icon(Icons.public, size: 18)),
+        onSubmitted: (v) => Navigator.pop(context, v),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(context, text.text), child: Text(l10n.open)),
+      ],
+    ),
+  );
+  // Not disposed here: the dialog's closing animation still uses it (it is collected with the dialog).
+  return result == null || result.trim().isEmpty ? null : result;
+}

@@ -239,4 +239,19 @@ void main() {
     expect(cEnd, isNot(cStart));
     expect(cMid, isNot(cEnd), reason: 'still on its way after 100 ms');
   });
+
+  testWidgets('zooming moves only the tab picture: the cards stay where they are', (tester) async {
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    c
+      ..open(CounterTab('a'))
+      ..open(CounterTab('b'));
+    await tester.pumpWidget(app(c));
+    c.gridOpen = true;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 80)); // mid-zoom
+    final mid = tester.getTopLeft(find.text('Tab a'));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.text('Tab a')), mid);
+  });
 }

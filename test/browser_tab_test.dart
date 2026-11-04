@@ -23,6 +23,10 @@ void main() {
     c.read(workspaceProvider).open(tab);
     await settle(tester);
     expect(find.text('Web pages cannot be shown here'), findsOneWidget, reason: 'no web view in tests');
+    expect(find.byType(TextField), findsNothing, reason: 'no address field on the page');
+    // Tapping the title in the header asks for the address.
+    await tester.tap(find.text('Browser').first);
+    await settle(tester);
     await tester.enterText(find.byType(TextField), 'localhost:8080');
     await tester.testTextInput.receiveAction(TextInputAction.go);
     await settle(tester);

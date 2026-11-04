@@ -754,29 +754,49 @@ class _TabGridState extends State<_TabGrid> with SingleTickerProviderStateMixin 
             ],
           ),
         );
-        return AnimatedBuilder(
-          animation: _zoom,
-          child: SingleChildScrollView(controller: _scroll, child: grid),
-          builder: (context, child) {
-            final t = _zoom.value;
-            final focus = rects[_focus];
-            if (t >= 1 || focus == null || !(_scroll?.hasClients ?? false) && t >= 1) return child!;
-            // Zoomed around the focused card: at 0 it fills the width, centred in the screen.
-            final offset = _scroll!.hasClients ? _scroll!.offset : _scroll!.initialScrollOffset;
-            final r = focus.translate(0, -offset);
-            final full = width / r.width;
-            final scale = ui.lerpDouble(full, 1, t)!;
-            final dx = ui.lerpDouble(width / 2 - r.center.dx * full, 0, t)!;
-            final dy = ui.lerpDouble(viewport / 2 - r.center.dy * full, 0, t)!;
-            return ClipRect(
-              child: Transform(
-                transform: Matrix4.identity()
-                  ..translateByDouble(dx, dy, 0, 1)
-                  ..scaleByDouble(scale, scale, 1, 1),
-                child: child,
-              ),
-            );
-          },
+        final scroller = SingleChildScrollView(controller: _scroll, child: grid);
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // The grid itself never moves: only the focused tab's picture grows out of (or shrinks into)
+            // its card's preview area.
+            Positioned.fill(child: scroller),
+            AnimatedBuilder(
+              animation: _zoom,
+              builder: (context, _) {
+                final t = _zoom.value;
+                final focus = rects[_focus];
+                final tab = controller.find<SwitcherTab>((x) => x.id == _focus);
+                if (t >= 1 || focus == null || tab == null) return const SizedBox.shrink();
+                final offset = (_scroll?.hasClients ?? false) ? _scroll!.offset : _scroll?.initialScrollOffset ?? 0;
+                // The card's preview area (below its title row, and its subtitle if it has one).
+                final card = focus.translate(0, -offset);
+                final preview = Rect.fromLTRB(
+                  card.left + 4,
+                  card.top + (tab.subtitle == null ? 40 : 62),
+                  card.right - 4,
+                  card.bottom - 4,
+                );
+                final rect = Rect.lerp(Rect.fromLTWH(0, 0, width, viewport), preview, Curves.easeInOut.transform(t))!;
+                return Positioned.fromRect(
+                  rect: rect,
+                  child: IgnorePointer(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10 * t),
+                      child: ColoredBox(
+                        color: theme.colorScheme.surface,
+                        child: _Preview(
+                          image: controller.preview(tab),
+                          fit: BoxFit.fitWidth,
+                          noPreview: strings.noPreview,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         );
       },
     );

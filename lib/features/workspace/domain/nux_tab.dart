@@ -23,6 +23,9 @@ abstract class NuxTab extends SwitcherTab {
   bool get menuBadge => false;
   Listenable? get menuBadgeChanges => null;
 
+  /// What tapping the title in the full-screen header does (e.g. the browser asks for an address).
+  void Function(BuildContext context)? get onHeaderTap => null;
+
   /// The text size the menu's stepper (and pinching) changes, if the tab shows such text.
   TextSizeKind? get textSizeKind => null;
 

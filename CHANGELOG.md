@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.8
+
+- **Calmer zoom on the tab overview**: only the tab's own picture grows out of (or shrinks into) its card; the other cards and their outlines stay where they are.
+- **Browser**: no address field on the page any more. Tap the tab's title in the header to change the address (New browser tab asks for it first).
+
 ## 0.9.7
 
 - **The tab overview moves**: closing a tab slides the others into their new places; a card swiped away fades as it goes, rides above its neighbours with a shadow, and a haptic tick marks the point where letting go closes it. Opening the overview zooms out from the tab you were on, and picking a card zooms into it.

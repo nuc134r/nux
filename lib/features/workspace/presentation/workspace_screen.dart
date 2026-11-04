@@ -9,6 +9,7 @@ import '../../../app/router.dart';
 import '../../../core/background/background_providers.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
+import '../../browser/domain/address.dart';
 import '../../browser/presentation/browser_tab.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
@@ -128,37 +129,41 @@ class _Header extends ConsumerWidget {
           const SizedBox(width: 4),
         ],
         Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Over the tab grid: only the workspace's name, quietly.
-              if (workspace != null)
-                ListenableBuilder(
-                  listenable: workspace,
-                  builder: (context, _) => Text(
-                    workspace.current?.name ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: tab?.onHeaderTap == null ? null : () => tab!.onHeaderTap!(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Over the tab grid: only the workspace's name, quietly.
+                if (workspace != null)
+                  ListenableBuilder(
+                    listenable: workspace,
+                    builder: (context, _) => Text(
+                      workspace.current?.name ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
                   ),
-                ),
-              if (tab != null)
-                Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
-              if (tab?.subtitle case final subtitle?)
-                // Paths keep their end (the folder the file is in), cutting the start.
-                subtitle.contains('/')
-                    ? StartEllipsisText(
-                        subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      )
-                    : Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      ),
-            ],
+                if (tab != null)
+                  Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
+                if (tab?.subtitle case final subtitle?)
+                  // Paths keep their end (the folder the file is in), cutting the start.
+                  subtitle.contains('/')
+                      ? StartEllipsisText(
+                          subtitle,
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        )
+                      : Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        ),
+              ],
+            ),
           ),
         ),
         // Only the tab count and the menu: every action lives in the menu.
@@ -206,7 +211,10 @@ class _Header extends ConsumerWidget {
               NuxMenuAction(
                 icon: Icons.public,
                 label: l10n.newBrowserTab,
-                onSelected: () => openBrowserTab(controller, ''),
+                onSelected: () async {
+                  final typed = await askAddress(context);
+                  if (typed != null) openBrowserTab(controller, '${addressToUri(typed)}');
+                },
               ),
               const NuxMenuDivider(),
               if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
