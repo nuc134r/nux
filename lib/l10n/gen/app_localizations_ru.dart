@@ -967,7 +967,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get organize => 'Упорядочить';
 
   @override
-  String get otherDevices => 'Другие устройства';
+  String get otherDevices => 'Подключения из LAN';
 
   @override
   String get overwrite => 'Перезаписать';
@@ -1296,7 +1296,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get startWithNux => 'Запуск вместе с nux';
+  String get startWithNux => 'Автозапуск';
 
   @override
   String get stopAll => 'Остановить все';

@@ -653,7 +653,7 @@
   "openTerminal": "Open terminal",
   "openTerminalHere": "Open terminal here",
   "organize": "Organize",
-  "otherDevices": "Other devices",
+  "otherDevices": "Connections from LAN",
   "overwrite": "Overwrite",
   "ownerLabel": "Owner",
   "partiallyLoaded": "Showing the first {loaded} of {total}",
@@ -840,7 +840,7 @@
       }
     }
   },
-  "startWithNux": "Start with nux",
+  "startWithNux": "Auto start",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
   "tabClosed": "Closed {title}",

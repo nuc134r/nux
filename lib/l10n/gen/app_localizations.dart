@@ -1631,7 +1631,7 @@ abstract class AppLocalizations {
   /// No description provided for @otherDevices.
   ///
   /// In en, this message translates to:
-  /// **'Other devices'**
+  /// **'Connections from LAN'**
   String get otherDevices;
 
   /// No description provided for @overwrite.
@@ -2213,7 +2213,7 @@ abstract class AppLocalizations {
   /// No description provided for @startWithNux.
   ///
   /// In en, this message translates to:
-  /// **'Start with nux'**
+  /// **'Auto start'**
   String get startWithNux;
 
   /// No description provided for @stopAll.

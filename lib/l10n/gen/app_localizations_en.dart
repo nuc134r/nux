@@ -954,7 +954,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get organize => 'Organize';
 
   @override
-  String get otherDevices => 'Other devices';
+  String get otherDevices => 'Connections from LAN';
 
   @override
   String get overwrite => 'Overwrite';
@@ -1280,7 +1280,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get startWithNux => 'Start with nux';
+  String get startWithNux => 'Auto start';
 
   @override
   String get stopAll => 'Stop all';

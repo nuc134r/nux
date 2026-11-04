@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.8.1
+
+- Forwarding options read "Connections from LAN" and "Auto start".
+
 ## 0.8.0
 
 - **Forwardings live under their host.** The ⇄ button at the end of a host tile slides its forwardings out: each shows its ports, a switch and, while on, connections and traffic. When they are hidden and some run, a strip under the host shows how many and how much traffic. The separate Port forwarding screen is gone.
