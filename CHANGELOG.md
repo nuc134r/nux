@@ -7,6 +7,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 - **The tab overview moves**: closing a tab slides the others into their new places; a card swiped away fades as it goes, rides above its neighbours with a shadow, and a haptic tick marks the point where letting go closes it. Opening the overview zooms out from the tab you were on, and picking a card zooms into it.
 - **Git sign-in**: a fetch, pull or push that needs a username and password now asks for them (an access token works as the password), optionally remembered for the workspace. They reach git through its input, never a command line or a file on the server.
+- **Browser tab**: ⋮ on the tab overview → New browser tab. An address bar (type an address, `localhost:8080`, or words to search), Back / Forward / Reload, Open in another app and Copy link in ⋮; Back goes back in the page. Long-press a port forwarding → Open in browser tab opens `http://localhost:<port>` (starting the forwarding if it is off). Tabs keep their page across restarts.
 - The editor key bar no longer closes the keyboard, and it is a little taller.
 - The branch menu (and every menu) stays on screen.
 - The "Tab closed" snackbar (and others with a button) goes away by itself.

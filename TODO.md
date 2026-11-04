@@ -115,8 +115,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Diagnostics, hover, completion, definition, references, rename, format, code actions
 
 ## M9 — Polish / research
-- [ ] Web browser tab (PLAN §5): address bar, back/forward/reload, restore URL, downloads to transfers
-- [ ] "Open in browser tab" on local forwards; SOCKS (-D) forward as the WebView proxy (Android `ProxyController`)
+- [x] Web browser tab (PLAN §5): address bar, back/forward/reload, restore URL; [ ] downloads to transfers
+- [x] "Open in browser tab" on local forwards; [ ] SOCKS (-D) forward as the WebView proxy (Android `ProxyController`)
 - [ ] VS Code: `code-server`/`openvscode-server` through a forward in a WebView tab
 - [ ] Tablet / desktop layouts, hardware keyboard shortcuts
 - [ ] tree-sitter highlighting and outline

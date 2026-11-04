@@ -25,6 +25,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addPortForwarding => 'Добавить проброс порта';
 
   @override
+  String get addressHint => 'Адрес или поиск';
+
+  @override
   String addressVia(String address, String jump) {
     return '$address через $jump';
   }
@@ -111,6 +114,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get browseFiles => 'Файлы';
 
   @override
+  String get browser => 'Браузер';
+
+  @override
   String bytesCount(String bytes) {
     return '$bytes байт';
   }
@@ -189,6 +195,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copyAll => 'Скопировать всё';
+
+  @override
+  String get copyLink => 'Копировать ссылку';
 
   @override
   String copyOf(String name) {
@@ -696,6 +705,12 @@ class AppLocalizationsRu extends AppLocalizations {
       'Удалённый репозиторий их не принял. Попробуйте ещё раз.';
 
   @override
+  String get goBack => 'Назад';
+
+  @override
+  String get goForward => 'Вперёд';
+
+  @override
   String get goToLine => 'Перейти к строке';
 
   @override
@@ -1022,6 +1037,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get newBranch => 'Новая ветка';
 
   @override
+  String get newBrowserTab => 'Новая вкладка браузера';
+
+  @override
   String get newFolder => 'Новая папка';
 
   @override
@@ -1121,7 +1139,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openAsWorkspace => 'Открыть как рабочую область';
 
   @override
+  String get openInBrowserTab => 'Открыть во вкладке браузера';
+
+  @override
   String get openInFileBrowser => 'Открыть в файловом менеджере';
+
+  @override
+  String get openInOtherApp => 'Открыть в другом приложении';
 
   @override
   String get openLinkQuestion => 'Открыть ссылку?';
@@ -1345,6 +1369,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get reload => 'Перезагрузить';
+
+  @override
+  String get reloadPage => 'Обновить';
 
   @override
   String get rememberForWorkspace => 'Запомнить для этой рабочей области';
@@ -1780,6 +1807,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get viewMenu => 'Вид';
+
+  @override
+  String get webViewUnavailable => 'Здесь нельзя показать веб-страницы';
 
   @override
   String get whatsNew => 'Что нового';

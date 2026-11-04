@@ -5,6 +5,7 @@
   "addHost": "Add host",
   "addKey": "Add key",
   "addPortForwarding": "Add port forwarding",
+  "addressHint": "Address or search",
   "addressVia": "{address} via {jump}",
   "@addressVia": {
     "placeholders": {
@@ -47,6 +48,7 @@
   "branchName": "Branch name",
   "branches": "Branches",
   "browseFiles": "Browse files",
+  "browser": "Browser",
   "bytesCount": "{bytes} bytes",
   "@bytesCount": {
     "placeholders": {
@@ -86,6 +88,7 @@
   "copied": "Copied",
   "copy": "Copy",
   "copyAll": "Copy everything",
+  "copyLink": "Copy link",
   "copyOf": "{name} (copy)",
   "@copyOf": {
     "placeholders": {
@@ -512,6 +515,8 @@
     }
   },
   "gitSignInWrong": "The remote did not accept these. Try again.",
+  "goBack": "Back",
+  "goForward": "Forward",
   "goToLine": "Go to line",
   "groupField": "Group",
   "hiddenFiles": "Hidden files",
@@ -709,6 +714,7 @@
   "nameField": "Name",
   "nameOptional": "Name (optional)",
   "newBranch": "New branch",
+  "newBrowserTab": "New browser tab",
   "newFolder": "New folder",
   "newPassphrase": "New passphrase",
   "newTab": "New tab",
@@ -740,7 +746,9 @@
   "ok": "OK",
   "open": "Open",
   "openAsWorkspace": "Open as workspace",
+  "openInBrowserTab": "Open in browser tab",
   "openInFileBrowser": "Open in file browser",
+  "openInOtherApp": "Open in another app",
   "openLinkQuestion": "Open this link?",
   "openReleasePage": "Open release page",
   "openTerminal": "Open terminal",
@@ -865,6 +873,7 @@
   "refresh": "Refresh",
   "regex": "Regular expression",
   "reload": "Reload",
+  "reloadPage": "Reload",
   "rememberForWorkspace": "Remember for this workspace",
   "rememberUntilClosed": "Remember until nux is closed",
   "removeBookmark": "Remove bookmark",
@@ -1122,6 +1131,7 @@
     }
   },
   "viewMenu": "View",
+  "webViewUnavailable": "Web pages cannot be shown here",
   "whatsNew": "What's new",
   "workspaces": "Workspaces",
   "wrapLines": "Wrap lines",

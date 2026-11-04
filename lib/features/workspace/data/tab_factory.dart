@@ -1,3 +1,5 @@
+import '../../browser/presentation/browser_tab.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../files/domain/fs_handle.dart';
@@ -41,6 +43,7 @@ class TabFactory {
     final args = (json['args'] as Map?)?.cast<String, Object?>() ?? const {};
     return switch (json['kind']) {
       HostsTab.kindName => HostsTab(),
+      BrowserTab.kindName when id != null && args['url'] is String => BrowserTab(url: args['url']! as String, id: id),
       TerminalTab.kindName when id != null && args['connectionId'] is String => TerminalTab(
         _ref,
         connectionId: args['connectionId']! as String,

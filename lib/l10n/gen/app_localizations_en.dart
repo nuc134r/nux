@@ -25,6 +25,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPortForwarding => 'Add port forwarding';
 
   @override
+  String get addressHint => 'Address or search';
+
+  @override
   String addressVia(String address, String jump) {
     return '$address via $jump';
   }
@@ -110,6 +113,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseFiles => 'Browse files';
 
   @override
+  String get browser => 'Browser';
+
+  @override
   String bytesCount(String bytes) {
     return '$bytes bytes';
   }
@@ -188,6 +194,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copyAll => 'Copy everything';
+
+  @override
+  String get copyLink => 'Copy link';
 
   @override
   String copyOf(String name) {
@@ -682,6 +691,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gitSignInWrong => 'The remote did not accept these. Try again.';
 
   @override
+  String get goBack => 'Back';
+
+  @override
+  String get goForward => 'Forward';
+
+  @override
   String get goToLine => 'Go to line';
 
   @override
@@ -1006,6 +1021,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newBranch => 'New branch';
 
   @override
+  String get newBrowserTab => 'New browser tab';
+
+  @override
   String get newFolder => 'New folder';
 
   @override
@@ -1105,7 +1123,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openAsWorkspace => 'Open as workspace';
 
   @override
+  String get openInBrowserTab => 'Open in browser tab';
+
+  @override
   String get openInFileBrowser => 'Open in file browser';
+
+  @override
+  String get openInOtherApp => 'Open in another app';
 
   @override
   String get openLinkQuestion => 'Open this link?';
@@ -1325,6 +1349,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reload => 'Reload';
+
+  @override
+  String get reloadPage => 'Reload';
 
   @override
   String get rememberForWorkspace => 'Remember for this workspace';
@@ -1758,6 +1785,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewMenu => 'View';
+
+  @override
+  String get webViewUnavailable => 'Web pages cannot be shown here';
 
   @override
   String get whatsNew => 'What\'s new';

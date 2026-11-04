@@ -4,7 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
+import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
+import '../../browser/domain/address.dart';
+import '../../browser/presentation/browser_tab.dart';
+import '../../workspace/data/workspace.dart';
 import '../../files/domain/file_listing.dart';
 import '../../ssh/data/ssh_connector.dart';
 import '../../ssh/presentation/ssh_errors.dart';
@@ -95,6 +99,28 @@ class ForwardingRow extends ConsumerWidget {
         };
         return InkWell(
           onTap: () => context.push(Routes.forward(rule.id)),
+          // A forward that listens here can be opened as a web page (http://localhost:port).
+          onLongPress: rule.forwardKind == ForwardKind.remote
+              ? null
+              : () => showNuxMenu(
+                  context,
+                  beside: true,
+                  (_) => [
+                    NuxMenuAction(
+                      icon: Icons.public,
+                      label: l10n.openInBrowserTab,
+                      onSelected: () {
+                        if (!s.on) manager.start(rule);
+                        openBrowserTab(ref.read(workspaceProvider), '${forwardedPortUri(rule.bindPort)}');
+                      },
+                    ),
+                    NuxMenuAction(
+                      icon: Icons.edit_outlined,
+                      label: l10n.edit,
+                      onSelected: () => context.push(Routes.forward(rule.id)),
+                    ),
+                  ],
+                ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 0, 8),
             child: Column(

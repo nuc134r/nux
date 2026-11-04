@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Add port forwarding'**
   String get addPortForwarding;
 
+  /// No description provided for @addressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Address or search'**
+  String get addressHint;
+
   /// No description provided for @addressVia.
   ///
   /// In en, this message translates to:
@@ -278,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Browse files'**
   String get browseFiles;
 
+  /// No description provided for @browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser'**
+  String get browser;
+
   /// No description provided for @bytesCount.
   ///
   /// In en, this message translates to:
@@ -427,6 +439,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy everything'**
   String get copyAll;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get copyLink;
 
   /// No description provided for @copyOf.
   ///
@@ -1142,6 +1160,18 @@ abstract class AppLocalizations {
   /// **'The remote did not accept these. Try again.'**
   String get gitSignInWrong;
 
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get goBack;
+
+  /// No description provided for @goForward.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward'**
+  String get goForward;
+
   /// No description provided for @goToLine.
   ///
   /// In en, this message translates to:
@@ -1694,6 +1724,12 @@ abstract class AppLocalizations {
   /// **'New branch'**
   String get newBranch;
 
+  /// No description provided for @newBrowserTab.
+  ///
+  /// In en, this message translates to:
+  /// **'New browser tab'**
+  String get newBrowserTab;
+
   /// No description provided for @newFolder.
   ///
   /// In en, this message translates to:
@@ -1880,11 +1916,23 @@ abstract class AppLocalizations {
   /// **'Open as workspace'**
   String get openAsWorkspace;
 
+  /// No description provided for @openInBrowserTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in browser tab'**
+  String get openInBrowserTab;
+
   /// No description provided for @openInFileBrowser.
   ///
   /// In en, this message translates to:
   /// **'Open in file browser'**
   String get openInFileBrowser;
+
+  /// No description provided for @openInOtherApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in another app'**
+  String get openInOtherApp;
 
   /// No description provided for @openLinkQuestion.
   ///
@@ -2275,6 +2323,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reload'**
   String get reload;
+
+  /// No description provided for @reloadPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload'**
+  String get reloadPage;
 
   /// No description provided for @rememberForWorkspace.
   ///
@@ -3025,6 +3079,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View'**
   String get viewMenu;
+
+  /// No description provided for @webViewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Web pages cannot be shown here'**
+  String get webViewUnavailable;
 
   /// No description provided for @whatsNew.
   ///

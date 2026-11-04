@@ -9,6 +9,7 @@ import '../../../app/router.dart';
 import '../../../core/background/background_providers.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
+import '../../browser/presentation/browser_tab.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
 import '../../settings/presentation/text_size_controls.dart';
@@ -201,6 +202,11 @@ class _Header extends ConsumerWidget {
                 icon: Icons.add,
                 label: l10n.newTab,
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
+              ),
+              NuxMenuAction(
+                icon: Icons.public,
+                label: l10n.newBrowserTab,
+                onSelected: () => openBrowserTab(controller, ''),
               ),
               const NuxMenuDivider(),
               if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],

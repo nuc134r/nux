@@ -18,7 +18,8 @@
         android:label="nux"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:usesCleartextTraffic="true">
         <!-- Background connections (flutter_foreground_task). specialUse: SSH sessions and tunnels fit no
              other type, and dataSync is limited to 6 hours a day on Android 15+. -->
         <service
