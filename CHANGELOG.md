@@ -7,6 +7,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 - **Workspaces**: a folder on a host with its own tabs. Open one from a file browser (⋮ → Open as workspace) or from ☰ on the tab overview. Switching workspaces swaps all tabs; the others keep running in the background and come back as you left them, also after a restart.
 - **The workspace drawer** (☰ on the tab overview): the workspace, its branch, the project tree with changed files marked, and Version control with the list of changes. Tap a file to open it; long-press a folder to open it in a file browser or a terminal.
+- **Quick open and Search in files** in a workspace (⋮ of any tab, or the workspace card): find a file by a few letters of its name, or find text in all files (ripgrep or grep on the host, case-insensitive unless you type a capital) and open it at that line.
 - **Stopping a forwarding really stops it**: connections that were already open (a game, a database session) used to keep going through a stopped forwarding, over ZeroTier and SSH alike. They are now closed too.
 - Forwarding options read "Connections from LAN" and "Auto start".
 

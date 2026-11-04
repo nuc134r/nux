@@ -29,12 +29,13 @@ class ViewerTab extends NuxTab {
     String? id,
     FsOpener? open,
     this.openerId,
-  })
-      : id = id ?? 'viewer:${newId()}',
-        document = RemoteDocument(
-          open: open ?? sshFsOpener(_ref.read(sshPoolProvider), () => _ref.read(sshPrompterProvider), connectionId),
-          path: path,
-        ) {
+    int? line,
+  }) : id = id ?? 'viewer:${newId()}',
+       pendingLine = line,
+       document = RemoteDocument(
+         open: open ?? sshFsOpener(_ref.read(sshPoolProvider), () => _ref.read(sshPrompterProvider), connectionId),
+         path: path,
+       ) {
     document.addListener(notifyListeners);
   }
 
@@ -50,6 +51,9 @@ class ViewerTab extends NuxTab {
   /// The tab that opened this file, if any: Back returns there.
   final String? openerId;
   final RemoteDocument document;
+
+  /// A line (1-based) to put the cursor on and scroll to once the text is shown (search results).
+  int? pendingLine;
 
   /// View state that outlives the widget (kept while the tab is parked).
   bool wrap = false;
@@ -73,6 +77,11 @@ class ViewerTab extends NuxTab {
       _editor?.removeListener(_edited);
       _editor?.dispose();
       _editor = CodeLineEditingController.fromText(text)..addListener(_edited);
+      final line = pendingLine;
+      if (line != null) {
+        final index = (line - 1).clamp(0, _editor!.lineCount - 1);
+        _editor!.selection = CodeLineSelection.collapsed(index: index, offset: 0);
+      }
       _finder = CodeFindController(_editor!);
       _editorGeneration = generation;
       dirty = false;
@@ -172,11 +181,11 @@ class ViewerTab extends NuxTab {
 
   @override
   IconData get icon => switch (document.kind) {
-        FileKind.image => Icons.image_outlined,
-        FileKind.markdown => Icons.article_outlined,
-        FileKind.binary || FileKind.archive => Icons.memory,
-        FileKind.text => Icons.description_outlined,
-      };
+    FileKind.image => Icons.image_outlined,
+    FileKind.markdown => Icons.article_outlined,
+    FileKind.binary || FileKind.archive => Icons.memory,
+    FileKind.text => Icons.description_outlined,
+  };
 
   @override
   Widget buildContent(BuildContext context) => ViewerView(tab: this);
@@ -209,8 +218,18 @@ class ViewerTab extends NuxTab {
           onSelected: () => onSave?.call(),
         ),
         NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
-        NuxMenuAction(icon: Icons.undo, label: l10n.undoEdit, enabled: _editor?.canUndo ?? false, onSelected: () => _editor?.undo()),
-        NuxMenuAction(icon: Icons.redo, label: l10n.redoEdit, enabled: _editor?.canRedo ?? false, onSelected: () => _editor?.redo()),
+        NuxMenuAction(
+          icon: Icons.undo,
+          label: l10n.undoEdit,
+          enabled: _editor?.canUndo ?? false,
+          onSelected: () => _editor?.undo(),
+        ),
+        NuxMenuAction(
+          icon: Icons.redo,
+          label: l10n.redoEdit,
+          enabled: _editor?.canRedo ?? false,
+          onSelected: () => _editor?.redo(),
+        ),
       ] else if (canEdit)
         NuxMenuAction(icon: Icons.edit_outlined, label: l10n.edit, onSelected: () => setEditing(true)),
       if (shownAsText) NuxMenuAction(icon: Icons.search, label: l10n.find, onSelected: () => _finder?.findMode()),
@@ -227,10 +246,18 @@ class ViewerTab extends NuxTab {
       const NuxMenuDivider(),
       NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
       if (textual)
-        NuxMenuAction(icon: Icons.wrap_text, label: wrap ? l10n.noWrap : l10n.wrapLines, onSelected: () => setWrap(!wrap)),
+        NuxMenuAction(
+          icon: Icons.wrap_text,
+          label: wrap ? l10n.noWrap : l10n.wrapLines,
+          onSelected: () => setWrap(!wrap),
+        ),
       if (document.kind == FileKind.binary)
         NuxMenuAction(icon: Icons.notes, label: l10n.showAsText, onSelected: document.showAsText),
-      NuxMenuAction(icon: Icons.copy, label: l10n.copyPath, onSelected: () => Clipboard.setData(ClipboardData(text: path))),
+      NuxMenuAction(
+        icon: Icons.copy,
+        label: l10n.copyPath,
+        onSelected: () => Clipboard.setData(ClipboardData(text: path)),
+      ),
       NuxMenuAction(
         icon: Icons.download,
         label: l10n.download,

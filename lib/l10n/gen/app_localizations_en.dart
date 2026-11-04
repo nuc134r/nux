@@ -381,6 +381,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filePermissionDenied => 'Permission denied';
 
   @override
+  String filesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '$count file',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get find => 'Find';
 
   @override
@@ -964,6 +975,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notNow => 'Not now';
 
   @override
+  String get nothingFound => 'Nothing found';
+
+  @override
   String get notificationsBlocked =>
       'Turn them on in Android settings: Apps → nux → Notifications';
 
@@ -1138,6 +1152,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quickConnectHint => 'Saved to hosts, offering all your keys';
 
   @override
+  String get quickOpen => 'Quick open';
+
+  @override
+  String get quickOpenHint => 'File name, e.g. main';
+
+  @override
   String get reachThroughZeroTier => 'Reach it through ZeroTier';
 
   @override
@@ -1214,6 +1234,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchHosts => 'Search hosts';
+
+  @override
+  String get searchInFiles => 'Search in files';
+
+  @override
+  String get searchInFilesHint => 'Text to find';
+
+  @override
+  String searchMatches(int count, String files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count matches in $files',
+      one: '$count match in $files',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get selectAll => 'Select all';

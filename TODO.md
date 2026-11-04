@@ -89,7 +89,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
   workspace card, project tree and git status (Version control); Open as workspace from the file browser
 - [ ] Edit mode: undo/redo, auto-indent, brackets, find/replace, go to line, save, save-as-root (`sudo tee`)
 - [ ] Remote change detection (mtime/hash) with a reload/overwrite/diff choice
-- [ ] Quick open (fuzzy), search in files (`rg`/`grep` over exec; Dart fallback locally)
+- [x] Quick open (fuzzy, `git ls-files` or `find`), search in files (`rg`, else `grep`, over exec) opening at the line
+- [ ] Search: Dart fallback for the local backend; replace in files
 - [ ] Cursor ergonomics: keybar swipe, symbol palette, big handles
 
 ## M6 — Git

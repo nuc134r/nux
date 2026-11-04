@@ -384,6 +384,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filePermissionDenied => 'Нет доступа';
 
   @override
+  String filesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count файлах',
+      many: '$count файлах',
+      few: '$count файлах',
+      one: '$count файле',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get find => 'Найти';
 
   @override
@@ -977,6 +990,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get notNow => 'Не сейчас';
 
   @override
+  String get nothingFound => 'Ничего не найдено';
+
+  @override
   String get notificationsBlocked =>
       'Включите их в настройках Android: Приложения → nux → Уведомления';
 
@@ -1154,6 +1170,12 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сохранится в хосты, будут предложены все ваши ключи';
 
   @override
+  String get quickOpen => 'Быстрое открытие';
+
+  @override
+  String get quickOpenHint => 'Имя файла, например main';
+
+  @override
   String get reachThroughZeroTier => 'Подключаться через ZeroTier';
 
   @override
@@ -1230,6 +1252,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get searchHosts => 'Поиск хостов';
+
+  @override
+  String get searchInFiles => 'Поиск по файлам';
+
+  @override
+  String get searchInFilesHint => 'Что найти';
+
+  @override
+  String searchMatches(int count, String files) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count совпадения в $files',
+      many: '$count совпадений в $files',
+      few: '$count совпадения в $files',
+      one: '$count совпадение в $files',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get selectAll => 'Выбрать всё';

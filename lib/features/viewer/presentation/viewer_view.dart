@@ -162,6 +162,10 @@ class _CodeView extends ConsumerWidget {
     final doc = tab.document;
     final text = doc.text;
     final (editor, finder) = tab.editorFor(doc.generation, text);
+    if (tab.pendingLine != null) {
+      tab.pendingLine = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) => editor.makeCursorCenterIfInvisible());
+    }
     final firstLine = text.substring(0, min(text.length, 120)).split('\n').first;
     final language = languageFor(doc.path) ?? languageFromShebang(firstLine);
     final mode = language == null || text.length > RemoteDocument.highlightLimit ? null : modeFor(language);
@@ -181,9 +185,12 @@ class _CodeView extends ConsumerWidget {
           return AdaptiveTextSelectionToolbar.buttonItems(
             anchors: anchors,
             buttonItems: [
-              if (editing && selected) ContextMenuButtonItem(type: ContextMenuButtonType.cut, onPressed: () => run(controller.cut)),
-              if (selected) ContextMenuButtonItem(type: ContextMenuButtonType.copy, onPressed: () => run(controller.copy)),
-              if (editing) ContextMenuButtonItem(type: ContextMenuButtonType.paste, onPressed: () => run(controller.paste)),
+              if (editing && selected)
+                ContextMenuButtonItem(type: ContextMenuButtonType.cut, onPressed: () => run(controller.cut)),
+              if (selected)
+                ContextMenuButtonItem(type: ContextMenuButtonType.copy, onPressed: () => run(controller.copy)),
+              if (editing)
+                ContextMenuButtonItem(type: ContextMenuButtonType.paste, onPressed: () => run(controller.paste)),
               if (!controller.isAllSelected)
                 ContextMenuButtonItem(
                   type: ContextMenuButtonType.selectAll,

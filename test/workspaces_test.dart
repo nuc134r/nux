@@ -100,6 +100,31 @@ void main() {
     await settle(tester);
     expect(tabs.current, isA<ViewerTab>());
 
+    // Quick open and Search in files, from the tab's menu.
+    await tester.tap(find.byTooltip('More').last);
+    await settle(tester);
+    await tester.tap(find.text('Quick open'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'readme');
+    await settle(tester);
+    await tester.tap(find.text('README.md'));
+    await settle(tester);
+    expect((tabs.current! as ViewerTab).path, '$root/README.md');
+
+    await tester.tap(find.byTooltip('More').last);
+    await settle(tester);
+    await tester.tap(find.text('Search in files'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'print');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    for (var i = 0; i < 5 && find.textContaining('main.dart').evaluate().isEmpty; i++) {
+      await settle(tester);
+    }
+    expect(find.textContaining('main.dart  lib'), findsOneWidget, reason: 'the file, then its folder');
+    await tester.tap(find.text('1'));
+    await settle(tester);
+    expect((tabs.current! as ViewerTab).path, '$root/lib/main.dart');
+
     // Back outside workspaces: the terminal is there again, the same live tab.
     await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(null));
     await settle(tester);

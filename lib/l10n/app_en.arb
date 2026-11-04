@@ -309,6 +309,14 @@
   "fileExists": "Something with this name already exists",
   "fileNotFound": "Not found",
   "filePermissionDenied": "Permission denied",
+  "filesCount": "{count, plural, one{{count} file} other{{count} files}}",
+  "@filesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "find": "Find",
   "fingerprint": "Fingerprint",
   "folderEmpty": "This folder is empty",
@@ -663,6 +671,7 @@
   "none": "None",
   "notGitRepo": "Not a git repository",
   "notNow": "Not now",
+  "nothingFound": "Nothing found",
   "notificationsBlocked": "Turn them on in Android settings: Apps → nux → Notifications",
   "notificationsLabel": "Notifications",
   "notificationsOff": "Off: background connections run without their notification",
@@ -761,6 +770,8 @@
   "qrCode": "QR code",
   "quickConnect": "Quick connect",
   "quickConnectHint": "Saved to hosts, offering all your keys",
+  "quickOpen": "Quick open",
+  "quickOpenHint": "File name, e.g. main",
   "reachThroughZeroTier": "Reach it through ZeroTier",
   "reachThroughZeroTierHint": "For hosts with no public address: nux joins the network itself, no VPN app needed",
   "recommended": "recommended",
@@ -799,6 +810,19 @@
     }
   },
   "searchHosts": "Search hosts",
+  "searchInFiles": "Search in files",
+  "searchInFilesHint": "Text to find",
+  "searchMatches": "{count, plural, one{{count} match in {files}} other{{count} matches in {files}}}",
+  "@searchMatches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "files": {
+        "type": "String"
+      }
+    }
+  },
   "selectAll": "Select all",
   "serverPort": "Port on the server",
   "settings": "Settings",

@@ -23,8 +23,14 @@ class TabFactory {
       FilesTab(_ref, connectionId: connectionId, path: path, open: open ?? openOverride);
 
   /// [openerId]: the tab that opened the file (Back closes the viewer and returns there).
-  ViewerTab viewer(String connectionId, String path, {FsOpener? open, String? openerId}) =>
-      ViewerTab(_ref, connectionId: connectionId, path: path, open: open ?? openOverride, openerId: openerId);
+  ViewerTab viewer(String connectionId, String path, {FsOpener? open, String? openerId, int? line}) => ViewerTab(
+    _ref,
+    connectionId: connectionId,
+    path: path,
+    open: open ?? openOverride,
+    openerId: openerId,
+    line: line,
+  );
 
   /// Tests and screenshots: files and viewer tabs use this instead of SFTP.
   FsOpener? openOverride;

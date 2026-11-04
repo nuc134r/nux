@@ -202,7 +202,9 @@ String? languageFor(String fileName) {
   final byName = _byName[base];
   if (byName != null) return byName;
   final lower = base.toLowerCase();
-  final ext = lower.startsWith('.') && !lower.substring(1).contains('.') ? lower.substring(1) : posix.extension(lower).replaceFirst('.', '');
+  final ext = lower.startsWith('.') && !lower.substring(1).contains('.')
+      ? lower.substring(1)
+      : posix.extension(lower).replaceFirst('.', '');
   return _byExtension[ext];
 }
 
@@ -211,7 +213,16 @@ Mode? modeFor(String language) => _modes[language];
 /// A guess from the first line (`#!/usr/bin/env python3`) for files without an extension.
 String? languageFromShebang(String firstLine) {
   if (!firstLine.startsWith('#!')) return null;
-  for (final (needle, lang) in [('python', 'python'), ('node', 'javascript'), ('bash', 'bash'), ('/sh', 'bash'), ('zsh', 'bash'), ('ruby', 'ruby'), ('perl', 'perl'), ('php', 'php')]) {
+  for (final (needle, lang) in [
+    ('python', 'python'),
+    ('node', 'javascript'),
+    ('bash', 'bash'),
+    ('/sh', 'bash'),
+    ('zsh', 'bash'),
+    ('ruby', 'ruby'),
+    ('perl', 'perl'),
+    ('php', 'php'),
+  ]) {
     if (firstLine.contains(needle)) return lang;
   }
   return null;

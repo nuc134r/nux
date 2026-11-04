@@ -59,11 +59,11 @@ class RemoteDocument extends ChangeNotifier {
 
   /// What [load] reads by default.
   static int limitFor(FileKind kind) => switch (kind) {
-        FileKind.image => 32 << 20,
-        FileKind.binary || FileKind.archive => 256 << 10,
-        // Text lays out line by line in the editor: past ~0.5 MB opening a file stutters on phones.
-        FileKind.text || FileKind.markdown => 512 << 10,
-      };
+    FileKind.image => 32 << 20,
+    FileKind.binary || FileKind.archive => 256 << 10,
+    // Text lays out line by line in the editor: past ~0.5 MB opening a file stutters on phones.
+    FileKind.text || FileKind.markdown => 512 << 10,
+  };
 
   /// Loads the file; [all] ignores the size limit.
   Future<void> load({bool all = false}) async {
@@ -90,7 +90,9 @@ class RemoteDocument extends ChangeNotifier {
       // Large text is decoded off the UI thread (the getter would do it during the first frame).
       _text = bytes!.length > _decodeInIsolate ? await compute(_decode, bytes!) : null;
       generation++;
-      kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!) ? FileKind.binary : named;
+      kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!)
+          ? FileKind.binary
+          : named;
     } catch (e) {
       error = e;
     } finally {

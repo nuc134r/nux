@@ -18,6 +18,7 @@ import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../domain/nux_tab.dart';
 import 'workspace_drawer.dart';
+import 'workspace_find.dart';
 
 /// The scaffold holding the workspace drawer (tabs have scaffolds of their own).
 final _scaffold = GlobalKey<ScaffoldState>();
@@ -159,6 +160,18 @@ class _Header extends ConsumerWidget {
               label: l10n.settings,
               onSelected: () => context.push(Routes.settings),
             );
+            // In a workspace: find a file or text in it, from any tab.
+            final ws = ref.read(workspaceSwitcherProvider).current;
+            final find = [
+              if (ws != null) ...[
+                NuxMenuAction(icon: Icons.search, label: l10n.quickOpen, onSelected: () => showQuickOpen(context, ws)),
+                NuxMenuAction(
+                  icon: Icons.manage_search,
+                  label: l10n.searchInFiles,
+                  onSelected: () => showSearchInFiles(context, ws),
+                ),
+              ],
+            ];
             if (tab != null) {
               return [
                 if (sizeKind != null) textSizeMenuItem(sizeKind),
@@ -166,6 +179,7 @@ class _Header extends ConsumerWidget {
                 ...entries,
                 // No divider above Settings when it is the only entry (e.g. the hosts tab).
                 if (sizeKind != null || entries.isNotEmpty) const NuxMenuDivider(),
+                if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
                 settings,
               ];
             }
@@ -176,6 +190,7 @@ class _Header extends ConsumerWidget {
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
               ),
               const NuxMenuDivider(),
+              if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
               NuxMenuAction(
                 icon: Icons.dns_outlined,
                 label: l10n.hosts,

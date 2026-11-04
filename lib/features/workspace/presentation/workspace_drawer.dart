@@ -16,6 +16,8 @@ import '../data/workspace.dart';
 import '../data/workspace_access.dart';
 import '../data/workspace_repository.dart';
 import '../domain/git_status.dart';
+import '../../../app/router.dart';
+import 'workspace_find.dart';
 
 /// What the drawer remembers between openings: the side shown and the open folders, per workspace.
 class WorkspaceDrawerState {
@@ -316,7 +318,17 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     final l10n = context.l10n;
     final switcher = ref.read(workspaceSwitcherProvider);
     final all = ref.read(workspacesProvider).value ?? const <Workspace>[];
+    // The drawer closes first; the finder opens over the tabs.
+    void find(Future<void> Function(BuildContext, Workspace) show) {
+      Navigator.of(context).pop();
+      final root = rootNavigatorKey.currentContext;
+      if (root != null) show(root, ws);
+    }
+
     return [
+      NuxMenuAction(icon: Icons.search, label: l10n.quickOpen, onSelected: () => find(showQuickOpen)),
+      NuxMenuAction(icon: Icons.manage_search, label: l10n.searchInFiles, onSelected: () => find(showSearchInFiles)),
+      const NuxMenuDivider(),
       NuxMenuSubmenu(
         icon: Icons.swap_horiz,
         label: l10n.switchWorkspace,
@@ -555,7 +567,10 @@ class _BottomTab extends StatelessWidget {
                   ),
                 ),
               ),
-              if (badge > 0) ...[const SizedBox(width: 6), Badge(label: Text('$badge'), backgroundColor: scheme.primary, textColor: scheme.onPrimary)],
+              if (badge > 0) ...[
+                const SizedBox(width: 6),
+                Badge(label: Text('$badge'), backgroundColor: scheme.primary, textColor: scheme.onPrimary),
+              ],
             ],
           ),
         ),

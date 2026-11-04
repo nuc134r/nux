@@ -710,6 +710,12 @@ abstract class AppLocalizations {
   /// **'Permission denied'**
   String get filePermissionDenied;
 
+  /// No description provided for @filesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} file} other{{count} files}}'**
+  String filesCount(int count);
+
   /// No description provided for @find.
   ///
   /// In en, this message translates to:
@@ -1646,6 +1652,12 @@ abstract class AppLocalizations {
   /// **'Not now'**
   String get notNow;
 
+  /// No description provided for @nothingFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found'**
+  String get nothingFound;
+
   /// No description provided for @notificationsBlocked.
   ///
   /// In en, this message translates to:
@@ -1964,6 +1976,18 @@ abstract class AppLocalizations {
   /// **'Saved to hosts, offering all your keys'**
   String get quickConnectHint;
 
+  /// No description provided for @quickOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick open'**
+  String get quickOpen;
+
+  /// No description provided for @quickOpenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'File name, e.g. main'**
+  String get quickOpenHint;
+
   /// No description provided for @reachThroughZeroTier.
   ///
   /// In en, this message translates to:
@@ -2107,6 +2131,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search hosts'**
   String get searchHosts;
+
+  /// No description provided for @searchInFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Search in files'**
+  String get searchInFiles;
+
+  /// No description provided for @searchInFilesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Text to find'**
+  String get searchInFilesHint;
+
+  /// No description provided for @searchMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} match in {files}} other{{count} matches in {files}}}'**
+  String searchMatches(int count, String files);
 
   /// No description provided for @selectAll.
   ///

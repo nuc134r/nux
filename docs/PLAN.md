@@ -204,6 +204,8 @@ the way and every screen works the same way:
   project tree (changed files coloured with a letter, changed folders dotted; long-press a folder for
   file browser / terminal), and Explorer / Version control at the bottom (git status; staging, diffs and
   commits come with M6). A folder becomes a workspace from the file browser's ⋮ → Open as workspace.
+  While a workspace is open, every tab's ⋮ (and the drawer card's) has **Quick open** (fuzzy file names)
+  and **Search in files** (ripgrep or grep on the host; a result opens the file at its line).
 - **Empty states** may have buttons in the content (Add host, Generate key): that is where the eye is
   when there is nothing else, and they disappear once there is something to show.
 - Results and errors are **snackbars** (low, swipe to dismiss); progress is shown **where the action
