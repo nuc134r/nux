@@ -126,7 +126,7 @@ class _FilesViewState extends ConsumerState<FilesView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(leading: Icon(fileIcon(e)), title: Text(e.name), subtitle: Text(e.path)),
-              _EntryDetails(entry: e),
+              EntryDetails(entry: e),
               const Divider(height: 1),
               if (!e.isBrowsable) ...[
                 ListTile(
@@ -443,8 +443,8 @@ class _EntryTile extends StatelessWidget {
 }
 
 /// Everything known about an entry, for the top of its actions sheet.
-class _EntryDetails extends StatelessWidget {
-  const _EntryDetails({required this.entry});
+class EntryDetails extends StatelessWidget {
+  const EntryDetails({super.key, required this.entry});
 
   final FileEntry entry;
 

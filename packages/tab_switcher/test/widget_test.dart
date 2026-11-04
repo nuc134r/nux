@@ -177,4 +177,20 @@ void main() {
     await tester.pumpAndSettle();
     await openFromGrid('a'); // another page than the one shown before the grid
   });
+
+  testWidgets('the grid opens scrolled to the current tab', (tester) async {
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    for (var i = 0; i < 40; i++) {
+      c.open(CounterTab('t$i'), foreground: false, index: c.length);
+    }
+    c.select(c.tabs[36]);
+    await tester.pumpWidget(app(c));
+    c.gridOpen = true;
+    await tester.pumpAndSettle();
+    final card = find.text(c.tabs[36].title);
+    expect(card, findsWidgets);
+    final y = tester.getCenter(card.first).dy;
+    expect(y, inInclusiveRange(0, tester.view.physicalSize.height / tester.view.devicePixelRatio));
+  });
 }

@@ -555,7 +555,7 @@ class _Preview extends StatelessWidget {
   }
 }
 
-class _TabGrid extends StatelessWidget {
+class _TabGrid extends StatefulWidget {
   const _TabGrid({
     required this.controller,
     required this.strings,
@@ -573,9 +573,49 @@ class _TabGrid extends StatelessWidget {
   final void Function(SwitcherTab tab) onMenu;
 
   @override
-  Widget build(BuildContext context) {
+  State<_TabGrid> createState() => _TabGridState();
+}
+
+/// Opens scrolled so the current tab's card is in view (the grid is built afresh each time it opens).
+class _TabGridState extends State<_TabGrid> {
+  final _scroll = ScrollController();
+  final _currentKey = GlobalKey();
+
+  TabSwitcherController get controller => widget.controller;
+  TabSwitcherStrings get strings => widget.strings;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _reveal());
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  /// Jumps near the current card by its row (cards are laid out lazily), then lines it up exactly.
+  void _reveal() {
+    if (!mounted || !_scroll.hasClients) return;
+    final width = context.size?.width ?? 0;
+    final columns = (width / 220).floor().clamp(2, 6);
+    final cardHeight = (width - 24 - 12 * (columns - 1)) / columns / .72 + 12;
+    final index = _sections().values.expand((l) => l).toList().indexOf(controller.current!);
+    if (index < 0) return;
+    final position = _scroll.position;
+    final row = index ~/ columns;
+    _scroll.jumpTo((row * cardHeight - position.viewportDimension / 4).clamp(0, position.maxScrollExtent));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final card = _currentKey.currentContext;
+      if (card != null && card.mounted) Scrollable.ensureVisible(card, alignment: .3);
+    });
+  }
+
+  /// Sections: pinned first, then each group in order of first appearance, then the rest.
+  Map<String?, List<SwitcherTab>> _sections() {
     final tabs = controller.tabs;
-    // Sections: pinned first, then each group in order of first appearance, then the rest.
     final sections = <String?, List<SwitcherTab>>{};
     final pinned = tabs.where(controller.isPinned).toList();
     if (pinned.isNotEmpty) sections[strings.pinned] = pinned;
@@ -583,11 +623,18 @@ class _TabGrid extends StatelessWidget {
     for (final t in tabs.where((t) => !controller.isPinned(t))) {
       sections.putIfAbsent(hasGroups ? t.group : null, () => []).add(t);
     }
+    return sections;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final sections = _sections();
     final theme = Theme.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = (constraints.maxWidth / 220).floor().clamp(2, 6);
         return CustomScrollView(
+          controller: _scroll,
           slivers: [
             for (final MapEntry(key: title, value: list) in sections.entries) ...[
               if (sections.length > 1 || title != null)
@@ -607,7 +654,7 @@ class _TabGrid extends StatelessWidget {
                   children: [
                     for (final t in list)
                       _TabCard(
-                        key: ValueKey(t.id),
+                        key: t == controller.current ? _currentKey : ValueKey(t.id),
                         tab: t,
                         current: t == controller.current,
                         pinned: controller.isPinned(t),
@@ -615,10 +662,10 @@ class _TabGrid extends StatelessWidget {
                         noPreview: strings.noPreview,
                         closeTooltip: strings.close,
                         onTap: () => controller.select(t),
-                        onClose: () => onClose(t),
-                        mayClose: () => mayClose(t),
-                        onDismissed: () => onDismissed(t),
-                        onMenu: () => onMenu(t),
+                        onClose: () => widget.onClose(t),
+                        mayClose: () => widget.mayClose(t),
+                        onDismissed: () => widget.onDismissed(t),
+                        onMenu: () => widget.onMenu(t),
                       ),
                   ],
                 ),

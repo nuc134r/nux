@@ -8,6 +8,7 @@ import 'package:tab_switcher/tab_switcher.dart';
 import '../../../app/router.dart';
 import '../../../core/background/background_providers.dart';
 import '../../../core/widgets/nux_menu.dart';
+import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';
@@ -116,10 +117,15 @@ class _Header extends ConsumerWidget {
             onPressed: () => _scaffold.currentState?.openDrawer(),
           )
         else
-          const SizedBox(width: 16),
+          const SizedBox(width: 4),
         if (tab != null) ...[
-          Icon(tab.icon ?? Icons.tab, size: 20, color: tab.color ?? theme.colorScheme.onSurfaceVariant),
-          const SizedBox(width: 12),
+          // The tab's icon opens the workspace drawer too (☰ is only on the overview).
+          IconButton(
+            tooltip: l10n.workspaces,
+            icon: Icon(tab.icon ?? Icons.tab, size: 20, color: tab.color ?? theme.colorScheme.onSurfaceVariant),
+            onPressed: () => _scaffold.currentState?.openDrawer(),
+          ),
+          const SizedBox(width: 4),
         ],
         Expanded(
           child: Column(
@@ -140,12 +146,18 @@ class _Header extends ConsumerWidget {
               if (tab != null)
                 Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
               if (tab?.subtitle case final subtitle?)
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                ),
+                // Paths keep their end (the folder the file is in), cutting the start.
+                subtitle.contains('/')
+                    ? StartEllipsisText(
+                        subtitle,
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      )
+                    : Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
             ],
           ),
         ),

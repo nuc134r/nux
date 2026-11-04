@@ -205,7 +205,9 @@ class ViewerTab extends NuxTab {
   }
 
   @override
-  TextSizeKind? get textSizeKind => TextSizeKind.editor;
+  // Pictures and hex dumps have no text size to change.
+  TextSizeKind? get textSizeKind =>
+      document.kind == FileKind.text || document.kind == FileKind.markdown ? TextSizeKind.editor : null;
 
   @override
   List<NuxMenuItem> menuEntries(BuildContext context) {

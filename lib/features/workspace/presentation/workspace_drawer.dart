@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
 
@@ -11,6 +12,7 @@ import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/presentation/file_dialogs.dart';
+import '../../files/presentation/files_view.dart' show EntryDetails, fileIcon;
 import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../data/workspace_access.dart';
@@ -468,7 +470,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => dir ? _toggle(e.path) : _openFile(e.path),
-              onLongPress: dir ? () => _folderMenu(rowContext, e.path) : null,
+              onLongPress: () => _entrySheet(e),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(4.0 + depth * 14, 0, 10, 0),
                 child: Row(
@@ -522,30 +524,65 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     );
   }
 
-  void _folderMenu(BuildContext rowContext, String path) {
+  /// A file's or folder's details and what can be done with it (long press in the tree).
+  Future<void> _entrySheet(FileEntry e) async {
     final l10n = context.l10n;
-    showNuxMenu(
-      rowContext,
-      beside: true,
-      (_) => [
-        NuxMenuAction(
-          icon: Icons.folder_open_outlined,
-          label: l10n.openInFileBrowser,
-          onSelected: () {
-            Navigator.of(context).pop();
-            ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).files(ws.connectionId, path: path));
-          },
+    final dir = e.isBrowsable;
+    // A file opens in a browser and a terminal at its folder.
+    final folder = dir ? e.path : posix.dirname(e.path);
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(leading: Icon(fileIcon(e)), title: Text(e.name), subtitle: Text(e.path)),
+              EntryDetails(entry: e),
+              const Divider(height: 1),
+              if (!dir)
+                ListTile(
+                  leading: const Icon(Icons.visibility_outlined),
+                  title: Text(l10n.open),
+                  onTap: () => Navigator.pop(context, 'open'),
+                ),
+              ListTile(
+                leading: const Icon(Icons.folder_open_outlined),
+                title: Text(l10n.openInFileBrowser),
+                onTap: () => Navigator.pop(context, 'files'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.terminal),
+                title: Text(l10n.openTerminalHere),
+                onTap: () => Navigator.pop(context, 'terminal'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: Text(l10n.copyPath),
+                onTap: () => Navigator.pop(context, 'copy'),
+              ),
+            ],
+          ),
         ),
-        NuxMenuAction(
-          icon: Icons.terminal,
-          label: l10n.openTerminalHere,
-          onSelected: () {
-            Navigator.of(context).pop();
-            ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).terminal(ws.connectionId, directory: path));
-          },
-        ),
-      ],
+      ),
     );
+    if (!mounted || action == null) return;
+    final factory = ref.read(tabFactoryProvider);
+    final tabs = ref.read(workspaceProvider);
+    switch (action) {
+      case 'open':
+        _openFile(e.path);
+      case 'files':
+        Navigator.of(context).pop();
+        tabs.open(factory.files(ws.connectionId, path: folder));
+      case 'terminal':
+        Navigator.of(context).pop();
+        tabs.open(factory.terminal(ws.connectionId, directory: folder));
+      case 'copy':
+        await Clipboard.setData(ClipboardData(text: e.path));
+        if (mounted) showSnack(context, l10n.copied);
+    }
   }
 
   Widget _changesList(BuildContext context) {

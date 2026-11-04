@@ -181,7 +181,7 @@ class _MenuPanelState extends State<_MenuPanel> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final sub = _stack.lastOrNull;
-    final items = sub?.items ?? widget.items;
+    final items = _tidy(sub?.items ?? widget.items);
     return Material(
       color: scheme.surfaceContainerHigh,
       elevation: 6,
@@ -254,6 +254,19 @@ class _MenuPanelState extends State<_MenuPanel> {
       ),
     );
   }
+}
+
+/// Without dividers at the ends or next to each other (entries that only show sometimes leave them).
+List<NuxMenuItem> _tidy(List<NuxMenuItem> items) {
+  final out = <NuxMenuItem>[];
+  for (final item in items) {
+    if (item is NuxMenuDivider && (out.isEmpty || out.last is NuxMenuDivider)) continue;
+    out.add(item);
+  }
+  while (out.isNotEmpty && out.last is NuxMenuDivider) {
+    out.removeLast();
+  }
+  return out;
 }
 
 class _Row extends StatelessWidget {

@@ -91,6 +91,14 @@ void main() {
     await tester.tap(drawer('lib'));
     await settle(tester);
     expect(drawer('main.dart'), findsOneWidget);
+    // Long press: details and actions for a file.
+    await tester.longPress(drawer('main.dart'));
+    await settle(tester);
+    expect(find.text('Open in file browser'), findsOneWidget);
+    expect(find.text('Open terminal here'), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10)); // dismiss
+    await settle(tester);
+
     await tester.tap(drawer('Version control'));
     await settle(tester);
     expect(drawer('notes.md'), findsOneWidget);

@@ -3,6 +3,14 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.4
+
+- **Workspace tree**: long-press any file or folder for its details (size, date, owner, permissions) and Open, Open in file browser, Open terminal here, Copy path.
+- The tab's icon in the header opens the workspace drawer.
+- The tab overview opens scrolled to the tab you were on.
+- File paths under a tab's name keep their end visible (`…/lib/src`) when they do not fit.
+- Pictures and hex views no longer offer a text size, and menus no longer show empty sections.
+
 ## 0.9.3
 
 - **The log is kept across launches** (up to about 2 MB) and **crashes are written to it** the moment they happen, so they are still there after nux restarts. Settings → Share log sends it as a text file, with hosts and addresses hidden.
