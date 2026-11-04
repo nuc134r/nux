@@ -12,6 +12,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Copy and paste**: selecting text in the terminal shows Copy, Paste and Select all; the text editor gets Cut, Copy, Paste and Select all on its selection.
 - Leaving a **ZeroTier** network asks first.
 - **Add buttons** at the bottom of Keys, Port forwarding and ZeroTier, instead of in the ⋮ menu.
+- Host pings refresh every 10 seconds again; a host that does not answer shows just an empty dot.
 - The unused "predictive back" setting is gone.
 
 ## 0.7.5

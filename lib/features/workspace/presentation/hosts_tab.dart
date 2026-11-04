@@ -71,7 +71,7 @@ class _HostsViewState extends ConsumerState<_HostsView> {
   void initState() {
     super.initState();
     // Pings refresh while the list is shown (the tab is unmounted when parked).
-    _ping = Timer.periodic(const Duration(seconds: 5), (_) => ref.invalidate(hostPingProvider));
+    _ping = Timer.periodic(const Duration(seconds: 10), (_) => ref.invalidate(hostPingProvider));
   }
 
   @override
@@ -224,16 +224,27 @@ class _Ping extends ConsumerWidget {
       (id: c.id, host: c.host, port: c.port, network: c.zerotierNetwork, viaJump: c.jumpHostId != null),
     ));
     // While a refresh runs the previous result stays shown.
-    final (Color color, String label) = switch (ping.value) {
-      null => (theme.colorScheme.outlineVariant, '…'),
-      Ping(measured: false) => (theme.colorScheme.outline, ''),
-      Ping(rtt: null) => (theme.colorScheme.error, context.l10n.pingFailed),
-      Ping(:final rtt?) => (pingColor(rtt.inMilliseconds), context.l10n.pingMs(rtt.inMilliseconds)),
+    final waiting = theme.colorScheme.outlineVariant;
+    final (Color color, String label, bool hollow) = switch (ping.value) {
+      null => (waiting, '…', false),
+      Ping(measured: false) => (theme.colorScheme.outline, '', false),
+      // No reply: just an outline in the "waiting" colour, no text (the reason is in the tooltip).
+      Ping(rtt: null) => (waiting, '', true),
+      Ping(:final rtt?) => (pingColor(rtt.inMilliseconds), context.l10n.pingMs(rtt.inMilliseconds), false),
     };
+    final dot = Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        color: hollow ? null : color,
+        border: hollow ? Border.all(color: color, width: 1.5) : null,
+        shape: BoxShape.circle,
+      ),
+    );
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        if (hollow) Tooltip(message: context.l10n.pingFailed, child: dot) else dot,
         if (label.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(label, maxLines: 1, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
