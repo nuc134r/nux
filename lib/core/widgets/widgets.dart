@@ -89,13 +89,15 @@ class StartEllipsisText extends StatelessWidget {
         final style = DefaultTextStyle.of(context).style.merge(this.style);
         final scaler = MediaQuery.textScalerOf(context);
         bool fits(String s) {
+          // Laid out unconstrained: its natural width must fit (a path has break points, so a width-limited
+          // layout could wrap it instead of overflowing).
           final painter = TextPainter(
             text: TextSpan(text: s, style: style),
             maxLines: 1,
             textDirection: Directionality.of(context),
             textScaler: scaler,
-          )..layout(maxWidth: constraints.maxWidth);
-          final ok = !painter.didExceedMaxLines;
+          )..layout();
+          final ok = painter.width <= constraints.maxWidth;
           painter.dispose();
           return ok;
         }

@@ -7,7 +7,7 @@ void main() {
     const path = '/home/dev/projects/very/deep/folder/structure/lib/src';
     await tester.pumpWidget(
       const MaterialApp(
-        home: Center(child: SizedBox(width: 160, child: StartEllipsisText(path))),
+        home: Scaffold(body: Center(child: SizedBox(width: 160, child: StartEllipsisText(path)))),
       ),
     );
     final shown = tester.widget<Text>(find.byType(Text)).data!;
