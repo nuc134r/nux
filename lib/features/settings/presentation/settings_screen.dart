@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nux_backend/nux_backend.dart' show posix;
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -135,11 +139,7 @@ class SettingsScreen extends ConsumerWidget {
                 leading: const Icon(Icons.receipt_long_outlined),
                 title: Text(l10n.shareLog),
                 subtitle: Text(l10n.shareLogHint),
-                onTap: () {
-                  final text = ref.read(logProvider).export();
-                  if (text.isEmpty) return showSnack(context, l10n.logEmpty);
-                  SharePlus.instance.share(ShareParams(text: text, subject: 'nux log'));
-                },
+                onTap: () => shareLog(context, ref),
               ),
               ListTile(
                 leading: const Icon(Icons.code),
@@ -275,21 +275,20 @@ class _BackgroundIslandState extends ConsumerState<_BackgroundIsland> {
       required String okText,
       required String badText,
       required Future<void> Function() allow,
-    }) =>
-        ListTile(
-          leading: Icon(icon, color: ok == false ? error : null),
-          title: Text(title),
-          subtitle: Text(ok == false ? badText : okText),
-          trailing: ok == false
-              ? FilledButton.tonal(
-                  onPressed: () async {
-                    await allow();
-                    await _refresh();
-                  },
-                  child: Text(l10n.allow),
-                )
-              : null,
-        );
+    }) => ListTile(
+      leading: Icon(icon, color: ok == false ? error : null),
+      title: Text(title),
+      subtitle: Text(ok == false ? badText : okText),
+      trailing: ok == false
+          ? FilledButton.tonal(
+              onPressed: () async {
+                await allow();
+                await _refresh();
+              },
+              child: Text(l10n.allow),
+            )
+          : null,
+    );
     return Island(
       title: l10n.backgroundChannel,
       children: [
@@ -314,4 +313,21 @@ class _BackgroundIslandState extends ConsumerState<_BackgroundIsland> {
       ],
     );
   }
+}
+
+/// Shares the log (this and earlier launches, hosts masked) as a text file.
+Future<void> shareLog(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final text = ref.read(logProvider).export();
+  if (text.isEmpty) return showSnack(context, l10n.logEmpty);
+  final stamp = DateTime.now().toIso8601String().replaceAll(RegExp(r'[:.]'), '-').substring(0, 19);
+  final file = File('${(await getTemporaryDirectory()).path}/nux-log-$stamp.txt');
+  await file.writeAsString(text);
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [XFile(file.path, mimeType: 'text/plain')],
+      subject: 'nux log',
+      fileNameOverrides: [posix.basename(file.path)],
+    ),
+  );
 }

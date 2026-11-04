@@ -2201,7 +2201,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareLogHint.
   ///
   /// In en, this message translates to:
-  /// **'What nux did since it started, with hosts and addresses hidden'**
+  /// **'What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden'**
   String get shareLogHint;
 
   /// No description provided for @show.

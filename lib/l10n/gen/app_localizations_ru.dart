@@ -1307,7 +1307,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareLogHint =>
-      'Что делал nux с момента запуска; хосты и адреса скрыты';
+      'Что делал nux, включая прошлые запуски и сбои, текстовым файлом со скрытыми хостами и адресами';
 
   @override
   String get show => 'Показать';

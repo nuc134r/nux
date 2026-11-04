@@ -1286,7 +1286,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareLogHint =>
-      'What nux did since it started, with hosts and addresses hidden';
+      'What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden';
 
   @override
   String get show => 'Show';

@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.3
+
+- **The log is kept across launches** (up to about 2 MB) and **crashes are written to it** the moment they happen, so they are still there after nux restarts. Settings → Share log sends it as a text file, with hosts and addresses hidden.
+
 ## 0.9.2
 
 - **Quick open is fast in big projects**: the file list is remembered between openings (refreshed in the background), and matching runs off the main thread while you type.

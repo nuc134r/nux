@@ -838,7 +838,7 @@
   "settings": "Settings",
   "share": "Share",
   "shareLog": "Share log",
-  "shareLogHint": "What nux did since it started, with hosts and addresses hidden",
+  "shareLogHint": "What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden",
   "show": "Show",
   "showAsText": "Show as text",
   "showHiddenFiles": "Show hidden files",
