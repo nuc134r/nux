@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 import 'controller.dart';
+import 'start_ellipsis_text.dart';
 import 'switcher_tab.dart';
 
 /// Builds the header row for [tab]; null [tab] means the grid is shown.
@@ -247,7 +248,11 @@ class _TabSwitcherState extends State<TabSwitcher> {
             ListTile(
               leading: Icon(tab.icon ?? Icons.tab),
               title: Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-              subtitle: tab.subtitle == null ? null : Text(tab.subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis),
+              subtitle: tab.subtitle == null
+                  ? null
+                  : tab.subtitle!.contains('/')
+                  ? StartEllipsisText(tab.subtitle!)
+                  : Text(tab.subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
             const Divider(height: 1),
             for (final a in extra)
@@ -752,12 +757,18 @@ class _TabCard extends StatelessWidget {
             if (tab.subtitle != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 4),
-                child: Text(
-                  tab.subtitle!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
-                ),
+                // Paths keep their end (the folder), cutting the start.
+                child: tab.subtitle!.contains('/')
+                    ? StartEllipsisText(
+                        tab.subtitle!,
+                        style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                      )
+                    : Text(
+                        tab.subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                      ),
               ),
             Expanded(
               child: Padding(

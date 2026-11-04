@@ -8,7 +8,6 @@ import 'package:tab_switcher/tab_switcher.dart';
 import '../../../app/router.dart';
 import '../../../core/background/background_providers.dart';
 import '../../../core/widgets/nux_menu.dart';
-import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../forwarding/data/forwarding_providers.dart';

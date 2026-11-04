@@ -4,6 +4,7 @@
 library;
 
 export 'src/controller.dart';
+export 'src/start_ellipsis_text.dart';
 export 'src/switcher_tab.dart';
 export 'src/tab_count_button.dart';
 export 'src/tab_switcher.dart';

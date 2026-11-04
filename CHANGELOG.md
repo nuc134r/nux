@@ -9,6 +9,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Branches**: tap the branch on the workspace card to switch or create one.
 - **Pull, Push and Fetch** in the workspace card's ⋮. When the branches have diverged, nux explains and asks: rebase or merge. A new branch is offered to be published. git never waits for a password it cannot get.
 - **Fixed: tabs sometimes could not be switched** from the overview (taking the preview of an unpainted tab failed and stopped the switch).
+- File paths on the tab overview's cards keep their end visible too (`…/lib/src`).
 - Fixed an error when the workspace card's menu stayed open while the drawer closed.
 
 ## 0.9.5
