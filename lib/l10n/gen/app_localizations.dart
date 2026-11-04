@@ -1838,6 +1838,12 @@ abstract class AppLocalizations {
   /// **'No workspace'**
   String get noWorkspace;
 
+  /// No description provided for @noWorkspaceCard.
+  ///
+  /// In en, this message translates to:
+  /// **'The open tabs belong to no workspace'**
+  String get noWorkspaceCard;
+
   /// No description provided for @noWorkspaceHint.
   ///
   /// In en, this message translates to:

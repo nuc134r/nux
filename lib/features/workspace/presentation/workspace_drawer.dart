@@ -70,42 +70,73 @@ class _NoWorkspace extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final all = ref.watch(workspacesProvider).value ?? const <Workspace>[];
     final hosts = {for (final c in ref.watch(connectionsProvider).value ?? const <Connection>[]) c.id: c.name};
     return ListView(
       padding: const EdgeInsets.only(bottom: 16),
       children: [
-        _Card(
-          title: l10n.noWorkspace,
-          subtitle: l10n.noWorkspaceHint,
-          menu: (_) => [
-            NuxMenuAction(icon: Icons.add, label: l10n.newWorkspace, onSelected: () => newWorkspace(context, ref)),
-          ],
-        ),
-        if (all.isNotEmpty) SectionTitle(l10n.workspaces),
+        _Card(title: l10n.noWorkspace, subtitle: l10n.noWorkspaceCard),
+        if (all.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 16, 6),
+            child: Text(l10n.workspaces, style: theme.textTheme.titleSmall?.copyWith(color: scheme.primary)),
+          ),
         for (final w in all)
-          ListTile(
-            leading: const Icon(Icons.folder_special_outlined),
-            title: Text(w.name),
-            subtitle: Text(
-              '${hosts[w.connectionId] ?? ''} · ${w.rootPath}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+            child: Material(
+              color: scheme.surfaceContainer,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => ref.read(workspaceSwitcherProvider).switchTo(w.id),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.folder_special_outlined, color: scheme.primary),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              w.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleSmall,
+                            ),
+                            StartEllipsisText(
+                              '${hosts[w.connectionId] ?? ''} · ${w.rootPath}',
+                              style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            onTap: () => ref.read(workspaceSwitcherProvider).switchTo(w.id),
           ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
           child: FilledButton.tonalIcon(
             icon: const Icon(Icons.add),
             label: Text(l10n.newWorkspace),
             onPressed: () => newWorkspace(context, ref),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Text(l10n.noWorkspaceHint, style: theme.textTheme.bodySmall),
-        ),
+        // What a workspace is: only while there is none yet.
+        if (all.isEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Text(
+              l10n.noWorkspaceHint,
+              style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ),
       ],
     );
   }
@@ -113,12 +144,14 @@ class _NoWorkspace extends ConsumerWidget {
 
 /// The workspace's name, host and folder, and its branch, with ⋮ for switching and managing.
 class _Card extends StatelessWidget {
-  const _Card({required this.title, this.subtitle, this.footer, required this.menu});
+  const _Card({required this.title, this.subtitle, this.footer, this.menu});
 
   final String title;
   final String? subtitle;
   final Widget? footer;
-  final List<NuxMenuItem> Function(BuildContext) menu;
+
+  /// Its ⋮ menu; none when null.
+  final List<NuxMenuItem> Function(BuildContext)? menu;
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +182,7 @@ class _Card extends StatelessWidget {
               ],
             ),
           ),
-          NuxMenuButton(tooltip: context.l10n.more, items: menu),
+          if (menu != null) NuxMenuButton(tooltip: context.l10n.more, items: menu!) else const SizedBox(width: 12),
         ],
       ),
     );

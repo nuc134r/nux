@@ -40,7 +40,8 @@ void main() {
 
     await tester.tap(find.byTooltip('More').first);
     await settle(tester);
-    expect(find.text('Back'), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget, reason: 'Back, Forward and Reload on one row');
+    expect(find.byTooltip('Reload'), findsOneWidget);
     expect(find.text('Open in another app'), findsOneWidget);
   });
 }

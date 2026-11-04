@@ -94,14 +94,25 @@ class BrowserTab extends NuxTab {
     final l10n = context.l10n;
     final c = controller;
     return [
-      NuxMenuAction(icon: Icons.arrow_back, label: l10n.goBack, enabled: c != null, onSelected: () => c?.goBack()),
-      NuxMenuAction(
-        icon: Icons.arrow_forward,
-        label: l10n.goForward,
-        enabled: c != null,
-        onSelected: () => c?.goForward(),
-      ),
-      NuxMenuAction(icon: Icons.refresh, label: l10n.reloadPage, enabled: c != null, onSelected: () => c?.reload()),
+      // Back, Forward and Reload on one line.
+      NuxMenuCustom((menuContext) {
+        Widget button(IconData icon, String tooltip, Future<void> Function()? action) => IconButton(
+          tooltip: tooltip,
+          icon: Icon(icon),
+          onPressed: c == null || action == null ? null : () => Navigator.of(menuContext).pop<VoidCallback>(action),
+        );
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              button(Icons.arrow_back, l10n.goBack, c?.goBack),
+              button(Icons.arrow_forward, l10n.goForward, c?.goForward),
+              button(Icons.refresh, l10n.reloadPage, c?.reload),
+            ],
+          ),
+        );
+      }),
       const NuxMenuDivider(),
       NuxMenuAction(
         icon: Icons.open_in_new,

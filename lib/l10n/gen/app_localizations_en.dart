@@ -1080,6 +1080,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noWorkspace => 'No workspace';
 
   @override
+  String get noWorkspaceCard => 'The open tabs belong to no workspace';
+
+  @override
   String get noWorkspaceHint =>
       'A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.';
 

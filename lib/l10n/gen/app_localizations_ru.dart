@@ -1096,6 +1096,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noWorkspace => 'Без рабочей области';
 
   @override
+  String get noWorkspaceCard =>
+      'Открытые вкладки не относятся ни к одной рабочей области';
+
+  @override
   String get noWorkspaceHint =>
       'Рабочая область — папка на хосте со своими вкладками, деревом проекта и статусом git. Откройте её из файлового менеджера (⋮ → Открыть как рабочую область) или добавьте здесь.';
 

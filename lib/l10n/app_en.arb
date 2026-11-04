@@ -733,6 +733,7 @@
   "noTabsHint": "Open the hosts list or connect to a server.",
   "noTransfers": "No transfers",
   "noWorkspace": "No workspace",
+  "noWorkspaceCard": "The open tabs belong to no workspace",
   "noWorkspaceHint": "A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.",
   "noWrap": "Don't wrap lines",
   "none": "None",

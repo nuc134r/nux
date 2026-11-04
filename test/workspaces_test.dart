@@ -187,4 +187,26 @@ void main() {
     expect(c.read(workspaceSwitcherProvider).currentId, id);
     expect(c.read(workspaceProvider).tabs.single, isA<FilesTab>());
   });
+
+  testWidgets('empty overview: one Home button; drawer without a workspace explains it once', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(c.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    final tabs = c.read(workspaceProvider);
+    tabs.gridOpen = true;
+    await settle(tester);
+    await tabs.close(tabs.tabs.single, force: true);
+    await settle(tester);
+    expect(find.widgetWithText(FilledButton, 'Home'), findsOneWidget, reason: 'the footer goes with the last tab');
+
+    await tester.tap(find.byTooltip('Workspaces'));
+    await settle(tester);
+    expect(find.text('No workspace'), findsOneWidget);
+    expect(find.textContaining('A workspace is a folder'), findsOneWidget);
+    expect(find.descendant(of: find.byType(Drawer), matching: find.byTooltip('More')), findsNothing);
+  });
 }

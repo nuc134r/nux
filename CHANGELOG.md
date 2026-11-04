@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.9
+
+- **Browser**: Back, Forward and Reload sit on one row at the top of the menu.
+- **Workspace drawer without a workspace** is tidier: a short card, your workspaces as tiles, one New workspace button, and the explanation only while you have none.
+- Fixed two Home buttons on the empty tab overview.
+
 ## 0.9.8
 
 - **Calmer zoom on the tab overview**: only the tab's own picture grows out of (or shrinks into) its card; the other cards and their outlines stay where they are.

@@ -312,25 +312,31 @@ class _GridFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    // Without tabs the empty state has the button, in the middle.
-    if (ref.watch(workspaceProvider).isEmpty) return const SizedBox.shrink();
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-        child: Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          alignment: WrapAlignment.center,
-          children: [
-            FilledButton.tonalIcon(
-              icon: const Icon(Icons.home_outlined),
-              label: Text(l10n.home),
-              onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
+    final tabs = ref.watch(workspaceProvider);
+    // Without tabs the empty state has the button, in the middle. Listened to: the footer is built once and
+    // kept while tabs close, so it must notice the last one going.
+    return ListenableBuilder(
+      listenable: tabs,
+      builder: (context, _) => tabs.isEmpty
+          ? const SizedBox.shrink()
+          : SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.home_outlined),
+                      label: Text(l10n.home),
+                      onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
