@@ -45,22 +45,26 @@ final forwardingManagerProvider = Provider((ref) {
         final parts = <RunningForward>[];
         try {
           if (rule.tcp) {
-            parts.add(await startZeroTierTcpForward(
-              bindHost: rule.bindHost,
-              bindPort: rule.bindPort,
-              targetHost: address,
-              targetPort: rule.targetPort,
-              onChange: onChange,
-            ));
+            parts.add(
+              await startZeroTierTcpForward(
+                bindHost: rule.bindHost,
+                bindPort: rule.bindPort,
+                targetHost: address,
+                targetPort: rule.targetPort,
+                onChange: onChange,
+              ),
+            );
           }
           if (rule.udp) {
-            parts.add(await startZeroTierUdpForward(
-              bindHost: rule.bindHost,
-              bindPort: rule.bindPort,
-              targetHost: address,
-              targetPort: rule.targetPort,
-              onChange: onChange,
-            ));
+            parts.add(
+              await startZeroTierUdpForward(
+                bindHost: rule.bindHost,
+                bindPort: rule.bindPort,
+                targetHost: address,
+                targetPort: rule.targetPort,
+                onChange: onChange,
+              ),
+            );
           }
         } catch (_) {
           for (final p in parts) {

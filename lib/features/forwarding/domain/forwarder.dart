@@ -187,7 +187,13 @@ class OpenConnections {
   }
 }
 
-void _pipe(Socket socket, SSHForwardChannel channel, ForwardStats stats, OpenConnections open, void Function()? onChange) {
+void _pipe(
+  Socket socket,
+  SSHForwardChannel channel,
+  ForwardStats stats,
+  OpenConnections open,
+  void Function()? onChange,
+) {
   var closed = false;
   late final void Function() close;
   close = () {

@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addKey => 'Add key';
 
   @override
+  String get addPortForwarding => 'Add port forwarding';
+
+  @override
   String addressVia(String address, String jump) {
     return '$address via $jump';
   }
@@ -1132,6 +1135,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get portSuggested => 'Suggested: not used by other forwardings';
+
+  @override
+  String portsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ports',
+      one: '$count port',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get previous => 'Previous';

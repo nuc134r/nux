@@ -22,6 +22,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addKey => 'Добавить ключ';
 
   @override
+  String get addPortForwarding => 'Добавить проброс порта';
+
+  @override
   String addressVia(String address, String jump) {
     return '$address через $jump';
   }
@@ -1149,6 +1152,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get portSuggested => 'Предложен: не занят другими пробросами';
+
+  @override
+  String portsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count порта',
+      many: '$count портов',
+      few: '$count порта',
+      one: '$count порт',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get previous => 'Предыдущее';

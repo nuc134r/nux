@@ -4,6 +4,7 @@
   "addForward": "Add forwarding",
   "addHost": "Add host",
   "addKey": "Add key",
+  "addPortForwarding": "Add port forwarding",
   "addressVia": "{address} via {jump}",
   "@addressVia": {
     "placeholders": {
@@ -764,6 +765,14 @@
     }
   },
   "portSuggested": "Suggested: not used by other forwardings",
+  "portsCount": "{count, plural, one{{count} port} other{{count} ports}}",
+  "@portsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "previous": "Previous",
   "protection": "Protection",
   "publicKey": "Public key",

@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/theme.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
@@ -17,7 +16,21 @@ import '../data/forwarding_providers.dart';
 import '../domain/forward_rule.dart';
 
 /// Ports offered as one-tap destinations.
-const _services = [('PostgreSQL', 5432), ('MySQL', 3306), ('Redis', 6379), ('HTTP', 80), ('HTTP', 8080), ('SSH', 22)];
+const _services = [
+  ('SSH', 22),
+  ('HTTP', 80),
+  ('HTTPS', 443),
+  ('HTTP', 8080),
+  ('RDP', 3389),
+  ('VNC', 5900),
+  ('SMB', 445),
+  ('PostgreSQL', 5432),
+  ('MySQL', 3306),
+  ('Redis', 6379),
+  ('MongoDB', 27017),
+  ('Dev server', 3000),
+  ('Minecraft', 25565),
+];
 
 /// Adds or edits a forwarding of one host (the host is fixed: forwardings belong to it).
 class ForwardRuleEditor extends ConsumerStatefulWidget {
@@ -95,21 +108,21 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
   }
 
   ForwardRule _draft({int? bindPort}) => ForwardRule(
-        id: widget.ruleId ?? '',
-        createdAt: DateTime(2000),
-        updatedAt: DateTime(2000),
-        connectionId: _connectionId,
-        kind: _kind.name,
-        label: _label.text.trim(),
-        bindHost: _shared ? '0.0.0.0' : '127.0.0.1',
-        bindPort: bindPort ?? int.tryParse(_bindPort.text.trim()) ?? 0,
-        targetHost: _kind == ForwardKind.dynamic ? '' : _targetHost.text.trim(),
-        targetPort: _kind == ForwardKind.dynamic ? 0 : int.tryParse(_targetPort.text.trim()) ?? 0,
-        tcp: _tcp || !_udpAllowed,
-        udp: _udp && _udpAllowed,
-        autoStart: _autoStart,
-        sortOrder: _original?.sortOrder ?? 0,
-      );
+    id: widget.ruleId ?? '',
+    createdAt: DateTime(2000),
+    updatedAt: DateTime(2000),
+    connectionId: _connectionId,
+    kind: _kind.name,
+    label: _label.text.trim(),
+    bindHost: _shared ? '0.0.0.0' : '127.0.0.1',
+    bindPort: bindPort ?? int.tryParse(_bindPort.text.trim()) ?? 0,
+    targetHost: _kind == ForwardKind.dynamic ? '' : _targetHost.text.trim(),
+    targetPort: _kind == ForwardKind.dynamic ? 0 : int.tryParse(_targetPort.text.trim()) ?? 0,
+    tcp: _tcp || !_udpAllowed,
+    udp: _udp && _udpAllowed,
+    autoStart: _autoStart,
+    sortOrder: _original?.sortOrder ?? 0,
+  );
 
   /// UDP goes straight over ZeroTier, so only to a port of a ZeroTier host itself.
   bool get _udpAllowed => _host?.zerotierNetwork != null && _kind == ForwardKind.local && isLoopback(_targetHost.text);
@@ -149,22 +162,24 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
       return;
     }
     final repo = ref.read(forwardRuleRepositoryProvider);
-    final id = await repo.save(ForwardRulesCompanion(
-      id: _isNew ? const Value.absent() : Value(widget.ruleId!),
-      connectionId: Value(draft.connectionId),
-      zerotierNetwork: const Value(null),
-      kind: Value(draft.kind),
-      label: Value(draft.label),
-      bindHost: Value(draft.bindHost),
-      bindPort: Value(draft.bindPort),
-      targetHost: Value(draft.targetHost),
-      targetPort: Value(draft.targetPort),
-      tcp: Value(draft.tcp),
-      udp: Value(draft.udp),
-      autoStart: Value(draft.autoStart),
-      createdAt: _isNew ? Value(DateTime.now()) : const Value.absent(),
-      updatedAt: Value(DateTime.now()),
-    ));
+    final id = await repo.save(
+      ForwardRulesCompanion(
+        id: _isNew ? const Value.absent() : Value(widget.ruleId!),
+        connectionId: Value(draft.connectionId),
+        zerotierNetwork: const Value(null),
+        kind: Value(draft.kind),
+        label: Value(draft.label),
+        bindHost: Value(draft.bindHost),
+        bindPort: Value(draft.bindPort),
+        targetHost: Value(draft.targetHost),
+        targetPort: Value(draft.targetPort),
+        tcp: Value(draft.tcp),
+        udp: Value(draft.udp),
+        autoStart: Value(draft.autoStart),
+        createdAt: _isNew ? Value(DateTime.now()) : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
     final saved = await repo.get(id);
     if (saved != null) await ref.read(forwardingManagerProvider).restartIfOn(saved);
     if (mounted) context.pop();
@@ -204,7 +219,6 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
     final onZeroTier = host?.zerotierNetwork != null;
     final digits = [FilteringTextInputFormatter.digitsOnly];
     final targetPort = int.tryParse(_targetPort.text.trim());
-    final mono = const TextStyle(fontFamily: monoFont, fontFeatures: noLigatures);
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
@@ -283,7 +297,9 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                             autocorrect: false,
                             keyboardType: TextInputType.url,
                             decoration: InputDecoration(
-                              labelText: _kind == ForwardKind.remote ? l10n.destinationHere : l10n.destinationFrom(hostName),
+                              labelText: _kind == ForwardKind.remote
+                                  ? l10n.destinationHere
+                                  : l10n.destinationFrom(hostName),
                             ),
                             validator: (v) => (v ?? '').trim().isEmpty ? l10n.required : null,
                           ),
@@ -295,7 +311,6 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                             controller: _targetPort,
                             keyboardType: TextInputType.number,
                             inputFormatters: digits,
-                            style: mono,
                             decoration: InputDecoration(labelText: l10n.portField),
                             validator: _portError,
                             onChanged: (v) => _suggestBindPort(int.tryParse(v)),
@@ -333,14 +348,13 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                     controller: _bindPort,
                     keyboardType: TextInputType.number,
                     inputFormatters: digits,
-                    style: mono,
                     decoration: InputDecoration(
                       labelText: _kind == ForwardKind.remote ? l10n.portOnHost(hostName) : l10n.portHere,
                       helperText: _kind == ForwardKind.dynamic
                           ? l10n.socksPortHint
                           : _suggested
-                              ? l10n.portSuggested
-                              : null,
+                          ? l10n.portSuggested
+                          : null,
                       helperMaxLines: 2,
                     ),
                     validator: (v) => _portError(v, local: _kind != ForwardKind.remote),
@@ -352,11 +366,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                     decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(12)),
                     child: Text(
                       _summary(hostName),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: monoFont,
-                        fontFeatures: noLigatures,
-                        color: scheme.onSurfaceVariant,
-                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
                     ),
                   ),
                   const SizedBox(height: 16),

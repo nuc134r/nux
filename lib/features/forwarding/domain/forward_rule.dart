@@ -38,8 +38,8 @@ extension ForwardRuleX on ForwardRule {
   /// the host itself; anything else (another destination, remote, SOCKS) needs SSH.
   ForwardRoute routeVia(Connection? host) =>
       host?.zerotierNetwork != null && forwardKind == ForwardKind.local && isLoopback(targetHost)
-          ? ForwardRoute.zeroTier
-          : ForwardRoute.ssh;
+      ? ForwardRoute.zeroTier
+      : ForwardRoute.ssh;
 
   /// `8080 → 8020`, `::1234 → otherserver:8020`, `1234 ← 8020`, `SOCKS 1080`.
   String describe() {

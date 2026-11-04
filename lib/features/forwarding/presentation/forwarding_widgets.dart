@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
-import '../../../app/theme.dart';
 import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
@@ -15,13 +14,13 @@ import '../domain/forwarder.dart';
 import '../domain/forwarding_manager.dart';
 
 String forwardErrorText(AppLocalizations l10n, Object error, ForwardRule rule) => switch (error) {
-      ForwardException(error: ForwardError.portInUse) => l10n.forwardPortInUse(rule.bindPort),
-      ForwardException(error: ForwardError.bindDenied) => l10n.forwardBindDenied(rule.bindPort),
-      ForwardException(error: ForwardError.remoteRefused) => l10n.forwardRemoteRefused,
-      ForwardException(:final message) => l10n.errorGeneric(message),
-      SshConnectException() => sshErrorText(l10n, error),
-      _ => l10n.errorGeneric('$error'),
-    };
+  ForwardException(error: ForwardError.portInUse) => l10n.forwardPortInUse(rule.bindPort),
+  ForwardException(error: ForwardError.bindDenied) => l10n.forwardBindDenied(rule.bindPort),
+  ForwardException(error: ForwardError.remoteRefused) => l10n.forwardRemoteRefused,
+  ForwardException(:final message) => l10n.errorGeneric(message),
+  SshConnectException() => sshErrorText(l10n, error),
+  _ => l10n.errorGeneric('$error'),
+};
 
 /// A host's forwardings, shown under its tile: no background, one row each, then "Add forwarding".
 class HostForwardings extends StatelessWidget {
@@ -33,20 +32,27 @@ class HostForwardings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 2, 12, 6),
+    // A subtle panel hanging from the host tile: square on top, rounded at the bottom.
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      padding: const EdgeInsets.fromLTRB(4, 2, 4, 8),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLow,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(14)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final r in rules) ...[
             ForwardingRow(rule: r),
-            Divider(height: 1, color: scheme.outlineVariant.withValues(alpha: .5)),
+            Divider(height: 1, indent: 12, endIndent: 12, color: scheme.outlineVariant.withValues(alpha: .5)),
           ],
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(40)),
               icon: const Icon(Icons.add, size: 18),
-              label: Text(context.l10n.addForward),
+              label: Text(context.l10n.addPortForwarding),
               onPressed: () => context.push(Routes.newForward(host.id)),
             ),
           ),
@@ -71,11 +77,9 @@ class ForwardingRow extends ConsumerWidget {
     final name = rule.label.isNotEmpty
         ? rule.label
         : rule.forwardKind == ForwardKind.dynamic
-            ? null
-            : wellKnownPorts[rule.targetPort];
-    final mono = theme.textTheme.bodyMedium?.copyWith(
-      fontFamily: monoFont,
-      fontFeatures: noLigatures,
+        ? null
+        : wellKnownPorts[rule.targetPort];
+    final ports = theme.textTheme.bodyMedium?.copyWith(
       color: name == null ? scheme.onSurface : scheme.onSurfaceVariant,
     );
     return ListenableBuilder(
@@ -108,10 +112,10 @@ class ForwardingRow extends ConsumerWidget {
                             spacing: 6,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Text(rule.describe(), style: mono),
-                              if (rule.udp) ...[
+                              Text(rule.describe(), style: ports),
+                              if (rule.forwardKind != ForwardKind.dynamic) ...[
                                 if (rule.tcp) const _Badge('TCP'),
-                                const _Badge('UDP'),
+                                if (rule.udp) const _Badge('UDP'),
                               ],
                             ],
                           ),
@@ -135,7 +139,11 @@ class ForwardingRow extends ConsumerWidget {
                       spacing: 6,
                       runSpacing: 4,
                       children: [
-                        _Chip(l10n.forwardConnections(rule.forwardKind == ForwardKind.dynamic ? stats.connections : stats.open)),
+                        _Chip(
+                          l10n.forwardConnections(
+                            rule.forwardKind == ForwardKind.dynamic ? stats.connections : stats.open,
+                          ),
+                        ),
                         _Chip('↓ ${formatSize(stats.bytesIn)}'),
                         _Chip('↑ ${formatSize(stats.bytesOut)}'),
                       ],
@@ -156,8 +164,9 @@ Widget? forwardingsPeek(BuildContext context, ForwardingManager manager, List<Fo
   if (on.isEmpty) return null;
   final theme = Theme.of(context);
   final scheme = theme.colorScheme;
-  var bytesIn = 0, bytesOut = 0;
+  var bytesIn = 0, bytesOut = 0, connections = 0;
   for (final r in on) {
+    connections += manager.status(r.id).stats?.open ?? 0;
     bytesIn += manager.status(r.id).stats?.bytesIn ?? 0;
     bytesOut += manager.status(r.id).stats?.bytesOut ?? 0;
   }
@@ -178,7 +187,10 @@ Widget? forwardingsPeek(BuildContext context, ForwardingManager manager, List<Fo
               decoration: BoxDecoration(color: failed ? Colors.amber : Colors.green, shape: BoxShape.circle),
             ),
             const SizedBox(width: 8),
-            Text(context.l10n.forwardingsOn(on.length), style: theme.textTheme.bodySmall),
+            Text(
+              '${context.l10n.portsCount(on.length)}, ${context.l10n.forwardConnections(connections)}',
+              style: theme.textTheme.bodySmall,
+            ),
             const SizedBox(width: 12),
             Text('↓ ${formatSize(bytesIn)}', style: muted),
             const SizedBox(width: 10),
@@ -203,7 +215,12 @@ class _Badge extends StatelessWidget {
       decoration: BoxDecoration(color: scheme.secondaryContainer, borderRadius: BorderRadius.circular(4)),
       child: Text(
         text,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: .4, color: scheme.onSecondaryContainer),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          letterSpacing: .4,
+          color: scheme.onSecondaryContainer,
+        ),
       ),
     );
   }

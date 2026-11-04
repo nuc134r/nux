@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Add key'**
   String get addKey;
 
+  /// No description provided for @addPortForwarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Add port forwarding'**
+  String get addPortForwarding;
+
   /// No description provided for @addressVia.
   ///
   /// In en, this message translates to:
@@ -1939,6 +1945,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Suggested: not used by other forwardings'**
   String get portSuggested;
+
+  /// No description provided for @portsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} port} other{{count} ports}}'**
+  String portsCount(int count);
 
   /// No description provided for @previous.
   ///

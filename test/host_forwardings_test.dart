@@ -39,7 +39,7 @@ void main() {
     await tester.tap(find.byTooltip('Forwardings'));
     await settle(tester);
     expect(find.text('Database'), findsOneWidget);
-    expect(find.text('Add forwarding'), findsOneWidget);
+    expect(find.text('Add port forwarding'), findsOneWidget);
 
     await tester.tap(find.byType(Switch));
     await settle(tester);
@@ -49,8 +49,8 @@ void main() {
     await tester.tap(find.byTooltip('Forwardings'));
     await settle(tester);
     expect(find.text('Database'), findsNothing);
-    expect(find.text('1 forwarding on'), findsOneWidget, reason: 'the peek under the closed host');
-    await tester.tap(find.text('1 forwarding on'));
+    expect(find.text('1 port, 2 connections'), findsOneWidget, reason: 'the peek under the closed host');
+    await tester.tap(find.text('1 port, 2 connections'));
     await settle(tester);
     expect(find.text('Database'), findsOneWidget);
 

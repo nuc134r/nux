@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.1
+
+- **Port forwarding under a host, tidied**: a plain chevron at the end of the host opens them in a subtle panel attached below it; TCP/UDP badges on every forwarding; regular font; a full-width "Add port forwarding" button.
+- While they are hidden, the strip under the host reads like "2 ports, 3 connections" with the traffic.
+- More one-tap ports in the editor: SSH, HTTP, HTTPS, RDP, VNC, SMB, PostgreSQL, MySQL, Redis, MongoDB, dev server, Minecraft.
+
 ## 0.9.0
 
 - **Workspaces**: a folder on a host with its own tabs. Open one from a file browser (⋮ → Open as workspace) or from ☰ on the tab overview. Switching workspaces swaps all tabs; the others keep running in the background and come back as you left them, also after a restart.

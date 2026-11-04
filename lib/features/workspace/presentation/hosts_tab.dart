@@ -156,10 +156,12 @@ class _HostTile extends ConsumerWidget {
     final c = connection;
     final manager = ref.watch(forwardingManagerProvider);
     final tile = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      padding: EdgeInsets.fromLTRB(12, 3, 12, open ? 0 : 3),
       child: Material(
         color: scheme.surfaceContainer,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(
+          borderRadius: open ? const BorderRadius.vertical(top: Radius.circular(14)) : BorderRadius.circular(14),
+        ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           children: [
@@ -201,7 +203,7 @@ class _HostTile extends ConsumerWidget {
                       else if (state == SshState.connected)
                         Icon(Icons.link, size: 18, color: scheme.primary, semanticLabel: context.l10n.connected),
                       const SizedBox(width: 4),
-                      _ForwardingsButton(count: rules.length, open: open, onPressed: onToggle),
+                      _ForwardingsButton(open: open, onPressed: onToggle),
                     ],
                   ),
                 ),
@@ -398,49 +400,22 @@ class _Empty extends ConsumerWidget {
   }
 }
 
-/// ⇄ with the number of forwardings and a chevron; filled while they are shown.
+/// A chevron that slides the host's port forwardings out (turned up while they are shown).
 class _ForwardingsButton extends StatelessWidget {
-  const _ForwardingsButton({required this.count, required this.open, required this.onPressed});
+  const _ForwardingsButton({required this.open, required this.onPressed});
 
-  final int count;
   final bool open;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final color = open ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
-    return Tooltip(
-      message: context.l10n.forwardings,
-      child: Material(
-        color: open ? scheme.secondaryContainer : Colors.transparent,
-        shape: const StadiumBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: count == 0 ? 8 : 10),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.swap_horiz, size: 20, color: color),
-                  if (count > 0) ...[
-                    const SizedBox(width: 2),
-                    Text('$count', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: color)),
-                    AnimatedRotation(
-                      turns: open ? .5 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(Icons.expand_more, size: 18, color: color),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
+    return IconButton(
+      tooltip: context.l10n.forwardings,
+      onPressed: onPressed,
+      icon: AnimatedRotation(
+        turns: open ? .5 : 0,
+        duration: const Duration(milliseconds: 200),
+        child: Icon(Icons.expand_more, color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
