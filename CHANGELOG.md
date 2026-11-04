@@ -5,19 +5,17 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.9.6
 
+- **Find and replace** in the editor (⋮ → Replace while editing, or the ⇄ button in the find bar), with match case and regex.
+- **Go to line** (⋮ → Go to line).
+- **An editor key bar** while editing: Tab and outdent, arrows, Home/End, undo/redo, and the symbols code needs ({} () [] <> ; : = " ' ` / \ | & …).
+- **Changed on the server?** Saving a file someone else changed now offers Show changes: a line diff of the server's copy against yours, then Overwrite or Discard mine.
+
 - **Git in the workspace drawer** (Version control): a commit box (with Amend), **Staged** and **Changes** with a + / − on each file to stage or unstage, Stage all / Unstage all, and a tap on a file shows its diff. Long-press a change to discard it (asks first).
 - **Branches**: tap the branch on the workspace card to switch or create one.
 - **Pull, Push and Fetch** in the workspace card's ⋮. When the branches have diverged, nux explains and asks: rebase or merge. A new branch is offered to be published. git never waits for a password it cannot get.
 - **Fixed: tabs sometimes could not be switched** from the overview (taking the preview of an unpainted tab failed and stopped the switch).
 - File paths on the tab overview's cards keep their end visible too (`…/lib/src`).
 - Fixed an error when the workspace card's menu stayed open while the drawer closed.
-
-## 0.9.5
-
-- **Find and replace** in the editor (⋮ → Replace while editing, or the ⇄ button in the find bar), with match case and regex.
-- **Go to line** (⋮ → Go to line).
-- **An editor key bar** while editing: Tab and outdent, arrows, Home/End, undo/redo, and the symbols code needs ({} () [] <> ; : = " ' ` / \ | & …).
-- **Changed on the server?** Saving a file someone else changed now offers Show changes: a line diff of the server's copy against yours, then Overwrite or Discard mine.
 
 ## 0.9.4
 
