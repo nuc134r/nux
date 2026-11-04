@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/features/viewer/domain/line_diff.dart';
+import 'package:nux/features/workspace/domain/git_model.dart';
 import 'package:nux/features/workspace/domain/git_repo.dart';
 import 'package:nux/features/workspace/domain/git_status.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -113,6 +114,126 @@ void main() {
     expect(askedFor, 'https://example.com');
     expect(runner.stdin, 'me\ntok\n');
     expect(repo.credentials?.username, 'me', reason: 'kept for the next fetch');
+  });
+
+  test("history with a graph, a commit's diff, blame", () async {
+    await sh(dir.path, 'echo three >> a.txt && git commit -qam "add three" && git switch -q -c side && '
+        'echo s > s.txt && git add s.txt && git commit -qm side && git switch -q main && echo m > m.txt && '
+        'git add m.txt && git commit -qm main-work && git merge -q --no-edit side');
+    final log = await git.log();
+    expect(log.first.isMerge, isTrue);
+    expect(log.map((c) => c.subject), containsAll(['add three', 'side', 'main-work', 'init']));
+    expect(log.first.refs.join(' '), contains('main'));
+    final graph = graphLanes(log);
+    expect(graph.first.merges, isNotEmpty, reason: 'the merge draws a line to its second parent');
+    expect(graph.map((r) => r.lanes).reduce((a, b) => a > b ? a : b), 2);
+
+    final three = log.firstWhere((c) => c.subject == 'add three');
+    final files = await git.show(three.hash);
+    expect(files.single.path, 'a.txt');
+    expect(files.single.lines.whereType<DiffLine>().where((l) => l.kind == DiffKind.added).single.text, 'three');
+    expect(await git.message(three.hash), 'add three');
+    expect((await git.log(path: 'a.txt')).map((c) => c.subject), ['add three', 'init']);
+
+    final blame = await git.blame('a.txt');
+    expect(blame.map((b) => b.text), ['one', 'two', 'three']);
+    expect(blame.last.summary, 'add three');
+  });
+
+  test('stage one hunk of two', () async {
+    File('${dir.path}/long.txt').writeAsStringSync([for (var i = 0; i < 30; i++) 'line $i'].join('\n'));
+    await sh(dir.path, 'git add long.txt && git commit -qm long');
+    final lines = [for (var i = 0; i < 30; i++) 'line $i'];
+    lines[1] = 'FIRST';
+    lines[28] = 'LAST';
+    File('${dir.path}/long.txt').writeAsStringSync(lines.join('\n'));
+    final hunks = PatchHunks.parse(await git.diff('${dir.path}/long.txt'));
+    expect(hunks.hunks, hasLength(2));
+    await git.applyToIndex(hunks.patchFor(0));
+    final staged = await git.diff('${dir.path}/long.txt', staged: true);
+    expect(staged, contains('+FIRST'));
+    expect(staged, isNot(contains('+LAST')));
+    await git.applyToIndex(PatchHunks.parse(staged).patchFor(0), reverse: true);
+    expect(await git.diff('${dir.path}/long.txt', staged: true), isEmpty);
+  });
+
+  test('a merge conflict: resolve block by block, stage, continue; or abort', () async {
+    await sh(dir.path, 'git switch -q -c other && printf "one\\nTHEIRS\\n" > a.txt && git commit -qam theirs && '
+        'git switch -q main && printf "one\\nOURS\\n" > a.txt && git commit -qam ours');
+    await sh(dir.path, 'git merge -q other || true');
+    expect(await git.operation(), GitOperation.merge);
+    final s = (await git.status())!;
+    expect(s.changeOf('${dir.path}/a.txt')!.kind, GitChangeKind.conflict);
+
+    final file = ConflictFile.parse(File('${dir.path}/a.txt').readAsStringSync());
+    final block = file.blocks.single;
+    expect(block.ours, ['OURS']);
+    expect(block.theirs, ['THEIRS']);
+    block.choice = ConflictChoice.both;
+    File('${dir.path}/a.txt').writeAsStringSync(file.resolve());
+    expect(File('${dir.path}/a.txt').readAsStringSync(), 'one\nOURS\nTHEIRS\n');
+    await git.stage(['${dir.path}/a.txt']);
+    await git.continueOperation(GitOperation.merge);
+    expect(await git.operation(), isNull);
+    expect((await git.log()).first.isMerge, isTrue);
+
+    // Again, and give up this time.
+    await sh(dir.path, 'git switch -q other && printf "one\\nX\\n" > a.txt && git commit -qam x && git switch -q main && '
+        'printf "one\\nY\\n" > a.txt && git commit -qam y && (git merge -q other || true)');
+    expect(await git.operation(), GitOperation.merge);
+    await git.abortOperation(GitOperation.merge);
+    expect(await git.operation(), isNull);
+    expect(File('${dir.path}/a.txt').readAsStringSync(), 'one\nY\n');
+  });
+
+  test('stash, branches, tags, sign-off, the equivalent command', () async {
+    File('${dir.path}/a.txt').writeAsStringSync('wip\n');
+    await git.stash('work in progress');
+    expect((await git.status())!.changes, isEmpty);
+    final stashes = await git.stashes();
+    expect((stashes.single.ref, stashes.single.message.contains('work in progress')), ('stash@{0}', true));
+    await git.stashApply('stash@{0}', drop: true);
+    expect(File('${dir.path}/a.txt').readAsStringSync(), 'wip\n');
+    expect(await git.stashes(), isEmpty);
+
+    await git.stage(['${dir.path}/a.txt']);
+    await git.commit('signed', signOff: true);
+    expect(git.lastCommand, startsWith('git commit'));
+    expect(await git.message('HEAD'), contains('Signed-off-by: T <t@example.com>'));
+
+    await git.createBranch('feat');
+    File('${dir.path}/f.txt').writeAsStringSync('f\n');
+    await git.stage(['${dir.path}/f.txt']);
+    await git.commit('feature');
+    await git.switchTo('main');
+    await expectLater(git.deleteBranch('feat'), throwsA(isA<GitException>().having((e) => e.notMerged, 'notMerged', isTrue)));
+    await git.renameBranch('feat', 'feature');
+    expect(await git.branches(), containsAll(['main', 'feature']));
+    await git.deleteBranch('feature', force: true);
+    expect(await git.branches(), ['main']);
+
+    await git.createTag('v1', message: 'first');
+    await git.createTag('light');
+    expect(await git.tags(), containsAll(['v1', 'light']));
+  });
+
+  test('push preview, and force-with-lease after a rejected push', () async {
+    final remote = Directory(Directory.systemTemp.createTempSync('nux-remote2-').resolveSymbolicLinksSync());
+    addTearDown(() => remote.deleteSync(recursive: true));
+    await sh(remote.path, 'git init -q --bare -b main');
+    await sh(dir.path, 'git remote add origin ${remote.path}');
+    expect(await git.outgoing(), isNull, reason: 'no upstream yet');
+    await git.push(setUpstream: true);
+    File('${dir.path}/b.txt').writeAsStringSync('b\n');
+    await git.stage(['${dir.path}/b.txt']);
+    await git.commit('outgoing one');
+    expect((await git.outgoing())!.map((c) => c.subject), ['outgoing one']);
+    await git.push();
+    // Rewrite the pushed commit: the next push is rejected; force-with-lease goes through.
+    await git.commit('reworded', amend: true);
+    await expectLater(git.push(), throwsA(isA<GitException>().having((e) => e.rejected, 'rejected', isTrue)));
+    await git.push(force: true);
+    expect(await git.outgoing(), isEmpty);
   });
 }
 
