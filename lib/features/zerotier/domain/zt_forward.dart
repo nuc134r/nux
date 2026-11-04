@@ -40,6 +40,7 @@ class _ZtTcpForward implements RunningForward {
 
   final ServerSocket _server;
   late final StreamSubscription<Socket> _sub;
+  final _open = OpenConnections();
 
   @override
   final stats = ForwardStats();
@@ -48,17 +49,20 @@ class _ZtTcpForward implements RunningForward {
   int get port => _server.port;
 
   void _pipe(Socket socket, ZeroTierSocket zt, void Function()? onChange) {
-    stats.open++;
-    onChange?.call();
     var closed = false;
-    void close() {
+    late final void Function() close;
+    close = () {
       if (closed) return;
       closed = true;
+      _open.remove(close);
       stats.open--;
       onChange?.call();
       socket.destroy();
       zt.destroy();
-    }
+    };
+    stats.open++;
+    onChange?.call();
+    if (!_open.add(close)) return;
 
     socket.listen((d) {
       stats.bytesOut += d.length;
@@ -74,6 +78,7 @@ class _ZtTcpForward implements RunningForward {
 
   @override
   Future<void> close() async {
+    _open.closeAll();
     await _sub.cancel();
     await _server.close();
   }

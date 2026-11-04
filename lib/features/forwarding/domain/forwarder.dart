@@ -157,18 +157,51 @@ ForwardException forwardBindError(SocketException e) {
 }
 
 /// Copies both ways between a local socket and an SSH channel, counting bytes.
-void _pipe(Socket socket, SSHForwardChannel channel, ForwardStats stats, void Function()? onChange) {
-  stats.open++;
-  onChange?.call();
+/// The connections a forward carries, so stopping it ends them too (not only the listening port: a
+/// client that keeps one connection open would otherwise go on talking through a stopped forward).
+class OpenConnections {
+  final Set<void Function()> _closers = {};
+  bool _closed = false;
+
+  /// Whether the forward was stopped (a connection set up meanwhile must be dropped).
+  bool get closed => _closed;
+
+  /// Tracks a connection; returns false (and closes it) when the forward is already stopped.
+  bool add(void Function() close) {
+    if (_closed) {
+      close();
+      return false;
+    }
+    _closers.add(close);
+    return true;
+  }
+
+  void remove(void Function() close) => _closers.remove(close);
+
+  void closeAll() {
+    _closed = true;
+    for (final close in [..._closers]) {
+      close();
+    }
+    _closers.clear();
+  }
+}
+
+void _pipe(Socket socket, SSHForwardChannel channel, ForwardStats stats, OpenConnections open, void Function()? onChange) {
   var closed = false;
-  void close() {
+  late final void Function() close;
+  close = () {
     if (closed) return;
     closed = true;
+    open.remove(close);
     stats.open--;
     onChange?.call();
     socket.destroy();
     channel.close();
-  }
+  };
+  stats.open++;
+  onChange?.call();
+  if (!open.add(close)) return;
 
   socket.listen(
     (data) {
@@ -198,7 +231,7 @@ class _LocalForward implements RunningForward {
       stats.connections++;
       try {
         final channel = await client.forwardLocal(host, port);
-        _pipe(socket, channel, stats, onChange);
+        _pipe(socket, channel, stats, _open, onChange);
       } catch (_) {
         stats.failed++;
         socket.destroy();
@@ -209,6 +242,7 @@ class _LocalForward implements RunningForward {
 
   final ServerSocket _server;
   late final StreamSubscription<Socket> _sub;
+  final _open = OpenConnections();
 
   @override
   final stats = ForwardStats();
@@ -218,6 +252,7 @@ class _LocalForward implements RunningForward {
 
   @override
   Future<void> close() async {
+    _open.closeAll();
     await _sub.cancel();
     await _server.close();
   }
@@ -229,7 +264,7 @@ class _RemoteForward implements RunningForward {
       stats.connections++;
       try {
         final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 10));
-        _pipe(socket, channel, stats, onChange);
+        _pipe(socket, channel, stats, _open, onChange);
       } catch (_) {
         stats.failed++;
         channel.close();
@@ -241,6 +276,7 @@ class _RemoteForward implements RunningForward {
   final SSHClient _client;
   final SSHRemoteForward _remote;
   late final StreamSubscription<SSHForwardChannel> _sub;
+  final _open = OpenConnections();
 
   @override
   final stats = ForwardStats();
@@ -250,6 +286,7 @@ class _RemoteForward implements RunningForward {
 
   @override
   Future<void> close() async {
+    _open.closeAll();
     await _sub.cancel();
     if (!_client.isClosed) {
       try {

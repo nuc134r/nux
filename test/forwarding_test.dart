@@ -80,6 +80,20 @@ void main() {
     expect(fwd.stats.bytesIn, 12);
   });
 
+  test('stopping a forward also ends the connections it carries', () async {
+    if (client == null) return markTestSkipped('sshd not available');
+    final fwd = await startForward(client!, kind: ForwardKind.local, bindHost: '127.0.0.1', bindPort: 0, targetHost: '127.0.0.1', targetPort: echo.port);
+    final s = await Socket.connect('127.0.0.1', fwd.port);
+    final ended = Completer<void>(), echoed = Completer<void>();
+    s.listen((_) => echoed.isCompleted ? null : echoed.complete(), onDone: ended.complete, onError: (Object _) => ended.complete());
+    s.write('hello\n');
+    await echoed.future.timeout(const Duration(seconds: 10));
+    await fwd.close();
+    await ended.future.timeout(const Duration(seconds: 5));
+    expect(fwd.stats.open, 0);
+    s.destroy();
+  });
+
   test('a taken local port is reported as such', () async {
     if (client == null) return markTestSkipped('sshd not available');
     final taken = await ServerSocket.bind('127.0.0.1', 0);
