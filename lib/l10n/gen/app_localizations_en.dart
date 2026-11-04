@@ -52,6 +52,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allow => 'Allow';
 
   @override
+  String get amend => 'Amend';
+
+  @override
   String get appTitle => 'nux';
 
   @override
@@ -88,10 +91,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unrestricted: Android leaves background connections running';
 
   @override
+  String get binaryOrEmptyDiff =>
+      'Nothing to show (binary file or only mode changes)';
+
+  @override
   String get bookmarkFolder => 'Bookmark this folder';
 
   @override
   String get bookmarks => 'Bookmarks';
+
+  @override
+  String get branchName => 'Branch name';
+
+  @override
+  String get branches => 'Branches';
 
   @override
   String get browseFiles => 'Browse files';
@@ -123,6 +136,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'GitHub is unreachable; showing the changelog of this version.';
 
   @override
+  String get changesSection => 'Changes';
+
+  @override
   String get checkForUpdates => 'Check for updates';
 
   @override
@@ -145,6 +161,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get closeWorkspace => 'Close workspace';
+
+  @override
+  String get commit => 'Commit';
+
+  @override
+  String get commitMessage => 'Commit message';
+
+  @override
+  String get committed => 'Committed';
 
   @override
   String get connect => 'Connect';
@@ -238,6 +263,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get deleteUntrackedBody =>
+      'The file is not in git yet, so it is deleted.';
+
+  @override
   String get deleteWorkspace => 'Delete workspace';
 
   @override
@@ -275,7 +304,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discard => 'Discard';
 
   @override
+  String get discardChanges => 'Discard changes';
+
+  @override
   String get discardChangesBody => 'The changes you made have not been saved.';
+
+  @override
+  String get discardChangesGitBody =>
+      'What you changed since the last commit is lost. This cannot be undone.';
+
+  @override
+  String discardChangesGitTitle(String name) {
+    return 'Discard changes to $name?';
+  }
 
   @override
   String discardChangesTitle(String name) {
@@ -290,6 +331,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get disconnectAll => 'Disconnect all';
+
+  @override
+  String get divergedBody =>
+      'Both this branch and the server have new commits. Rebase puts yours on top of theirs (a straight history); merge joins them with a merge commit.';
+
+  @override
+  String get divergedTitle => 'Branches have diverged';
 
   @override
   String get doneEditing => 'Done editing';
@@ -376,6 +424,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get exportPrivateKeyWarning =>
       'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.';
+
+  @override
+  String get fetch => 'Fetch';
+
+  @override
+  String get fetched => 'Fetched';
 
   @override
   String get fileDisconnected => 'The connection was lost';
@@ -609,6 +663,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get generatingRsa =>
       'Generating an RSA key. This can take a minute on a phone.';
+
+  @override
+  String gitFailed(String command, String message) {
+    return 'git $command: $message';
+  }
 
   @override
   String get goToLine => 'Go to line';
@@ -895,6 +954,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get matchCase => 'Match case';
 
   @override
+  String get merge => 'Merge';
+
+  @override
   String minutesAgo(int count) {
     return '$count min ago';
   }
@@ -927,6 +989,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nameOptional => 'Name (optional)';
+
+  @override
+  String get newBranch => 'New branch';
 
   @override
   String get newFolder => 'New folder';
@@ -1186,6 +1251,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get publicKey => 'Public key';
 
   @override
+  String get publish => 'Publish';
+
+  @override
+  String get publishBranchBody =>
+      'This branch is not on the server yet. Push it to origin and track it?';
+
+  @override
+  String publishBranchTitle(String branch) {
+    return 'Publish $branch?';
+  }
+
+  @override
+  String get pull => 'Pull';
+
+  @override
+  String get pulled => 'Pulled';
+
+  @override
+  String get push => 'Push';
+
+  @override
+  String get pushed => 'Pushed';
+
+  @override
   String get qrCode => 'QR code';
 
   @override
@@ -1200,6 +1289,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reachThroughZeroTierHint =>
       'For hosts with no public address: nux joins the network itself, no VPN app needed';
+
+  @override
+  String get rebase => 'Rebase';
 
   @override
   String get recommended => 'recommended';
@@ -1424,6 +1516,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get stage => 'Stage';
+
+  @override
+  String get stageAll => 'Stage all';
+
+  @override
+  String get staged => 'Staged';
+
+  @override
   String get startWithNux => 'Auto start';
 
   @override
@@ -1556,6 +1657,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unpinTab => 'Unpin';
+
+  @override
+  String get unstage => 'Unstage';
+
+  @override
+  String get unstageAll => 'Unstage all';
 
   @override
   String get upToDate => 'You have the latest version';

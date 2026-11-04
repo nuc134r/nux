@@ -96,11 +96,11 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Cursor ergonomics: keybar swipe, big handles
 
 ## M6 — Git
-- [ ] `GitRepo` port; CLI implementation (porcelain v2) for SSH/Termux
-- [ ] Status screen, stage/unstage files, hunks and lines
-- [ ] Diff viewer (unified / side-by-side), commit sheet (amend, sign-off)
-- [ ] Branches: switch (with stash/carry choice), create, delete, rename; tags; stash list
-- [ ] Fetch/pull with an explained divergence choice; push preview; force-with-lease confirmation
+- [x] `GitRepo` over the host's commands (status, stage/unstage, diff, commit/amend, branches, fetch/pull/push)
+- [x] Version control: stage/unstage files; [ ] hunks and lines
+- [x] Diff viewer (unified), commit box with amend; [ ] side-by-side, sign-off
+- [x] Branches: switch, create; [ ] stash/carry choice, delete, rename; tags; stash list
+- [x] Fetch/pull with an explained divergence choice (rebase/merge), publish a new branch; [ ] push preview; force-with-lease
 - [ ] Log graph, commit details, blame gutter
 - [ ] Conflict resolver
 - [ ] "Equivalent git command" expander on every action

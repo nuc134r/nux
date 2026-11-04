@@ -29,6 +29,7 @@
     }
   },
   "allow": "Allow",
+  "amend": "Amend",
   "appTitle": "nux",
   "appVersion": "App version",
   "appearance": "Appearance",
@@ -40,8 +41,11 @@
   "batteryLabel": "Battery optimisation",
   "batteryOff": "Optimised: some phones stop background connections anyway",
   "batteryOn": "Unrestricted: Android leaves background connections running",
+  "binaryOrEmptyDiff": "Nothing to show (binary file or only mode changes)",
   "bookmarkFolder": "Bookmark this folder",
   "bookmarks": "Bookmarks",
+  "branchName": "Branch name",
+  "branches": "Branches",
   "browseFiles": "Browse files",
   "bytesCount": "{bytes} bytes",
   "@bytesCount": {
@@ -64,6 +68,7 @@
   },
   "changelog": "Changelog",
   "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
+  "changesSection": "Changes",
   "checkForUpdates": "Check for updates",
   "clearFinished": "Clear finished",
   "clearSelection": "Clear selection",
@@ -72,6 +77,9 @@
   "closeOtherTabs": "Close other tabs",
   "closeTab": "Close tab",
   "closeWorkspace": "Close workspace",
+  "commit": "Commit",
+  "commitMessage": "Commit message",
+  "committed": "Committed",
   "connect": "Connect",
   "connected": "Connected",
   "continueAction": "Continue",
@@ -150,6 +158,7 @@
       }
     }
   },
+  "deleteUntrackedBody": "The file is not in git yet, so it is deleted.",
   "deleteWorkspace": "Delete workspace",
   "deleteWorkspaceBody": "Its tabs are closed. Files on the host are not touched.",
   "deleteWorkspaceTitle": "Delete {name}?",
@@ -181,7 +190,17 @@
   "detachedHead": "detached HEAD",
   "devicePort": "Port on this device",
   "discard": "Discard",
+  "discardChanges": "Discard changes",
   "discardChangesBody": "The changes you made have not been saved.",
+  "discardChangesGitBody": "What you changed since the last commit is lost. This cannot be undone.",
+  "discardChangesGitTitle": "Discard changes to {name}?",
+  "@discardChangesGitTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "discardChangesTitle": "Discard changes to {name}?",
   "@discardChangesTitle": {
     "placeholders": {
@@ -193,6 +212,8 @@
   "discardMine": "Discard mine",
   "disconnect": "Disconnect",
   "disconnectAll": "Disconnect all",
+  "divergedBody": "Both this branch and the server have new commits. Rebase puts yours on top of theirs (a straight history); merge joins them with a merge commit.",
+  "divergedTitle": "Branches have diverged",
   "doneEditing": "Done editing",
   "download": "Download",
   "duplicate": "Duplicate",
@@ -308,6 +329,8 @@
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
   "exportPrivateKeyWarning": "Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.",
+  "fetch": "Fetch",
+  "fetched": "Fetched",
   "fileDisconnected": "The connection was lost",
   "fileExists": "Something with this name already exists",
   "fileNotFound": "Not found",
@@ -468,6 +491,17 @@
   "generateKeyHint": "A new key pair made on this device",
   "generating": "Generating…",
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
+  "gitFailed": "git {command}: {message}",
+  "@gitFailed": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      },
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "goToLine": "Go to line",
   "groupField": "Group",
   "hiddenFiles": "Hidden files",
@@ -641,6 +675,7 @@
   "loadAll": "Load all",
   "logEmpty": "The log is empty",
   "matchCase": "Match case",
+  "merge": "Merge",
   "minutesAgo": "{count} min ago",
   "@minutesAgo": {
     "placeholders": {
@@ -663,6 +698,7 @@
   },
   "nameField": "Name",
   "nameOptional": "Name (optional)",
+  "newBranch": "New branch",
   "newFolder": "New folder",
   "newPassphrase": "New passphrase",
   "newTab": "New tab",
@@ -792,11 +828,26 @@
   "previous": "Previous",
   "protection": "Protection",
   "publicKey": "Public key",
+  "publish": "Publish",
+  "publishBranchBody": "This branch is not on the server yet. Push it to origin and track it?",
+  "publishBranchTitle": "Publish {branch}?",
+  "@publishBranchTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
+  "pull": "Pull",
+  "pulled": "Pulled",
+  "push": "Push",
+  "pushed": "Pushed",
   "qrCode": "QR code",
   "quickOpen": "Quick open",
   "quickOpenHint": "File name, e.g. main",
   "reachThroughZeroTier": "Reach it through ZeroTier",
   "reachThroughZeroTierHint": "For hosts with no public address: nux joins the network itself, no VPN app needed",
+  "rebase": "Rebase",
   "recommended": "recommended",
   "reconnect": "Reconnect",
   "redoEdit": "Redo",
@@ -916,6 +967,9 @@
       }
     }
   },
+  "stage": "Stage",
+  "stageAll": "Stage all",
+  "staged": "Staged",
   "startWithNux": "Auto start",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
@@ -997,6 +1051,8 @@
     }
   },
   "unpinTab": "Unpin",
+  "unstage": "Unstage",
+  "unstageAll": "Unstage all",
   "upToDate": "You have the latest version",
   "update": "Update",
   "updateAvailable": "nux {version} is available",

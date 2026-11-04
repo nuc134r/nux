@@ -17,7 +17,9 @@ import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../data/workspace_access.dart';
 import '../data/workspace_repository.dart';
+import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
+import 'git_panel.dart';
 import '../../viewer/presentation/viewer_tab.dart';
 import '../../../app/router.dart';
 import 'workspace_find.dart';
@@ -175,6 +177,9 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   String? _target;
 
   Workspace get ws => widget.workspace;
+
+  /// git in the workspace folder, once connected.
+  GitRepo? get _repo => _access == null ? null : GitRepo(_access!.runner, ws.rootPath);
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
   Set<String> get _expanded => _state.expanded.putIfAbsent(ws.id, () => {});
 
@@ -307,23 +312,30 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
           subtitle: '${host?.name ?? ''} · ${ws.rootPath}',
           footer: git == null
               ? null
-              : Row(
-                  children: [
-                    Icon(Icons.call_split, size: 16, color: scheme.primary),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        [
-                          git.branch ?? l10n.detachedHead,
-                          if (git.ahead > 0) '↑${git.ahead}',
-                          if (git.behind > 0) '↓${git.behind}',
-                        ].join('  '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(color: scheme.primary),
-                      ),
+              : Builder(
+                  builder: (anchor) => InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: _repo == null ? null : () => showBranchMenu(anchor, _repo!, _loadGit),
+                    child: Row(
+                      children: [
+                        Icon(Icons.call_split, size: 16, color: scheme.primary),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            [
+                              git.branch ?? l10n.detachedHead,
+                              if (git.ahead > 0) '↑${git.ahead}',
+                              if (git.behind > 0) '↓${git.behind}',
+                            ].join('  '),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium?.copyWith(color: scheme.primary),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, size: 20, color: scheme.primary),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
           menu: (_) => _menu(context),
         ),
@@ -333,7 +345,12 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
                   padding: const EdgeInsets.all(24),
                   child: Text(l10n.errorGeneric('$_error'), style: TextStyle(color: scheme.error)),
                 )
-              : RefreshIndicator(onRefresh: _refresh, child: vcs ? _changesList(context) : _tree(context)),
+              : RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: vcs
+                      ? GitPanel(repo: _repo, status: _git, loaded: _gitLoaded, onRefresh: _loadGit, onOpen: _openFile)
+                      : _tree(context),
+                ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
@@ -390,6 +407,24 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
       ),
       NuxMenuAction(icon: Icons.search, label: l10n.quickOpen, onSelected: () => find(showQuickOpen)),
       NuxMenuAction(icon: Icons.manage_search, label: l10n.searchInFiles, onSelected: () => find(showSearchInFiles)),
+      if (_git != null && _repo != null) ...[
+        const NuxMenuDivider(),
+        NuxMenuAction(
+          icon: Icons.cloud_download_outlined,
+          label: l10n.pull,
+          onSelected: () => gitPull(context, _repo!, _loadGit),
+        ),
+        NuxMenuAction(
+          icon: Icons.cloud_upload_outlined,
+          label: l10n.push,
+          onSelected: () => gitPush(context, _repo!, _git?.branch, _loadGit),
+        ),
+        NuxMenuAction(
+          icon: Icons.sync,
+          label: l10n.fetch,
+          onSelected: () => runGit(context, _repo!.fetch, refresh: _loadGit, done: l10n.fetched),
+        ),
+      ],
       const NuxMenuDivider(),
       NuxMenuSubmenu(
         icon: Icons.swap_horiz,
@@ -494,7 +529,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
                         decoration: BoxDecoration(color: scheme.tertiary, shape: BoxShape.circle),
                       )
                     else if (change != null)
-                      _ChangeLetter(change.kind, staged: change.staged),
+                      ChangeLetter(change.kind, staged: change.staged),
                   ],
                 ),
               ),
@@ -565,106 +600,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
         if (mounted) showSnack(context, l10n.copied);
     }
   }
-
-  Widget _changesList(BuildContext context) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final git = _git;
-    if (git == null || git.changes.isEmpty) {
-      return ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: !_gitLoaded
-                ? const Center(child: CircularProgressIndicator())
-                : Text(git == null ? l10n.notGitRepo : l10n.noChanges, textAlign: TextAlign.center),
-          ),
-        ],
-      );
-    }
-    String relative(String dir) => posix.isWithin(git.root, dir) ? posix.relative(dir, from: git.root) : '';
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-      itemCount: git.changes.length,
-      itemBuilder: (context, i) {
-        final c = git.changes[i];
-        final deleted = c.kind == GitChangeKind.deleted;
-        final dir = relative(posix.dirname(c.path));
-        return Material(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: deleted ? null : () => _openFile(c.path),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
-              child: Row(
-                children: [
-                  Icon(Icons.description_outlined, size: 20, color: scheme.onSurfaceVariant),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          posix.basename(c.path),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            decoration: deleted ? TextDecoration.lineThrough : null,
-                          ),
-                        ),
-                        if (dir.isNotEmpty)
-                          Text(
-                            dir,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
-                          ),
-                      ],
-                    ),
-                  ),
-                  _ChangeLetter(c.kind, staged: c.staged),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
-
-/// M / A / D / R / U / ! in a small tinted box (bolder when staged).
-class _ChangeLetter extends StatelessWidget {
-  const _ChangeLetter(this.kind, {required this.staged});
-
-  final GitChangeKind kind;
-  final bool staged;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = changeColor(kind, Theme.of(context).colorScheme);
-    return Container(
-      width: 20,
-      height: 20,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: color.withValues(alpha: .16), borderRadius: BorderRadius.circular(5)),
-      child: Text(
-        kind.letter,
-        style: TextStyle(fontSize: 11, fontWeight: staged ? FontWeight.w800 : FontWeight.w600, color: color),
-      ),
-    );
-  }
-}
-
-Color changeColor(GitChangeKind kind, ColorScheme scheme) => switch (kind) {
-  GitChangeKind.modified => const Color(0xFFE2B93D),
-  GitChangeKind.added || GitChangeKind.untracked => const Color(0xFF73C991),
-  GitChangeKind.deleted || GitChangeKind.conflict => scheme.error,
-  GitChangeKind.renamed => const Color(0xFF6CB6FF),
-};
 
 /// Asks for a name, a host and a folder, then opens the new workspace.
 Future<void> newWorkspace(BuildContext context, WidgetRef ref, {String? connectionId, String? path}) async {

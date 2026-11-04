@@ -15,15 +15,33 @@ enum GitChangeKind {
 }
 
 class GitChange {
-  const GitChange({required this.path, required this.kind, required this.staged});
+  const GitChange({required this.path, required this.kind, required this.staged, this.indexKind, this.worktreeKind});
 
   /// Absolute path on the host.
   final String path;
+
+  /// The change as one letter (conflicts and untracked first).
   final GitChangeKind kind;
 
-  /// In the index (would be committed as is).
+  /// Entirely in the index (would be committed as is).
   final bool staged;
+
+  /// What is staged for this file (null: nothing).
+  final GitChangeKind? indexKind;
+
+  /// What is changed in the working tree and not staged (null: nothing).
+  final GitChangeKind? worktreeKind;
 }
+
+GitChangeKind? _kindOf(String c) => switch (c) {
+  'M' || 'T' => GitChangeKind.modified,
+  'A' => GitChangeKind.added,
+  'D' => GitChangeKind.deleted,
+  'R' || 'C' => GitChangeKind.renamed,
+  '?' => GitChangeKind.untracked,
+  'U' => GitChangeKind.conflict,
+  _ => null,
+};
 
 class GitStatus {
   const GitStatus({required this.root, required this.branch, required this.changes, this.ahead = 0, this.behind = 0});
@@ -98,7 +116,16 @@ GitStatus? parseGitStatus(CommandResult result) {
       _ => GitChangeKind.modified,
     };
     final staged = x != ' ' && x != '?' && y == ' ';
-    changes.add(GitChange(path: posix.join(root, path), kind: kind, staged: staged));
+    final conflict = kind == GitChangeKind.conflict;
+    changes.add(
+      GitChange(
+        path: posix.join(root, path),
+        kind: kind,
+        staged: staged,
+        indexKind: conflict || x == '?' ? null : _kindOf(x),
+        worktreeKind: conflict ? GitChangeKind.conflict : _kindOf(y),
+      ),
+    );
   }
   return GitStatus(root: root, branch: branch, ahead: ahead, behind: behind, changes: changes);
 }

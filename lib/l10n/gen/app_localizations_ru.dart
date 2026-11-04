@@ -53,6 +53,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get allow => 'Разрешить';
 
   @override
+  String get amend => 'Исправить последний';
+
+  @override
   String get appTitle => 'nux';
 
   @override
@@ -89,10 +92,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Без ограничений: Android не останавливает фоновые подключения';
 
   @override
+  String get binaryOrEmptyDiff =>
+      'Нечего показать (двоичный файл или изменились только права)';
+
+  @override
   String get bookmarkFolder => 'Добавить папку в закладки';
 
   @override
   String get bookmarks => 'Закладки';
+
+  @override
+  String get branchName => 'Имя ветки';
+
+  @override
+  String get branches => 'Ветки';
 
   @override
   String get browseFiles => 'Файлы';
@@ -124,6 +137,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'GitHub недоступен; показана история изменений этой версии.';
 
   @override
+  String get changesSection => 'Изменения';
+
+  @override
   String get checkForUpdates => 'Проверить обновления';
 
   @override
@@ -146,6 +162,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get closeWorkspace => 'Закрыть рабочую область';
+
+  @override
+  String get commit => 'Коммит';
+
+  @override
+  String get commitMessage => 'Сообщение коммита';
+
+  @override
+  String get committed => 'Закоммичено';
 
   @override
   String get connect => 'Подключиться';
@@ -240,6 +265,10 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get deleteUntrackedBody =>
+      'Файла ещё нет в git, поэтому он будет удалён.';
+
+  @override
   String get deleteWorkspace => 'Удалить рабочую область';
 
   @override
@@ -277,7 +306,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get discard => 'Отменить правки';
 
   @override
+  String get discardChanges => 'Отменить изменения';
+
+  @override
   String get discardChangesBody => 'Сделанные правки не сохранены.';
+
+  @override
+  String get discardChangesGitBody =>
+      'Всё изменённое после последнего коммита пропадёт. Это нельзя отменить.';
+
+  @override
+  String discardChangesGitTitle(String name) {
+    return 'Отменить изменения в $name?';
+  }
 
   @override
   String discardChangesTitle(String name) {
@@ -292,6 +333,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get disconnectAll => 'Отключить все';
+
+  @override
+  String get divergedBody =>
+      'И в этой ветке, и на сервере есть новые коммиты. Rebase ставит ваши поверх серверных (прямая история); merge объединяет их коммитом слияния.';
+
+  @override
+  String get divergedTitle => 'Ветки разошлись';
 
   @override
   String get doneEditing => 'Закончить правку';
@@ -379,6 +427,12 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get exportPrivateKeyWarning =>
       'Любой, у кого есть этот файл и его парольная фраза, сможет войти везде, где принимается этот ключ. Экспортируйте только для переноса на доверенное устройство. Затем вы зададите парольную фразу для файла.';
+
+  @override
+  String get fetch => 'Получить (fetch)';
+
+  @override
+  String get fetched => 'Получено';
 
   @override
   String get fileDisconnected => 'Соединение потеряно';
@@ -622,6 +676,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get generatingRsa =>
       'Создание RSA-ключа. На телефоне это может занять минуту.';
+
+  @override
+  String gitFailed(String command, String message) {
+    return 'git $command: $message';
+  }
 
   @override
   String get goToLine => 'Перейти к строке';
@@ -909,6 +968,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get matchCase => 'Учитывать регистр';
 
   @override
+  String get merge => 'Merge';
+
+  @override
   String minutesAgo(int count) {
     return '$count мин назад';
   }
@@ -942,6 +1004,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get nameOptional => 'Название (необязательно)';
+
+  @override
+  String get newBranch => 'Новая ветка';
 
   @override
   String get newFolder => 'Новая папка';
@@ -1205,6 +1270,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get publicKey => 'Открытый ключ';
 
   @override
+  String get publish => 'Опубликовать';
+
+  @override
+  String get publishBranchBody =>
+      'Этой ветки ещё нет на сервере. Отправить её в origin и отслеживать?';
+
+  @override
+  String publishBranchTitle(String branch) {
+    return 'Опубликовать $branch?';
+  }
+
+  @override
+  String get pull => 'Подтянуть (pull)';
+
+  @override
+  String get pulled => 'Подтянуто';
+
+  @override
+  String get push => 'Отправить (push)';
+
+  @override
+  String get pushed => 'Отправлено';
+
+  @override
   String get qrCode => 'QR-код';
 
   @override
@@ -1219,6 +1308,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get reachThroughZeroTierHint =>
       'Для хостов без публичного адреса: nux сам подключается к сети, VPN-приложение не нужно';
+
+  @override
+  String get rebase => 'Rebase';
 
   @override
   String get recommended => 'рекомендуется';
@@ -1445,6 +1537,15 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get stage => 'Подготовить';
+
+  @override
+  String get stageAll => 'Подготовить всё';
+
+  @override
+  String get staged => 'Подготовлено';
+
+  @override
   String get startWithNux => 'Автозапуск';
 
   @override
@@ -1576,6 +1677,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get unpinTab => 'Открепить';
+
+  @override
+  String get unstage => 'Убрать из подготовки';
+
+  @override
+  String get unstageAll => 'Убрать всё';
 
   @override
   String get upToDate => 'Установлена последняя версия';

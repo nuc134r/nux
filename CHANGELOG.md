@@ -3,6 +3,14 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.6
+
+- **Git in the workspace drawer** (Version control): a commit box (with Amend), **Staged** and **Changes** with a + / − on each file to stage or unstage, Stage all / Unstage all, and a tap on a file shows its diff. Long-press a change to discard it (asks first).
+- **Branches**: tap the branch on the workspace card to switch or create one.
+- **Pull, Push and Fetch** in the workspace card's ⋮. When the branches have diverged, nux explains and asks: rebase or merge. A new branch is offered to be published. git never waits for a password it cannot get.
+- **Fixed: tabs sometimes could not be switched** from the overview (taking the preview of an unpainted tab failed and stopped the switch).
+- Fixed an error when the workspace card's menu stayed open while the drawer closed.
+
 ## 0.9.5
 
 - **Find and replace** in the editor (⋮ → Replace while editing, or the ⇄ button in the find bar), with match case and regex.

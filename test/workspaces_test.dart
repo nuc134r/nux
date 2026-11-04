@@ -43,6 +43,8 @@ void main() {
       File('$root/README.md').writeAsStringSync('# app\n');
       final git = ['-c', 'user.name=t', '-c', 'user.email=t@example.com'];
       await Process.run('git', ['init', '-q', '-b', 'main'], workingDirectory: root);
+      await Process.run('git', ['config', 'user.name', 't'], workingDirectory: root);
+      await Process.run('git', ['config', 'user.email', 't@example.com'], workingDirectory: root);
       await Process.run('git', ['add', '.'], workingDirectory: root);
       await Process.run('git', [...git, 'commit', '-qm', 'init'], workingDirectory: root);
       File('$root/lib/main.dart').writeAsStringSync('void main() { print(1); }\n');
@@ -104,19 +106,37 @@ void main() {
     expect(drawer('notes.md'), findsOneWidget);
     expect(drawer('U'), findsOneWidget);
     expect(drawer('M'), findsOneWidget);
+    // A change opens its diff; Stage moves it to Staged; the commit box commits it.
     await tester.tap(drawer('main.dart'));
     await settle(tester);
-    expect(tabs.current, isA<ViewerTab>());
+    await settle(tester);
+    expect(find.text('void main() { print(1); }'), findsOneWidget, reason: 'the added line');
+    await tester.tap(find.widgetWithText(FilledButton, 'Stage'));
+    await settle(tester);
+    await settle(tester);
+    expect(drawer('Staged  1'), findsOneWidget);
+    await tester.enterText(find.descendant(of: find.byType(Drawer), matching: find.byType(TextField)), 'Print one');
+    await settle(tester);
+    await tester.tap(find.widgetWithText(FilledButton, 'Commit'));
+    for (var i = 0; i < 25 && drawer('Staged  1').evaluate().isNotEmpty; i++) {
+      await settle(tester);
+    }
+    expect(drawer('Staged  1'), findsNothing);
+    final log = await tester.runAsync(() => Process.run('git', ['log', '-1', '--format=%s'], workingDirectory: root));
+    expect((log!.stdout as String).trim(), 'Print one');
+    Navigator.of(tester.element(find.byType(Drawer))).pop(); // close the drawer
+    await settle(tester);
 
-    // Quick open and Search in files, from the tab's menu.
-    await tester.tap(find.byTooltip('More').last);
+    // Quick open and Search in files, from the tab's menu (the header's ⋮, not a file row's).
+    await tester.tap(find.byTooltip('More').first);
     await settle(tester);
     await tester.ensureVisible(find.text('Quick open'));
     await tester.tap(find.text('Quick open'));
     await settle(tester);
     await tester.enterText(find.byType(TextField), 'readme');
     await settle(tester);
-    await tester.tap(find.text('README.md'));
+    // The finder is over the file browser, which lists README.md too: tap the finder's row.
+    await tester.tap(find.descendant(of: find.byType(Dialog), matching: find.text('README.md')));
     await settle(tester);
     expect((tabs.current! as ViewerTab).path, '$root/README.md');
 

@@ -355,10 +355,7 @@ class DiffView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final hunks = diffHunks(diffLines(oldText, newText));
-    final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.serverVsYours),
@@ -370,51 +367,61 @@ class DiffView extends StatelessWidget {
           ),
         ],
       ),
-      body: hunks.isEmpty
-          ? Center(child: Text(l10n.noDifferences))
-          : ListView.builder(
-              itemCount: hunks.length,
-              itemBuilder: (context, i) {
-                final line = hunks[i];
-                if (line == null) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Center(
-                      child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant)),
-                    ),
-                  );
-                }
-                final (bg, sign) = switch (line.kind) {
-                  DiffKind.removed => (scheme.errorContainer.withValues(alpha: .5), '-'),
-                  DiffKind.added => (Colors.green.withValues(alpha: .18), '+'),
-                  DiffKind.same => (Colors.transparent, ' '),
-                };
-                return Container(
-                  color: bg,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        child: Text(
-                          '${line.newLine ?? line.oldLine}',
-                          textAlign: TextAlign.right,
-                          style: mono?.copyWith(color: scheme.onSurfaceVariant),
-                        ),
-                      ),
-                      SizedBox(width: 18, child: Text(' $sign', style: mono)),
-                      Expanded(child: Text(line.text, style: mono)),
-                    ],
-                  ),
-                );
-              },
-            ),
+      body: hunks.isEmpty ? Center(child: Text(l10n.noDifferences)) : DiffLinesView(lines: hunks),
     );
   }
 }
 
-/// Search box over the code (re_editor's find, without replace in the viewer).
+/// Diff lines with their numbers, removed ones red and added ones green; null is a "⋯" gap between hunks.
+class DiffLinesView extends StatelessWidget {
+  const DiffLinesView({super.key, required this.lines});
+
+  final List<DiffLine?> lines;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
+    return ListView.builder(
+      itemCount: lines.length,
+      itemBuilder: (context, i) {
+        final line = lines[i];
+        if (line == null) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Center(child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant))),
+          );
+        }
+        final (bg, sign) = switch (line.kind) {
+          DiffKind.removed => (scheme.errorContainer.withValues(alpha: .5), '-'),
+          DiffKind.added => (Colors.green.withValues(alpha: .18), '+'),
+          DiffKind.same => (Colors.transparent, ' '),
+        };
+        return Container(
+          color: bg,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 40,
+                child: Text(
+                  '${line.newLine ?? line.oldLine}',
+                  textAlign: TextAlign.right,
+                  style: mono?.copyWith(color: scheme.onSurfaceVariant),
+                ),
+              ),
+              SizedBox(width: 18, child: Text(' $sign', style: mono)),
+              Expanded(child: Text(line.text, style: mono)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class FindBar extends StatelessWidget implements PreferredSizeWidget {
   const FindBar({super.key, required this.controller, this.editing = false});
 
