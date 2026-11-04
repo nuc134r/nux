@@ -201,6 +201,7 @@
   "editHost": "Edit host",
   "editorFontSize": "File text size",
   "emptyFolder": "Empty folder",
+  "encoding": "Encoding",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
@@ -624,6 +625,7 @@
     }
   },
   "licenses": "Licenses",
+  "lineEndings": "Line endings",
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
   "logEmpty": "The log is empty",
@@ -777,8 +779,6 @@
   "protection": "Protection",
   "publicKey": "Public key",
   "qrCode": "QR code",
-  "quickConnect": "Quick connect",
-  "quickConnectHint": "Saved to hosts, offering all your keys",
   "quickOpen": "Quick open",
   "quickOpenHint": "File name, e.g. main",
   "reachThroughZeroTier": "Reach it through ZeroTier",
@@ -802,6 +802,7 @@
   "saveAs": "Save as…",
   "savePassword": "Save password",
   "savePasswordHint": "Kept in the device's secure storage",
+  "saveWithEncoding": "Save with encoding",
   "savedAs": "Saved {name}",
   "@savedAs": {
     "placeholders": {

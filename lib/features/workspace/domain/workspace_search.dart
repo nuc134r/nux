@@ -85,6 +85,7 @@ int? fuzzyScore(String query, String path) {
 
 /// [paths] that match [query], best first (at most [limit]).
 List<String> fuzzyFilter(String query, Iterable<String> paths, {int limit = 100}) {
+  if (query.trim().isEmpty) return paths.take(limit).toList();
   final scored = <(int, String)>[];
   for (final p in paths) {
     final s = fuzzyScore(query, p);

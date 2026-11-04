@@ -103,6 +103,7 @@ void main() {
     // Quick open and Search in files, from the tab's menu.
     await tester.tap(find.byTooltip('More').last);
     await settle(tester);
+    await tester.ensureVisible(find.text('Quick open'));
     await tester.tap(find.text('Quick open'));
     await settle(tester);
     await tester.enterText(find.byType(TextField), 'readme');
@@ -113,6 +114,7 @@ void main() {
 
     await tester.tap(find.byTooltip('More').last);
     await settle(tester);
+    await tester.ensureVisible(find.text('Search in files'));
     await tester.tap(find.text('Search in files'));
     await settle(tester);
     await tester.enterText(find.byType(TextField), 'print');

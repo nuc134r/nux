@@ -3,6 +3,16 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.9.2
+
+- **Quick open is fast in big projects**: the file list is remembered between openings (refreshed in the background), and matching runs off the main thread while you type.
+- **The workspace drawer looks like the rest of nux**: folder and file icons, rounded rows, change letters in small badges, and Explorer / Version control as a segmented switch.
+- The project tree **opens at the file you are on** (or the last one you opened from it), with that file marked.
+- **Open terminal** in the workspace card's ⋮ starts a terminal in the workspace folder.
+- **Encoding and line endings in the editor**: the file's encoding (UTF-8, UTF-8 BOM, UTF-16, ISO 8859-1, Windows-1251) and line endings (LF, CRLF, CR) are detected and kept when saving. ⋮ → Encoding reads it again in another one, Save with encoding converts it, Line endings changes them.
+- With no tabs open, the Hosts button sits in the middle of the screen.
+- Quick connect is gone: add a host instead.
+
 ## 0.9.1
 
 - **Port forwarding under a host, tidied**: a plain chevron at the end of the host opens them in a subtle panel attached below it; TCP/UDP badges on every forwarding; regular font; a full-width "Add port forwarding" button.

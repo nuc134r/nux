@@ -614,6 +614,12 @@ abstract class AppLocalizations {
   /// **'Empty folder'**
   String get emptyFolder;
 
+  /// No description provided for @encoding.
+  ///
+  /// In en, this message translates to:
+  /// **'Encoding'**
+  String get encoding;
+
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
@@ -1454,6 +1460,12 @@ abstract class AppLocalizations {
   /// **'Licenses'**
   String get licenses;
 
+  /// No description provided for @lineEndings.
+  ///
+  /// In en, this message translates to:
+  /// **'Line endings'**
+  String get lineEndings;
+
   /// No description provided for @linkTargetLabel.
   ///
   /// In en, this message translates to:
@@ -1976,18 +1988,6 @@ abstract class AppLocalizations {
   /// **'QR code'**
   String get qrCode;
 
-  /// No description provided for @quickConnect.
-  ///
-  /// In en, this message translates to:
-  /// **'Quick connect'**
-  String get quickConnect;
-
-  /// No description provided for @quickConnectHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved to hosts, offering all your keys'**
-  String get quickConnectHint;
-
   /// No description provided for @quickOpen.
   ///
   /// In en, this message translates to:
@@ -2125,6 +2125,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kept in the device\'s secure storage'**
   String get savePasswordHint;
+
+  /// No description provided for @saveWithEncoding.
+  ///
+  /// In en, this message translates to:
+  /// **'Save with encoding'**
+  String get saveWithEncoding;
 
   /// No description provided for @savedAs.
   ///

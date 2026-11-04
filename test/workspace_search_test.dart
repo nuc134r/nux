@@ -15,7 +15,7 @@ void main() {
     expect(fuzzyFilter('main', paths).first, 'lib/main.dart');
     expect(fuzzyFilter('mt', paths).first, 'test/main_test.dart');
     expect(fuzzyFilter('xyz', paths), isEmpty);
-    expect(fuzzyFilter('', paths), hasLength(paths.length));
+    expect(fuzzyFilter('', paths), paths);
     expect(fuzzyScore('fma', 'lib/features/maintenance/a.dart'), isNotNull, reason: 'across folders');
   });
 

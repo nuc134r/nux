@@ -383,11 +383,6 @@ class _Empty extends ConsumerWidget {
                 onPressed: () => context.push(Routes.newConnection),
               ),
               OutlinedButton.icon(
-                icon: const Icon(Icons.bolt),
-                label: Text(l10n.quickConnect),
-                onPressed: () => quickConnect(context, ref),
-              ),
-              OutlinedButton.icon(
                 icon: const Icon(Icons.key),
                 label: Text(l10n.keys),
                 onPressed: () => context.push(Routes.keys),

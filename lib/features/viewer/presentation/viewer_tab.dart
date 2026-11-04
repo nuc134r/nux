@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,7 @@ import '../../settings/data/settings_repository.dart';
 import '../../workspace/data/workspace.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../domain/remote_document.dart';
+import '../domain/text_encoding.dart';
 import 'viewer_view.dart';
 
 /// Read-only view of a remote file: code, Markdown, images or hex.
@@ -98,7 +101,7 @@ class ViewerTab extends NuxTab {
   }
 
   @override
-  bool get hasUnsavedChanges => dirty;
+  bool get hasUnsavedChanges => dirty || document.formatChanged;
 
   /// Text to save.
   String? get editedText => _editor?.text;
@@ -112,7 +115,7 @@ class ViewerTab extends NuxTab {
   /// is off now.
   Future<bool> exitEditing(BuildContext context) async {
     if (!editing) return true;
-    if (dirty) {
+    if (hasUnsavedChanges) {
       final l10n = context.l10n;
       final choice = await showDialog<String>(
         context: context,
@@ -129,10 +132,12 @@ class ViewerTab extends NuxTab {
       switch (choice) {
         case 'save':
           await onSave?.call();
-          if (dirty) return false;
+          if (hasUnsavedChanges) return false;
         case 'discard':
           _editorGeneration = -1; // fresh controllers with the loaded text
           dirty = false;
+          // A changed encoding or line ending is undone by reading the file again.
+          if (document.formatChanged) unawaited(document.load());
         default:
           return false;
       }
@@ -157,8 +162,7 @@ class ViewerTab extends NuxTab {
 
   /// Saves; called by the view, which handles [RemoteChangedException].
   Future<void> save({bool force = false}) async {
-    final text = _editor?.text;
-    if (text == null) return;
+    final text = _editor?.text ?? document.text;
     await document.save(text, force: force);
     dirty = false;
     notifyListeners();
@@ -174,7 +178,7 @@ class ViewerTab extends NuxTab {
   Map<String, Object?> get args => {'connectionId': connectionId, 'path': path};
 
   @override
-  String get title => '${dirty ? '• ' : ''}${posix.basename(path)}';
+  String get title => '${hasUnsavedChanges ? '• ' : ''}${posix.basename(path)}';
 
   @override
   String? get subtitle => posix.dirname(path);
@@ -214,7 +218,7 @@ class ViewerTab extends NuxTab {
         NuxMenuAction(
           icon: Icons.save_outlined,
           label: l10n.save,
-          enabled: dirty && !document.saving,
+          enabled: hasUnsavedChanges && !document.saving,
           onSelected: () => onSave?.call(),
         ),
         NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
@@ -243,8 +247,63 @@ class ViewerTab extends NuxTab {
             setRendered(!rendered);
           },
         ),
+      if (shownAsText && document.bytes != null) ...[
+        const NuxMenuDivider(),
+        // How the file is read (only without unsaved edits: they would be lost)...
+        NuxMenuSubmenu(
+          icon: Icons.translate,
+          label: l10n.encoding,
+          hint: document.encoding.label,
+          items: [
+            for (final e in TextEncoding.values)
+              NuxMenuAction(
+                icon: null,
+                label: e.label,
+                checked: e == document.encoding,
+                enabled: !dirty,
+                onSelected: () => document.reopenWith(e),
+              ),
+          ],
+        ),
+        // ...and how it is written: both make a save due, so they switch to edit mode.
+        if (canEdit || editing) ...[
+          NuxMenuSubmenu(
+            icon: Icons.save_as_outlined,
+            label: l10n.saveWithEncoding,
+            items: [
+              for (final e in TextEncoding.values)
+                NuxMenuAction(
+                  icon: null,
+                  label: e.label,
+                  checked: e == document.encoding,
+                  onSelected: () {
+                    document.saveAs(e);
+                    setEditing(true);
+                  },
+                ),
+            ],
+          ),
+          NuxMenuSubmenu(
+            icon: Icons.keyboard_return,
+            label: l10n.lineEndings,
+            hint: document.lineEnding.label,
+            items: [
+              for (final e in LineEnding.values)
+                NuxMenuAction(
+                  icon: null,
+                  label: e.label,
+                  checked: e == document.lineEnding,
+                  onSelected: () {
+                    document.setLineEnding(e);
+                    setEditing(true);
+                  },
+                ),
+            ],
+          ),
+        ],
+      ],
       const NuxMenuDivider(),
-      NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !dirty, onSelected: document.load),
+      NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !hasUnsavedChanges, onSelected: document.load),
       if (textual)
         NuxMenuAction(
           icon: Icons.wrap_text,

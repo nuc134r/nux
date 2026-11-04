@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -196,7 +198,6 @@ class _Header extends ConsumerWidget {
                 label: l10n.hosts,
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
               ),
-              NuxMenuAction(icon: Icons.bolt, label: l10n.quickConnect, onSelected: () => quickConnect(context, ref)),
               NuxMenuAction(icon: Icons.key, label: l10n.keys, onSelected: () => context.push(Routes.keys)),
               NuxMenuAction(
                 icon: Icons.lan_outlined,
@@ -242,26 +243,40 @@ class _NoTabs extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    return ListView(
-      children: [
-        const UpdateBanner(),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: Column(
             children: [
-              Icon(Icons.tab_unselected, size: 56, color: theme.colorScheme.primary),
-              const SizedBox(height: 16),
-              Text(l10n.noTabs, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 8),
-              Text(
-                l10n.noTabsHint,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              const UpdateBanner(),
+              // Centred in the free space, with the way out (the hosts) right under the text.
+              Padding(
+                padding: EdgeInsets.fromLTRB(24, math.max(48, constraints.maxHeight / 2 - 160), 24, 24),
+                child: Column(
+                  children: [
+                    Icon(Icons.tab_unselected, size: 56, color: theme.colorScheme.primary),
+                    const SizedBox(height: 16),
+                    Text(l10n.noTabs, style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.noTabsHint,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.dns_outlined),
+                      label: Text(l10n.hosts),
+                      onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -272,6 +287,8 @@ class _GridFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    // Without tabs the empty state has the button, in the middle.
+    if (ref.watch(workspaceProvider).isEmpty) return const SizedBox.shrink();
     return SafeArea(
       top: false,
       child: Padding(
@@ -285,11 +302,6 @@ class _GridFooter extends ConsumerWidget {
               icon: const Icon(Icons.dns_outlined),
               label: Text(l10n.hosts),
               onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
-            ),
-            FilledButton.tonalIcon(
-              icon: const Icon(Icons.bolt),
-              label: Text(l10n.quickConnect),
-              onPressed: () => quickConnect(context, ref),
             ),
           ],
         ),

@@ -16,6 +16,7 @@ import '../data/workspace.dart';
 import '../data/workspace_access.dart';
 import '../data/workspace_repository.dart';
 import '../domain/git_status.dart';
+import '../../viewer/presentation/viewer_tab.dart';
 import '../../../app/router.dart';
 import 'workspace_find.dart';
 
@@ -23,7 +24,13 @@ import 'workspace_find.dart';
 class WorkspaceDrawerState {
   bool versionControl = false;
   final Map<String, Set<String>> expanded = {};
+
+  /// The file last opened from the drawer or a finder, per workspace (the tree scrolls to it).
+  final Map<String, String> lastOpened = {};
 }
+
+/// Height of a tree row (fixed, so the tree can scroll straight to a file).
+const _rowHeight = 38.0;
 
 final workspaceDrawerStateProvider = Provider((ref) => WorkspaceDrawerState());
 
@@ -160,6 +167,10 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   final Set<String> _loading = {};
   GitStatus? _git;
   bool _gitLoaded = false;
+  final _scroll = ScrollController();
+
+  /// The file to show (and mark) in the tree: the open file of this workspace, else the last opened one.
+  String? _target;
 
   Workspace get ws => widget.workspace;
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
@@ -168,13 +179,43 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   @override
   void initState() {
     super.initState();
+    final current = ref.read(workspaceProvider).current;
+    _target =
+        current is ViewerTab && current.connectionId == ws.connectionId && posix.isWithin(ws.rootPath, current.path)
+        ? current.path
+        : _state.lastOpened[ws.id];
     _connect();
   }
 
   @override
   void dispose() {
+    _scroll.dispose();
     _access?.release();
     super.dispose();
+  }
+
+  /// Opens the folders down to [_target] and scrolls it into the middle of the tree.
+  Future<void> _reveal() async {
+    final target = _target;
+    if (target == null || !posix.isWithin(ws.rootPath, target)) return;
+    final dirs = <String>[];
+    for (var d = posix.dirname(target); d != ws.rootPath && posix.isWithin(ws.rootPath, d); d = posix.dirname(d)) {
+      dirs.insert(0, d);
+    }
+    for (final d in dirs) {
+      if (!mounted) return;
+      _expanded.add(d);
+      if (!_children.containsKey(d)) await _list(d);
+    }
+    if (!mounted) return;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final index = _rows().indexWhere((r) => r.$1.path == target);
+      if (index < 0 || !_scroll.hasClients) return;
+      final position = _scroll.position;
+      final offset = index * _rowHeight - position.viewportDimension / 3;
+      _scroll.jumpTo(offset.clamp(0, position.maxScrollExtent));
+    });
   }
 
   Future<void> _connect() async {
@@ -182,7 +223,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
       final access = await ref.read(workspaceOpenerProvider)(ws.connectionId);
       if (!mounted) return access.release();
       _access = access;
-      await Future.wait([_list(ws.rootPath), for (final d in _expanded) _list(d), _loadGit()]);
+      await Future.wait([_list(ws.rootPath).then((_) => _reveal()), for (final d in _expanded) _list(d), _loadGit()]);
     } catch (e) {
       if (mounted) setState(() => _error = e);
     }
@@ -229,6 +270,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   }
 
   void _openFile(String path) {
+    _state.lastOpened[ws.id] = path;
     Navigator.of(context).pop();
     ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).viewer(ws.connectionId, path));
   }
@@ -291,23 +333,31 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
                 )
               : RefreshIndicator(onRefresh: _refresh, child: vcs ? _changesList(context) : _tree(context)),
         ),
-        Divider(height: 1, color: scheme.outlineVariant),
-        SizedBox(
-          height: 52,
-          child: Row(
-            children: [
-              _BottomTab(
-                label: l10n.explorer,
-                selected: !vcs,
-                onTap: () => setState(() => _state.versionControl = false),
-              ),
-              _BottomTab(
-                label: l10n.versionControl,
-                badge: changes,
-                selected: vcs,
-                onTap: () => setState(() => _state.versionControl = true),
-              ),
-            ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
+          child: SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<bool>(
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(value: false, label: Text(l10n.explorer)),
+                ButtonSegment(
+                  value: true,
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(child: Text(l10n.versionControl, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      if (changes > 0) ...[
+                        const SizedBox(width: 6),
+                        Badge(label: Text('$changes'), backgroundColor: scheme.primary, textColor: scheme.onPrimary),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+              selected: {vcs},
+              onSelectionChanged: (v) => setState(() => _state.versionControl = v.single),
+            ),
           ),
         ),
       ],
@@ -326,6 +376,16 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     }
 
     return [
+      NuxMenuAction(
+        icon: Icons.terminal,
+        label: l10n.openTerminal,
+        onSelected: () {
+          Navigator.of(context).pop();
+          ref
+              .read(workspaceProvider)
+              .open(ref.read(tabFactoryProvider).terminal(ws.connectionId, directory: ws.rootPath));
+        },
+      ),
       NuxMenuAction(icon: Icons.search, label: l10n.quickOpen, onSelected: () => find(showQuickOpen)),
       NuxMenuAction(icon: Icons.manage_search, label: l10n.searchInFiles, onSelected: () => find(showSearchInFiles)),
       const NuxMenuDivider(),
@@ -389,7 +449,9 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
       );
     }
     return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 8),
+      controller: _scroll,
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      itemExtent: _rowHeight,
       itemCount: rows.length,
       itemBuilder: (context, i) {
         final (e, depth) = rows[i];
@@ -397,52 +459,59 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
         final open = _expanded.contains(e.path);
         final change = dir ? null : _git?.changeOf(e.path);
         final color = change == null ? null : changeColor(change.kind, scheme);
+        final marked = changedFolders.contains(e.path);
+        final selected = e.path == _target;
         return Builder(
-          builder: (rowContext) => InkWell(
-            onTap: () => dir ? _toggle(e.path) : _openFile(e.path),
-            onLongPress: dir ? () => _folderMenu(rowContext, e.path) : null,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(8.0 + depth * 16, 0, 16, 0),
-              child: SizedBox(
-                height: 40,
+          builder: (rowContext) => Material(
+            color: selected ? scheme.secondaryContainer : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => dir ? _toggle(e.path) : _openFile(e.path),
+              onLongPress: dir ? () => _folderMenu(rowContext, e.path) : null,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(4.0 + depth * 14, 0, 10, 0),
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 24,
-                      child: dir
-                          ? (_loading.contains(e.path)
-                                ? const Center(
-                                    child: SizedBox.square(
-                                      dimension: 12,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    ),
-                                  )
-                                : Icon(
-                                    open ? Icons.expand_more : Icons.chevron_right,
-                                    size: 20,
-                                    color: scheme.onSurfaceVariant,
-                                  ))
-                          : null,
+                      width: 20,
+                      child: !dir
+                          ? null
+                          : _loading.contains(e.path)
+                          ? const Center(
+                              child: SizedBox.square(dimension: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                            )
+                          : AnimatedRotation(
+                              turns: open ? .25 : 0,
+                              duration: const Duration(milliseconds: 150),
+                              child: Icon(Icons.chevron_right, size: 18, color: scheme.onSurfaceVariant),
+                            ),
                     ),
-                    const SizedBox(width: 4),
+                    Icon(
+                      dir ? (open ? Icons.folder_open : Icons.folder) : Icons.description_outlined,
+                      size: 20,
+                      color: dir ? scheme.primary : scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         e.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: color ?? (changedFolders.contains(e.path) ? scheme.tertiary : null),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: color ?? (selected ? scheme.onSecondaryContainer : null),
+                          fontWeight: selected ? FontWeight.w600 : null,
                         ),
                       ),
                     ),
-                    if (dir && changedFolders.contains(e.path))
+                    if (marked)
                       Container(
-                        width: 8,
-                        height: 8,
+                        width: 7,
+                        height: 7,
                         decoration: BoxDecoration(color: scheme.tertiary, shape: BoxShape.circle),
                       )
                     else if (change != null)
-                      Text(change.kind.letter, style: theme.textTheme.labelLarge?.copyWith(color: color)),
+                      _ChangeLetter(change.kind, staged: change.staged),
                   ],
                 ),
               ),
@@ -498,31 +567,76 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     }
     String relative(String dir) => posix.isWithin(git.root, dir) ? posix.relative(dir, from: git.root) : '';
     return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       itemCount: git.changes.length,
       itemBuilder: (context, i) {
         final c = git.changes[i];
-        final color = changeColor(c.kind, scheme);
-        return ListTile(
-          dense: true,
-          enabled: c.kind != GitChangeKind.deleted,
-          title: Text(
-            posix.basename(c.path),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: color,
-              decoration: c.kind == GitChangeKind.deleted ? TextDecoration.lineThrough : null,
+        final deleted = c.kind == GitChangeKind.deleted;
+        final dir = relative(posix.dirname(c.path));
+        return Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: deleted ? null : () => _openFile(c.path),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+              child: Row(
+                children: [
+                  Icon(Icons.description_outlined, size: 20, color: scheme.onSurfaceVariant),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          posix.basename(c.path),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            decoration: deleted ? TextDecoration.lineThrough : null,
+                          ),
+                        ),
+                        if (dir.isNotEmpty)
+                          Text(
+                            dir,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                          ),
+                      ],
+                    ),
+                  ),
+                  _ChangeLetter(c.kind, staged: c.staged),
+                ],
+              ),
             ),
           ),
-          subtitle: Text(relative(posix.dirname(c.path)), maxLines: 1, overflow: TextOverflow.ellipsis),
-          trailing: Text(
-            c.kind.letter,
-            style: theme.textTheme.labelLarge?.copyWith(color: color, fontWeight: c.staged ? FontWeight.w800 : null),
-          ),
-          onTap: () => _openFile(c.path),
         );
       },
+    );
+  }
+}
+
+/// M / A / D / R / U / ! in a small tinted box (bolder when staged).
+class _ChangeLetter extends StatelessWidget {
+  const _ChangeLetter(this.kind, {required this.staged});
+
+  final GitChangeKind kind;
+  final bool staged;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = changeColor(kind, Theme.of(context).colorScheme);
+    return Container(
+      width: 20,
+      height: 20,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: color.withValues(alpha: .16), borderRadius: BorderRadius.circular(5)),
+      child: Text(
+        kind.letter,
+        style: TextStyle(fontSize: 11, fontWeight: staged ? FontWeight.w800 : FontWeight.w600, color: color),
+      ),
     );
   }
 }
@@ -533,51 +647,6 @@ Color changeColor(GitChangeKind kind, ColorScheme scheme) => switch (kind) {
   GitChangeKind.deleted || GitChangeKind.conflict => scheme.error,
   GitChangeKind.renamed => const Color(0xFF6CB6FF),
 };
-
-class _BottomTab extends StatelessWidget {
-  const _BottomTab({required this.label, required this.selected, required this.onTap, this.badge = 0});
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final int badge;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: selected ? scheme.primary : Colors.transparent, width: 2)),
-          ),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-              if (badge > 0) ...[
-                const SizedBox(width: 6),
-                Badge(label: Text('$badge'), backgroundColor: scheme.primary, textColor: scheme.onPrimary),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 /// Asks for a name, a host and a folder, then opens the new workspace.
 Future<void> newWorkspace(BuildContext context, WidgetRef ref, {String? connectionId, String? path}) async {

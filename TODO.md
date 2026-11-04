@@ -21,7 +21,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Live/parked tab lifecycle (`keepAlive`, `onParked`/`onResumed`, previews), session restore after restart
 - [x] Tab menu (pin, close others, "another terminal on this host"), grid sections by group, undo close, unsaved-changes guard
 - [x] Connections: host, port, user, keys in order, saved password, jump host (ProxyJump), group, colour tag, keep-alive
-- [x] Quick connect (`user@host:port`)
+- [x] ~~Quick connect (`user@host:port`)~~ removed in 0.9.2 (add a host instead)
 - [x] Identities screen (PLAN §14): generate Ed25519/ECDSA/RSA with passphrase and comment
 - [x] Import OpenSSH / PEM / PKCS#8 (plain and PBES2) / PuTTY `.ppk` v2+v3 from file or clipboard
 - [ ] Import from a share intent (another app's "Share" → nux)
@@ -87,6 +87,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Editing: edit mode in the viewer, save with remote-change detection (overwrite / discard mine), undo/redo, "•" in the tab title, close guard for unsaved changes
 - [x] Workspace = host + folder with its own tabs (kept alive when switching); ☰ drawer on the tab overview with the
   workspace card, project tree and git status (Version control); Open as workspace from the file browser
+- [x] Encoding (detect, reopen with, save with) and line endings (LF/CRLF/CR) in the editor
 - [ ] Edit mode: undo/redo, auto-indent, brackets, find/replace, go to line, save, save-as-root (`sudo tee`)
 - [ ] Remote change detection (mtime/hash) with a reload/overwrite/diff choice
 - [x] Quick open (fuzzy, `git ls-files` or `find`), search in files (`rg`, else `grep`, over exec) opening at the line

@@ -318,6 +318,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get emptyFolder => 'Пустая папка';
 
   @override
+  String get encoding => 'Кодировка';
+
+  @override
   String errorGeneric(String error) {
     return 'Что-то пошло не так: $error';
   }
@@ -877,6 +880,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get licenses => 'Лицензии';
 
   @override
+  String get lineEndings => 'Концы строк';
+
+  @override
   String get linkTargetLabel => 'Ссылается на';
 
   @override
@@ -1179,13 +1185,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get qrCode => 'QR-код';
 
   @override
-  String get quickConnect => 'Быстрое подключение';
-
-  @override
-  String get quickConnectHint =>
-      'Сохранится в хосты, будут предложены все ваши ключи';
-
-  @override
   String get quickOpen => 'Быстрое открытие';
 
   @override
@@ -1255,6 +1254,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get savePasswordHint => 'Хранится в защищённом хранилище устройства';
+
+  @override
+  String get saveWithEncoding => 'Сохранить в кодировке';
 
   @override
   String savedAs(String name) {

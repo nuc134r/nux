@@ -316,6 +316,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyFolder => 'Empty folder';
 
   @override
+  String get encoding => 'Encoding';
+
+  @override
   String errorGeneric(String error) {
     return 'Something went wrong: $error';
   }
@@ -863,6 +866,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get licenses => 'Licenses';
 
   @override
+  String get lineEndings => 'Line endings';
+
+  @override
   String get linkTargetLabel => 'Points to';
 
   @override
@@ -1160,12 +1166,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qrCode => 'QR code';
 
   @override
-  String get quickConnect => 'Quick connect';
-
-  @override
-  String get quickConnectHint => 'Saved to hosts, offering all your keys';
-
-  @override
   String get quickOpen => 'Quick open';
 
   @override
@@ -1235,6 +1235,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savePasswordHint => 'Kept in the device\'s secure storage';
+
+  @override
+  String get saveWithEncoding => 'Save with encoding';
 
   @override
   String savedAs(String name) {

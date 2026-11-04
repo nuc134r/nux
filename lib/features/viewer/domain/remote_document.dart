@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -7,6 +6,7 @@ import 'package:nux_backend/nux_backend.dart';
 
 import '../../files/domain/file_listing.dart';
 import '../../files/domain/fs_handle.dart';
+import 'text_encoding.dart';
 
 /// The file changed on the server after it was opened here.
 class RemoteChangedException implements Exception {
@@ -50,7 +50,49 @@ class RemoteDocument extends ChangeNotifier {
   String get name => posix.basename(path);
 
   String? _text;
-  String get text => _text ??= _decode(bytes ?? Uint8List(0));
+  String get text => _text ?? _apply(decodeText(bytes ?? Uint8List(0), encoding: _chosenEncoding)).text;
+
+  /// How the text is stored: detected on load (or chosen), used when saving.
+  TextEncoding encoding = TextEncoding.utf8;
+  LineEnding lineEnding = LineEnding.lf;
+
+  /// Picked by the user ("reopen with"): kept over reloads instead of detecting again.
+  TextEncoding? _chosenEncoding;
+
+  /// The encoding or line endings to save in were changed (a save is due even without edits).
+  bool formatChanged = false;
+
+  DecodedText _apply(DecodedText d) {
+    _text = d.text;
+    encoding = d.encoding;
+    lineEnding = d.lineEnding;
+    return d;
+  }
+
+  /// Reads the loaded bytes again as [enc] (the editor takes the new text).
+  Future<void> reopenWith(TextEncoding enc) async {
+    _chosenEncoding = enc;
+    final b = bytes ?? Uint8List(0);
+    _apply(b.length > _decodeInIsolate ? await compute(_decodeAs, (b, enc)) : decodeText(b, encoding: enc));
+    formatChanged = false;
+    generation++;
+    _notify();
+  }
+
+  /// Saves in [enc] from now on (the text stays as it is).
+  void saveAs(TextEncoding enc) {
+    if (enc == encoding) return;
+    encoding = enc;
+    formatChanged = true;
+    _notify();
+  }
+
+  void setLineEnding(LineEnding ending) {
+    if (ending == lineEnding) return;
+    lineEnding = ending;
+    formatChanged = true;
+    _notify();
+  }
 
   static const _decodeInIsolate = 256 << 10;
 
@@ -88,7 +130,9 @@ class RemoteDocument extends ChangeNotifier {
       }
       bytes = out.takeBytes();
       // Large text is decoded off the UI thread (the getter would do it during the first frame).
-      _text = bytes!.length > _decodeInIsolate ? await compute(_decode, bytes!) : null;
+      _text = null;
+      if (bytes!.length > _decodeInIsolate) _apply(await compute(_decodeAs, (bytes!, _chosenEncoding)));
+      formatChanged = false;
       generation++;
       kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!)
           ? FileKind.binary
@@ -115,11 +159,12 @@ class RemoteDocument extends ChangeNotifier {
         final now = await fs.stat(path);
         if (now.size != size || now.modified != modified) throw const RemoteChangedException();
       }
-      final data = Uint8List.fromList(utf8.encode(text));
+      final data = encodeText(text, encoding, lineEnding);
       await fs.writeBytes(path, data);
       final after = await fs.stat(path);
       bytes = data;
       _text = text;
+      formatChanged = false;
       size = after.size;
       modified = after.modified;
     } finally {
@@ -160,4 +205,4 @@ String hexLine(Uint8List bytes, int offset) {
   return '${offset.toRadixString(16).padLeft(8, '0')}  $hex |$ascii|';
 }
 
-String _decode(Uint8List bytes) => utf8.decode(bytes, allowMalformed: true);
+DecodedText _decodeAs((Uint8List, TextEncoding?) job) => decodeText(job.$1, encoding: job.$2);

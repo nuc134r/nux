@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -11,6 +12,7 @@ import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../data/workspace_access.dart';
 import '../domain/workspace_search.dart';
+import 'workspace_drawer.dart';
 
 /// Finds a file of the workspace by a few letters of its name and opens it.
 Future<void> showQuickOpen(BuildContext context, Workspace ws) => showDialog<void>(
@@ -25,6 +27,7 @@ Future<void> showSearchInFiles(BuildContext context, Workspace ws) => showDialog
 );
 
 void _open(BuildContext context, WidgetRef ref, Workspace ws, String relative, {int? line}) {
+  ref.read(workspaceDrawerStateProvider).lastOpened[ws.id] = posix.join(ws.rootPath, relative);
   Navigator.of(context).pop();
   ref
       .read(workspaceProvider)
@@ -82,29 +85,66 @@ class _QuickOpen extends ConsumerStatefulWidget {
   ConsumerState<_QuickOpen> createState() => _QuickOpenState();
 }
 
+/// The file list of each workspace from the last Quick open: shown at once next time while a fresh one
+/// loads (listing a big project over SSH takes a while).
+final _fileListCache = <String, List<String>>{};
+
+/// Above this many files, matching runs in a background isolate so typing stays smooth.
+const _isolateAbove = 4000;
+
+List<String> _filterJob((String, List<String>) job) => fuzzyFilter(job.$1, job.$2);
+
 class _QuickOpenState extends ConsumerState<_QuickOpen> {
   final _query = TextEditingController();
   List<String>? _files;
+  List<String> _matches = const [];
   Object? _error;
+  Timer? _debounce;
+  int _generation = 0;
 
   @override
   void initState() {
     super.initState();
-    _query.addListener(() => setState(() {}));
+    _files = _fileListCache[widget.ws.id];
+    if (_files != null) _filter();
+    _query.addListener(() {
+      _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 90), _filter);
+    });
     _load();
   }
 
   Future<void> _load() async {
     try {
-      final files = parseFileList(await _run(ref, widget.ws, listFilesCommand(widget.ws.rootPath)));
-      if (mounted) setState(() => _files = files);
+      final result = await _run(ref, widget.ws, listFilesCommand(widget.ws.rootPath));
+      // Splitting tens of thousands of lines is done off the UI thread too.
+      final files = result.stdout.length > 200000 ? await compute(parseFileList, result) : parseFileList(result);
+      _fileListCache[widget.ws.id] = files;
+      if (!mounted) return;
+      _files = files;
+      await _filter();
     } catch (e) {
-      if (mounted) setState(() => _error = e);
+      if (mounted && _files == null) setState(() => _error = e);
     }
+  }
+
+  /// Matches the query against the files (in an isolate for big projects); stale results are dropped.
+  Future<void> _filter() async {
+    final files = _files;
+    if (files == null) return;
+    final generation = ++_generation;
+    final query = _query.text;
+    final matches = query.trim().isEmpty
+        ? files.take(100).toList()
+        : files.length > _isolateAbove
+        ? await compute(_filterJob, (query, files))
+        : fuzzyFilter(query, files);
+    if (mounted && generation == _generation) setState(() => _matches = matches);
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _query.dispose();
     super.dispose();
   }
@@ -114,7 +154,7 @@ class _QuickOpenState extends ConsumerState<_QuickOpen> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final files = _files;
-    final matches = files == null ? const <String>[] : fuzzyFilter(_query.text, files);
+    final matches = _matches;
     return Scaffold(
       appBar: _SearchBar(
         controller: _query,
