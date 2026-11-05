@@ -444,11 +444,8 @@ class _Header extends StatelessWidget {
     return Material(
       color: overGrid ? theme.colorScheme.surface : color ?? theme.colorScheme.surfaceContainer,
       shape: overGrid ? null : Border(bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: .5)),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onVerticalDragEnd: (d) {
-          if ((d.primaryVelocity ?? 0) > 150) onSwipeDown();
-        },
+      child: _SwipeDownDetector(
+        onSwipeDown: onSwipeDown,
         child: Padding(
           padding: EdgeInsets.only(top: topPadding),
           child: SizedBox(height: height, child: child),
@@ -456,6 +453,48 @@ class _Header extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Calls [onSwipeDown] as soon as a drag has gone [distance] down, while the finger is still on
+/// the screen (or on a fast flick that ends before that).
+class _SwipeDownDetector extends StatefulWidget {
+  const _SwipeDownDetector({required this.onSwipeDown, required this.child});
+
+  static const distance = 24.0;
+
+  final VoidCallback onSwipeDown;
+  final Widget child;
+
+  @override
+  State<_SwipeDownDetector> createState() => _SwipeDownDetectorState();
+}
+
+class _SwipeDownDetectorState extends State<_SwipeDownDetector> {
+  double _dy = 0;
+  bool _fired = false;
+
+  void _fire() {
+    if (_fired) return;
+    _fired = true;
+    widget.onSwipeDown();
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.translucent,
+    onVerticalDragStart: (_) {
+      _dy = 0;
+      _fired = false;
+    },
+    onVerticalDragUpdate: (d) {
+      _dy += d.delta.dy;
+      if (_dy >= _SwipeDownDetector.distance) _fire();
+    },
+    onVerticalDragEnd: (d) {
+      if ((d.primaryVelocity ?? 0) > 150) _fire();
+    },
+    child: widget.child,
+  );
 }
 
 /// The live tabs, stacked. While the header is swiped, the current tab and its neighbour slide

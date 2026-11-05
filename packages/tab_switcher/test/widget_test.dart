@@ -57,7 +57,12 @@ void main() {
 
     c.gridOpen = true;
     await tester.pumpAndSettle();
-    await tester.tap(find.descendant(of: find.ancestor(of: find.text('Tab b'), matching: find.byType(Row)).first, matching: find.byIcon(Icons.close)));
+    await tester.tap(
+      find.descendant(
+        of: find.ancestor(of: find.text('Tab b'), matching: find.byType(Row)).first,
+        matching: find.byIcon(Icons.close),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(c.length, 1);
     expect(find.text('Closed Tab b'), findsOneWidget);
@@ -100,6 +105,22 @@ void main() {
     expect(find.text('b:0'), findsOneWidget);
 
     await tester.fling(find.text('header b'), const Offset(0, 200), 1500);
+    await tester.pumpAndSettle();
+    expect(c.gridOpen, isTrue);
+  });
+
+  testWidgets('a slow drag down on the header opens the overview before the finger lifts', (tester) async {
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    c.open(CounterTab('a'));
+    await tester.pumpWidget(app(c));
+    final g = await tester.startGesture(tester.getCenter(find.text('header a')));
+    for (var i = 0; i < 8; i++) {
+      await g.moveBy(const Offset(0, 5));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(c.gridOpen, isTrue, reason: 'still holding');
+    await g.up();
     await tester.pumpAndSettle();
     expect(c.gridOpen, isTrue);
   });
@@ -199,7 +220,9 @@ void main() {
     expect(y, inInclusiveRange(0, tester.view.physicalSize.height / tester.view.devicePixelRatio));
   });
 
-  testWidgets('swiping: a haptic at the closing point, the card above its neighbours, the rest slide in', (tester) async {
+  testWidgets('swiping: a haptic at the closing point, the card above its neighbours, the rest slide in', (
+    tester,
+  ) async {
     final haptics = <String>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
       if (call.method == 'HapticFeedback.vibrate') haptics.add(call.arguments as String);

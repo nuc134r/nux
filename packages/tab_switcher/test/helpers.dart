@@ -51,21 +51,18 @@ class _CounterState extends State<_Counter> {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: TextButton(
-          onPressed: () => setState(() => count++),
-          child: Text('${widget.label}:$count'),
-        ),
-      );
+    child: TextButton(onPressed: () => setState(() => count++), child: Text('${widget.label}:$count')),
+  );
 }
 
 Widget app(TabSwitcherController c, {Size? size}) => MaterialApp(
-      home: TabSwitcher(
-        controller: c,
-        headerBuilder: (context, tab) => Row(
-          children: [
-            Expanded(child: Text(tab == null ? 'grid' : 'header ${tab.id}')),
-            TabCountButton(controller: c),
-          ],
-        ),
-      ),
-    );
+  home: TabSwitcher(
+    controller: c,
+    headerBuilder: (context, tab) => Row(
+      children: [
+        Expanded(child: Text(tab == null ? 'grid' : 'header ${tab.id}')),
+        TabCountButton(controller: c),
+      ],
+    ),
+  ),
+);

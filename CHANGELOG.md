@@ -13,6 +13,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Push preview**: Push lists the commits it will send; when the server rejects it, nux explains and offers a force push that refuses to overwrite work you have not seen (force-with-lease).
 - **Sign-off** chip on the commit box.
 - Every git action's result has **Command**, showing the git command that does the same.
+- Swiping down on a tab's header opens the tab overview as soon as your finger moves, without waiting for you to let go or swipe fast.
 
 ## 0.9.9
 
