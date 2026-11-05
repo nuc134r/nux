@@ -21,16 +21,25 @@
   },
   "activityEarlier": "Earlier",
   "activityEmpty": "Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.",
-  "activityForwardBack": "Forwarding {name} works again",
-  "@activityForwardBack": {
+  "activityForwardBackShort": "Works again",
+  "activityForwardFailed": "Forwarding {name} stopped",
+  "@activityForwardFailed": {
     "placeholders": {
       "name": {
         "type": "String"
       }
     }
   },
-  "activityForwardFailed": "Forwarding {name} stopped",
-  "@activityForwardFailed": {
+  "activityForwardStopped": "Forwarding {name} turned off",
+  "@activityForwardStopped": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityForwarding": "Forwarding {name}",
+  "@activityForwarding": {
     "placeholders": {
       "name": {
         "type": "String"

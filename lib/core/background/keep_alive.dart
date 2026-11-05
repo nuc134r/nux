@@ -37,12 +37,6 @@ class NoKeepAlive implements KeepAlive {
 const _stopButton = 'stop';
 
 /// Entry point of the foreground service's isolate: it only relays the notification's buttons.
-/// Sent by the service when its notification is tapped.
-const _openMessage = 'open';
-
-/// The background notification was tapped (the app shows Activity).
-final notificationOpened = StreamController<void>.broadcast();
-
 @pragma('vm:entry-point')
 void keepAliveCallback() => FlutterForegroundTask.setTaskHandler(_RelayHandler());
 
@@ -65,11 +59,7 @@ class _RelayHandler extends TaskHandler {
   }
 
   @override
-  void onNotificationPressed() {
-    // Opens nux at Activity (what runs, what happened).
-    FlutterForegroundTask.sendDataToMain(_openMessage);
-    FlutterForegroundTask.launchApp();
-  }
+  void onNotificationPressed() => FlutterForegroundTask.launchApp();
 }
 
 /// An Android foreground service (type `specialUse`, see AndroidManifest.xml) whose notification shows
@@ -113,7 +103,6 @@ class ForegroundServiceKeepAlive implements KeepAlive {
   DateTime? _stopPressed;
 
   void _onData(Object data) {
-    if (data == _openMessage) notificationOpened.add(null);
     if (data == _stopButton) {
       // The service already stopped itself; don't start it again before the app has caught up.
       _stopPressed = DateTime.now();

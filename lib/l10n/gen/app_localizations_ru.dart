@@ -36,13 +36,21 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пока пусто. Здесь появятся команды git, передачи файлов, перенаправления, обновления и сообщения.';
 
   @override
-  String activityForwardBack(String name) {
-    return 'Перенаправление $name снова работает';
-  }
+  String get activityForwardBackShort => 'Снова работает';
 
   @override
   String activityForwardFailed(String name) {
     return 'Перенаправление $name остановлено';
+  }
+
+  @override
+  String activityForwardStopped(String name) {
+    return 'Перенаправление $name выключено';
+  }
+
+  @override
+  String activityForwarding(String name) {
+    return 'Перенаправление $name';
   }
 
   @override

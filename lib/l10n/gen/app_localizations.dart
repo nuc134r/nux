@@ -140,17 +140,29 @@ abstract class AppLocalizations {
   /// **'Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.'**
   String get activityEmpty;
 
-  /// No description provided for @activityForwardBack.
+  /// No description provided for @activityForwardBackShort.
   ///
   /// In en, this message translates to:
-  /// **'Forwarding {name} works again'**
-  String activityForwardBack(String name);
+  /// **'Works again'**
+  String get activityForwardBackShort;
 
   /// No description provided for @activityForwardFailed.
   ///
   /// In en, this message translates to:
   /// **'Forwarding {name} stopped'**
   String activityForwardFailed(String name);
+
+  /// No description provided for @activityForwardStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding {name} turned off'**
+  String activityForwardStopped(String name);
+
+  /// No description provided for @activityForwarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding {name}'**
+  String activityForwarding(String name);
 
   /// No description provided for @activityNew.
   ///

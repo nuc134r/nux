@@ -9,7 +9,6 @@ import '../../../app/router.dart';
 import '../../../core/activity/activity_center.dart';
 import '../../../core/activity/activity_view.dart';
 import '../../../core/background/background_providers.dart';
-import '../../../core/background/keep_alive.dart' show notificationOpened;
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../browser/domain/address.dart';
@@ -28,15 +27,6 @@ import '../data/workspace.dart';
 import '../domain/nux_tab.dart';
 import 'workspace_drawer.dart';
 import 'workspace_find.dart';
-
-/// Shows Activity when the background notification is tapped.
-final _notificationTapProvider = Provider<void>((ref) {
-  final sub = notificationOpened.stream.listen((_) {
-    final context = rootNavigatorKey.currentContext;
-    if (context != null && context.mounted) showActivity(context);
-  });
-  ref.onDispose(sub.cancel);
-});
 
 /// The scaffold holding the workspace drawer (tabs have scaffolds of their own).
 final _scaffold = GlobalKey<ScaffoldState>();
@@ -71,8 +61,6 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(backgroundResyncProvider);
     // Files other apps open with or share to nux.
     ref.watch(incomingHandlerProvider);
-    // Tapping nux's notification opens Activity.
-    ref.watch(_notificationTapProvider);
     // An available update is an Activity event.
     ref.listen(availableUpdateProvider, (before, now) {
       final release = now.value;

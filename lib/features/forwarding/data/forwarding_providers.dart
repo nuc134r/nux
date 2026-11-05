@@ -99,31 +99,74 @@ final forwardingManagerProvider = Provider((ref) {
     },
   );
   ref.onDispose(manager.dispose);
-  _reportForwardings(manager, ref.read(activityCenterProvider));
+  reportForwardings(manager, ref.read(activityCenterProvider));
   return manager;
 });
 
-/// A forwarding that stops on an error, or works again after one, is an Activity event (with Try again).
-void _reportForwardings(ForwardingManager manager, ActivityCenter center) {
+/// Forwardings in Activity: starting and reconnecting are operations (Cancel stops the forwarding), a
+/// forwarding that gives up is a failure (with Try again), and turning one off is noted.
+void reportForwardings(ForwardingManager manager, ActivityCenter center) {
   final last = <String, ForwardState>{};
+  final entries = <String, ActivityEntry>{};
   manager.addListener(() {
     for (final rule in manager.rules.values) {
       final s = manager.status(rule.id);
-      final before = last[rule.id];
+      final before = last[rule.id] ?? ForwardState.stopped;
+      final attempt = s.attempt;
       last[rule.id] = s.state;
-      if (before == s.state) continue;
       final l10n = currentL10n.value;
       final name = rule.label.isNotEmpty ? rule.label : rule.describe();
-      if (s.state == ForwardState.failed) {
-        center.event(
-          ActivitySource.forwarding,
-          l10n.activityForwardFailed(name),
-          subtitle: s.error == null ? null : forwardErrorText(l10n, s.error!, rule),
-          state: ActivityState.failed,
-          retry: () => manager.start(rule),
-        );
-      } else if (s.state == ForwardState.active && before == ForwardState.reconnecting) {
-        center.event(ActivitySource.forwarding, l10n.activityForwardBack(name), state: ActivityState.done, unread: false);
+      final error = s.error == null ? null : forwardErrorText(l10n, s.error!, rule);
+      final entry = entries[rule.id];
+      void begin(String subtitle) => entries[rule.id] = center.start(
+        ActivitySource.forwarding,
+        l10n.activityForwarding(name),
+        subtitle: subtitle,
+        cancel: () => manager.stop(rule.id),
+      );
+      if (before == s.state) {
+        // Another attempt while reconnecting.
+        if (s.state == ForwardState.reconnecting && entry != null) {
+          center.update(entry, subtitle: l10n.forwardReconnecting(attempt));
+        }
+        continue;
+      }
+      switch (s.state) {
+        case ForwardState.starting:
+          begin(l10n.forwardStarting);
+        case ForwardState.reconnecting:
+          if (entry == null || !entry.running) {
+            begin(l10n.forwardReconnecting(attempt));
+          } else {
+            center.update(entry, subtitle: l10n.forwardReconnecting(attempt));
+          }
+        case ForwardState.active:
+          if (entry != null && entry.running) {
+            center.finish(
+              entry,
+              ActivityState.done,
+              subtitle: before == ForwardState.reconnecting ? l10n.activityForwardBackShort : rule.describe(),
+              unread: false,
+            );
+          }
+        case ForwardState.failed:
+          if (entry != null && entry.running) {
+            entry.retry = () => manager.start(rule);
+            center.finish(entry, ActivityState.failed, subtitle: error);
+          } else {
+            center.event(
+              ActivitySource.forwarding,
+              l10n.activityForwardFailed(name),
+              subtitle: error,
+              state: ActivityState.failed,
+              retry: () => manager.start(rule),
+            );
+          }
+        case ForwardState.stopped:
+          if (entry != null && entry.running) center.finish(entry, ActivityState.cancelled, unread: false);
+          if (before != ForwardState.failed) {
+            center.event(ActivitySource.forwarding, l10n.activityForwardStopped(name), unread: false);
+          }
       }
     }
   });

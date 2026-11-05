@@ -36,13 +36,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.';
 
   @override
-  String activityForwardBack(String name) {
-    return 'Forwarding $name works again';
-  }
+  String get activityForwardBackShort => 'Works again';
 
   @override
   String activityForwardFailed(String name) {
     return 'Forwarding $name stopped';
+  }
+
+  @override
+  String activityForwardStopped(String name) {
+    return 'Forwarding $name turned off';
+  }
+
+  @override
+  String activityForwarding(String name) {
+    return 'Forwarding $name';
   }
 
   @override

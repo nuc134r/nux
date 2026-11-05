@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nux/core/activity/activity_center.dart';
+import 'package:nux/features/forwarding/data/forwarding_providers.dart' show reportForwardings;
 import 'package:nux/core/db/database.dart';
 import 'package:nux/core/log/log.dart';
 import 'package:nux/core/background/keep_alive.dart';
@@ -129,6 +131,32 @@ void main() {
     await manager.start(rule('b'));
     expect(manager.status('b').state, ForwardState.failed);
     expect(manager.status('b').error, isA<ForwardException>());
+  });
+
+  test('Activity: starting, reconnecting and failing are reported; Cancel stops; turning off is noted', () async {
+    final center = ActivityCenter();
+    reportForwardings(manager, center);
+    await manager.start(rule('a'));
+    final start = center.entries.single;
+    expect(start.state, ActivityState.done);
+    expect(start.title, contains('Forwarding'));
+
+    connections.single.complete(); // dropped: reconnecting is an operation
+    await pumpEventQueue();
+    expect(center.running, hasLength(1));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(center.running, isEmpty);
+    expect(center.entries.first.subtitle, 'Works again');
+
+    await manager.stop('a');
+    expect(center.entries.first.title, contains('turned off'));
+
+    startError = const ForwardException(ForwardError.portInUse, 'taken');
+    await manager.start(rule('b'));
+    final failed = center.entries.first;
+    expect(failed.state, ActivityState.failed);
+    expect(failed.retry, isNotNull);
+    expect(center.unread, 1, reason: 'only the failure is new');
   });
 
   test('the notification can stop everything; auto-start rules start', () async {

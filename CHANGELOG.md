@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.4
+
+- **Forwardings in Activity**: turning one on shows it starting (Cancel turns it off), a dropped connection shows the reconnecting attempts and "Works again", a forwarding that gives up is a failure with Try again, and turning one off is noted.
+- Tapping nux's notification opens nux as before, not the Activity sheet.
+
 ## 0.10.3
 
 - **Activity**: one place for what nux is doing and what happened: git fetch / pull / push with progress, uploads and downloads, forwardings that stopped (with Try again), dropped connections, updates, failed git commands and every message a snackbar showed. Running operations can be cancelled from there. Open it from ⋮ → Activity in any tab or the tab overview, or by tapping nux's notification. The tab count shows a small spinner while something runs and a dot when something new happened (red for a failure). It is kept until nux restarts.
