@@ -10,6 +10,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Settings → Log**: how much space the log takes, the latest lines (filter to warnings or errors), Share and Clear.
 - **Settings → Backup**: export your settings to a file and restore them (on this or another device).
 - Background connections in Settings show a green "All set" when nothing needs your attention.
+- **New icons**: the app icon is the nux wordmark, the notification icon an n.
 - **Editor status bar**: line and column (and how much is selected), the language, encoding and line endings; tap them to go to a line or change the encoding or line endings. It makes room while the keyboard is up.
 - **Side-by-side diffs**: old on the left, new on the right; on by default on wide screens, ⋮ → Side by side on any diff to switch.
 - **Extra keys you can set up** for the terminal and the editor (Settings → Extra keys, or ⋮ → Extra keys in the tab): one row, two rows, two rows with more symbols, or your own layout written as text.

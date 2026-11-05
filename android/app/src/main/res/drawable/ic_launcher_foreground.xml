@@ -4,6 +4,6 @@
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <group android:scaleX="0.22000" android:scaleY="0.22000" android:translateX="21.0000" android:translateY="21.0000">
-        <path android:fillColor="#FF7FE0C4" android:pathData="M78 92L152 150L78 208L78 174L109 150L78 126Z M164 186H226V212H164Z"/>
+        <path android:fillColor="#FFFFFFFF" android:pathData="M44,185V146A31,31 0 0 1 106,146V185H88V146A13,13 0 0 0 62,146V185Z M44,115H62V185H44Z M122,115V154A31,31 0 0 0 184,154V115H166V154A13,13 0 0 1 140,154V115Z M166,115V185H184V115Z M200,115H221L256,185H235Z M235,115H256L221,185H200Z"/>
     </group>
 </vector>

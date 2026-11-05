@@ -117,6 +117,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Diagnostics, hover, completion, definition, references, rename, format, code actions
 
 ## M9 — Polish / research
+- [x] New icons: nux wordmark (launcher, adaptive + themed), n (notification), from icons/*.svg
 - [x] Web browser tab (PLAN §5): address bar, back/forward/reload, restore URL; [ ] downloads to transfers
 - [x] "Open in browser tab" on local forwards; [ ] SOCKS (-D) forward as the WebView proxy (Android `ProxyController`)
 - [ ] VS Code: `code-server`/`openvscode-server` through a forward in a WebView tab
