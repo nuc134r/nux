@@ -12,6 +12,7 @@ import '../../../l10n/l10n.dart';
 import '../../terminal/presentation/extra_keys_bar.dart' show terminalSupports;
 import '../../viewer/presentation/viewer_view.dart' show editorSupports;
 import '../data/settings_repository.dart';
+import 'key_layout_editor.dart';
 
 /// The name of a preset in the UI.
 String keyBarPresetName(AppLocalizations l10n, String id) => switch (id) {
@@ -67,6 +68,14 @@ class _KeyBarSettingsScreenState extends ConsumerState<KeyBarSettingsScreen> {
     await repo.set(_keys.$1, id);
   }
 
+  /// The custom layout changed (in the editor, or [typed] as text): shown at once, saved a moment later.
+  void _setCustom(String text, {bool typed = false}) {
+    if (!typed) _custom.text = text;
+    setState(() {});
+    _save?.cancel();
+    _save = Timer(const Duration(milliseconds: 400), () => ref.read(settingsRepositoryProvider).set(_keys.$2, text));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -105,33 +114,45 @@ class _KeyBarSettingsScreenState extends ConsumerState<KeyBarSettingsScreen> {
               ),
             RadioListTile<String>(value: 'custom', title: Text(l10n.keysCustom)),
             if (chosen == 'custom') ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                child: TextField(
-                  controller: _custom,
-                  minLines: 2,
-                  maxLines: 6,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  style: const TextStyle(fontFamily: monoFont, fontFeatures: noLigatures),
-                  decoration: const InputDecoration(border: OutlineInputBorder()),
-                  onChanged: (text) {
-                    _save?.cancel();
-                    _save = Timer(
-                      const Duration(milliseconds: 400),
-                      () => ref.read(settingsRepositoryProvider).set(_keys.$2, text),
-                    );
-                    setState(() {});
-                  },
-                ),
-              ),
               Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: preview(parseKeyBar(_custom.text))),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                 child: Text(
-                  l10n.keysCustomHelp(specialKeys.keys.where(_supports).join(' ')),
+                  l10n.keyEditorHint,
                   style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: KeyLayoutEditor(
+                  rows: parseKeyBar(_custom.text),
+                  supports: _supports,
+                  onChanged: (rows) => _setCustom(formatKeyBar(rows)),
+                ),
+              ),
+              // The same layout as text, for pasting or sharing one.
+              ExpansionTile(
+                title: Text(l10n.editAsText),
+                childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                children: [
+                  TextField(
+                    controller: _custom,
+                    minLines: 2,
+                    maxLines: 6,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    style: const TextStyle(fontFamily: monoFont, fontFeatures: noLigatures),
+                    decoration: const InputDecoration(border: OutlineInputBorder()),
+                    onChanged: (text) => _setCustom(text, typed: true),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      l10n.keysCustomHelp(specialKeys.keys.where(_supports).join(' ')),
+                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    ),
+                  ),
+                ],
               ),
             ],
           ],

@@ -22,10 +22,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addHost => 'Добавить хост';
 
   @override
-  String get addKey => 'Добавить ключ';
+  String get addKey => 'Добавить клавишу';
 
   @override
   String get addPortForwarding => 'Добавить проброс порта';
+
+  @override
+  String get addRow => 'Добавить ряд';
 
   @override
   String get addressHint => 'Адрес или поиск';
@@ -484,10 +487,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edit => 'Изменить';
 
   @override
+  String get editAsText => 'Изменить как текст';
+
+  @override
   String get editForward => 'Изменить проброс';
 
   @override
   String get editHost => 'Изменить хост';
+
+  @override
+  String get editKey => 'Клавиша';
 
   @override
   String get editor => 'Редактор';
@@ -1034,11 +1043,21 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get keyAlternates => 'При долгом нажатии';
+
+  @override
+  String get keyAlternatesHint => 'Через пробел, например () (( [';
+
+  @override
   String get keyComment => 'Комментарий';
 
   @override
   String get keyCommentHint =>
       'Добавляется в конец открытого ключа и помогает узнать его на серверах';
+
+  @override
+  String get keyEditorHint =>
+      'Нажмите на клавишу, чтобы изменить её; удерживайте и перетаскивайте, чтобы переместить (или в «Убрать»). + добавляет клавишу в ряд.';
 
   @override
   String get keyHasPassphrase => 'Защищён парольной фразой';
@@ -1078,6 +1097,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get keyType => 'Тип';
+
+  @override
+  String get keyTypes => 'Вводит';
 
   @override
   String keyUnsupported(String detail) {
@@ -1254,6 +1276,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get newPassphrase => 'Новая парольная фраза';
 
   @override
+  String get newRow => 'Новый ряд';
+
+  @override
   String get newTab => 'Новая вкладка';
 
   @override
@@ -1406,6 +1431,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get operationRevert => 'Revert';
+
+  @override
+  String get orSpecialKey => 'Или специальная клавиша';
 
   @override
   String get organize => 'Упорядочить';
@@ -1648,6 +1676,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get removeBookmark => 'Убрать из закладок';
+
+  @override
+  String get removeKey => 'Убрать';
 
   @override
   String get rename => 'Переименовать';

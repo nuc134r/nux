@@ -9,6 +9,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Editor ⋮ → View**: Wrap lines, Status bar (it can be turned off) and Extra keys, together.
 - The editor status bar keeps clear of rounded screen corners; its encoding and line-endings menus open above it (they came up empty).
 - Menus keep long choices (like "Two rows, more symbols") on one short line.
+- **Custom extra keys by drag and drop**: hold a key and drag it within or between rows, onto New row, or onto Remove; tap a key to change what it types and what a long press offers; + adds a key. Edit as text is still there.
 
 ## 0.10.1
 

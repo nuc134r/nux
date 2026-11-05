@@ -6,6 +6,7 @@
   "addHost": "Add host",
   "addKey": "Add key",
   "addPortForwarding": "Add port forwarding",
+  "addRow": "Add row",
   "addressHint": "Address or search",
   "addressVia": "{address} via {jump}",
   "@addressVia": {
@@ -320,8 +321,10 @@
   "duplicate": "Duplicate",
   "duplicateTab": "New terminal on this host",
   "edit": "Edit",
+  "editAsText": "Edit as text",
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
+  "editKey": "Key",
   "editor": "Editor",
   "editorFontSize": "File text size",
   "editorKeys": "Editor keys",
@@ -719,8 +722,11 @@
       }
     }
   },
+  "keyAlternates": "On long press",
+  "keyAlternatesHint": "Separated by spaces, e.g. () (( [",
   "keyComment": "Comment",
   "keyCommentHint": "Shown at the end of the public key; helps you recognise it on servers",
+  "keyEditorHint": "Tap a key to change it, hold and drag to move it (or onto Remove). + adds a key to the row.",
   "keyHasPassphrase": "Protected with a passphrase",
   "keyInstalled": "Installed on {name}",
   "@keyInstalled": {
@@ -746,6 +752,7 @@
   },
   "keyStorageHint": "The private key is kept in the device's secure storage",
   "keyType": "Type",
+  "keyTypes": "Types",
   "keyUnsupported": "Unsupported key: {detail}",
   "@keyUnsupported": {
     "placeholders": {
@@ -860,6 +867,7 @@
   "newBrowserTab": "New browser tab",
   "newFolder": "New folder",
   "newPassphrase": "New passphrase",
+  "newRow": "New row",
   "newTab": "New tab",
   "newTag": "New tag",
   "newWorkspace": "New workspace",
@@ -909,6 +917,7 @@
   "operationMerge": "Merging",
   "operationRebase": "Rebasing",
   "operationRevert": "Reverting",
+  "orSpecialKey": "Or a special key",
   "organize": "Organize",
   "otherDevices": "Connections from LAN",
   "outdent": "Outdent",
@@ -1045,6 +1054,7 @@
   "rememberForWorkspace": "Remember for this workspace",
   "rememberUntilClosed": "Remember until nux is closed",
   "removeBookmark": "Remove bookmark",
+  "removeKey": "Remove",
   "rename": "Rename",
   "renameBranch": "Rename branch",
   "repeatPassphrase": "Repeat passphrase",

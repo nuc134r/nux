@@ -28,6 +28,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPortForwarding => 'Add port forwarding';
 
   @override
+  String get addRow => 'Add row';
+
+  @override
   String get addressHint => 'Address or search';
 
   @override
@@ -480,10 +483,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get editAsText => 'Edit as text';
+
+  @override
   String get editForward => 'Edit forwarding';
 
   @override
   String get editHost => 'Edit host';
+
+  @override
+  String get editKey => 'Key';
 
   @override
   String get editor => 'Editor';
@@ -1017,11 +1026,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get keyAlternates => 'On long press';
+
+  @override
+  String get keyAlternatesHint => 'Separated by spaces, e.g. () (( [';
+
+  @override
   String get keyComment => 'Comment';
 
   @override
   String get keyCommentHint =>
       'Shown at the end of the public key; helps you recognise it on servers';
+
+  @override
+  String get keyEditorHint =>
+      'Tap a key to change it, hold and drag to move it (or onto Remove). + adds a key to the row.';
 
   @override
   String get keyHasPassphrase => 'Protected with a passphrase';
@@ -1061,6 +1080,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get keyType => 'Type';
+
+  @override
+  String get keyTypes => 'Types';
 
   @override
   String keyUnsupported(String detail) {
@@ -1236,6 +1258,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPassphrase => 'New passphrase';
 
   @override
+  String get newRow => 'New row';
+
+  @override
   String get newTab => 'New tab';
 
   @override
@@ -1387,6 +1412,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get operationRevert => 'Reverting';
+
+  @override
+  String get orSpecialKey => 'Or a special key';
 
   @override
   String get organize => 'Organize';
@@ -1625,6 +1653,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeBookmark => 'Remove bookmark';
+
+  @override
+  String get removeKey => 'Remove';
 
   @override
   String get rename => 'Rename';

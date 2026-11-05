@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nux_backend/nux_backend.dart' show CommandResult, FileEntry, FileSystem, LocalFileSystem, ProcessRunner, RunningProcess;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
+import 'package:nux/core/keys/key_bar_layout.dart';
 import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/connections/domain/host_key_check.dart';
 import 'package:nux/features/files/domain/fs_handle.dart';
@@ -173,6 +174,11 @@ void main() {
       await tester.tap(find.text('Like the app').first);
     }),
     'log': const _Shot(ThemeMode.light, Routes.log),
+    'keys_custom': _Shot(ThemeMode.dark, Routes.keyBar(KeyBarFor.editor), act: (tester, c) async {
+      await tester.tap(find.text('Custom'));
+      await settle(tester);
+      await tester.scrollUntilVisible(find.text('Add row'), 300, scrollable: find.byType(Scrollable).first);
+    }),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),
     'desktop': _Shot(ThemeMode.dark, Routes.home, size: _desktop, act: (tester, c) async {

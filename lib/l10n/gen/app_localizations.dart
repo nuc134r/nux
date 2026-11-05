@@ -134,6 +134,12 @@ abstract class AppLocalizations {
   /// **'Add port forwarding'**
   String get addPortForwarding;
 
+  /// No description provided for @addRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Add row'**
+  String get addRow;
+
   /// No description provided for @addressHint.
   ///
   /// In en, this message translates to:
@@ -878,6 +884,12 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @editAsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit as text'**
+  String get editAsText;
+
   /// No description provided for @editForward.
   ///
   /// In en, this message translates to:
@@ -889,6 +901,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit host'**
   String get editHost;
+
+  /// No description provided for @editKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Key'**
+  String get editKey;
 
   /// No description provided for @editor.
   ///
@@ -1724,6 +1742,18 @@ abstract class AppLocalizations {
   /// **'This key is already here as {name}'**
   String keyAlreadyImported(String name);
 
+  /// No description provided for @keyAlternates.
+  ///
+  /// In en, this message translates to:
+  /// **'On long press'**
+  String get keyAlternates;
+
+  /// No description provided for @keyAlternatesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separated by spaces, e.g. () (( ['**
+  String get keyAlternatesHint;
+
   /// No description provided for @keyComment.
   ///
   /// In en, this message translates to:
@@ -1735,6 +1765,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shown at the end of the public key; helps you recognise it on servers'**
   String get keyCommentHint;
+
+  /// No description provided for @keyEditorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a key to change it, hold and drag to move it (or onto Remove). + adds a key to the row.'**
+  String get keyEditorHint;
 
   /// No description provided for @keyHasPassphrase.
   ///
@@ -1801,6 +1837,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Type'**
   String get keyType;
+
+  /// No description provided for @keyTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Types'**
+  String get keyTypes;
 
   /// No description provided for @keyUnsupported.
   ///
@@ -2089,6 +2131,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New passphrase'**
   String get newPassphrase;
+
+  /// No description provided for @newRow.
+  ///
+  /// In en, this message translates to:
+  /// **'New row'**
+  String get newRow;
 
   /// No description provided for @newTab.
   ///
@@ -2383,6 +2431,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reverting'**
   String get operationRevert;
+
+  /// No description provided for @orSpecialKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Or a special key'**
+  String get orSpecialKey;
 
   /// No description provided for @organize.
   ///
@@ -2803,6 +2857,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove bookmark'**
   String get removeBookmark;
+
+  /// No description provided for @removeKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeKey;
 
   /// No description provided for @rename.
   ///
