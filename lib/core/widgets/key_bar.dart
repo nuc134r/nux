@@ -15,7 +15,11 @@ enum KeyLatch { off, once, locked }
 /// keys repeat (arrows, ⌫, symbols). Ctrl / Alt: tap for the next key, hold to lock. The bar never takes
 /// focus, so the keyboard stays up.
 class KeyBar extends StatelessWidget {
-  const KeyBar({super.key, required this.rows, required this.onKey, this.latch, this.onLock});
+  const KeyBar({super.key, required this.rows, required this.onKey, this.latch, this.onLock, this.fit = false});
+
+  /// A preview: every row fits the width (keys get as narrow as needed, nothing scrolls) and no room is
+  /// kept for the system bars.
+  final bool fit;
 
   final List<List<BarKey>> rows;
 
@@ -38,6 +42,9 @@ class KeyBar extends StatelessWidget {
       color: scheme.surfaceContainer,
       child: SafeArea(
         top: false,
+        bottom: !fit,
+        left: !fit,
+        right: !fit,
         child: LayoutBuilder(
           builder: (context, box) => Column(
             mainAxisSize: MainAxisSize.min,
@@ -45,7 +52,7 @@ class KeyBar extends StatelessWidget {
               for (final row in rows)
                 SizedBox(
                   height: rowHeight,
-                  child: row.length * _minKeyWidth <= box.maxWidth - 8
+                  child: fit || row.length * _minKeyWidth <= box.maxWidth - 8
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Row(children: [for (final k in row) Expanded(child: _key(k))]),
@@ -63,12 +70,25 @@ class KeyBar extends StatelessWidget {
     );
   }
 
-  Widget _key(BarKey k) =>
-      _KeyButton(barKey: k, latch: latch?.call(k.main) ?? KeyLatch.off, onKey: onKey, onLock: onLock);
+  Widget _key(BarKey k) => _KeyButton(
+    barKey: k,
+    latch: latch?.call(k.main) ?? KeyLatch.off,
+    onKey: onKey,
+    onLock: onLock,
+    minWidth: fit ? 0 : _minKeyWidth,
+  );
 }
 
 class _KeyButton extends StatefulWidget {
-  const _KeyButton({required this.barKey, required this.latch, required this.onKey, this.onLock});
+  const _KeyButton({
+    required this.barKey,
+    required this.latch,
+    required this.onKey,
+    this.onLock,
+    this.minWidth = KeyBar._minKeyWidth,
+  });
+
+  final double minWidth;
 
   final BarKey barKey;
   final KeyLatch latch;
@@ -261,9 +281,9 @@ class _KeyButtonState extends State<_KeyButton> {
         button: true,
         label: label,
         child: Container(
-          constraints: const BoxConstraints(minWidth: KeyBar._minKeyWidth),
+          constraints: BoxConstraints(minWidth: widget.minWidth),
           margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 3),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: EdgeInsets.symmetric(horizontal: widget.minWidth == 0 ? 2 : 6),
           alignment: Alignment.center,
           decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(8)),
           child: Stack(

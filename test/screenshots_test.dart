@@ -174,6 +174,7 @@ void main() {
       await tester.tap(find.text('Like the app').first);
     }),
     'log': const _Shot(ThemeMode.light, Routes.log),
+    'keys': _Shot(ThemeMode.dark, Routes.keyBar(KeyBarFor.terminal)),
     'keys_custom': _Shot(ThemeMode.dark, Routes.keyBar(KeyBarFor.editor), act: (tester, c) async {
       await tester.tap(find.text('Custom'));
       await settle(tester);

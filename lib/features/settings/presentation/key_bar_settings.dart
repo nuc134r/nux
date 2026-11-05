@@ -92,7 +92,7 @@ class _KeyBarSettingsScreenState extends ConsumerState<KeyBarSettingsScreen> {
         padding: const EdgeInsets.only(top: 6),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: KeyBar(rows: _visible(rows), onKey: (_) {}),
+          child: KeyBar(rows: _visible(rows), onKey: (_) {}, fit: true),
         ),
       ),
     );
