@@ -98,8 +98,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 ## M6 — Git
 - [x] `GitRepo` over the host's commands (status, stage/unstage, diff, commit/amend, branches, fetch/pull/push)
 - [x] Version control: stage/unstage files and single hunks; [ ] single lines
-- [x] Diff viewer (unified), commit box with amend and sign-off; [ ] side-by-side
-- [x] Branches: switch, create, rename, delete; tags (create, push); stash and stash list; [ ] stash/carry choice on switch
+- [x] Diff viewer (unified or side by side), commit box with amend and sign-off
+- [x] Branches: switch, create, rename, delete; tags (create, push); stash and stash list; stash/carry choice on switch
 - [x] Fetch/pull with an explained divergence choice (rebase/merge), publish a new branch, push preview, force-with-lease
 - [x] Log graph, commit details, blame
 - [x] Conflict resolver (yours/theirs/both per block), continue/abort merge, rebase, cherry-pick, revert

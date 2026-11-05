@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
 
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
-import '../../viewer/presentation/viewer_view.dart' show DiffLinesView;
+import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffLayoutAction;
 import '../domain/git_model.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
@@ -161,7 +162,7 @@ Future<void> showBranchMenu(BuildContext anchor, GitRepo repo, Future<void> Func
           icon: null,
           label: b,
           checked: i == 0,
-          onSelected: () => runGit(anchor, () => repo.switchTo(b), refresh: refresh, repo: repo),
+          onSelected: i == 0 ? () {} : () => gitSwitch(anchor, repo, b, refresh),
         ),
       const NuxMenuDivider(),
       NuxMenuAction(
@@ -195,6 +196,75 @@ Future<void> showBranchMenu(BuildContext anchor, GitRepo repo, Future<void> Func
         ),
     ],
   );
+}
+
+/// Switches to [branch]. With uncommitted changes, asks first: carry them over, or stash them (they wait in
+/// Stashes). When carrying fails because the branch changes the same files, offers to stash instead.
+Future<void> gitSwitch(BuildContext context, GitRepo repo, String branch, Future<void> Function() refresh) async {
+  final l10n = context.l10n;
+  final GitStatus? status;
+  try {
+    status = await repo.status();
+  } catch (e) {
+    if (context.mounted) showSnack(context, l10n.errorGeneric('$e'));
+    return;
+  }
+  if (!context.mounted) return;
+  var stash = false;
+  final changes = status?.changes.length ?? 0;
+  if (changes > 0) {
+    final choice = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.switchWithChangesTitle(branch)),
+        content: Text(l10n.switchWithChangesBody(changes)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.stashThem)),
+          FilledButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.carryThem)),
+        ],
+      ),
+    );
+    if (choice == null || !context.mounted) return;
+    stash = choice;
+  }
+  final from = status?.branch ?? 'HEAD';
+  Future<void> stashAndSwitch() async {
+    await repo.stash(l10n.stashBeforeSwitch(from, branch));
+    await repo.switchTo(branch);
+  }
+
+  if (stash) {
+    await runGit(context, stashAndSwitch, refresh: refresh, repo: repo, done: l10n.switchedStashed(branch));
+    return;
+  }
+  try {
+    await repo.switchTo(branch);
+    await refresh();
+  } on GitException catch (e) {
+    if (!context.mounted) return;
+    if (!e.output.contains('would be overwritten')) {
+      showSnack(context, l10n.gitFailed(e.command, e.toString()));
+      await refresh();
+      return;
+    }
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.cannotCarryTitle),
+        content: Text(l10n.cannotCarryBody(branch)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.stashThem)),
+        ],
+      ),
+    );
+    if (ok == true && context.mounted) {
+      await runGit(context, stashAndSwitch, refresh: refresh, repo: repo, done: l10n.switchedStashed(branch));
+    } else {
+      await refresh();
+    }
+  }
 }
 
 /// Deletes [branch] after asking; when it has commits nowhere else, asks again before forcing.
@@ -548,7 +618,7 @@ class ChangeLetter extends StatelessWidget {
 }
 
 /// One file's diff (staged or not), with Stage / Unstage and Open file.
-class _DiffScreen extends StatefulWidget {
+class _DiffScreen extends ConsumerStatefulWidget {
   const _DiffScreen({
     required this.repo,
     required this.change,
@@ -568,10 +638,10 @@ class _DiffScreen extends StatefulWidget {
   final VoidCallback? onOpen;
 
   @override
-  State<_DiffScreen> createState() => _DiffScreenState();
+  ConsumerState<_DiffScreen> createState() => _DiffScreenState();
 }
 
-class _DiffScreenState extends State<_DiffScreen> {
+class _DiffScreenState extends ConsumerState<_DiffScreen> {
   late final Future<String> _diff = widget.repo.diff(
     widget.change.path,
     staged: widget.staged,
@@ -604,6 +674,7 @@ class _DiffScreenState extends State<_DiffScreen> {
               child: Text(widget.staged ? l10n.unstage : l10n.stage),
             ),
           ),
+          NuxMenuButton(tooltip: l10n.more, items: (context) => [diffLayoutAction(context, ref)]),
         ],
       ),
       body: FutureBuilder<String>(

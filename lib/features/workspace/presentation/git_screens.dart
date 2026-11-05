@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -10,7 +11,7 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
-import '../../viewer/presentation/viewer_view.dart' show DiffLinesView;
+import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffLayoutAction;
 import '../domain/git_model.dart';
 import '../domain/git_repo.dart';
 import 'git_panel.dart';
@@ -197,14 +198,14 @@ class _Ref extends StatelessWidget {
 Future<void> showCommit(BuildContext context, GitRepo repo, GitCommit commit) =>
     _fullScreen(context, _CommitScreen(repo: repo, commit: commit));
 
-class _CommitScreen extends StatelessWidget {
+class _CommitScreen extends ConsumerWidget {
   const _CommitScreen({required this.repo, required this.commit});
 
   final GitRepo repo;
   final GitCommit commit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -220,6 +221,7 @@ class _CommitScreen extends StatelessWidget {
                 label: l10n.copyHash,
                 onSelected: () => Clipboard.setData(ClipboardData(text: commit.hash)),
               ),
+              diffLayoutAction(context, ref),
             ],
           ),
         ],

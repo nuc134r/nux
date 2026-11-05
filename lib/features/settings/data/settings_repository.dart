@@ -12,6 +12,7 @@ abstract final class SettingKeys {
   static const terminalFontSize = 'terminalFontSize';
   static const terminalLineHeight = 'terminalLineHeight';
   static const editorFontSize = 'editorFontSize';
+  static const diffSideBySide = 'diffSideBySide';
 }
 
 /// Text that has its own size setting, changed in Settings, from a tab's menu or by pinching.
@@ -41,7 +42,6 @@ class AppSettingsState {
     final code => Locale(code),
   };
 
-
   bool get autoUpdateCheck => values[SettingKeys.autoUpdateCheck] != 'false';
 
   /// Offer pre-releases too.
@@ -59,6 +59,13 @@ class AppSettingsState {
       (double.tryParse(values[SettingKeys.terminalLineHeight] ?? '') ?? defaultTerminalLineHeight).clamp(.8, 1.6);
 
   static const defaultTerminalLineHeight = .9;
+
+  /// Diffs with old and new side by side; null: when the screen is wide enough.
+  bool? get diffSideBySide => switch (values[SettingKeys.diffSideBySide]) {
+    'true' => true,
+    'false' => false,
+    _ => null,
+  };
 
   /// Release version the user chose "Later" for; not offered again.
   String? get dismissedUpdate => values[SettingKeys.dismissedUpdate];

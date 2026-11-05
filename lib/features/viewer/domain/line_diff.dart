@@ -121,3 +121,37 @@ List<DiffLine?> diffHunks(List<DiffLine> lines, {int context = 3}) {
   if (out.isNotEmpty && out.last == null) out.removeLast();
   return out;
 }
+
+/// One row of a side-by-side diff: the old line on the left, the new on the right (either may be missing).
+typedef SideBySideRow = (DiffLine? old, DiffLine? now);
+
+/// [lines] (as from [diffHunks], null between hunks) as side-by-side rows: unchanged lines on both sides,
+/// each run of removed lines next to the added lines that follow it.
+List<SideBySideRow?> sideBySide(List<DiffLine?> lines) {
+  final out = <SideBySideRow?>[];
+  final removed = <DiffLine>[], added = <DiffLine>[];
+  void flush() {
+    for (var i = 0; i < removed.length || i < added.length; i++) {
+      out.add((i < removed.length ? removed[i] : null, i < added.length ? added[i] : null));
+    }
+    removed.clear();
+    added.clear();
+  }
+
+  for (final l in lines) {
+    if (l == null) {
+      flush();
+      out.add(null);
+    } else if (l.kind == DiffKind.removed) {
+      if (added.isNotEmpty) flush();
+      removed.add(l);
+    } else if (l.kind == DiffKind.added) {
+      added.add(l);
+    } else {
+      flush();
+      out.add((l, l));
+    }
+  }
+  flush();
+  return out;
+}

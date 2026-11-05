@@ -39,12 +39,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get advanced => 'Advanced';
 
   @override
-  String get algEcdsa =>
-      'NIST curves. Use when a server or policy requires ECDSA.';
+  String get algEcdsa => 'NIST curves. Use when a server or policy requires ECDSA.';
 
   @override
-  String get algEd25519 =>
-      'Small, fast and secure. Supported by every server from the last decade.';
+  String get algEd25519 => 'Small, fast and secure. Supported by every server from the last decade.';
 
   @override
   String get algRsa => 'For old servers. Generating takes a while on a phone.';
@@ -92,16 +90,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get batteryLabel => 'Battery optimisation';
 
   @override
-  String get batteryOff =>
-      'Optimised: some phones stop background connections anyway';
+  String get batteryOff => 'Optimised: some phones stop background connections anyway';
 
   @override
-  String get batteryOn =>
-      'Unrestricted: Android leaves background connections running';
+  String get batteryOn => 'Unrestricted: Android leaves background connections running';
 
   @override
-  String get binaryOrEmptyDiff =>
-      'Nothing to show (binary file or only mode changes)';
+  String get binaryOrEmptyDiff => 'Nothing to show (binary file or only mode changes)';
 
   @override
   String get blame => 'Blame';
@@ -138,6 +133,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String cannotCarryBody(String branch) {
+    return '$branch changes some of the same files. Stash your changes and switch?';
+  }
+
+  @override
+  String get cannotCarryTitle => 'Can\'t carry the changes over';
+
+  @override
+  String get carryThem => 'Carry over';
+
+  @override
   String get change => 'Change';
 
   @override
@@ -152,8 +158,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changelog => 'Changelog';
 
   @override
-  String get changelogOffline =>
-      'GitHub is unreachable; showing the changelog of this version.';
+  String get changelogOffline => 'GitHub is unreachable; showing the changelog of this version.';
 
   @override
   String get changesSection => 'Changes';
@@ -275,8 +280,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get deleteConnectionBody =>
-      'Its saved password is deleted too. Trusted host keys and SSH keys stay.';
+  String get deleteConnectionBody => 'Its saved password is deleted too. Trusted host keys and SSH keys stay.';
 
   @override
   String deleteConnectionJumpers(String names) {
@@ -294,8 +298,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get deleteFilesBody =>
-      'Folders are deleted with everything inside. This cannot be undone.';
+  String get deleteFilesBody => 'Folders are deleted with everything inside. This cannot be undone.';
 
   @override
   String deleteFilesTitle(int count) {
@@ -323,15 +326,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get deleteUntrackedBody =>
-      'The file is not in git yet, so it is deleted.';
+  String get deleteUntrackedBody => 'The file is not in git yet, so it is deleted.';
 
   @override
   String get deleteWorkspace => 'Delete workspace';
 
   @override
-  String get deleteWorkspaceBody =>
-      'Its tabs are closed. Files on the host are not touched.';
+  String get deleteWorkspaceBody => 'Its tabs are closed. Files on the host are not touched.';
 
   @override
   String deleteWorkspaceTitle(String name) {
@@ -370,8 +371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discardChangesBody => 'The changes you made have not been saved.';
 
   @override
-  String get discardChangesGitBody =>
-      'What you changed since the last commit is lost. This cannot be undone.';
+  String get discardChangesGitBody => 'What you changed since the last commit is lost. This cannot be undone.';
 
   @override
   String discardChangesGitTitle(String name) {
@@ -508,12 +508,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String filesCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count files',
-      one: '$count file',
-    );
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count files', one: '$count file');
     return '$_temp0';
   }
 
@@ -547,8 +542,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get folderPath => 'Folder';
 
   @override
-  String get foldersNotDownloaded =>
-      'Folders are not downloaded yet; only the files were queued';
+  String get foldersNotDownloaded => 'Folders are not downloaded yet; only the files were queued';
 
   @override
   String get fontSize => 'Font size';
@@ -560,8 +554,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forget => 'Forget';
 
   @override
-  String get forgetHostBody =>
-      'The next connection will show the server\'s key and ask you to trust it again.';
+  String get forgetHostBody => 'The next connection will show the server\'s key and ask you to trust it again.';
 
   @override
   String forgetHostTitle(String host) {
@@ -620,8 +613,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forwardDynamic => 'SOCKS';
 
   @override
-  String get forwardDynamicHint =>
-      'A proxy on this device: apps go out to the internet through the server (ssh -D)';
+  String get forwardDynamicHint => 'A proxy on this device: apps go out to the internet through the server (ssh -D)';
 
   @override
   String get forwardFailed => 'Failed';
@@ -637,8 +629,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'A port on this device leads to something only the server can reach, like its database (ssh -L)';
 
   @override
-  String get forwardLowPort =>
-      'Android apps can only listen on ports 1024 and above';
+  String get forwardLowPort => 'Android apps can only listen on ports 1024 and above';
 
   @override
   String get forwardOff => 'Off';
@@ -668,8 +659,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forwardShared => 'Allow other devices on the network';
 
   @override
-  String get forwardSharedHint =>
-      'Listens on all interfaces instead of only this device';
+  String get forwardSharedHint => 'Listens on all interfaces instead of only this device';
 
   @override
   String get forwardStarting => 'Starting…';
@@ -727,8 +717,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generating => 'Generating…';
 
   @override
-  String get generatingRsa =>
-      'Generating an RSA key. This can take a minute on a phone.';
+  String get generatingRsa => 'Generating an RSA key. This can take a minute on a phone.';
 
   @override
   String get gitCommand => 'Command';
@@ -796,8 +785,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hostKeyChangedTitle => 'The server\'s key changed!';
 
   @override
-  String get hostKeyCompareHint =>
-      'On the server: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub';
+  String get hostKeyCompareHint => 'On the server: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub';
 
   @override
   String hostKeyNewTypeBody(String host) {
@@ -857,8 +845,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importKeyPassphraseTitle => 'This key has a passphrase';
 
   @override
-  String get importKeyStaysEncrypted =>
-      'nux will store it encrypted with the same passphrase.';
+  String get importKeyStaysEncrypted => 'nux will store it encrypted with the same passphrase.';
 
   @override
   String get importedKey => 'Imported key';
@@ -897,8 +884,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jumpHost => 'Jump host';
 
   @override
-  String get jumpHostHint =>
-      'Connect through another saved host (like ProxyJump)';
+  String get jumpHostHint => 'Connect through another saved host (like ProxyJump)';
 
   @override
   String get justNow => 'just now';
@@ -907,8 +893,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keepAlive => 'Keep-alive, seconds';
 
   @override
-  String get keepAliveHint =>
-      'Pings the server so idle connections are not dropped. 0 turns it off.';
+  String get keepAliveHint => 'Pings the server so idle connections are not dropped. 0 turns it off.';
 
   @override
   String get keepBoth => 'Both';
@@ -934,8 +919,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keyComment => 'Comment';
 
   @override
-  String get keyCommentHint =>
-      'Shown at the end of the public key; helps you recognise it on servers';
+  String get keyCommentHint => 'Shown at the end of the public key; helps you recognise it on servers';
 
   @override
   String get keyHasPassphrase => 'Protected with a passphrase';
@@ -949,8 +933,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keyInvalid => 'This is not a private key nux can read';
 
   @override
-  String get keyIsPublic =>
-      'This is a public key. Import the private key (the file without .pub).';
+  String get keyIsPublic => 'This is a public key. Import the private key (the file without .pub).';
 
   @override
   String get keyNameHint => 'e.g. Phone';
@@ -970,8 +953,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get keyStorageHint =>
-      'The private key is kept in the device\'s secure storage';
+  String get keyStorageHint => 'The private key is kept in the device\'s secure storage';
 
   @override
   String get keyType => 'Type';
@@ -997,8 +979,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No trusted servers yet. A server\'s key is saved here when you trust it on the first connection.';
 
   @override
-  String get knownHostsHint =>
-      'Keys of servers you trusted. nux warns when a server presents a different key.';
+  String get knownHostsHint => 'Keys of servers you trusted. nux warns when a server presents a different key.';
 
   @override
   String get language => 'Language';
@@ -1077,12 +1058,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String nSelected(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count selected',
-      one: '$count selected',
-    );
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count selected', one: '$count selected');
     return '$_temp0';
   }
 
@@ -1135,8 +1111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noHosts => 'No hosts yet';
 
   @override
-  String get noHostsHint =>
-      'Add a server to connect to, or type user@host to connect right away.';
+  String get noHostsHint => 'Add a server to connect to, or type user@host to connect right away.';
 
   @override
   String get noKeysHint =>
@@ -1192,19 +1167,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nothingFound => 'Nothing found';
 
   @override
-  String get notificationsBlocked =>
-      'Turn them on in Android settings: Apps → nux → Notifications';
+  String get notificationsBlocked => 'Turn them on in Android settings: Apps → nux → Notifications';
 
   @override
   String get notificationsLabel => 'Notifications';
 
   @override
-  String get notificationsOff =>
-      'Off: background connections run without their notification';
+  String get notificationsOff => 'Off: background connections run without their notification';
 
   @override
-  String get notificationsOn =>
-      'Allowed: the notification shows what keeps running';
+  String get notificationsOn => 'Allowed: the notification shows what keeps running';
 
   @override
   String get ok => 'OK';
@@ -1376,12 +1348,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String portsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count ports',
-      one: '$count port',
-    );
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count ports', one: '$count port');
     return '$_temp0';
   }
 
@@ -1398,8 +1365,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get publish => 'Publish';
 
   @override
-  String get publishBranchBody =>
-      'This branch is not on the server yet. Push it to origin and track it?';
+  String get publishBranchBody => 'This branch is not on the server yet. Push it to origin and track it?';
 
   @override
   String publishBranchTitle(String branch) {
@@ -1416,8 +1382,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get push => 'Push';
 
   @override
-  String get pushNothing =>
-      'Nothing to push: the server has all these commits.';
+  String get pushNothing => 'Nothing to push: the server has all these commits.';
 
   @override
   String pushPreviewTitle(String upstream) {
@@ -1508,8 +1473,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requireUnlock => 'Require device unlock';
 
   @override
-  String get requireUnlockHint =>
-      'Fingerprint, face or screen lock before each use';
+  String get requireUnlockHint => 'Fingerprint, face or screen lock before each use';
 
   @override
   String get required => 'Required';
@@ -1612,6 +1576,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showTabs => 'Show tabs';
 
   @override
+  String get sideBySide => 'Side by side';
+
+  @override
   String get signIn => 'Sign in';
 
   @override
@@ -1627,8 +1594,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get smallerText => 'Smaller text';
 
   @override
-  String get socksPortHint =>
-      'Point apps\' SOCKS5 proxy setting at this port (1080 is the usual one)';
+  String get socksPortHint => 'Point apps\' SOCKS5 proxy setting at this port (1080 is the usual one)';
 
   @override
   String get sortByDate => 'Sort by date';
@@ -1658,8 +1624,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ssh => 'SSH';
 
   @override
-  String get sshAuthFailed =>
-      'The server refused the keys and password offered';
+  String get sshAuthFailed => 'The server refused the keys and password offered';
 
   @override
   String get sshCancelled => 'Cancelled';
@@ -1715,6 +1680,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stashApply => 'Apply';
 
   @override
+  String stashBeforeSwitch(String from, String to) {
+    return 'On $from, before switching to $to';
+  }
+
+  @override
   String get stashChanges => 'Stash changes';
 
   @override
@@ -1725,6 +1695,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stashPop => 'Apply and drop';
+
+  @override
+  String get stashThem => 'Stash them';
 
   @override
   String get stashed => 'Stashed';
@@ -1739,7 +1712,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stopEditing => 'Stop editing';
 
   @override
+  String switchWithChangesBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You have $count uncommitted changes.',
+      one: 'You have $count uncommitted change.',
+    );
+    return '$_temp0 Carry them over to the other branch, or stash them (they wait under Stashes)?';
+  }
+
+  @override
+  String switchWithChangesTitle(String branch) {
+    return 'Switch to $branch?';
+  }
+
+  @override
   String get switchWorkspace => 'Switch workspace';
+
+  @override
+  String switchedStashed(String branch) {
+    return 'On $branch; your changes are in Stashes';
+  }
 
   @override
   String tabClosed(String title) {
@@ -1759,16 +1753,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get targetHost => 'Destination';
 
   @override
-  String get targetHostLocalHint =>
-      'As the server sees it: localhost is the server itself';
+  String get targetHostLocalHint => 'As the server sees it: localhost is the server itself';
 
   @override
-  String get targetHostRemoteHint =>
-      'As this device sees it: localhost is this device';
+  String get targetHostRemoteHint => 'As this device sees it: localhost is this device';
 
   @override
-  String get targetHostZeroTierHint =>
-      'The ZeroTier address of the device, like 10.147.17.5';
+  String get targetHostZeroTierHint => 'The ZeroTier address of the device, like 10.147.17.5';
 
   @override
   String get terminal => 'Terminal';
@@ -1800,8 +1791,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get textSize => 'Text size';
 
   @override
-  String get textSizeHint =>
-      'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.';
+  String get textSizeHint => 'Also from a tab\'s ⋮ menu, or pinch the text with two fingers.';
 
   @override
   String get theRemote => 'the remote';
@@ -1831,8 +1821,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get throughZeroTier => 'ZeroTier';
 
   @override
-  String get transferCancelled =>
-      'Cancelled — resume continues where it stopped';
+  String get transferCancelled => 'Cancelled — resume continues where it stopped';
 
   @override
   String get transferDownloaded => 'Downloaded';
@@ -1935,8 +1924,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updatesBeta => 'Beta versions';
 
   @override
-  String get updatesBetaHint =>
-      'Also offer pre-releases. They may be unstable.';
+  String get updatesBetaHint => 'Also offer pre-releases. They may be unstable.';
 
   @override
   String get upload => 'Upload';
@@ -1992,8 +1980,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.';
 
   @override
-  String get ztAccessDenied =>
-      'Not authorized: allow this node in the network\'s controller';
+  String get ztAccessDenied => 'Not authorized: allow this node in the network\'s controller';
 
   @override
   String get ztAutoStart => 'Start with nux';
@@ -2008,15 +1995,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ztNoNetworks => 'No networks yet';
 
   @override
-  String get ztNoNetworksHint =>
-      'Join one with its 16-digit id from my.zerotier.com or your own controller';
+  String get ztNoNetworksHint => 'Join one with its 16-digit id from my.zerotier.com or your own controller';
 
   @override
   String get ztNode => 'ZeroTier node';
 
   @override
-  String get ztNodeIdHint =>
-      'This node\'s id: authorize it in your network\'s controller';
+  String get ztNodeIdHint => 'This node\'s id: authorize it in your network\'s controller';
 
   @override
   String get ztNotFound => 'No such network';
@@ -2028,8 +2013,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ztOnline => 'Online';
 
   @override
-  String get ztRequesting =>
-      'Waiting for the network\'s controller (authorize this node there)';
+  String get ztRequesting => 'Waiting for the network\'s controller (authorize this node there)';
 
   @override
   String get ztStarting => 'Starting…';

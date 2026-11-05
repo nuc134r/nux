@@ -10,6 +10,7 @@ import 'package:re_highlight/styles/atom-one-light.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart';
@@ -351,14 +352,14 @@ class EditorKeyBar extends StatelessWidget {
 
 /// What changed from [oldText] to [newText], as hunks of removed / added lines with a little context.
 /// Closes with 'reload' (keep the old) or 'overwrite' (keep the new).
-class DiffView extends StatelessWidget {
+class DiffView extends ConsumerWidget {
   const DiffView({super.key, required this.oldText, required this.newText});
 
   final String oldText;
   final String newText;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final hunks = diffHunks(diffLines(oldText, newText));
     return Scaffold(
@@ -370,6 +371,7 @@ class DiffView extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8),
             child: FilledButton(onPressed: () => Navigator.pop(context, 'overwrite'), child: Text(l10n.overwrite)),
           ),
+          NuxMenuButton(tooltip: l10n.more, items: (context) => [diffLayoutAction(context, ref)]),
         ],
       ),
       body: hunks.isEmpty ? Center(child: Text(l10n.noDifferences)) : DiffLinesView(lines: hunks),
@@ -377,8 +379,24 @@ class DiffView extends StatelessWidget {
   }
 }
 
+/// Whether diffs show old and new side by side: the setting, else when the screen is wide.
+bool diffSideBySideOn(BuildContext context, AppSettingsState? settings) =>
+    settings?.diffSideBySide ?? MediaQuery.sizeOf(context).width >= 600;
+
+/// The "Side by side" option for a diff screen's menu.
+NuxMenuAction diffLayoutAction(BuildContext context, WidgetRef ref) {
+  final on = diffSideBySideOn(context, ref.read(appSettingsProvider).value);
+  return NuxMenuAction(
+    icon: Icons.vertical_split_outlined,
+    label: context.l10n.sideBySide,
+    checked: on,
+    onSelected: () => ref.read(settingsRepositoryProvider).set(SettingKeys.diffSideBySide, '${!on}'),
+  );
+}
+
 /// Diff lines with their numbers, removed ones red and added ones green; null is a "⋯" gap between hunks.
-class DiffLinesView extends StatelessWidget {
+/// Side by side (see [diffSideBySideOn]) the old lines are on the left and the new on the right.
+class DiffLinesView extends ConsumerWidget {
   const DiffLinesView({super.key, required this.lines, this.shrinkWrap = false});
 
   final List<DiffLine?> lines;
@@ -387,42 +405,79 @@ class DiffLinesView extends StatelessWidget {
   final bool shrinkWrap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
+    final numbers = mono?.copyWith(color: scheme.onSurfaceVariant);
+    final split = diffSideBySideOn(context, ref.watch(appSettingsProvider).value);
+    final rows = split ? sideBySide(lines) : null;
+    Color background(DiffKind kind) => switch (kind) {
+      DiffKind.removed => scheme.errorContainer.withValues(alpha: .5),
+      DiffKind.added => Colors.green.withValues(alpha: .18),
+      DiffKind.same => Colors.transparent,
+    };
+    Widget gap() => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Center(
+        child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant)),
+      ),
+    );
+    // One side of a side-by-side row; empty (shaded) where the line is not on that side.
+    Widget half(DiffLine? line, {required bool old}) => Expanded(
+      child: Container(
+        color: line == null ? scheme.surfaceContainerHigh : background(line.kind),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: line == null
+            ? const SizedBox.shrink()
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 32,
+                    child: Text('${old ? line.oldLine : line.newLine}', textAlign: TextAlign.right, style: numbers),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(child: Text(line.text, style: mono)),
+                ],
+              ),
+      ),
+    );
     return ListView.builder(
       shrinkWrap: shrinkWrap,
       physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
-      itemCount: lines.length,
+      itemCount: rows?.length ?? lines.length,
       itemBuilder: (context, i) {
-        final line = lines[i];
-        if (line == null) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Center(
-              child: Text('⋯', style: TextStyle(color: scheme.onSurfaceVariant)),
+        if (rows != null) {
+          final row = rows[i];
+          if (row == null) return gap();
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                half(row.$1, old: true),
+                VerticalDivider(width: 1, thickness: 1, color: scheme.outlineVariant),
+                half(row.$2, old: false),
+              ],
             ),
           );
         }
-        final (bg, sign) = switch (line.kind) {
-          DiffKind.removed => (scheme.errorContainer.withValues(alpha: .5), '-'),
-          DiffKind.added => (Colors.green.withValues(alpha: .18), '+'),
-          DiffKind.same => (Colors.transparent, ' '),
+        final line = lines[i];
+        if (line == null) return gap();
+        final sign = switch (line.kind) {
+          DiffKind.removed => '-',
+          DiffKind.added => '+',
+          DiffKind.same => ' ',
         };
         return Container(
-          color: bg,
+          color: background(line.kind),
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 width: 40,
-                child: Text(
-                  '${line.newLine ?? line.oldLine}',
-                  textAlign: TextAlign.right,
-                  style: mono?.copyWith(color: scheme.onSurfaceVariant),
-                ),
+                child: Text('${line.newLine ?? line.oldLine}', textAlign: TextAlign.right, style: numbers),
               ),
               SizedBox(width: 18, child: Text(' $sign', style: mono)),
               Expanded(child: Text(line.text, style: mono)),

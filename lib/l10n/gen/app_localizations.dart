@@ -62,8 +62,7 @@ import 'app_localizations_ru.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,8 +70,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,19 +82,15 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('ru'),
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('ru')];
 
   /// No description provided for @abortOperation.
   ///
@@ -325,6 +319,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @cannotCarryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{branch} changes some of the same files. Stash your changes and switch?'**
+  String cannotCarryBody(String branch);
+
+  /// No description provided for @cannotCarryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t carry the changes over'**
+  String get cannotCarryTitle;
+
+  /// No description provided for @carryThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Carry over'**
+  String get carryThem;
 
   /// No description provided for @change.
   ///
@@ -2780,6 +2792,12 @@ abstract class AppLocalizations {
   /// **'Show tabs'**
   String get showTabs;
 
+  /// No description provided for @sideBySide.
+  ///
+  /// In en, this message translates to:
+  /// **'Side by side'**
+  String get sideBySide;
+
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:
@@ -2954,6 +2972,12 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get stashApply;
 
+  /// No description provided for @stashBeforeSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'On {from}, before switching to {to}'**
+  String stashBeforeSwitch(String from, String to);
+
   /// No description provided for @stashChanges.
   ///
   /// In en, this message translates to:
@@ -2977,6 +3001,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply and drop'**
   String get stashPop;
+
+  /// No description provided for @stashThem.
+  ///
+  /// In en, this message translates to:
+  /// **'Stash them'**
+  String get stashThem;
 
   /// No description provided for @stashed.
   ///
@@ -3002,11 +3032,29 @@ abstract class AppLocalizations {
   /// **'Stop editing'**
   String get stopEditing;
 
+  /// No description provided for @switchWithChangesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{You have {count} uncommitted change.} other{You have {count} uncommitted changes.}} Carry them over to the other branch, or stash them (they wait under Stashes)?'**
+  String switchWithChangesBody(int count);
+
+  /// No description provided for @switchWithChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to {branch}?'**
+  String switchWithChangesTitle(String branch);
+
   /// No description provided for @switchWorkspace.
   ///
   /// In en, this message translates to:
   /// **'Switch workspace'**
   String get switchWorkspace;
+
+  /// No description provided for @switchedStashed.
+  ///
+  /// In en, this message translates to:
+  /// **'On {branch}; your changes are in Stashes'**
+  String switchedStashed(String branch);
 
   /// No description provided for @tabClosed.
   ///
@@ -3525,8 +3573,7 @@ abstract class AppLocalizations {
   String get ztWaitingAddress;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -3535,8 +3582,7 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'ru'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;

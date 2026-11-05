@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.1
+
+- **Side-by-side diffs**: old on the left, new on the right; on by default on wide screens, ⋮ → Side by side on any diff to switch.
+- **Switching branch with uncommitted changes** asks whether to carry them over or stash them; when the other branch changes the same files, it offers to stash.
+
 ## 0.10.0
 
 - **Git history**: Version control ⋮ → History shows the commits with a branch graph and branch/tag labels (this branch or all branches); tap one to see its message and the changes of each file. Long-press a file or folder in the tree → History or Blame (who changed each line, and in which commit).

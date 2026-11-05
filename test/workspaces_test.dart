@@ -247,6 +247,64 @@ void main() {
     expect(find.text('Our change'), findsOneWidget);
   });
 
+  testWidgets('switching branch with changes asks: stash them, and they wait under Stashes', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-ws-').resolveSymbolicLinksSync();
+    addTearDown(() => Directory(root).deleteSync(recursive: true));
+    Future<ProcessResult> git(List<String> args) => Process.run('git', args, workingDirectory: root);
+    await tester.runAsync(() async {
+      await git(['init', '-q', '-b', 'main']);
+      await git(['config', 'user.name', 't']);
+      await git(['config', 'user.email', 't@example.com']);
+      File('$root/a.txt').writeAsStringSync('one\n');
+      await git(['add', '.']);
+      await git(['commit', '-qm', 'init']);
+      await git(['branch', 'other']);
+      File('$root/a.txt').writeAsStringSync('changed\n');
+    });
+    final c = ProviderContainer(
+      overrides: [
+        ...testOverrides(db: db, secrets: secrets),
+        workspaceOpenerProvider.overrideWithValue(
+          (id) async => WorkspaceAccess(fs: LocalFileSystem(root), runner: LocalRunner(), release: () {}),
+        ),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root), release: () {});
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    await tester.runAsync(
+      () => c.read(workspaceRepositoryProvider).create(name: 'App', connectionId: 'sample', rootPath: root),
+    );
+    c.read(workspaceProvider).gridOpen = true;
+    await settle(tester);
+    await tester.tap(find.byTooltip('Workspaces'));
+    await settle(tester);
+    await tester.tap(find.text('App'));
+    await settle(tester);
+    await settle(tester);
+
+    await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.text('main')));
+    await settle(tester);
+    await tester.tap(find.text('other'));
+    await settle(tester);
+    await settle(tester);
+    expect(find.text('Switch to other?'), findsOneWidget);
+    await tester.tap(find.text('Stash them'));
+    for (var i = 0; i < 10 && find.text('Switch to other?').evaluate().isNotEmpty; i++) {
+      await settle(tester);
+    }
+    await settle(tester);
+    final branch = await tester.runAsync(() => git(['branch', '--show-current']));
+    expect((branch!.stdout as String).trim(), 'other');
+    final stashes = await tester.runAsync(() => git(['stash', 'list']));
+    expect(stashes!.stdout as String, contains('before switching to other'));
+    expect(File('$root/a.txt').readAsStringSync(), 'one\n');
+  });
+
   testWidgets('Home lists the workspaces on its second page and opens one', (tester) async {
     final db = memoryDb();
     final secrets = MemorySecretStore();

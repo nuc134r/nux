@@ -34,4 +34,17 @@ void main() {
     final h = diffHunks(diffLines(a, b), context: 2);
     expect(h.map((l) => l?.toString() ?? '…').toList(), [' l8', ' l9', '-l10', '+L10', ' l11', ' l12']);
   });
+
+  test('side by side pairs each run of removed lines with the added lines after it', () {
+    final rows = sideBySide(diffLines('a\nb\nc\nd', 'a\nB\nC\nX\nd'));
+    String side(DiffLine? l) => l?.toString() ?? '_';
+    expect(rows.map((r) => '${side(r!.$1)}|${side(r.$2)}').toList(), [
+      ' a| a',
+      '-b|+B',
+      '-c|+C',
+      '_|+X',
+      ' d| d',
+    ]);
+    expect(sideBySide([null]), [null]);
+  });
 }
