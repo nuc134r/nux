@@ -183,6 +183,16 @@
   "clearSelection": "Clear selection",
   "clipboardEmpty": "The clipboard is empty",
   "close": "Close",
+  "closeAllTabs": "Close all tabs",
+  "closeAllTabsBody": "Terminals disconnect. Pinned tabs stay; tabs with unsaved changes ask first.",
+  "closeAllTabsTitle": "{count, plural, one{Close {count} tab?} other{Close all {count} tabs?}}",
+  "@closeAllTabsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "closeOtherTabs": "Close other tabs",
   "closeTab": "Close tab",
   "closeWorkspace": "Close workspace",

@@ -7,6 +7,10 @@ import 'package:nux/core/widgets/nux_menu.dart';
 import 'package:nux/core/widgets/widgets.dart';
 import 'package:tab_switcher/tab_switcher.dart' show TabCountButton;
 
+import 'package:nux/core/secure/secret_store.dart';
+import 'package:nux/features/workspace/data/tab_factory.dart';
+import 'package:nux/features/workspace/data/workspace.dart';
+
 import 'helpers.dart';
 
 void main() {
@@ -45,6 +49,36 @@ void main() {
     showSnack(tester.element(find.text('Activity')), 'Saved notes.md');
     await settle(tester);
     expect(find.text('Saved notes.md'), findsWidgets);
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('tab overview: Activity next to Home; ⋮ → Close all tabs asks, then closes them', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    addTearDown(c.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    final tabs = c.read(workspaceProvider);
+    tabs.open(c.read(tabFactoryProvider).hosts());
+    tabs.gridOpen = true;
+    await settle(tester);
+    expect(find.widgetWithText(FilledButton, 'Home'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Activity'));
+    await settle(tester);
+    expect(find.text('Running'), findsNothing);
+    Navigator.of(tester.element(find.text('Activity').last)).pop();
+    await settle(tester);
+
+    await tester.tap(find.byType(NuxMenuButton).first);
+    await settle(tester);
+    await tester.tap(find.text('Close all tabs'));
+    await settle(tester);
+    await tester.tap(find.widgetWithText(FilledButton, 'Close all tabs'));
+    await settle(tester);
+    expect(tabs.isEmpty, isTrue);
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });

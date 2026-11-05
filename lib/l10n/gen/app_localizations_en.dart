@@ -276,6 +276,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
+  String get closeAllTabs => 'Close all tabs';
+
+  @override
+  String get closeAllTabsBody =>
+      'Terminals disconnect. Pinned tabs stay; tabs with unsaved changes ask first.';
+
+  @override
+  String closeAllTabsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Close all $count tabs?',
+      one: 'Close $count tab?',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get closeOtherTabs => 'Close other tabs';
 
   @override

@@ -548,6 +548,24 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
+  /// No description provided for @closeAllTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Close all tabs'**
+  String get closeAllTabs;
+
+  /// No description provided for @closeAllTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminals disconnect. Pinned tabs stay; tabs with unsaved changes ask first.'**
+  String get closeAllTabsBody;
+
+  /// No description provided for @closeAllTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Close {count} tab?} other{Close all {count} tabs?}}'**
+  String closeAllTabsTitle(int count);
+
   /// No description provided for @closeOtherTabs.
   ///
   /// In en, this message translates to:

@@ -183,6 +183,13 @@ class TabSwitcherController extends ChangeNotifier {
     select(keep);
   }
 
+  /// Closes every unpinned tab. Tabs with unsaved changes ask first (and stay when kept).
+  Future<void> closeAll() async {
+    for (final t in [..._tabs]) {
+      if (!isPinned(t)) await close(t);
+    }
+  }
+
   bool get canReopen => _closed.isNotEmpty;
 
   /// Reopens the most recently closed tab where it was.

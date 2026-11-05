@@ -277,6 +277,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get close => 'Закрыть';
 
   @override
+  String get closeAllTabs => 'Закрыть все вкладки';
+
+  @override
+  String get closeAllTabsBody =>
+      'Терминалы отключатся. Закреплённые вкладки останутся; вкладки с несохранёнными изменениями спросят.';
+
+  @override
+  String closeAllTabsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Закрыть все $count вкладок?',
+      few: 'Закрыть все $count вкладки?',
+      one: 'Закрыть $count вкладку?',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get closeOtherTabs => 'Закрыть другие вкладки';
 
   @override

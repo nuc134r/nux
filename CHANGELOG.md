@@ -6,6 +6,7 @@ shown in the app under Settings → App version. Write for people using the app,
 ## 0.10.3
 
 - **Activity**: one place for what nux is doing and what happened: git fetch / pull / push with progress, uploads and downloads, forwardings that stopped (with Try again), dropped connections, updates, failed git commands and every message a snackbar showed. Running operations can be cancelled from there. Open it from ⋮ → Activity in any tab or the tab overview, or by tapping nux's notification. The tab count shows a small spinner while something runs and a dot when something new happened (red for a failure). It is kept until nux restarts.
+- The tab overview has **Activity** next to Home, and ⋮ → **Close all tabs** (pinned tabs stay; unsaved ones ask).
 - A failed git action's message has **Details** with git's whole output.
 - **Undo and Redo** sit on one line in the editor's menu.
 

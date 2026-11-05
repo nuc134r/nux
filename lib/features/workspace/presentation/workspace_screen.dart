@@ -246,6 +246,25 @@ class _Header extends ConsumerWidget {
                   if (typed != null) openBrowserTab(controller, '${addressToUri(typed)}');
                 },
               ),
+              NuxMenuAction(
+                icon: Icons.clear_all,
+                label: l10n.closeAllTabs,
+                enabled: !controller.isEmpty,
+                onSelected: () async {
+                  final ok = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.closeAllTabsTitle(controller.length)),
+                      content: Text(l10n.closeAllTabsBody),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+                        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.closeAllTabs)),
+                      ],
+                    ),
+                  );
+                  if (ok == true) await controller.closeAll();
+                },
+              ),
               const NuxMenuDivider(),
               if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
               NuxMenuAction(
@@ -321,10 +340,18 @@ class _NoTabs extends ConsumerWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: 24),
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.home_outlined),
-                      label: Text(l10n.home),
-                      onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        FilledButton.tonalIcon(
+                          icon: const Icon(Icons.home_outlined),
+                          label: Text(l10n.home),
+                          onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
+                        ),
+                        const _ActivityButton(),
+                      ],
                     ),
                   ],
                 ),
@@ -364,12 +391,31 @@ class _GridFooter extends ConsumerWidget {
                       label: Text(l10n.home),
                       onPressed: () => ref.read(workspaceProvider).open(ref.read(tabFactoryProvider).hosts()),
                     ),
+                    const _ActivityButton(),
                   ],
                 ),
               ),
             ),
     );
   }
+}
+
+/// Next to Home on the tab overview: opens Activity; shows what runs or is new like the tab count does.
+class _ActivityButton extends StatelessWidget {
+  const _ActivityButton();
+
+  @override
+  Widget build(BuildContext context) => FilledButton.tonalIcon(
+    icon: const Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Icon(Icons.notifications_outlined),
+        Positioned(top: -3, right: -3, child: ActivityBadge()),
+      ],
+    ),
+    label: Text(context.l10n.activity),
+    onPressed: () => showActivity(context),
+  );
 }
 
 /// Under another screen (an editor, settings) the keyboard must not reach the tabs: each frame of its
