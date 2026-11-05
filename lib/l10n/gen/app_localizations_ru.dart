@@ -10,6 +10,9 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get abortOperation => 'Прервать';
+
+  @override
   String get about => 'О приложении';
 
   @override
@@ -46,6 +49,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get algRsa =>
       'Для старых серверов. Создание на телефоне занимает время.';
+
+  @override
+  String get allBranches => 'Все ветки';
 
   @override
   String allRules(int count) {
@@ -99,6 +105,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нечего показать (двоичный файл или изменились только права)';
 
   @override
+  String get blame => 'Авторы строк';
+
+  @override
   String get bookmarkFolder => 'Добавить папку в закладки';
 
   @override
@@ -106,6 +115,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get branchName => 'Имя ветки';
+
+  @override
+  String branchNotMerged(String branch) {
+    return 'В $branch есть коммиты, которых нет в других ветках. Всё равно удалить? Они пропадут.';
+  }
 
   @override
   String get branches => 'Ветки';
@@ -173,10 +187,32 @@ class AppLocalizationsRu extends AppLocalizations {
   String get commit => 'Коммит';
 
   @override
+  String get commitDetails => 'Коммит';
+
+  @override
   String get commitMessage => 'Сообщение коммита';
 
   @override
   String get committed => 'Закоммичено';
+
+  @override
+  String conflictBlock(int index, int count) {
+    return 'Конфликт $index из $count';
+  }
+
+  @override
+  String conflictsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count конфликта',
+      many: '$count конфликтов',
+      few: '$count конфликта',
+      one: '$count конфликт',
+      zero: 'Конфликтов не осталось',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get connect => 'Подключиться';
@@ -188,6 +224,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get continueAction => 'Продолжить';
 
   @override
+  String get continueOperation => 'Продолжить';
+
+  @override
   String get copied => 'Скопировано';
 
   @override
@@ -195,6 +234,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copyAll => 'Скопировать всё';
+
+  @override
+  String get copyHash => 'Копировать хеш';
 
   @override
   String get copyLink => 'Копировать ссылку';
@@ -223,6 +265,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get delete => 'Удалить';
+
+  @override
+  String get deleteAnyway => 'Всё равно удалить';
+
+  @override
+  String get deleteBranch => 'Удалить ветку';
+
+  @override
+  String deleteBranchTitle(String branch) {
+    return 'Удалить $branch?';
+  }
 
   @override
   String get deleteConnectionBody =>
@@ -381,6 +434,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get encoding => 'Кодировка';
 
   @override
+  String get equivalentCommand => 'То же в терминале';
+
+  @override
   String errorGeneric(String error) {
     return 'Что-то пошло не так: $error';
   }
@@ -504,6 +560,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get fontSize => 'Размер шрифта';
+
+  @override
+  String get forcePush => 'Принудительно (with lease)';
 
   @override
   String get forget => 'Забыть';
@@ -687,6 +746,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Создание RSA-ключа. На телефоне это может занять минуту.';
 
   @override
+  String get gitCommand => 'Команда';
+
+  @override
   String gitFailed(String command, String message) {
     return 'git $command: $message';
   }
@@ -724,6 +786,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get hideHiddenFiles => 'Скрыть скрытые файлы';
+
+  @override
+  String get history => 'История';
 
   @override
   String get home => 'Главная';
@@ -863,10 +928,19 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пингует сервер, чтобы простаивающее соединение не обрывалось. 0 — выключить.';
 
   @override
+  String get keepBoth => 'Оба';
+
+  @override
   String get keepEditing => 'Продолжить правку';
 
   @override
   String get keepPassphrase => 'Хранить ключ защищённым этой парольной фразой';
+
+  @override
+  String get keepTheirs => 'Их';
+
+  @override
+  String get keepYours => 'Ваше';
 
   @override
   String keyAlreadyImported(String name) {
@@ -993,6 +1067,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get logEmpty => 'Журнал пуст';
 
   @override
+  String get markResolved => 'Сохранить и отметить решённым';
+
+  @override
   String get matchCase => 'Учитывать регистр';
 
   @override
@@ -1049,6 +1126,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get newTab => 'Новая вкладка';
 
   @override
+  String get newTag => 'Новый тег';
+
+  @override
   String get newWorkspace => 'Новая рабочая область';
 
   @override
@@ -1059,6 +1139,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noColor => 'Без цвета';
+
+  @override
+  String get noCommits => 'Коммитов пока нет';
 
   @override
   String get noDifferences => 'Различий нет';
@@ -1084,10 +1167,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noPreview => 'Нет превью';
 
   @override
+  String get noStashes => 'Ничего не спрятано';
+
+  @override
   String get noTabs => 'Нет открытых вкладок';
 
   @override
   String get noTabsHint => 'Откройте список хостов или подключитесь к серверу.';
+
+  @override
+  String get noTags => 'Тегов нет';
 
   @override
   String get noTransfers => 'Передач нет';
@@ -1108,6 +1197,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get none => 'Нет';
+
+  @override
+  String get notCommittedYet => 'Ещё не закоммичено';
 
   @override
   String get notGitRepo => 'Не git-репозиторий';
@@ -1165,6 +1257,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openWorkspace => 'Открыть';
+
+  @override
+  String get operationCherryPick => 'Cherry-pick';
+
+  @override
+  String get operationMerge => 'Слияние';
+
+  @override
+  String get operationRebase => 'Rebase';
+
+  @override
+  String get operationRevert => 'Revert';
 
   @override
   String get organize => 'Упорядочить';
@@ -1335,6 +1439,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get push => 'Отправить (push)';
 
   @override
+  String get pushNothing =>
+      'Нечего отправлять: на сервере уже есть все эти коммиты.';
+
+  @override
+  String pushPreviewTitle(String upstream) {
+    return 'Отправить в $upstream';
+  }
+
+  @override
+  String get pushRejectedBody =>
+      'Кто-то отправил коммиты в эту ветку, или вы переписали уже отправленные. Сначала подтяните их, или отправьте принудительно: ветка на сервере заменится, только если она такая же, как при последнем fetch, так что чужая новая работа случайно не пропадёт.';
+
+  @override
+  String get pushRejectedTitle => 'На сервере есть более новые коммиты';
+
+  @override
+  String get pushTag => 'Отправить тег';
+
+  @override
   String get pushed => 'Отправлено';
 
   @override
@@ -1390,6 +1513,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get rename => 'Переименовать';
 
   @override
+  String get renameBranch => 'Переименовать ветку';
+
+  @override
   String get repeatPassphrase => 'Повторите парольную фразу';
 
   @override
@@ -1410,6 +1536,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get required => 'Обязательное поле';
+
+  @override
+  String get resolveConflicts => 'Разрешить конфликты';
 
   @override
   String get resume => 'Продолжить';
@@ -1511,6 +1640,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signIn => 'Войти';
 
   @override
+  String get signOff => 'Подписать (sign-off)';
+
+  @override
   String get sizeLabel => 'Размер';
 
   @override
@@ -1596,10 +1728,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get stageAll => 'Подготовить всё';
 
   @override
+  String get stageHunk => 'Подготовить эту часть';
+
+  @override
   String get staged => 'Подготовлено';
 
   @override
   String get startWithNux => 'Автозапуск';
+
+  @override
+  String get stashApply => 'Применить';
+
+  @override
+  String get stashChanges => 'Спрятать изменения (stash)';
+
+  @override
+  String get stashDrop => 'Удалить';
+
+  @override
+  String get stashMessage => 'Заметка (необязательно)';
+
+  @override
+  String get stashPop => 'Применить и убрать';
+
+  @override
+  String get stashed => 'Спрятано';
+
+  @override
+  String get stashes => 'Спрятанное (stash)';
 
   @override
   String get stopAll => 'Остановить все';
@@ -1614,6 +1770,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String tabClosed(String title) {
     return 'Вкладка «$title» закрыта';
   }
+
+  @override
+  String get tagMessage =>
+      'Сообщение (необязательно, будет аннотированный тег)';
+
+  @override
+  String get tagName => 'Имя тега';
+
+  @override
+  String get tags => 'Теги';
 
   @override
   String get targetHost => 'Куда';
@@ -1682,6 +1848,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get themeSystem => 'Как в системе';
 
   @override
+  String get thisBranch => 'Эта ветка';
+
+  @override
   String get throughSsh => 'Через SSH';
 
   @override
@@ -1735,10 +1904,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unpinTab => 'Открепить';
 
   @override
+  String unresolvedLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Осталось выбрать $count блока',
+      many: 'Осталось выбрать $count блоков',
+      few: 'Осталось выбрать $count блока',
+      one: 'Осталось выбрать $count блок',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get unstage => 'Убрать из подготовки';
 
   @override
   String get unstageAll => 'Убрать всё';
+
+  @override
+  String get unstageHunk => 'Убрать эту часть';
 
   @override
   String get upToDate => 'Установлена последняя версия';

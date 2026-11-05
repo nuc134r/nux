@@ -44,8 +44,14 @@ GitCommit _commit(String record) {
     author: f[1],
     email: f[2],
     time: DateTime.fromMillisecondsSinceEpoch((int.tryParse(f[3]) ?? 0) * 1000),
-    parents: [for (final p in f[4].split(' ')) if (p.isNotEmpty) p],
-    refs: [for (final r in f[5].split(', ')) if (r.trim().isNotEmpty) r.trim()],
+    parents: [
+      for (final p in f[4].split(' '))
+        if (p.isNotEmpty) p,
+    ],
+    refs: [
+      for (final r in f[5].split(', '))
+        if (r.trim().isNotEmpty) r.trim(),
+    ],
     subject: f.length > 6 ? f.sublist(6).join(gitFieldSep) : '',
   );
 }
@@ -189,7 +195,13 @@ class PatchHunks {
 }
 
 class BlameLine {
-  const BlameLine({required this.hash, required this.author, required this.time, required this.summary, required this.text});
+  const BlameLine({
+    required this.hash,
+    required this.author,
+    required this.time,
+    required this.summary,
+    required this.text,
+  });
 
   final String hash;
   final String author;
@@ -210,13 +222,15 @@ List<BlameLine> parseBlame(String out) {
   var time = 0;
   for (final line in out.split('\n')) {
     if (line.startsWith('\t')) {
-      result.add(BlameLine(
-        hash: hash ?? '',
-        author: author ?? '',
-        time: DateTime.fromMillisecondsSinceEpoch(time * 1000),
-        summary: summary ?? '',
-        text: line.substring(1),
-      ));
+      result.add(
+        BlameLine(
+          hash: hash ?? '',
+          author: author ?? '',
+          time: DateTime.fromMillisecondsSinceEpoch(time * 1000),
+          summary: summary ?? '',
+          text: line.substring(1),
+        ),
+      );
       continue;
     }
     final space = line.indexOf(' ');

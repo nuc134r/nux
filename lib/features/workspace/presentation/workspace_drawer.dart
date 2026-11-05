@@ -21,6 +21,8 @@ import '../../../core/secure/secret_store.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
 import 'git_panel.dart';
+import '../domain/git_model.dart';
+import 'git_screens.dart';
 import '../../viewer/presentation/viewer_tab.dart';
 import '../../../app/router.dart';
 import 'workspace_find.dart';
@@ -226,6 +228,9 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
           },
         );
 
+  /// A merge, rebase, cherry-pick or revert waiting for its conflicts.
+  GitOperation? _operation;
+
   /// Remembered (in the secret store) or given this session, for fetch / pull / push.
   GitCredentials? _gitCredentials;
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
@@ -305,8 +310,10 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     try {
       final result = await access.runner.run(gitStatusCommand(ws.rootPath));
       _git = parseGitStatus(result);
+      _operation = _git == null ? null : await _repo?.operation();
     } catch (_) {
       _git = null;
+      _operation = null;
     }
     if (mounted) setState(() => _gitLoaded = true);
   }
@@ -397,7 +404,21 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
               : RefreshIndicator(
                   onRefresh: _refresh,
                   child: vcs
-                      ? GitPanel(repo: _repo, status: _git, loaded: _gitLoaded, onRefresh: _loadGit, onOpen: _openFile)
+                      ? GitPanel(
+                          repo: _repo,
+                          status: _git,
+                          loaded: _gitLoaded,
+                          onRefresh: _loadGit,
+                          onOpen: _openFile,
+                          operation: _operation,
+                          onResolve: (path) => showConflictResolver(
+                            context,
+                            repo: _repo!,
+                            path: path,
+                            fs: _access!.fs,
+                            refresh: _loadGit,
+                          ),
+                        )
                       : _tree(context),
                 ),
         ),
@@ -466,12 +487,30 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
         NuxMenuAction(
           icon: Icons.cloud_upload_outlined,
           label: l10n.push,
-          onSelected: () => gitPush(context, _repo!, _git?.branch, _loadGit),
+          onSelected: () => gitPushWithPreview(context, _repo!, _git?.branch, _loadGit),
         ),
         NuxMenuAction(
           icon: Icons.sync,
           label: l10n.fetch,
-          onSelected: () => runGit(context, _repo!.fetch, refresh: _loadGit, done: l10n.fetched),
+          onSelected: () => runGit(context, _repo!.fetch, refresh: _loadGit, done: l10n.fetched, repo: _repo),
+        ),
+        const NuxMenuDivider(),
+        NuxMenuAction(icon: Icons.history, label: l10n.history, onSelected: () => showHistory(context, _repo!)),
+        NuxMenuAction(
+          icon: Icons.inventory_2_outlined,
+          label: l10n.stashChanges,
+          enabled: (_git?.changes.isNotEmpty ?? false),
+          onSelected: () => stashChanges(context, _repo!, _loadGit),
+        ),
+        NuxMenuAction(
+          icon: Icons.unarchive_outlined,
+          label: l10n.stashes,
+          onSelected: () => showStashes(context, _repo!, _loadGit),
+        ),
+        NuxMenuAction(
+          icon: Icons.sell_outlined,
+          label: l10n.tags,
+          onSelected: () => showTags(context, _repo!, _loadGit),
         ),
       ],
       const NuxMenuDivider(),
@@ -627,6 +666,19 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
                 title: Text(l10n.copyPath),
                 onTap: () => Navigator.pop(context, 'copy'),
               ),
+              if (_git != null) ...[
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: Text(l10n.history),
+                  onTap: () => Navigator.pop(context, 'history'),
+                ),
+                if (!dir)
+                  ListTile(
+                    leading: const Icon(Icons.person_search_outlined),
+                    title: Text(l10n.blame),
+                    onTap: () => Navigator.pop(context, 'blame'),
+                  ),
+              ],
             ],
           ),
         ),
@@ -647,6 +699,10 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
       case 'copy':
         await Clipboard.setData(ClipboardData(text: e.path));
         if (mounted) showSnack(context, l10n.copied);
+      case 'history':
+        await showHistory(context, _repo!, path: e.path);
+      case 'blame':
+        await showBlame(context, _repo!, e.path);
     }
   }
 }

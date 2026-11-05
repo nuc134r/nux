@@ -3,6 +3,17 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.0
+
+- **Git history**: Version control ⋮ → History shows the commits with a branch graph and branch/tag labels (this branch or all branches); tap one to see its message and the changes of each file. Long-press a file or folder in the tree → History or Blame (who changed each line, and in which commit).
+- **Conflicts**: when a merge, rebase, cherry-pick or revert stops on conflicts, a card says so with Continue and Abort. Tap a conflicted file to pick Yours, Theirs or Both for each block, then Save and mark resolved.
+- **Stage part of a file**: in a file's diff, each changed part has Stage this part / Unstage this part.
+- **Stash**: Stash changes, and a Stashes list to apply, pop or drop.
+- **Branches and tags**: rename or delete a branch (a branch that is not merged asks again), create and push tags.
+- **Push preview**: Push lists the commits it will send; when the server rejects it, nux explains and offers a force push that refuses to overwrite work you have not seen (force-with-lease).
+- **Sign-off** chip on the commit box.
+- Every git action's result has **Command**, showing the git command that does the same.
+
 ## 0.9.9
 
 - **Browser**: Back, Forward and Reload sit on one row at the top of the menu.

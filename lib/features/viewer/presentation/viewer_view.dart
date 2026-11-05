@@ -379,9 +379,12 @@ class DiffView extends StatelessWidget {
 
 /// Diff lines with their numbers, removed ones red and added ones green; null is a "⋯" gap between hunks.
 class DiffLinesView extends StatelessWidget {
-  const DiffLinesView({super.key, required this.lines});
+  const DiffLinesView({super.key, required this.lines, this.shrinkWrap = false});
 
   final List<DiffLine?> lines;
+
+  /// Sized to its lines and not scrolling (inside another list).
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context) {
@@ -389,6 +392,8 @@ class DiffLinesView extends StatelessWidget {
     final scheme = theme.colorScheme;
     final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
     return ListView.builder(
+      shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
       itemCount: lines.length,
       itemBuilder: (context, i) {
         final line = lines[i];

@@ -174,14 +174,8 @@ class GitRepo {
 
   /// Pushes the current branch; [setUpstream] publishes a new branch to origin; [force] overwrites the
   /// server's branch, but only if it is still where it was when last fetched (`--force-with-lease`).
-  Future<void> push({bool setUpstream = false, bool force = false}) => _git(
-    [
-      'push -q',
-      if (force) '--force-with-lease',
-      if (setUpstream) '-u origin HEAD',
-    ].join(' '),
-    network: true,
-  );
+  Future<void> push({bool setUpstream = false, bool force = false}) =>
+      _git(['push -q', if (force) '--force-with-lease', if (setUpstream) '-u origin HEAD'].join(' '), network: true);
 
   /// Commits a push would send: on the branch and not on its upstream (null: no upstream yet).
   Future<List<GitCommit>?> outgoing() async {
@@ -206,7 +200,8 @@ class GitRepo {
       splitFileDiffs(await _git('show --format= --no-color --no-ext-diff -m --first-parent ${shellQuote(hash)}'));
 
   /// Who last changed each line of [path].
-  Future<List<BlameLine>> blame(String path) async => parseBlame(await _git('blame --line-porcelain -- ${shellQuote(path)}'));
+  Future<List<BlameLine>> blame(String path) async =>
+      parseBlame(await _git('blame --line-porcelain -- ${shellQuote(path)}'));
 
   /// Applies [patch] to the index (stage a hunk), or takes it back out with [reverse].
   Future<void> applyToIndex(String patch, {bool reverse = false}) async {
@@ -243,12 +238,14 @@ class GitRepo {
   };
 
   /// Gives up [op] and goes back to where it started.
-  Future<void> abortOperation(GitOperation op) => _git('${switch (op) {
-    GitOperation.merge => 'merge',
-    GitOperation.rebase => 'rebase',
-    GitOperation.cherryPick => 'cherry-pick',
-    GitOperation.revert => 'revert',
-  }} --abort');
+  Future<void> abortOperation(GitOperation op) => _git(
+    '${switch (op) {
+      GitOperation.merge => 'merge',
+      GitOperation.rebase => 'rebase',
+      GitOperation.cherryPick => 'cherry-pick',
+      GitOperation.revert => 'revert',
+    }} --abort',
+  );
 
   Future<List<GitStash>> stashes() async {
     final out = await _git('stash list --format=%gd%x1f%s%x1f%at');
@@ -257,22 +254,29 @@ class GitRepo {
         if (l.trim().isNotEmpty)
           () {
             final f = l.split(gitFieldSep);
-            return GitStash(f[0], f.length > 1 ? f[1] : '', DateTime.fromMillisecondsSinceEpoch((int.tryParse(f.length > 2 ? f[2] : '') ?? 0) * 1000));
+            return GitStash(
+              f[0],
+              f.length > 1 ? f[1] : '',
+              DateTime.fromMillisecondsSinceEpoch((int.tryParse(f.length > 2 ? f[2] : '') ?? 0) * 1000),
+            );
           }(),
     ];
   }
 
   /// Puts the changes (untracked files too) away in a stash.
-  Future<void> stash(String message) => _git('stash push -q -u${message.trim().isEmpty ? '' : ' -m ${shellQuote(message.trim())}'}');
+  Future<void> stash(String message) =>
+      _git('stash push -q -u${message.trim().isEmpty ? '' : ' -m ${shellQuote(message.trim())}'}');
 
-  Future<void> stashApply(String ref, {bool drop = false}) => _git('stash ${drop ? 'pop' : 'apply'} -q ${shellQuote(ref)}');
+  Future<void> stashApply(String ref, {bool drop = false}) =>
+      _git('stash ${drop ? 'pop' : 'apply'} -q ${shellQuote(ref)}');
 
   Future<void> stashDrop(String ref) => _git('stash drop -q ${shellQuote(ref)}');
 
   Future<void> renameBranch(String from, String to) => _git('branch -m ${shellQuote(from)} ${shellQuote(to)}');
 
   /// Deletes [branch]; refused (notMerged) when it has commits nowhere else, unless [force].
-  Future<void> deleteBranch(String branch, {bool force = false}) => _git('branch ${force ? '-D' : '-d'} ${shellQuote(branch)}');
+  Future<void> deleteBranch(String branch, {bool force = false}) =>
+      _git('branch ${force ? '-D' : '-d'} ${shellQuote(branch)}');
 
   /// Tags, newest first.
   Future<List<String>> tags() async => [

@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('ru'),
   ];
 
+  /// No description provided for @abortOperation.
+  ///
+  /// In en, this message translates to:
+  /// **'Abort'**
+  String get abortOperation;
+
   /// No description provided for @about.
   ///
   /// In en, this message translates to:
@@ -163,6 +169,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For old servers. Generating takes a while on a phone.'**
   String get algRsa;
+
+  /// No description provided for @allBranches.
+  ///
+  /// In en, this message translates to:
+  /// **'All branches'**
+  String get allBranches;
 
   /// No description provided for @allRules.
   ///
@@ -254,6 +266,12 @@ abstract class AppLocalizations {
   /// **'Nothing to show (binary file or only mode changes)'**
   String get binaryOrEmptyDiff;
 
+  /// No description provided for @blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Blame'**
+  String get blame;
+
   /// No description provided for @bookmarkFolder.
   ///
   /// In en, this message translates to:
@@ -271,6 +289,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Branch name'**
   String get branchName;
+
+  /// No description provided for @branchNotMerged.
+  ///
+  /// In en, this message translates to:
+  /// **'{branch} has commits that are on no other branch. Delete it anyway? They will be lost.'**
+  String branchNotMerged(String branch);
 
   /// No description provided for @branches.
   ///
@@ -392,6 +416,12 @@ abstract class AppLocalizations {
   /// **'Commit'**
   String get commit;
 
+  /// No description provided for @commitDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit'**
+  String get commitDetails;
+
   /// No description provided for @commitMessage.
   ///
   /// In en, this message translates to:
@@ -403,6 +433,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Committed'**
   String get committed;
+
+  /// No description provided for @conflictBlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict {index} of {count}'**
+  String conflictBlock(int index, int count);
+
+  /// No description provided for @conflictsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No conflicts left} one{{count} conflict to resolve} other{{count} conflicts to resolve}}'**
+  String conflictsLeft(int count);
 
   /// No description provided for @connect.
   ///
@@ -422,6 +464,12 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueAction;
 
+  /// No description provided for @continueOperation.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueOperation;
+
   /// No description provided for @copied.
   ///
   /// In en, this message translates to:
@@ -439,6 +487,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy everything'**
   String get copyAll;
+
+  /// No description provided for @copyHash.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy hash'**
+  String get copyHash;
 
   /// No description provided for @copyLink.
   ///
@@ -487,6 +541,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @deleteAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete anyway'**
+  String get deleteAnyway;
+
+  /// No description provided for @deleteBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete branch'**
+  String get deleteBranch;
+
+  /// No description provided for @deleteBranchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {branch}?'**
+  String deleteBranchTitle(String branch);
 
   /// No description provided for @deleteConnectionBody.
   ///
@@ -728,6 +800,12 @@ abstract class AppLocalizations {
   /// **'Encoding'**
   String get encoding;
 
+  /// No description provided for @equivalentCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'The same in a terminal'**
+  String get equivalentCommand;
+
   /// No description provided for @errorGeneric.
   ///
   /// In en, this message translates to:
@@ -901,6 +979,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Font size'**
   String get fontSize;
+
+  /// No description provided for @forcePush.
+  ///
+  /// In en, this message translates to:
+  /// **'Force (with lease)'**
+  String get forcePush;
 
   /// No description provided for @forget.
   ///
@@ -1136,6 +1220,12 @@ abstract class AppLocalizations {
   /// **'Generating an RSA key. This can take a minute on a phone.'**
   String get generatingRsa;
 
+  /// No description provided for @gitCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'Command'**
+  String get gitCommand;
+
   /// No description provided for @gitFailed.
   ///
   /// In en, this message translates to:
@@ -1201,6 +1291,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide hidden files'**
   String get hideHiddenFiles;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
 
   /// No description provided for @home.
   ///
@@ -1442,6 +1538,12 @@ abstract class AppLocalizations {
   /// **'Pings the server so idle connections are not dropped. 0 turns it off.'**
   String get keepAliveHint;
 
+  /// No description provided for @keepBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get keepBoth;
+
   /// No description provided for @keepEditing.
   ///
   /// In en, this message translates to:
@@ -1453,6 +1555,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep the key protected with this passphrase'**
   String get keepPassphrase;
+
+  /// No description provided for @keepTheirs.
+  ///
+  /// In en, this message translates to:
+  /// **'Theirs'**
+  String get keepTheirs;
+
+  /// No description provided for @keepYours.
+  ///
+  /// In en, this message translates to:
+  /// **'Yours'**
+  String get keepYours;
 
   /// No description provided for @keyAlreadyImported.
   ///
@@ -1658,6 +1772,12 @@ abstract class AppLocalizations {
   /// **'The log is empty'**
   String get logEmpty;
 
+  /// No description provided for @markResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and mark resolved'**
+  String get markResolved;
+
   /// No description provided for @matchCase.
   ///
   /// In en, this message translates to:
@@ -1748,6 +1868,12 @@ abstract class AppLocalizations {
   /// **'New tab'**
   String get newTab;
 
+  /// No description provided for @newTag.
+  ///
+  /// In en, this message translates to:
+  /// **'New tag'**
+  String get newTag;
+
   /// No description provided for @newWorkspace.
   ///
   /// In en, this message translates to:
@@ -1771,6 +1897,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No colour'**
   String get noColor;
+
+  /// No description provided for @noCommits.
+  ///
+  /// In en, this message translates to:
+  /// **'No commits yet'**
+  String get noCommits;
 
   /// No description provided for @noDifferences.
   ///
@@ -1814,6 +1946,12 @@ abstract class AppLocalizations {
   /// **'No preview'**
   String get noPreview;
 
+  /// No description provided for @noStashes.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing stashed'**
+  String get noStashes;
+
   /// No description provided for @noTabs.
   ///
   /// In en, this message translates to:
@@ -1825,6 +1963,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open the hosts list or connect to a server.'**
   String get noTabsHint;
+
+  /// No description provided for @noTags.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags'**
+  String get noTags;
 
   /// No description provided for @noTransfers.
   ///
@@ -1861,6 +2005,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None'**
   String get none;
+
+  /// No description provided for @notCommittedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not committed yet'**
+  String get notCommittedYet;
 
   /// No description provided for @notGitRepo.
   ///
@@ -1969,6 +2119,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get openWorkspace;
+
+  /// No description provided for @operationCherryPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Cherry-picking'**
+  String get operationCherryPick;
+
+  /// No description provided for @operationMerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Merging'**
+  String get operationMerge;
+
+  /// No description provided for @operationRebase.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebasing'**
+  String get operationRebase;
+
+  /// No description provided for @operationRevert.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverting'**
+  String get operationRevert;
 
   /// No description provided for @organize.
   ///
@@ -2252,6 +2426,36 @@ abstract class AppLocalizations {
   /// **'Push'**
   String get push;
 
+  /// No description provided for @pushNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to push: the server has all these commits.'**
+  String get pushNothing;
+
+  /// No description provided for @pushPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Push to {upstream}'**
+  String pushPreviewTitle(String upstream);
+
+  /// No description provided for @pushRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone pushed to this branch, or you rewrote commits that were already pushed. Pull first to combine them, or force the push: the server branch is replaced only if it is still as you last fetched it, so nobody else\'s new work is lost by accident.'**
+  String get pushRejectedBody;
+
+  /// No description provided for @pushRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The server has newer commits'**
+  String get pushRejectedTitle;
+
+  /// No description provided for @pushTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Push tag'**
+  String get pushTag;
+
   /// No description provided for @pushed.
   ///
   /// In en, this message translates to:
@@ -2360,6 +2564,12 @@ abstract class AppLocalizations {
   /// **'Rename'**
   String get rename;
 
+  /// No description provided for @renameBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename branch'**
+  String get renameBranch;
+
   /// No description provided for @repeatPassphrase.
   ///
   /// In en, this message translates to:
@@ -2401,6 +2611,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get required;
+
+  /// No description provided for @resolveConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve conflicts'**
+  String get resolveConflicts;
 
   /// No description provided for @resume.
   ///
@@ -2570,6 +2786,12 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get signIn;
 
+  /// No description provided for @signOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign off'**
+  String get signOff;
+
   /// No description provided for @sizeLabel.
   ///
   /// In en, this message translates to:
@@ -2708,6 +2930,12 @@ abstract class AppLocalizations {
   /// **'Stage all'**
   String get stageAll;
 
+  /// No description provided for @stageHunk.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage this part'**
+  String get stageHunk;
+
   /// No description provided for @staged.
   ///
   /// In en, this message translates to:
@@ -2719,6 +2947,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Auto start'**
   String get startWithNux;
+
+  /// No description provided for @stashApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get stashApply;
+
+  /// No description provided for @stashChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Stash changes'**
+  String get stashChanges;
+
+  /// No description provided for @stashDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop'**
+  String get stashDrop;
+
+  /// No description provided for @stashMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get stashMessage;
+
+  /// No description provided for @stashPop.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply and drop'**
+  String get stashPop;
+
+  /// No description provided for @stashed.
+  ///
+  /// In en, this message translates to:
+  /// **'Stashed'**
+  String get stashed;
+
+  /// No description provided for @stashes.
+  ///
+  /// In en, this message translates to:
+  /// **'Stashes'**
+  String get stashes;
 
   /// No description provided for @stopAll.
   ///
@@ -2743,6 +3013,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Closed {title}'**
   String tabClosed(String title);
+
+  /// No description provided for @tagMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message (optional, makes an annotated tag)'**
+  String get tagMessage;
+
+  /// No description provided for @tagName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name'**
+  String get tagName;
+
+  /// No description provided for @tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tags;
 
   /// No description provided for @targetHost.
   ///
@@ -2864,6 +3152,12 @@ abstract class AppLocalizations {
   /// **'System'**
   String get themeSystem;
 
+  /// No description provided for @thisBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'This branch'**
+  String get thisBranch;
+
   /// No description provided for @throughSsh.
   ///
   /// In en, this message translates to:
@@ -2954,6 +3248,12 @@ abstract class AppLocalizations {
   /// **'Unpin'**
   String get unpinTab;
 
+  /// No description provided for @unresolvedLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} block still to choose} other{{count} blocks still to choose}}'**
+  String unresolvedLeft(int count);
+
   /// No description provided for @unstage.
   ///
   /// In en, this message translates to:
@@ -2965,6 +3265,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unstage all'**
   String get unstageAll;
+
+  /// No description provided for @unstageHunk.
+  ///
+  /// In en, this message translates to:
+  /// **'Unstage this part'**
+  String get unstageHunk;
 
   /// No description provided for @upToDate.
   ///

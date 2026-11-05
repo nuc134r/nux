@@ -163,13 +163,99 @@ void main() {
     expect(tabs.tabs.whereType<TerminalTab>().single, same(terminal));
   });
 
+  testWidgets('a merge stopped on a conflict: resolve it in the drawer, continue, see it in History', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-ws-').resolveSymbolicLinksSync();
+    addTearDown(() => Directory(root).deleteSync(recursive: true));
+    Future<void> git(List<String> args) => Process.run('git', args, workingDirectory: root);
+    await tester.runAsync(() async {
+      await git(['init', '-q', '-b', 'main']);
+      await git(['config', 'user.name', 't']);
+      await git(['config', 'user.email', 't@example.com']);
+      File('$root/a.txt').writeAsStringSync('one\n');
+      await git(['add', '.']);
+      await git(['commit', '-qm', 'init']);
+      await git(['checkout', '-qb', 'other']);
+      File('$root/a.txt').writeAsStringSync('theirs\n');
+      await git(['commit', '-qam', 'Their change']);
+      await git(['checkout', '-q', 'main']);
+      File('$root/a.txt').writeAsStringSync('ours\n');
+      await git(['commit', '-qam', 'Our change']);
+      await git(['merge', 'other']); // stops on the conflict
+    });
+
+    final c = ProviderContainer(
+      overrides: [
+        ...testOverrides(db: db, secrets: secrets),
+        workspaceOpenerProvider.overrideWithValue(
+          (id) async => WorkspaceAccess(fs: LocalFileSystem(root), runner: LocalRunner(), release: () {}),
+        ),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root), release: () {});
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    await tester.runAsync(
+      () => c.read(workspaceRepositoryProvider).create(name: 'App', connectionId: 'sample', rootPath: root),
+    );
+    c.read(workspaceProvider).gridOpen = true;
+    await settle(tester);
+    await tester.tap(find.byTooltip('Workspaces'));
+    await settle(tester);
+    await tester.tap(find.text('App'));
+    await settle(tester);
+    await settle(tester);
+
+    Finder drawer(String text) => find.descendant(of: find.byType(Drawer), matching: find.text(text));
+    await tester.tap(drawer('Version control'));
+    await settle(tester);
+    expect(drawer('Merging'), findsOneWidget);
+    expect(drawer('1 conflict to resolve'), findsOneWidget);
+
+    await tester.tap(drawer('a.txt'));
+    await settle(tester);
+    expect(find.text('Resolve conflicts'), findsOneWidget);
+    await tester.tap(find.text('Yours'));
+    await settle(tester);
+    await tester.tap(find.text('Save and mark resolved'));
+    for (var i = 0; i < 10 && find.text('Resolve conflicts').evaluate().isNotEmpty; i++) {
+      await settle(tester);
+    }
+    await settle(tester);
+    expect(File('$root/a.txt').readAsStringSync(), 'ours\n');
+    expect(drawer('No conflicts left'), findsOneWidget);
+
+    await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.widgetWithText(FilledButton, 'Continue')));
+    for (var i = 0; i < 10 && drawer('Merging').evaluate().isNotEmpty; i++) {
+      await settle(tester);
+    }
+    expect(drawer('Merging'), findsNothing);
+    final log = await tester.runAsync(() => Process.run('git', ['log', '-1', '--format=%P'], workingDirectory: root));
+    expect((log!.stdout as String).trim().split(' '), hasLength(2), reason: 'a merge commit');
+
+    // History lists the merge and both sides.
+    await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.byTooltip('More')).first);
+    await settle(tester);
+    await tester.tap(find.text('History'));
+    for (var i = 0; i < 5 && find.text('Their change').evaluate().isEmpty; i++) {
+      await settle(tester);
+    }
+    expect(find.text('Their change'), findsOneWidget);
+    expect(find.text('Our change'), findsOneWidget);
+  });
+
   testWidgets('Home lists the workspaces on its second page and opens one', (tester) async {
     final db = memoryDb();
     final secrets = MemorySecretStore();
     await tester.runAsync(() => insertSamples(db, secrets));
     final root = Directory.systemTemp.createTempSync('nux-home-').resolveSymbolicLinksSync();
     addTearDown(() => Directory(root).deleteSync(recursive: true));
-    final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    final c = ProviderContainer(
+      overrides: testOverrides(db: db, secrets: secrets),
+    );
     addTearDown(c.dispose);
     c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root), release: () {});
     final id = await tester.runAsync(
@@ -192,7 +278,9 @@ void main() {
     final db = memoryDb();
     final secrets = MemorySecretStore();
     await tester.runAsync(() => insertSamples(db, secrets));
-    final c = ProviderContainer(overrides: testOverrides(db: db, secrets: secrets));
+    final c = ProviderContainer(
+      overrides: testOverrides(db: db, secrets: secrets),
+    );
     addTearDown(c.dispose);
     await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
     await settle(tester);

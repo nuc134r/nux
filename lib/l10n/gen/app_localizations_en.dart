@@ -10,6 +10,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get abortOperation => 'Abort';
+
+  @override
   String get about => 'About';
 
   @override
@@ -45,6 +48,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get algRsa => 'For old servers. Generating takes a while on a phone.';
+
+  @override
+  String get allBranches => 'All branches';
 
   @override
   String allRules(int count) {
@@ -98,6 +104,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Nothing to show (binary file or only mode changes)';
 
   @override
+  String get blame => 'Blame';
+
+  @override
   String get bookmarkFolder => 'Bookmark this folder';
 
   @override
@@ -105,6 +114,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get branchName => 'Branch name';
+
+  @override
+  String branchNotMerged(String branch) {
+    return '$branch has commits that are on no other branch. Delete it anyway? They will be lost.';
+  }
 
   @override
   String get branches => 'Branches';
@@ -172,10 +186,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commit => 'Commit';
 
   @override
+  String get commitDetails => 'Commit';
+
+  @override
   String get commitMessage => 'Commit message';
 
   @override
   String get committed => 'Committed';
+
+  @override
+  String conflictBlock(int index, int count) {
+    return 'Conflict $index of $count';
+  }
+
+  @override
+  String conflictsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conflicts to resolve',
+      one: '$count conflict to resolve',
+      zero: 'No conflicts left',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get connect => 'Connect';
@@ -187,6 +221,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueAction => 'Continue';
 
   @override
+  String get continueOperation => 'Continue';
+
+  @override
   String get copied => 'Copied';
 
   @override
@@ -194,6 +231,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copyAll => 'Copy everything';
+
+  @override
+  String get copyHash => 'Copy hash';
 
   @override
   String get copyLink => 'Copy link';
@@ -222,6 +262,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get deleteAnyway => 'Delete anyway';
+
+  @override
+  String get deleteBranch => 'Delete branch';
+
+  @override
+  String deleteBranchTitle(String branch) {
+    return 'Delete $branch?';
+  }
 
   @override
   String get deleteConnectionBody =>
@@ -379,6 +430,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get encoding => 'Encoding';
 
   @override
+  String get equivalentCommand => 'The same in a terminal';
+
+  @override
   String errorGeneric(String error) {
     return 'Something went wrong: $error';
   }
@@ -498,6 +552,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fontSize => 'Font size';
+
+  @override
+  String get forcePush => 'Force (with lease)';
 
   @override
   String get forget => 'Forget';
@@ -674,6 +731,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Generating an RSA key. This can take a minute on a phone.';
 
   @override
+  String get gitCommand => 'Command';
+
+  @override
   String gitFailed(String command, String message) {
     return 'git $command: $message';
   }
@@ -710,6 +770,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hideHiddenFiles => 'Hide hidden files';
+
+  @override
+  String get history => 'History';
 
   @override
   String get home => 'Home';
@@ -848,10 +911,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pings the server so idle connections are not dropped. 0 turns it off.';
 
   @override
+  String get keepBoth => 'Both';
+
+  @override
   String get keepEditing => 'Keep editing';
 
   @override
   String get keepPassphrase => 'Keep the key protected with this passphrase';
+
+  @override
+  String get keepTheirs => 'Theirs';
+
+  @override
+  String get keepYours => 'Yours';
 
   @override
   String keyAlreadyImported(String name) {
@@ -978,6 +1050,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logEmpty => 'The log is empty';
 
   @override
+  String get markResolved => 'Save and mark resolved';
+
+  @override
   String get matchCase => 'Match case';
 
   @override
@@ -1033,6 +1108,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newTab => 'New tab';
 
   @override
+  String get newTag => 'New tag';
+
+  @override
   String get newWorkspace => 'New workspace';
 
   @override
@@ -1043,6 +1121,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noColor => 'No colour';
+
+  @override
+  String get noCommits => 'No commits yet';
 
   @override
   String get noDifferences => 'No differences';
@@ -1068,10 +1149,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPreview => 'No preview';
 
   @override
+  String get noStashes => 'Nothing stashed';
+
+  @override
   String get noTabs => 'No open tabs';
 
   @override
   String get noTabsHint => 'Open the hosts list or connect to a server.';
+
+  @override
+  String get noTags => 'No tags';
 
   @override
   String get noTransfers => 'No transfers';
@@ -1091,6 +1178,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get none => 'None';
+
+  @override
+  String get notCommittedYet => 'Not committed yet';
 
   @override
   String get notGitRepo => 'Not a git repository';
@@ -1148,6 +1238,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openWorkspace => 'Open';
+
+  @override
+  String get operationCherryPick => 'Cherry-picking';
+
+  @override
+  String get operationMerge => 'Merging';
+
+  @override
+  String get operationRebase => 'Rebasing';
+
+  @override
+  String get operationRevert => 'Reverting';
 
   @override
   String get organize => 'Organize';
@@ -1314,6 +1416,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get push => 'Push';
 
   @override
+  String get pushNothing =>
+      'Nothing to push: the server has all these commits.';
+
+  @override
+  String pushPreviewTitle(String upstream) {
+    return 'Push to $upstream';
+  }
+
+  @override
+  String get pushRejectedBody =>
+      'Someone pushed to this branch, or you rewrote commits that were already pushed. Pull first to combine them, or force the push: the server branch is replaced only if it is still as you last fetched it, so nobody else\'s new work is lost by accident.';
+
+  @override
+  String get pushRejectedTitle => 'The server has newer commits';
+
+  @override
+  String get pushTag => 'Push tag';
+
+  @override
   String get pushed => 'Pushed';
 
   @override
@@ -1369,6 +1490,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rename => 'Rename';
 
   @override
+  String get renameBranch => 'Rename branch';
+
+  @override
   String get repeatPassphrase => 'Repeat passphrase';
 
   @override
@@ -1389,6 +1513,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get required => 'Required';
+
+  @override
+  String get resolveConflicts => 'Resolve conflicts';
 
   @override
   String get resume => 'Resume';
@@ -1488,6 +1615,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in';
 
   @override
+  String get signOff => 'Sign off';
+
+  @override
   String get sizeLabel => 'Size';
 
   @override
@@ -1573,10 +1703,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stageAll => 'Stage all';
 
   @override
+  String get stageHunk => 'Stage this part';
+
+  @override
   String get staged => 'Staged';
 
   @override
   String get startWithNux => 'Auto start';
+
+  @override
+  String get stashApply => 'Apply';
+
+  @override
+  String get stashChanges => 'Stash changes';
+
+  @override
+  String get stashDrop => 'Drop';
+
+  @override
+  String get stashMessage => 'Note (optional)';
+
+  @override
+  String get stashPop => 'Apply and drop';
+
+  @override
+  String get stashed => 'Stashed';
+
+  @override
+  String get stashes => 'Stashes';
 
   @override
   String get stopAll => 'Stop all';
@@ -1591,6 +1745,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String tabClosed(String title) {
     return 'Closed $title';
   }
+
+  @override
+  String get tagMessage => 'Message (optional, makes an annotated tag)';
+
+  @override
+  String get tagName => 'Tag name';
+
+  @override
+  String get tags => 'Tags';
 
   @override
   String get targetHost => 'Destination';
@@ -1659,6 +1822,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeSystem => 'System';
 
   @override
+  String get thisBranch => 'This branch';
+
+  @override
   String get throughSsh => 'SSH host';
 
   @override
@@ -1713,10 +1879,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unpinTab => 'Unpin';
 
   @override
+  String unresolvedLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count blocks still to choose',
+      one: '$count block still to choose',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get unstage => 'Unstage';
 
   @override
   String get unstageAll => 'Unstage all';
+
+  @override
+  String get unstageHunk => 'Unstage this part';
 
   @override
   String get upToDate => 'You have the latest version';

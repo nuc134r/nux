@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nux_backend/nux_backend.dart';
 
 import '../../../core/widgets/nux_menu.dart';
@@ -6,6 +7,7 @@ import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
 import '../../viewer/presentation/viewer_view.dart' show DiffLinesView;
+import '../domain/git_model.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
 
@@ -23,12 +25,44 @@ Future<bool> runGit(
   Future<void> Function() action, {
   required Future<void> Function() refresh,
   String? done,
+  GitRepo? repo,
 }) async {
   final l10n = context.l10n;
   final messenger = ScaffoldMessenger.of(context);
+  final navigator = Navigator.of(context);
   try {
     await action();
-    if (done != null) messenger.showSnackBar(SnackBar(content: Text(done)));
+    final command = repo?.lastCommand;
+    if (done != null) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(done),
+          persist: false,
+          // The same in a terminal: what nux just ran (credentials and helpers left out).
+          action: command == null
+              ? null
+              : SnackBarAction(
+                  label: l10n.gitCommand,
+                  onPressed: () => showDialog<void>(
+                    context: navigator.context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.equivalentCommand),
+                      content: SelectableText(command, style: const TextStyle(fontFamily: 'monospace')),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: command));
+                            Navigator.pop(context);
+                          },
+                          child: Text(l10n.copy),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+        ),
+      );
+    }
     return true;
   } on GitException catch (e) {
     messenger.showSnackBar(SnackBar(content: Text(l10n.gitFailed(e.command, e.toString()))));
@@ -127,7 +161,7 @@ Future<void> showBranchMenu(BuildContext anchor, GitRepo repo, Future<void> Func
           icon: null,
           label: b,
           checked: i == 0,
-          onSelected: () => runGit(anchor, () => repo.switchTo(b), refresh: refresh),
+          onSelected: () => runGit(anchor, () => repo.switchTo(b), refresh: refresh, repo: repo),
         ),
       const NuxMenuDivider(),
       NuxMenuAction(
@@ -136,11 +170,61 @@ Future<void> showBranchMenu(BuildContext anchor, GitRepo repo, Future<void> Func
         onSelected: () async {
           final name = await askText(anchor, title: l10n.newBranch, label: l10n.branchName);
           if (name == null || name.trim().isEmpty || !anchor.mounted) return;
-          await runGit(anchor, () => repo.createBranch(name.trim()), refresh: refresh);
+          await runGit(anchor, () => repo.createBranch(name.trim()), refresh: refresh, repo: repo);
         },
       ),
+      if (branches.isNotEmpty)
+        NuxMenuAction(
+          icon: Icons.edit_outlined,
+          label: l10n.renameBranch,
+          onSelected: () async {
+            final current = branches.first;
+            final name = await askText(anchor, title: l10n.renameBranch, label: l10n.branchName, initial: current);
+            if (name == null || name.trim().isEmpty || name.trim() == current || !anchor.mounted) return;
+            await runGit(anchor, () => repo.renameBranch(current, name.trim()), refresh: refresh, repo: repo);
+          },
+        ),
+      if (branches.length > 1)
+        NuxMenuSubmenu(
+          icon: Icons.delete_outline,
+          label: l10n.deleteBranch,
+          items: [
+            for (final b in branches.skip(1))
+              NuxMenuAction(icon: null, label: b, onSelected: () => _deleteBranch(anchor, repo, b, refresh)),
+          ],
+        ),
     ],
   );
+}
+
+/// Deletes [branch] after asking; when it has commits nowhere else, asks again before forcing.
+Future<void> _deleteBranch(BuildContext context, GitRepo repo, String branch, Future<void> Function() refresh) async {
+  final l10n = context.l10n;
+  Future<bool> confirm(String body, String action) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.deleteBranchTitle(branch)),
+          content: body.isEmpty ? null : Text(body),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(action)),
+          ],
+        ),
+      ) ??
+      false;
+  if (!await confirm('', l10n.delete) || !context.mounted) return;
+  try {
+    await repo.deleteBranch(branch);
+  } on GitException catch (e) {
+    if (!context.mounted) return;
+    if (!e.notMerged) {
+      showSnack(context, l10n.gitFailed(e.command, e.toString()));
+    } else if (await confirm(l10n.branchNotMerged(branch), l10n.deleteAnyway) && context.mounted) {
+      await runGit(context, () => repo.deleteBranch(branch, force: true), refresh: () async {}, repo: repo);
+    }
+  }
+  await refresh();
 }
 
 /// Version control: a commit box, then Staged and Changes, each file with stage / unstage. Tap a file for
@@ -153,6 +237,8 @@ class GitPanel extends StatefulWidget {
     required this.loaded,
     required this.onRefresh,
     required this.onOpen,
+    this.operation,
+    this.onResolve,
   });
 
   final GitRepo? repo;
@@ -161,6 +247,12 @@ class GitPanel extends StatefulWidget {
   final Future<void> Function() onRefresh;
   final void Function(String path) onOpen;
 
+  /// A merge, rebase, cherry-pick or revert waiting for its conflicts (shown with Continue / Abort).
+  final GitOperation? operation;
+
+  /// Opens the resolver for a conflicted file.
+  final void Function(String path)? onResolve;
+
   @override
   State<GitPanel> createState() => _GitPanelState();
 }
@@ -168,6 +260,7 @@ class GitPanel extends StatefulWidget {
 class _GitPanelState extends State<GitPanel> {
   final _message = TextEditingController();
   bool _amend = false;
+  bool _signOff = false;
   bool _busy = false;
 
   @override
@@ -184,7 +277,7 @@ class _GitPanelState extends State<GitPanel> {
 
   Future<void> _run(Future<void> Function() action, {String? done}) async {
     setState(() => _busy = true);
-    await runGit(context, action, refresh: widget.onRefresh, done: done);
+    await runGit(context, action, refresh: widget.onRefresh, done: done, repo: widget.repo);
     if (mounted) setState(() => _busy = false);
   }
 
@@ -228,6 +321,7 @@ class _GitPanelState extends State<GitPanel> {
           change: c,
           staged: staged,
           onStage: () => _run(() => staged ? repo.unstage([c.path]) : repo.stage([c.path])),
+          onHunk: (patch) => _run(() => repo.applyToIndex(patch, reverse: staged)),
           onOpen: c.worktreeKind == GitChangeKind.deleted ? null : () => widget.onOpen(c.path),
         ),
       ),
@@ -274,7 +368,9 @@ class _GitPanelState extends State<GitPanel> {
       borderRadius: BorderRadius.circular(10),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _showDiff(c, staged: inIndex),
+        onTap: c.kind == GitChangeKind.conflict && widget.onResolve != null
+            ? () => widget.onResolve!(c.path)
+            : () => _showDiff(c, staged: inIndex),
         onLongPress: inIndex ? null : () => _discard(c),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(12, 4, 0, 4),
@@ -313,9 +409,47 @@ class _GitPanelState extends State<GitPanel> {
       ),
     );
 
+    final op = widget.operation;
+    final conflicts = git.changes.where((c) => c.kind == GitChangeKind.conflict).length;
     return ListView(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       children: [
+        if (op != null)
+          Card(
+            margin: const EdgeInsets.fromLTRB(4, 4, 4, 8),
+            color: scheme.tertiaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 8, 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(switch (op) {
+                    GitOperation.merge => l10n.operationMerge,
+                    GitOperation.rebase => l10n.operationRebase,
+                    GitOperation.cherryPick => l10n.operationCherryPick,
+                    GitOperation.revert => l10n.operationRevert,
+                  }, style: theme.textTheme.titleSmall?.copyWith(color: scheme.onTertiaryContainer)),
+                  Text(
+                    l10n.conflictsLeft(conflicts),
+                    style: theme.textTheme.bodySmall?.copyWith(color: scheme.onTertiaryContainer),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: _busy ? null : () => _run(() => repo.abortOperation(op)),
+                        child: Text(l10n.abortOperation),
+                      ),
+                      FilledButton(
+                        onPressed: _busy || conflicts > 0 ? null : () => _run(() => repo.continueOperation(op)),
+                        child: Text(l10n.continueOperation),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
           child: TextField(
@@ -330,19 +464,34 @@ class _GitPanelState extends State<GitPanel> {
           padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
           child: Row(
             children: [
-              FilterChip(
-                visualDensity: VisualDensity.compact,
-                label: Text(l10n.amend),
-                selected: _amend,
-                onSelected: _busy ? null : _toggleAmend,
+              // The chips wrap under each other in a narrow drawer.
+              Expanded(
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: [
+                    FilterChip(
+                      visualDensity: VisualDensity.compact,
+                      label: Text(l10n.amend),
+                      selected: _amend,
+                      onSelected: _busy ? null : _toggleAmend,
+                    ),
+                    FilterChip(
+                      visualDensity: VisualDensity.compact,
+                      label: Text(l10n.signOff),
+                      selected: _signOff,
+                      onSelected: _busy ? null : (v) => setState(() => _signOff = v),
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 6),
               FilledButton.icon(
                 icon: const Icon(Icons.check, size: 18),
                 label: Text(l10n.commit),
                 onPressed: canCommit
                     ? () => _run(() async {
-                        await repo.commit(_message.text.trim(), amend: _amend);
+                        await repo.commit(_message.text.trim(), amend: _amend, signOff: _signOff);
                         _message.clear();
                         _amend = false;
                       }, done: l10n.committed)
@@ -405,6 +554,7 @@ class _DiffScreen extends StatefulWidget {
     required this.change,
     required this.staged,
     required this.onStage,
+    required this.onHunk,
     required this.onOpen,
   });
 
@@ -412,6 +562,9 @@ class _DiffScreen extends StatefulWidget {
   final GitChange change;
   final bool staged;
   final VoidCallback onStage;
+
+  /// Stages (or, for a staged diff, unstages) one part given as a patch.
+  final void Function(String patch) onHunk;
   final VoidCallback? onOpen;
 
   @override
@@ -460,7 +613,43 @@ class _DiffScreenState extends State<_DiffScreen> {
           if (!snap.hasData) return const Center(child: CircularProgressIndicator());
           final lines = parseUnifiedDiff(snap.data!);
           if (lines.isEmpty) return Center(child: Text(l10n.binaryOrEmptyDiff));
-          return DiffLinesView(lines: lines);
+          final untracked = widget.change.worktreeKind == GitChangeKind.untracked && !widget.staged;
+          final patch = PatchHunks.parse(snap.data!);
+          if (untracked || patch.hunks.length < 2) return DiffLinesView(lines: lines);
+          // Several parts: each can be staged (or unstaged) on its own.
+          return ListView(
+            children: [
+              for (final (i, hunk) in patch.hunks.indexed)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 8, 8, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              hunk.split('\n').first,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              widget.onHunk(patch.patchFor(i));
+                            },
+                            child: Text(widget.staged ? l10n.unstageHunk : l10n.stageHunk),
+                          ),
+                        ],
+                      ),
+                    ),
+                    DiffLinesView(lines: parseUnifiedDiff('${patch.header}$hunk'), shrinkWrap: true),
+                  ],
+                ),
+            ],
+          );
         },
       ),
     );

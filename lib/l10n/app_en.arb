@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "abortOperation": "Abort",
   "about": "About",
   "addForward": "Add forwarding",
   "addHost": "Add host",
@@ -21,6 +22,7 @@
   "algEcdsa": "NIST curves. Use when a server or policy requires ECDSA.",
   "algEd25519": "Small, fast and secure. Supported by every server from the last decade.",
   "algRsa": "For old servers. Generating takes a while on a phone.",
+  "allBranches": "All branches",
   "allRules": "All ({count})",
   "@allRules": {
     "placeholders": {
@@ -43,9 +45,18 @@
   "batteryOff": "Optimised: some phones stop background connections anyway",
   "batteryOn": "Unrestricted: Android leaves background connections running",
   "binaryOrEmptyDiff": "Nothing to show (binary file or only mode changes)",
+  "blame": "Blame",
   "bookmarkFolder": "Bookmark this folder",
   "bookmarks": "Bookmarks",
   "branchName": "Branch name",
+  "branchNotMerged": "{branch} has commits that are on no other branch. Delete it anyway? They will be lost.",
+  "@branchNotMerged": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "branches": "Branches",
   "browseFiles": "Browse files",
   "browser": "Browser",
@@ -80,14 +91,36 @@
   "closeTab": "Close tab",
   "closeWorkspace": "Close workspace",
   "commit": "Commit",
+  "commitDetails": "Commit",
   "commitMessage": "Commit message",
   "committed": "Committed",
+  "conflictBlock": "Conflict {index} of {count}",
+  "@conflictBlock": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "conflictsLeft": "{count, plural, =0{No conflicts left} one{{count} conflict to resolve} other{{count} conflicts to resolve}}",
+  "@conflictsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "connect": "Connect",
   "connected": "Connected",
   "continueAction": "Continue",
+  "continueOperation": "Continue",
   "copied": "Copied",
   "copy": "Copy",
   "copyAll": "Copy everything",
+  "copyHash": "Copy hash",
   "copyLink": "Copy link",
   "copyOf": "{name} (copy)",
   "@copyOf": {
@@ -110,6 +143,16 @@
     }
   },
   "delete": "Delete",
+  "deleteAnyway": "Delete anyway",
+  "deleteBranch": "Delete branch",
+  "deleteBranchTitle": "Delete {branch}?",
+  "@deleteBranchTitle": {
+    "placeholders": {
+      "branch": {
+        "type": "String"
+      }
+    }
+  },
   "deleteConnectionBody": "Its saved password is deleted too. Trusted host keys and SSH keys stay.",
   "deleteConnectionJumpers": "These hosts connect through it and will connect directly: {names}",
   "@deleteConnectionJumpers": {
@@ -227,6 +270,7 @@
   "editorFontSize": "File text size",
   "emptyFolder": "Empty folder",
   "encoding": "Encoding",
+  "equivalentCommand": "The same in a terminal",
   "errorGeneric": "Something went wrong: {error}",
   "@errorGeneric": {
     "placeholders": {
@@ -362,6 +406,7 @@
   "folderPath": "Folder",
   "foldersNotDownloaded": "Folders are not downloaded yet; only the files were queued",
   "fontSize": "Font size",
+  "forcePush": "Force (with lease)",
   "forget": "Forget",
   "forgetHostBody": "The next connection will show the server's key and ask you to trust it again.",
   "forgetHostTitle": "Forget the key of {host}?",
@@ -494,6 +539,7 @@
   "generateKeyHint": "A new key pair made on this device",
   "generating": "Generating…",
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
+  "gitCommand": "Command",
   "gitFailed": "git {command}: {message}",
   "@gitFailed": {
     "placeholders": {
@@ -522,6 +568,7 @@
   "hiddenFiles": "Hidden files",
   "hide": "Hide",
   "hideHiddenFiles": "Hide hidden files",
+  "history": "History",
   "home": "Home",
   "homeEarly": "SSH, SFTP, port forwarding and a code editor are on their way. This early build sets up updates, so new features reach you as they land.",
   "homeWelcome": "Welcome to nux",
@@ -597,8 +644,11 @@
   "justNow": "just now",
   "keepAlive": "Keep-alive, seconds",
   "keepAliveHint": "Pings the server so idle connections are not dropped. 0 turns it off.",
+  "keepBoth": "Both",
   "keepEditing": "Keep editing",
   "keepPassphrase": "Keep the key protected with this passphrase",
+  "keepTheirs": "Theirs",
+  "keepYours": "Yours",
   "keyAlreadyImported": "This key is already here as {name}",
   "@keyAlreadyImported": {
     "placeholders": {
@@ -689,6 +739,7 @@
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
   "logEmpty": "The log is empty",
+  "markResolved": "Save and mark resolved",
   "matchCase": "Match case",
   "merge": "Merge",
   "minutesAgo": "{count} min ago",
@@ -718,10 +769,12 @@
   "newFolder": "New folder",
   "newPassphrase": "New passphrase",
   "newTab": "New tab",
+  "newTag": "New tag",
   "newWorkspace": "New workspace",
   "next": "Next",
   "noChanges": "No changes",
   "noColor": "No colour",
+  "noCommits": "No commits yet",
   "noDifferences": "No differences",
   "noForwards": "No port forwarding yet",
   "noHosts": "No hosts yet",
@@ -729,14 +782,17 @@
   "noKeysHint": "Keys let you sign in without a password. Generate one here, or import a key you already use.",
   "noKeysYet": "No keys yet",
   "noPreview": "No preview",
+  "noStashes": "Nothing stashed",
   "noTabs": "No open tabs",
   "noTabsHint": "Open the hosts list or connect to a server.",
+  "noTags": "No tags",
   "noTransfers": "No transfers",
   "noWorkspace": "No workspace",
   "noWorkspaceCard": "The open tabs belong to no workspace",
   "noWorkspaceHint": "A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.",
   "noWrap": "Don't wrap lines",
   "none": "None",
+  "notCommittedYet": "Not committed yet",
   "notGitRepo": "Not a git repository",
   "notNow": "Not now",
   "nothingFound": "Nothing found",
@@ -755,6 +811,10 @@
   "openTerminal": "Open terminal",
   "openTerminalHere": "Open terminal here",
   "openWorkspace": "Open",
+  "operationCherryPick": "Cherry-picking",
+  "operationMerge": "Merging",
+  "operationRebase": "Rebasing",
+  "operationRevert": "Reverting",
   "organize": "Organize",
   "otherDevices": "Connections from LAN",
   "outdent": "Outdent",
@@ -861,6 +921,18 @@
   "pull": "Pull",
   "pulled": "Pulled",
   "push": "Push",
+  "pushNothing": "Nothing to push: the server has all these commits.",
+  "pushPreviewTitle": "Push to {upstream}",
+  "@pushPreviewTitle": {
+    "placeholders": {
+      "upstream": {
+        "type": "String"
+      }
+    }
+  },
+  "pushRejectedBody": "Someone pushed to this branch, or you rewrote commits that were already pushed. Pull first to combine them, or force the push: the server branch is replaced only if it is still as you last fetched it, so nobody else's new work is lost by accident.",
+  "pushRejectedTitle": "The server has newer commits",
+  "pushTag": "Push tag",
   "pushed": "Pushed",
   "qrCode": "QR code",
   "quickOpen": "Quick open",
@@ -879,6 +951,7 @@
   "rememberUntilClosed": "Remember until nux is closed",
   "removeBookmark": "Remove bookmark",
   "rename": "Rename",
+  "renameBranch": "Rename branch",
   "repeatPassphrase": "Repeat passphrase",
   "replace": "Replace",
   "replaceAll": "Replace all",
@@ -886,6 +959,7 @@
   "requireUnlock": "Require device unlock",
   "requireUnlockHint": "Fingerprint, face or screen lock before each use",
   "required": "Required",
+  "resolveConflicts": "Resolve conflicts",
   "resume": "Resume",
   "save": "Save",
   "saveAndConnect": "Save and connect",
@@ -938,6 +1012,7 @@
   "showSource": "Show source",
   "showTabs": "Show tabs",
   "signIn": "Sign in",
+  "signOff": "Sign off",
   "sizeLabel": "Size",
   "skipKey": "Skip this key",
   "smallerText": "Smaller text",
@@ -992,8 +1067,16 @@
   },
   "stage": "Stage",
   "stageAll": "Stage all",
+  "stageHunk": "Stage this part",
   "staged": "Staged",
   "startWithNux": "Auto start",
+  "stashApply": "Apply",
+  "stashChanges": "Stash changes",
+  "stashDrop": "Drop",
+  "stashMessage": "Note (optional)",
+  "stashPop": "Apply and drop",
+  "stashed": "Stashed",
+  "stashes": "Stashes",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
   "switchWorkspace": "Switch workspace",
@@ -1005,6 +1088,9 @@
       }
     }
   },
+  "tagMessage": "Message (optional, makes an annotated tag)",
+  "tagName": "Tag name",
+  "tags": "Tags",
   "targetHost": "Destination",
   "targetHostLocalHint": "As the server sees it: localhost is the server itself",
   "targetHostRemoteHint": "As this device sees it: localhost is this device",
@@ -1032,6 +1118,7 @@
   "themeDark": "Dark",
   "themeLight": "Light",
   "themeSystem": "System",
+  "thisBranch": "This branch",
   "throughSsh": "SSH host",
   "throughZeroTier": "ZeroTier",
   "transferCancelled": "Cancelled — resume continues where it stopped",
@@ -1075,8 +1162,17 @@
     }
   },
   "unpinTab": "Unpin",
+  "unresolvedLeft": "{count, plural, one{{count} block still to choose} other{{count} blocks still to choose}}",
+  "@unresolvedLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "unstage": "Unstage",
   "unstageAll": "Unstage all",
+  "unstageHunk": "Unstage this part",
   "upToDate": "You have the latest version",
   "update": "Update",
   "updateAvailable": "nux {version} is available",
