@@ -1,9 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 import '../../../core/keys/key_bar_layout.dart';
 import '../../settings/presentation/key_bar_settings.dart';
 import '../../workspace/data/workspace_access.dart';
+import '../../files/presentation/file_sharing.dart';
+import '../../../core/platform/content.dart';
+import '../../../core/widgets/widgets.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -37,12 +42,11 @@ class ViewerTab extends NuxTab {
     FsOpener? open,
     this.openerId,
     int? line,
+    this.content,
   }) : id = id ?? 'viewer:${newId()}',
        pendingLine = line,
-       document = RemoteDocument(
-         open: open ?? sshFsOpener(_ref.read(sshPoolProvider), () => _ref.read(sshPrompterProvider), connectionId),
-         path: path,
-       ) {
+       _open = open ?? sshFsOpener(_ref.read(sshPoolProvider), () => _ref.read(sshPrompterProvider), connectionId) {
+    document = RemoteDocument(open: _open, path: path);
     document.addListener(notifyListeners);
   }
 
@@ -57,7 +61,14 @@ class ViewerTab extends NuxTab {
 
   /// The tab that opened this file, if any: Back returns there.
   final String? openerId;
-  final RemoteDocument document;
+  late final RemoteDocument document;
+  final FsOpener _open;
+
+  /// A file another app opened with nux (not on a host): no host actions, not restored after a restart.
+  final ContentItem? content;
+
+  /// The connection id of [content] tabs.
+  static const contentConnection = 'content';
 
   /// A line (1-based) to put the cursor on and scroll to once the text is shown (search results).
   int? pendingLine;
@@ -212,7 +223,7 @@ class ViewerTab extends NuxTab {
   String get title => '${hasUnsavedChanges ? '• ' : ''}${posix.basename(path)}';
 
   @override
-  String? get subtitle => posix.dirname(path);
+  String? get subtitle => content != null ? content!.name : posix.dirname(path);
 
   @override
   IconData get icon => switch (document.kind) {
@@ -254,12 +265,13 @@ class ViewerTab extends NuxTab {
           enabled: hasUnsavedChanges && !document.saving,
           onSelected: () => onSave?.call(),
         ),
-        NuxMenuAction(
-          icon: Icons.admin_panel_settings_outlined,
-          label: l10n.saveAsRoot,
-          enabled: !document.saving,
-          onSelected: () => onSaveAsRoot?.call(),
-        ),
+        if (content == null)
+          NuxMenuAction(
+            icon: Icons.admin_panel_settings_outlined,
+            label: l10n.saveAsRoot,
+            enabled: !document.saving,
+            onSelected: () => onSaveAsRoot?.call(),
+          ),
         NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
         NuxMenuAction(
           icon: Icons.undo,
@@ -357,20 +369,38 @@ class ViewerTab extends NuxTab {
       if (document.kind == FileKind.binary)
         NuxMenuAction(icon: Icons.notes, label: l10n.showAsText, onSelected: document.showAsText),
       NuxMenuAction(
-        icon: Icons.copy,
-        label: l10n.copyPath,
-        onSelected: () => Clipboard.setData(ClipboardData(text: path)),
-      ),
-      NuxMenuAction(
-        icon: Icons.download,
-        label: l10n.download,
-        onSelected: () {
-          _ref
-              .read(transferManagerProvider)
-              .download(connectionId, FileEntry(path: path, type: FileType.file, size: document.size));
-          if (context.mounted) showTransfersSheet(context);
+        icon: Icons.share_outlined,
+        label: l10n.shareFile,
+        onSelected: () async {
+          try {
+            // What is on screen, unsaved edits included; other files as they are on the host.
+            if (textual && (editing || dirty)) {
+              await shareText(document.name, _editor?.text ?? document.text);
+            } else {
+              await shareRemoteFile(_open, path);
+            }
+          } catch (e) {
+            if (context.mounted) showSnack(context, context.l10n.errorGeneric('$e'));
+          }
         },
       ),
+      if (content == null) ...[
+        NuxMenuAction(
+          icon: Icons.copy,
+          label: l10n.copyPath,
+          onSelected: () => Clipboard.setData(ClipboardData(text: path)),
+        ),
+        NuxMenuAction(
+          icon: Icons.download,
+          label: l10n.download,
+          onSelected: () {
+            _ref
+                .read(transferManagerProvider)
+                .download(connectionId, FileEntry(path: path, type: FileType.file, size: document.size));
+            if (context.mounted) showTransfersSheet(context);
+          },
+        ),
+      ],
     ];
   }
 

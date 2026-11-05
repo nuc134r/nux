@@ -12,6 +12,7 @@ import '../../../l10n/l10n.dart';
 import '../../browser/domain/address.dart';
 import '../../browser/presentation/browser_tab.dart';
 import '../../connections/presentation/connection_actions.dart';
+import '../../files/presentation/incoming.dart';
 import '../../forwarding/data/forwarding_providers.dart';
 import '../../settings/presentation/text_size_controls.dart';
 import '../../ssh/data/ssh_providers.dart';
@@ -55,6 +56,8 @@ class WorkspaceScreen extends ConsumerWidget {
     // Open terminals and file browsers keep nux running in the background (with a notification).
     ref.watch(sshKeepAliveProvider);
     ref.watch(backgroundResyncProvider);
+    // Files other apps open with or share to nux.
+    ref.watch(incomingHandlerProvider);
     return _KeyboardOnlyOnTop(
       child: Scaffold(
         key: _scaffold,

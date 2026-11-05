@@ -7,6 +7,7 @@ import 'package:nux_backend/nux_backend.dart';
 
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
+import '../../../core/platform/content.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
@@ -20,6 +21,7 @@ import '../domain/file_browser.dart';
 import '../domain/file_listing.dart';
 import '../domain/fs_handle.dart';
 import '../domain/transfers.dart';
+import 'file_sharing.dart';
 import 'files_view.dart';
 import 'transfers_sheet.dart';
 
@@ -51,6 +53,14 @@ class FilesTab extends NuxTab {
   final FileBrowser browser;
   Connection? connection;
   late final StreamSubscription<Connection?> _sub;
+
+  /// Files shared to nux from another app, waiting for the user to pick the folder ("Upload here").
+  List<UploadSource>? pendingUploads;
+
+  void setPendingUploads(List<UploadSource>? uploads) {
+    pendingUploads = uploads;
+    notifyListeners();
+  }
 
   @override
   String get kind => kindName;
@@ -131,6 +141,16 @@ class FilesTab extends NuxTab {
         label: l10n.upload,
         enabled: b.path != null,
         onSelected: () => uploadInto(context, _transfers, connectionId, b),
+      ),
+      NuxMenuAction(
+        icon: Icons.drive_folder_upload_outlined,
+        label: l10n.uploadFolder,
+        enabled: b.path != null,
+        onSelected: () async {
+          final uploads = await pickFolderUploads(_ref.read(contentFilesProvider));
+          if (uploads == null || !context.mounted) return;
+          uploadSources(context, _transfers, connectionId, b, uploads);
+        },
       ),
       NuxMenuAction(icon: Icons.refresh, label: l10n.refresh, onSelected: b.refresh),
       NuxMenuSubmenu(

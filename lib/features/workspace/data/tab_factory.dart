@@ -2,6 +2,8 @@ import '../../browser/presentation/browser_tab.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/platform/content.dart';
+
 import '../../files/domain/fs_handle.dart';
 import '../../files/presentation/files_tab.dart';
 import '../../terminal/domain/terminal_tab.dart';
@@ -25,6 +27,15 @@ class TabFactory {
       FilesTab(_ref, connectionId: connectionId, path: path, open: open ?? openOverride);
 
   /// [openerId]: the tab that opened the file (Back closes the viewer and returns there).
+  /// A file another app opened with nux.
+  ViewerTab content(ContentFiles files, ContentItem item) => ViewerTab(
+    _ref,
+    connectionId: ViewerTab.contentConnection,
+    path: '/${item.name}',
+    open: () async => FsHandle(ContentFileSystem(files, item), release: () {}),
+    content: item,
+  );
+
   ViewerTab viewer(String connectionId, String path, {FsOpener? open, String? openerId, int? line}) => ViewerTab(
     _ref,
     connectionId: connectionId,
@@ -56,6 +67,8 @@ class TabFactory {
         path: args['path'] as String?,
         id: id,
       ),
+      // Another app's file: its permission ended with the app's last run.
+      ViewerTab.kindName when args['connectionId'] == ViewerTab.contentConnection => null,
       ViewerTab.kindName when id != null && args['connectionId'] is String && args['path'] is String => ViewerTab(
         _ref,
         connectionId: args['connectionId']! as String,

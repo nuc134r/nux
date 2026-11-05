@@ -89,6 +89,10 @@ class _ViewerViewState extends State<ViewerView> {
         showSnack(context, fileErrorText(l10n, e));
         return;
       }
+      if (widget.tab.content != null) {
+        showSnack(context, l10n.cannotWriteContent);
+        return;
+      }
       final ok = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(

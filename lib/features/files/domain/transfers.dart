@@ -69,9 +69,52 @@ class TransferManager extends ChangeNotifier {
   int get activeCount => _transfers.where((t) => t.active).length;
 
   Transfer download(String connectionId, FileEntry entry) {
-    final t = Transfer._(direction: TransferDirection.download, connectionId: connectionId, remotePath: entry.path, total: entry.size);
+    final t = Transfer._(
+      direction: TransferDirection.download,
+      connectionId: connectionId,
+      remotePath: entry.path,
+      total: entry.size,
+    );
     _add(t);
     return t;
+  }
+
+  /// Downloads every file under [remoteDirectory] into a folder of the same name in the downloads folder,
+  /// keeping the layout; returns how many files were queued.
+  Future<int> downloadFolder(String connectionId, String remoteDirectory) async {
+    final handle = await opener(connectionId)();
+    final files = <FileEntry>[];
+    try {
+      Future<void> walk(String dir) async {
+        for (final e in await handle.fs.list(dir)) {
+          if (e.type == FileType.directory) {
+            await walk(e.path);
+          } else if (e.type == FileType.file) {
+            files.add(e);
+          }
+        }
+      }
+
+      await walk(remoteDirectory);
+    } finally {
+      handle.release();
+    }
+    final dir = await downloadsDir();
+    await dir.create(recursive: true);
+    final taken = {for (final e in dir.listSync()) posix.basename(e.path)};
+    final root = posix.join(dir.path, uniqueName(posix.basename(remoteDirectory), taken));
+    await Directory(root).create(recursive: true);
+    for (final e in files) {
+      final t = Transfer._(
+        direction: TransferDirection.download,
+        connectionId: connectionId,
+        remotePath: e.path,
+        total: e.size,
+      )..localPath = posix.join(root, posix.relative(e.path, from: remoteDirectory));
+      _transfers.add(t);
+    }
+    _pump();
+    return files.length;
   }
 
   Transfer upload(String connectionId, String remoteDirectory, UploadSource source) {
@@ -161,6 +204,7 @@ class TransferManager extends ChangeNotifier {
       t.localPath = posix.join(dir.path, uniqueName(t.name, taken));
     }
     final file = File(t.localPath!);
+    await file.parent.create(recursive: true);
     final offset = await file.exists() ? await file.length() : 0;
     if (t.total <= 0 || offset == 0) t.total = (await fs.stat(t.remotePath)).size;
     t.done = offset;
@@ -178,6 +222,8 @@ class TransferManager extends ChangeNotifier {
   }
 
   Future<void> _upload(Transfer t, FileSystem fs) async {
+    // A file of an uploaded folder (`photos/2024/a.jpg`): its folders first.
+    if (t.source!.name.contains('/')) await fs.createDirectory(posix.dirname(t.remotePath), recursive: true);
     var offset = 0;
     if (t.done > 0) {
       // Resuming: continue after what the server already has.
@@ -190,10 +236,15 @@ class TransferManager extends ChangeNotifier {
     t.done = offset;
     _notify();
     final data = t.source!.open(offset).takeWhile((_) => !t._cancel);
-    await fs.writeStream(t.remotePath, data, offset: offset, onProgress: (n) {
-      t.done = offset + n;
-      _notify();
-    });
+    await fs.writeStream(
+      t.remotePath,
+      data,
+      offset: offset,
+      onProgress: (n) {
+        t.done = offset + n;
+        _notify();
+      },
+    );
   }
 
   void _notify() {

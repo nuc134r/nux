@@ -44,8 +44,8 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] File browser tab: breadcrumbs, sort (folders first, natural order), hidden files, multi-select,
       rename/move/delete/chmod/new folder, bookmarks per host, back goes up, "Terminal here"
 - [x] Transfers: upload/download queue with progress, cancel, resume after a drop; save as / share downloads
-- [ ] Downloading and uploading whole folders
-- [ ] Receive files shared from other apps (share intent → upload)
+- [x] Downloading and uploading whole folders
+- [x] Receive files shared from other apps (share intent → upload); share files out
 - [x] Read-only code viewer (re_editor): ~45 highlighted languages, line numbers, folding, find, wrap
 - [x] Large files load the first 512 KB with "Load all"; image, Markdown (rendered/source) and hex views
 
@@ -108,6 +108,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## M7 — Backends
 - [ ] Termux guided setup (install openssh, authorise nux key, start sshd, test)
+- [x] Open text files from other apps (VIEW/EDIT content URIs) in the editor
 - [ ] Local backend: app storage + SAF folders, local PTY (ptyx/pty2), git2dart (clone over HTTPS with token)
 - [ ] Capability flags per backend so the UI hides what is unsupported
 

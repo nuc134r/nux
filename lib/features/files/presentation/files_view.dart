@@ -19,6 +19,7 @@ import '../domain/file_browser.dart';
 import '../domain/file_listing.dart';
 import '../domain/transfers.dart';
 import 'file_dialogs.dart';
+import 'file_sharing.dart';
 import 'files_tab.dart';
 import 'transfers_sheet.dart';
 
@@ -128,18 +129,23 @@ class _FilesViewState extends ConsumerState<FilesView> {
               ListTile(leading: Icon(fileIcon(e)), title: Text(e.name), subtitle: Text(e.path)),
               EntryDetails(entry: e),
               const Divider(height: 1),
-              if (!e.isBrowsable) ...[
+              if (!e.isBrowsable)
                 ListTile(
                   leading: const Icon(Icons.visibility_outlined),
                   title: Text(l10n.open),
                   onTap: () => Navigator.pop(context, 'open'),
                 ),
+              ListTile(
+                leading: const Icon(Icons.download),
+                title: Text(e.isBrowsable ? l10n.downloadFolder : l10n.download),
+                onTap: () => Navigator.pop(context, 'download'),
+              ),
+              if (!e.isBrowsable)
                 ListTile(
-                  leading: const Icon(Icons.download),
-                  title: Text(l10n.download),
-                  onTap: () => Navigator.pop(context, 'download'),
+                  leading: const Icon(Icons.share_outlined),
+                  title: Text(l10n.shareFile),
+                  onTap: () => Navigator.pop(context, 'share'),
                 ),
-              ],
               ListTile(
                 leading: const Icon(Icons.drive_file_rename_outline),
                 title: Text(l10n.rename),
@@ -184,6 +190,8 @@ class _FilesViewState extends ConsumerState<FilesView> {
             .open(ref.read(tabFactoryProvider).viewer(widget.tab.connectionId, e.path, openerId: widget.tab.id));
       case 'download':
         _download([e]);
+      case 'share':
+        await _run(() => shareRemoteFile(ref.read(transferManagerProvider).opener(widget.tab.connectionId), e.path));
       case 'rename':
         final name = await askText(
           context,
@@ -246,21 +254,23 @@ class _FilesViewState extends ConsumerState<FilesView> {
     if (ok == true) await _run(() => _b.delete(paths));
   }
 
-  void _download(List<FileEntry> entries) {
+  /// Files, and folders with everything in them.
+  Future<void> _download(List<FileEntry> entries) async {
     final manager = ref.read(transferManagerProvider);
-    final files = entries.where((e) => !e.isBrowsable).toList();
-    for (final e in files) {
+    for (final e in entries.where((e) => !e.isBrowsable)) {
       manager.download(widget.tab.connectionId, e);
     }
-    if (files.length < entries.length) showSnack(context, context.l10n.foldersNotDownloaded);
     showTransfersSheet(context);
+    for (final e in entries.where((e) => e.isBrowsable)) {
+      await _run(() => manager.downloadFolder(widget.tab.connectionId, e.path));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return ListenableBuilder(
-      listenable: _b,
+      listenable: Listenable.merge([_b, widget.tab]),
       builder: (context, _) {
         final entries = _b.entries;
         // Live tabs stay mounted: only the tab in front handles Back.
@@ -272,7 +282,11 @@ class _FilesViewState extends ConsumerState<FilesView> {
             _b.selecting ? _b.clearSelection() : _b.up();
           },
           child: Scaffold(
-            bottomNavigationBar: _b.selecting ? _SelectionBar(view: this) : null,
+            bottomNavigationBar: _b.selecting
+                ? _SelectionBar(view: this)
+                : widget.tab.pendingUploads != null
+                ? _PendingUploadBar(tab: widget.tab)
+                : null,
             body: Column(
               children: [
                 _Breadcrumbs(tab: widget.tab),
@@ -329,12 +343,26 @@ class _FilesViewState extends ConsumerState<FilesView> {
 Future<void> uploadInto(BuildContext context, TransferManager manager, String connectionId, FileBrowser b) async {
   final files = await FilePicker.pickFiles();
   if (files.isEmpty || b.path == null || !context.mounted) return;
+  final sources = <UploadSource>[];
   for (final f in files) {
     final x = f.xFile;
-    final size = await x.length();
-    manager.upload(connectionId, b.path!, UploadSource(name: x.name, size: size, open: (start) => x.openRead(start)));
+    sources.add(UploadSource(name: x.name, size: await x.length(), open: (start) => x.openRead(start)));
   }
-  if (!context.mounted) return;
+  if (context.mounted) uploadSources(context, manager, connectionId, b, sources);
+}
+
+/// Uploads [sources] into the browser's folder, shows the transfers and the new files when they are done.
+void uploadSources(
+  BuildContext context,
+  TransferManager manager,
+  String connectionId,
+  FileBrowser b,
+  List<UploadSource> sources,
+) {
+  if (b.path == null) return;
+  for (final source in sources) {
+    manager.upload(connectionId, b.path!, source);
+  }
   showTransfersSheet(context);
   // Show the new files once uploads finish.
   void reloadWhenDone() {
@@ -345,6 +373,44 @@ Future<void> uploadInto(BuildContext context, TransferManager manager, String co
   }
 
   manager.addListener(reloadWhenDone);
+}
+
+/// Files shared from another app: browse to the folder, then Upload here.
+class _PendingUploadBar extends ConsumerWidget {
+  const _PendingUploadBar({required this.tab});
+
+  final FilesTab tab;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final uploads = tab.pendingUploads!;
+    final b = tab.browser;
+    return Material(
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          child: Row(
+            children: [
+              Expanded(child: Text(l10n.uploadHereHint(uploads.length))),
+              TextButton(onPressed: () => tab.setPendingUploads(null), child: Text(l10n.cancel)),
+              FilledButton(
+                onPressed: b.path == null
+                    ? null
+                    : () {
+                        tab.setPendingUploads(null);
+                        uploadSources(context, ref.read(transferManagerProvider), tab.connectionId, b, uploads);
+                      },
+                child: Text(l10n.uploadHere),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _SelectionBar extends StatelessWidget {

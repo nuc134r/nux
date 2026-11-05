@@ -344,6 +344,12 @@ abstract class AppLocalizations {
   /// **'Your user may not write {name}. Save it as root with sudo? The file keeps its owner and permissions.'**
   String cannotWriteBody(String name);
 
+  /// No description provided for @cannotWriteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'The app that opened this file does not let nux change it. Share it to save a copy elsewhere.'**
+  String get cannotWriteContent;
+
   /// No description provided for @cannotWriteTitle.
   ///
   /// In en, this message translates to:
@@ -788,6 +794,12 @@ abstract class AppLocalizations {
   /// **'Download'**
   String get download;
 
+  /// No description provided for @downloadFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Download folder'**
+  String get downloadFolder;
+
   /// No description provided for @duplicate.
   ///
   /// In en, this message translates to:
@@ -1015,12 +1027,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Folder'**
   String get folderPath;
-
-  /// No description provided for @foldersNotDownloaded.
-  ///
-  /// In en, this message translates to:
-  /// **'Folders are not downloaded yet; only the files were queued'**
-  String get foldersNotDownloaded;
 
   /// No description provided for @fontSize.
   ///
@@ -2828,6 +2834,12 @@ abstract class AppLocalizations {
   /// **'Share'**
   String get share;
 
+  /// No description provided for @shareFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareFile;
+
   /// No description provided for @shareLog.
   ///
   /// In en, this message translates to:
@@ -3505,6 +3517,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upload'**
   String get upload;
+
+  /// No description provided for @uploadFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload folder'**
+  String get uploadFolder;
+
+  /// No description provided for @uploadHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload here'**
+  String get uploadHere;
+
+  /// No description provided for @uploadHereHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} file to upload: open the folder for it} other{{count} files to upload: open the folder for them}}'**
+  String uploadHereHint(int count);
+
+  /// No description provided for @uploadSharedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Upload {count} file to} other{Upload {count} files to}}'**
+  String uploadSharedTitle(int count);
 
   /// No description provided for @useKey.
   ///

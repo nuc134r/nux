@@ -152,6 +152,10 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get cannotWriteContent =>
+      'Приложение, открывшее этот файл, не разрешает nux его менять. Поделитесь им, чтобы сохранить копию в другом месте.';
+
+  @override
   String get cannotWriteTitle => 'Нет прав на запись';
 
   @override
@@ -432,6 +436,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get download => 'Скачать';
 
   @override
+  String get downloadFolder => 'Скачать папку';
+
+  @override
   String get duplicate => 'Дублировать';
 
   @override
@@ -581,10 +588,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get folderPath => 'Папка';
-
-  @override
-  String get foldersNotDownloaded =>
-      'Папки пока не скачиваются; в очередь добавлены только файлы';
 
   @override
   String get fontSize => 'Размер шрифта';
@@ -1668,6 +1671,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get share => 'Поделиться';
 
   @override
+  String get shareFile => 'Поделиться';
+
+  @override
   String get shareLog => 'Поделиться журналом';
 
   @override
@@ -2073,6 +2079,36 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get upload => 'Загрузить на сервер';
+
+  @override
+  String get uploadFolder => 'Загрузить папку';
+
+  @override
+  String get uploadHere => 'Загрузить сюда';
+
+  @override
+  String uploadHereHint(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count файлов для загрузки: откройте папку для них',
+      few: '$count файла для загрузки: откройте папку для них',
+      one: '$count файл для загрузки: откройте папку для него',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String uploadSharedTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Загрузить $count файлов на',
+      few: 'Загрузить $count файла на',
+      one: 'Загрузить $count файл на',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get useKey => 'Использовать ключ';

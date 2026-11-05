@@ -39,7 +39,8 @@ void main() {
     local = Directory.systemTemp.createTempSync('nux-local-');
     fs = FlakyFs(remote.path);
     manager = TransferManager(
-      opener: (_) => () async => FsHandle(fs, release: () {}),
+      opener: (_) =>
+          () async => FsHandle(fs, release: () {}),
       downloadsDir: () async => Directory('${local.path}/downloads'),
     );
   });
@@ -83,5 +84,28 @@ void main() {
     expect(t.fraction, 1);
     manager.clearFinished();
     expect(manager.transfers, isEmpty);
+  });
+
+  test('a whole folder down, and a folder up with its subfolders', () async {
+    Directory('${remote.path}/site/css').createSync(recursive: true);
+    File('${remote.path}/site/index.html').writeAsStringSync('<p>hi</p>');
+    File('${remote.path}/site/css/a.css').writeAsStringSync('p {}');
+    expect(await manager.downloadFolder('c', '${remote.path}/site'), 2);
+    await manager.idle;
+    expect(File('${local.path}/downloads/site/index.html').readAsStringSync(), '<p>hi</p>');
+    expect(File('${local.path}/downloads/site/css/a.css').readAsStringSync(), 'p {}');
+
+    Directory('${remote.path}/up').createSync();
+    for (final (name, text) in [('photos/2024/a.txt', 'a'), ('photos/b.txt', 'bb')]) {
+      final bytes = Uint8List.fromList(text.codeUnits);
+      manager.upload(
+        'c',
+        '${remote.path}/up',
+        UploadSource(name: name, size: bytes.length, open: (start) => Stream.value(bytes.sublist(start))),
+      );
+    }
+    await manager.idle;
+    expect(File('${remote.path}/up/photos/2024/a.txt').readAsStringSync(), 'a');
+    expect(File('${remote.path}/up/photos/b.txt').readAsStringSync(), 'bb');
   });
 }

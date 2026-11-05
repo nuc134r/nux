@@ -1,6 +1,7 @@
 package io.nuc134r.nux
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -13,8 +14,33 @@ import io.flutter.embedding.engine.FlutterEngine
 // every tab as it was. (The pattern audio_service uses for background playback.)
 class MainActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        NuxEngine.get(this) // exists before super.onCreate looks it up by id
+        ContentChannel.attach(NuxEngine.get(this), this) // the engine exists before super.onCreate looks it up
         super.onCreate(savedInstanceState)
+        current = this
+        // "Open with" / "Share to" nux (not when the activity is only being recreated).
+        if (savedInstanceState == null) ContentChannel.onIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        ContentChannel.onIntent(intent)
+    }
+
+    override fun onDestroy() {
+        if (current === this) current = null
+        super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (ContentChannel.onActivityResult(requestCode, resultCode, data)) return
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    companion object {
+        /** The activity on screen, for pickers that need one. */
+        var current: MainActivity? = null
     }
 
     override fun provideFlutterEngine(context: Context): FlutterEngine = NuxEngine.get(context)

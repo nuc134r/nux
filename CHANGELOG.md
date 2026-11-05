@@ -10,6 +10,10 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Hold a key** above the keyboard to repeat it (arrows, ⌫, symbols); keys with a dot offer more on a long press (`(` → `()`, `((`; `-` → `_`, `=`; `&` → `&&`, `2>&1` …): slide to one and let go. A pair like `()` puts the cursor inside. Hold Ctrl or Alt to keep it on.
 - **Open files from the terminal**: long-press a path in the output (`src/app.py:40` from grep or a compiler, `/etc/hosts`, `~/.bashrc`) and tap Open: it opens in an editor tab, at that line. A long press now selects the whole path.
 - **Save as root**: when your user may not write a file, saving offers to save it through sudo (also in ⋮ while editing). The sudo password is asked each time and goes to sudo directly, never stored.
+- **Open with nux**: text and code files from other apps (a file manager, an email attachment) open in an editor tab, with the extra keys, find and replace; Save writes them back when the app allows it.
+- **Share to nux**: share files (or text) from any app, pick a host, go to the folder and tap Upload here.
+- **Share from nux**: ⋮ → Share in an editor, and Share on a file in the file browser, send the file to another app.
+- **Whole folders**: Download folder (keeps its subfolders, under Downloads), and ⋮ → Upload folder in the file browser.
 - **Switching branch with uncommitted changes** asks whether to carry them over or stash them; when the other branch changes the same files, it offers to stash.
 
 ## 0.10.0

@@ -151,6 +151,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get cannotWriteContent =>
+      'The app that opened this file does not let nux change it. Share it to save a copy elsewhere.';
+
+  @override
   String get cannotWriteTitle => 'No permission to write';
 
   @override
@@ -428,6 +432,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get download => 'Download';
 
   @override
+  String get downloadFolder => 'Download folder';
+
+  @override
   String get duplicate => 'Duplicate';
 
   @override
@@ -573,10 +580,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get folderPath => 'Folder';
-
-  @override
-  String get foldersNotDownloaded =>
-      'Folders are not downloaded yet; only the files were queued';
 
   @override
   String get fontSize => 'Font size';
@@ -1643,6 +1646,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get share => 'Share';
 
   @override
+  String get shareFile => 'Share';
+
+  @override
   String get shareLog => 'Share log';
 
   @override
@@ -2043,6 +2049,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upload => 'Upload';
+
+  @override
+  String get uploadFolder => 'Upload folder';
+
+  @override
+  String get uploadHere => 'Upload here';
+
+  @override
+  String uploadHereHint(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files to upload: open the folder for them',
+      one: '$count file to upload: open the folder for it',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String uploadSharedTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Upload $count files to',
+      one: 'Upload $count file to',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get useKey => 'Use this key';

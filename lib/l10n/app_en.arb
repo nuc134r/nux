@@ -86,6 +86,7 @@
       }
     }
   },
+  "cannotWriteContent": "The app that opened this file does not let nux change it. Share it to save a copy elsewhere.",
   "cannotWriteTitle": "No permission to write",
   "carryThem": "Carry over",
   "change": "Change",
@@ -282,6 +283,7 @@
   "divergedTitle": "Branches have diverged",
   "doneEditing": "Done editing",
   "download": "Download",
+  "downloadFolder": "Download folder",
   "duplicate": "Duplicate",
   "duplicateTab": "New terminal on this host",
   "edit": "Edit",
@@ -426,7 +428,6 @@
     }
   },
   "folderPath": "Folder",
-  "foldersNotDownloaded": "Folders are not downloaded yet; only the files were queued",
   "fontSize": "Font size",
   "forcePush": "Force (with lease)",
   "forget": "Forget",
@@ -1047,6 +1048,7 @@
   "serverVsYours": "Server → yours",
   "settings": "Settings",
   "share": "Share",
+  "shareFile": "Share",
   "shareLog": "Share log",
   "shareLogHint": "What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden",
   "show": "Show",
@@ -1292,6 +1294,24 @@
   "updatesBeta": "Beta versions",
   "updatesBetaHint": "Also offer pre-releases. They may be unstable.",
   "upload": "Upload",
+  "uploadFolder": "Upload folder",
+  "uploadHere": "Upload here",
+  "uploadHereHint": "{count, plural, one{{count} file to upload: open the folder for it} other{{count} files to upload: open the folder for them}}",
+  "@uploadHereHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadSharedTitle": "{count, plural, one{Upload {count} file to} other{Upload {count} files to}}",
+  "@uploadSharedTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "useKey": "Use this key",
   "useKeyFor": "Sign in to {name} with this key from now on?",
   "@useKeyFor": {
