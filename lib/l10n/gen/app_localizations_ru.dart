@@ -308,6 +308,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get currentWorkspace => 'Открыта сейчас';
 
   @override
+  String cursorPosition(int line, int column) {
+    return 'Стр $line, стлб $column';
+  }
+
+  @override
+  String cursorPositionSelected(int line, int column, int count) {
+    return 'Стр $line, стлб $column (выделено $count)';
+  }
+
+  @override
   String get customizeKeys => 'Настроить…';
 
   @override

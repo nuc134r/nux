@@ -614,6 +614,18 @@ abstract class AppLocalizations {
   /// **'Open now'**
   String get currentWorkspace;
 
+  /// No description provided for @cursorPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Ln {line}, Col {column}'**
+  String cursorPosition(int line, int column);
+
+  /// No description provided for @cursorPositionSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Ln {line}, Col {column} ({count} selected)'**
+  String cursorPositionSelected(int line, int column, int count);
+
   /// No description provided for @customizeKeys.
   ///
   /// In en, this message translates to:

@@ -24,6 +24,7 @@ import '../domain/line_diff.dart';
 import '../../workspace/data/workspace_access.dart';
 import '../domain/remote_document.dart';
 import '../domain/sudo_write.dart';
+import '../domain/text_encoding.dart';
 import 'viewer_tab.dart';
 
 class ViewerView extends StatefulWidget {
@@ -336,11 +337,110 @@ class _CodeView extends ConsumerWidget {
       findBuilder: (context, controller, readOnly) => FindBar(controller: controller, editing: !readOnly),
     );
     // The same tree in both modes (the editor must not be rebuilt when editing starts).
+    // The status bar gives its room to the keyboard (the key bar is there then).
+    final keyboard = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Column(
       children: [
         Expanded(child: codeEditor),
         if (editing) EditorKeyBar(editor: editor),
+        if (!keyboard) _StatusBar(tab: tab, editor: editor, language: language),
       ],
+    );
+  }
+}
+
+/// Under the editor: cursor position (and selection), language, encoding and line endings. Encoding and
+/// line endings open their choices.
+class _StatusBar extends StatelessWidget {
+  const _StatusBar({required this.tab, required this.editor, required this.language});
+
+  final ViewerTab tab;
+  final CodeLineEditingController editor;
+  final String? language;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final doc = tab.document;
+    final style = theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant);
+    Widget item(String text, {VoidCallback? onTap, String? tooltip}) => InkWell(
+      onTap: onTap,
+      child: Tooltip(
+        message: tooltip ?? '',
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Text(text, style: style),
+        ),
+      ),
+    );
+    return Material(
+      color: scheme.surfaceContainerLow,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 28,
+          child: Row(
+            children: [
+              ListenableBuilder(
+                listenable: editor,
+                builder: (context, _) {
+                  final sel = editor.selection;
+                  final selected = sel.isCollapsed ? 0 : editor.selectedText.length;
+                  return item(
+                    selected > 0
+                        ? l10n.cursorPositionSelected(sel.extentIndex + 1, sel.extentOffset + 1, selected)
+                        : l10n.cursorPosition(sel.extentIndex + 1, sel.extentOffset + 1),
+                    tooltip: l10n.goToLine,
+                    onTap: () => tab.goToLine(context),
+                  );
+                },
+              ),
+              const Spacer(),
+              if (language != null) item(language!),
+              item(
+                doc.encoding.label,
+                tooltip: l10n.encoding,
+                onTap: () => showNuxMenu(
+                  context,
+                  (_) => [
+                    for (final e in TextEncoding.values)
+                      NuxMenuAction(
+                        icon: null,
+                        label: e.label,
+                        checked: e == doc.encoding,
+                        // Read again as e (only without unsaved edits), or, while editing, save as e.
+                        enabled: tab.editing || !tab.dirty,
+                        onSelected: () => tab.editing ? doc.saveAs(e) : doc.reopenWith(e),
+                      ),
+                  ],
+                ),
+              ),
+              item(
+                doc.lineEnding.label,
+                tooltip: l10n.lineEndings,
+                onTap: () => showNuxMenu(
+                  context,
+                  (_) => [
+                    for (final e in LineEnding.values)
+                      NuxMenuAction(
+                        icon: null,
+                        label: e.label,
+                        checked: e == doc.lineEnding,
+                        onSelected: () {
+                          doc.setLineEnding(e);
+                          tab.setEditing(true);
+                        },
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 4),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

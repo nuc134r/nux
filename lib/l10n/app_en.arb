@@ -162,6 +162,31 @@
   "create": "Create",
   "currentPassphrase": "Current passphrase",
   "currentWorkspace": "Open now",
+  "cursorPosition": "Ln {line}, Col {column}",
+  "@cursorPosition": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      }
+    }
+  },
+  "cursorPositionSelected": "Ln {line}, Col {column} ({count} selected)",
+  "@cursorPositionSelected": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "customizeKeys": "Customize…",
   "daysAgo": "{count} d ago",
   "@daysAgo": {

@@ -32,6 +32,10 @@ void main() {
     final viewer = c.read(tabFactoryProvider).viewer('sample', file.path);
     c.read(workspaceProvider).open(viewer);
     await settle(tester);
+    // The status bar: where the cursor is, the encoding and the line endings.
+    expect(find.text('Ln 1, Col 1'), findsOneWidget);
+    expect(find.text('UTF-8'), findsOneWidget);
+    expect(find.text('LF'), findsOneWidget);
     viewer.setEditing(true);
     await settle(tester);
 

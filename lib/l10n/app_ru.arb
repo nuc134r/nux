@@ -86,6 +86,8 @@
   "create": "Создать",
   "currentPassphrase": "Текущая парольная фраза",
   "currentWorkspace": "Открыта сейчас",
+  "cursorPosition": "Стр {line}, стлб {column}",
+  "cursorPositionSelected": "Стр {line}, стлб {column} (выделено {count})",
   "customizeKeys": "Настроить…",
   "daysAgo": "{count} дн. назад",
   "delete": "Удалить",

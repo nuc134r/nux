@@ -305,6 +305,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentWorkspace => 'Open now';
 
   @override
+  String cursorPosition(int line, int column) {
+    return 'Ln $line, Col $column';
+  }
+
+  @override
+  String cursorPositionSelected(int line, int column, int count) {
+    return 'Ln $line, Col $column ($count selected)';
+  }
+
+  @override
   String get customizeKeys => 'Customize…';
 
   @override
