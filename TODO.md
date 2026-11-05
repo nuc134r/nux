@@ -93,6 +93,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] Remote change detection (size/mtime) with a reload / overwrite / show-changes (line diff) choice
 - [x] Quick open (fuzzy, `git ls-files` or `find`), search in files (`rg`, else `grep`, over exec) opening at the line
 - [ ] Search: Dart fallback for the local backend; replace in files
+- [x] Configurable extra keys (presets, custom layout, long-press alternates, hold to repeat) for terminal and editor
 - [ ] Cursor ergonomics: keybar swipe, big handles
 
 ## M6 — Git

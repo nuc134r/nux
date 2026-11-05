@@ -144,6 +144,7 @@
   "create": "Create",
   "currentPassphrase": "Current passphrase",
   "currentWorkspace": "Open now",
+  "customizeKeys": "Customize…",
   "daysAgo": "{count} d ago",
   "@daysAgo": {
     "placeholders": {
@@ -278,6 +279,7 @@
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
   "editorFontSize": "File text size",
+  "editorKeys": "Editor keys",
   "emptyFolder": "Empty folder",
   "encoding": "Encoding",
   "equivalentCommand": "The same in a terminal",
@@ -386,6 +388,7 @@
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
   "exportPrivateKeyWarning": "Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.",
+  "extraKeys": "Extra keys",
   "fetch": "Fetch",
   "fetched": "Fetched",
   "fileDisconnected": "The connection was lost",
@@ -711,6 +714,18 @@
     }
   },
   "keys": "Keys",
+  "keysCustom": "Custom",
+  "keysCustomHelp": "One row per line, keys separated by spaces. Long-press alternates follow a key after commas: (,(),(( is ( with () and ((. A backslash makes the next character plain: \\, \\\\ \\(space). Hold a key with alternates to pick one; hold other keys to repeat them; hold Ctrl or Alt to lock it.\n\nSpecial keys: {keys}",
+  "@keysCustomHelp": {
+    "placeholders": {
+      "keys": {
+        "type": "String"
+      }
+    }
+  },
+  "keysOneRow": "One row",
+  "keysTwoRows": "Two rows",
+  "keysTwoRowsSymbols": "Two rows, more symbols",
   "knownHosts": "Known hosts",
   "knownHostsEmpty": "No trusted servers yet. A server's key is saved here when you trust it on the first connection.",
   "knownHostsHint": "Keys of servers you trusted. nux warns when a server presents a different key.",
@@ -1154,6 +1169,7 @@
   "terminalDisconnected": "Disconnected",
   "terminalFontSize": "Terminal text size",
   "terminalHere": "Terminal here",
+  "terminalKeys": "Terminal keys",
   "terminalLineSpacing": "Terminal line spacing",
   "terminalPressEnter": "Press Enter to reconnect",
   "text": "Text",

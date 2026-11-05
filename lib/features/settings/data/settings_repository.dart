@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/database.dart';
+import '../../../core/keys/key_bar_layout.dart';
 
 abstract final class SettingKeys {
   static const themeMode = 'themeMode';
@@ -13,6 +14,14 @@ abstract final class SettingKeys {
   static const terminalLineHeight = 'terminalLineHeight';
   static const editorFontSize = 'editorFontSize';
   static const diffSideBySide = 'diffSideBySide';
+  static const terminalKeys = 'terminalKeys';
+  static const terminalKeysCustom = 'terminalKeysCustom';
+  static const editorKeys = 'editorKeys';
+  static const editorKeysCustom = 'editorKeysCustom';
+
+  /// The preset id and custom layout settings of a key bar.
+  static (String, String) keyBar(KeyBarFor kind) =>
+      kind == KeyBarFor.terminal ? (terminalKeys, terminalKeysCustom) : (editorKeys, editorKeysCustom);
 }
 
 /// Text that has its own size setting, changed in Settings, from a tab's menu or by pinching.
@@ -66,6 +75,13 @@ class AppSettingsState {
     'false' => false,
     _ => null,
   };
+
+  /// The chosen key bar preset id (`custom` for [keyBarCustom]); null: the first preset.
+  String? keyBarPreset(KeyBarFor kind) => values[SettingKeys.keyBar(kind).$1];
+
+  String? keyBarCustom(KeyBarFor kind) => values[SettingKeys.keyBar(kind).$2];
+
+  List<List<BarKey>> keyBar(KeyBarFor kind) => keyBarLayout(kind, keyBarPreset(kind), keyBarCustom(kind));
 
   /// Release version the user chose "Later" for; not offered again.
   String? get dismissedUpdate => values[SettingKeys.dismissedUpdate];

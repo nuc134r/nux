@@ -14,7 +14,9 @@ import '../../../core/background/background_access.dart';
 import '../../../core/log/log.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/keys/key_bar_layout.dart';
 import '../data/settings_repository.dart';
+import 'key_bar_settings.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -121,6 +123,25 @@ class SettingsScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.bodySmall
                       ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
+              ),
+            ],
+          ),
+          Island(
+            title: l10n.extraKeys,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.terminal),
+                title: Text(l10n.terminalKeys),
+                subtitle: Text(keyBarPresetName(l10n, settings.keyBarPreset(KeyBarFor.terminal) ?? 'one_row')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.keyBar(KeyBarFor.terminal)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.keyboard_outlined),
+                title: Text(l10n.editorKeys),
+                subtitle: Text(keyBarPresetName(l10n, settings.keyBarPreset(KeyBarFor.editor) ?? 'one_row')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.keyBar(KeyBarFor.editor)),
               ),
             ],
           ),

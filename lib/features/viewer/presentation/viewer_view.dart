@@ -10,6 +10,8 @@ import 'package:re_highlight/styles/atom-one-light.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/keys/key_bar_layout.dart';
+import '../../../core/widgets/key_bar.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
@@ -255,97 +257,72 @@ class _CodeView extends ConsumerWidget {
   }
 }
 
-/// Keys a phone keyboard lacks for code, under the editor while editing: indent, cursor, undo, symbols.
-class EditorKeyBar extends StatelessWidget {
+/// Whether the editor's key bar can do [token].
+bool editorSupports(String token) =>
+    !isSpecialKey(token) || !(const {'ESC', 'CTRL', 'ALT', 'INS'}.contains(token) || RegExp(r'^F\d+$').hasMatch(token));
+
+/// Tab, arrows, undo and the symbols code needs, laid out by the editor keys setting.
+class EditorKeyBar extends ConsumerWidget {
   const EditorKeyBar({super.key, required this.editor});
 
   final CodeLineEditingController editor;
 
-  static const _symbols = [
-    '{',
-    '}',
-    '(',
-    ')',
-    '[',
-    ']',
-    '<',
-    '>',
-    ';',
-    ':',
-    '=',
-    '"',
-    "'",
-    '`',
-    '/',
-    '\\',
-    '|',
-    '&',
-    '!',
-    '?',
-    '-',
-    '_',
-    '+',
-    '*',
-    '#',
-    r'$',
-    '%',
-    '@',
-    '~',
-    '^',
-    '.',
-    ',',
-  ];
+  void _key(String token) {
+    switch (token) {
+      case 'TAB':
+        editor.applyIndent();
+      case 'STAB':
+        editor.applyOutdent();
+      case 'LEFT':
+        editor.moveCursor(AxisDirection.left);
+      case 'RIGHT':
+        editor.moveCursor(AxisDirection.right);
+      case 'UP':
+        editor.moveCursor(AxisDirection.up);
+      case 'DOWN':
+        editor.moveCursor(AxisDirection.down);
+      case 'HOME':
+        editor.moveCursorToLineStart();
+      case 'END':
+        editor.moveCursorToLineEnd();
+      case 'PGUP':
+        editor.moveCursorToPageUp();
+      case 'PGDN':
+        editor.moveCursorToPageDown();
+      case 'DEL':
+        editor.deleteForward();
+      case 'BKSP':
+        editor.deleteBackward();
+      case 'ENTER':
+        editor.applyNewLine();
+      case 'SPACE':
+        editor.replaceSelection(' ');
+      case 'UNDO':
+        editor.undo();
+      case 'REDO':
+        editor.redo();
+      default:
+        editor.replaceSelection(token);
+        // A pair like () or ${}: the cursor goes inside.
+        if (isBracketPair(token)) editor.moveCursor(AxisDirection.left);
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final scheme = Theme.of(context).colorScheme;
-    Widget key(Widget child, VoidCallback onTap, {String? tooltip}) => Tooltip(
-      message: tooltip ?? '',
-      child: InkWell(
-        onTap: onTap,
-        // Never takes focus: the editor keeps it (and the keyboard stays up).
-        canRequestFocus: false,
-        child: SizedBox(width: 42, height: 48, child: Center(child: child)),
-      ),
-    );
-    Widget icon(IconData i, VoidCallback onTap, String tooltip) =>
-        key(Icon(i, size: 20, color: scheme.onSurfaceVariant), onTap, tooltip: tooltip);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final layout =
+        ref.watch(appSettingsProvider).value?.keyBar(KeyBarFor.editor) ?? keyBarLayout(KeyBarFor.editor, null, null);
+    final rows = [
+      for (final r in layout)
+        if (r.any((k) => editorSupports(k.main)))
+          [
+            for (final k in r)
+              if (editorSupports(k.main)) k,
+          ],
+    ];
     // Inside the editor's tap region: a tap here must not count as "outside" and close the keyboard.
     return CodeEditorTapRegion(
-      child: Material(
-        color: scheme.surfaceContainer,
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 48,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                icon(Icons.keyboard_tab, editor.applyIndent, 'Tab'),
-                icon(Icons.format_indent_decrease, editor.applyOutdent, l10n.outdent),
-                icon(Icons.keyboard_arrow_left, () => editor.moveCursor(AxisDirection.left), '←'),
-                icon(Icons.keyboard_arrow_up, () => editor.moveCursor(AxisDirection.up), '↑'),
-                icon(Icons.keyboard_arrow_down, () => editor.moveCursor(AxisDirection.down), '↓'),
-                icon(Icons.keyboard_arrow_right, () => editor.moveCursor(AxisDirection.right), '→'),
-                icon(Icons.first_page, editor.moveCursorToLineStart, 'Home'),
-                icon(Icons.last_page, editor.moveCursorToLineEnd, 'End'),
-                icon(Icons.undo, editor.undo, l10n.undoEdit),
-                icon(Icons.redo, editor.redo, l10n.redoEdit),
-                VerticalDivider(width: 9, indent: 8, endIndent: 8, color: scheme.outlineVariant),
-                for (final s in _symbols)
-                  key(
-                    Text(
-                      s,
-                      style: TextStyle(fontFamily: monoFont, fontSize: 17, color: scheme.onSurface),
-                    ),
-                    () => editor.replaceSelection(s),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      child: KeyBar(rows: rows, onKey: _key),
     );
   }
 }

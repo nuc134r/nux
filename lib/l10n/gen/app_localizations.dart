@@ -62,7 +62,8 @@ import 'app_localizations_ru.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,15 +84,19 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('ru')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('ru'),
+  ];
 
   /// No description provided for @abortOperation.
   ///
@@ -542,6 +548,12 @@ abstract class AppLocalizations {
   /// **'Open now'**
   String get currentWorkspace;
 
+  /// No description provided for @customizeKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize…'**
+  String get customizeKeys;
+
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:
@@ -800,6 +812,12 @@ abstract class AppLocalizations {
   /// **'File text size'**
   String get editorFontSize;
 
+  /// No description provided for @editorKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor keys'**
+  String get editorKeys;
+
   /// No description provided for @emptyFolder.
   ///
   /// In en, this message translates to:
@@ -895,6 +913,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.'**
   String get exportPrivateKeyWarning;
+
+  /// No description provided for @extraKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra keys'**
+  String get extraKeys;
 
   /// No description provided for @fetch.
   ///
@@ -1681,6 +1705,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keys'**
   String get keys;
+
+  /// No description provided for @keysCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get keysCustom;
+
+  /// No description provided for @keysCustomHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'One row per line, keys separated by spaces. Long-press alternates follow a key after commas: (,(),(( is ( with () and ((. A backslash makes the next character plain: \\, \\\\ \\(space). Hold a key with alternates to pick one; hold other keys to repeat them; hold Ctrl or Alt to lock it.\n\nSpecial keys: {keys}'**
+  String keysCustomHelp(String keys);
+
+  /// No description provided for @keysOneRow.
+  ///
+  /// In en, this message translates to:
+  /// **'One row'**
+  String get keysOneRow;
+
+  /// No description provided for @keysTwoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Two rows'**
+  String get keysTwoRows;
+
+  /// No description provided for @keysTwoRowsSymbols.
+  ///
+  /// In en, this message translates to:
+  /// **'Two rows, more symbols'**
+  String get keysTwoRowsSymbols;
 
   /// No description provided for @knownHosts.
   ///
@@ -3134,6 +3188,12 @@ abstract class AppLocalizations {
   /// **'Terminal here'**
   String get terminalHere;
 
+  /// No description provided for @terminalKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal keys'**
+  String get terminalKeys;
+
   /// No description provided for @terminalLineSpacing.
   ///
   /// In en, this message translates to:
@@ -3573,7 +3633,8 @@ abstract class AppLocalizations {
   String get ztWaitingAddress;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -3582,7 +3643,8 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'ru'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;

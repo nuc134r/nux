@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../../core/keys/key_bar_layout.dart';
+import '../../settings/presentation/key_bar_settings.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -330,6 +332,7 @@ class ViewerTab extends NuxTab {
           ),
         ],
       ],
+      if (editing) keyBarMenuItem(context, _ref, KeyBarFor.editor),
       const NuxMenuDivider(),
       NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !hasUnsavedChanges, onSelected: document.load),
       if (textual)

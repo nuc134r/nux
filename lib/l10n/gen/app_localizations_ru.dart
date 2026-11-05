@@ -39,13 +39,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get advanced => 'Дополнительно';
 
   @override
-  String get algEcdsa => 'Кривые NIST. Для серверов и политик, которые требуют ECDSA.';
+  String get algEcdsa =>
+      'Кривые NIST. Для серверов и политик, которые требуют ECDSA.';
 
   @override
-  String get algEd25519 => 'Компактный, быстрый и надёжный. Поддерживается всеми серверами последних лет.';
+  String get algEd25519 =>
+      'Компактный, быстрый и надёжный. Поддерживается всеми серверами последних лет.';
 
   @override
-  String get algRsa => 'Для старых серверов. Создание на телефоне занимает время.';
+  String get algRsa =>
+      'Для старых серверов. Создание на телефоне занимает время.';
 
   @override
   String get allBranches => 'Все ветки';
@@ -90,13 +93,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get batteryLabel => 'Оптимизация батареи';
 
   @override
-  String get batteryOff => 'Оптимизируется: некоторые телефоны всё равно останавливают фоновые подключения';
+  String get batteryOff =>
+      'Оптимизируется: некоторые телефоны всё равно останавливают фоновые подключения';
 
   @override
-  String get batteryOn => 'Без ограничений: Android не останавливает фоновые подключения';
+  String get batteryOn =>
+      'Без ограничений: Android не останавливает фоновые подключения';
 
   @override
-  String get binaryOrEmptyDiff => 'Нечего показать (двоичный файл или изменились только права)';
+  String get binaryOrEmptyDiff =>
+      'Нечего показать (двоичный файл или изменились только права)';
 
   @override
   String get blame => 'Авторы строк';
@@ -158,7 +164,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get changelog => 'История изменений';
 
   @override
-  String get changelogOffline => 'GitHub недоступен; показана история изменений этой версии.';
+  String get changelogOffline =>
+      'GitHub недоступен; показана история изменений этой версии.';
 
   @override
   String get changesSection => 'Изменения';
@@ -263,6 +270,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get currentWorkspace => 'Открыта сейчас';
 
   @override
+  String get customizeKeys => 'Настроить…';
+
+  @override
   String daysAgo(int count) {
     return '$count дн. назад';
   }
@@ -282,7 +292,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get deleteConnectionBody => 'Сохранённый пароль тоже удалится. Доверенные ключи хоста и SSH-ключи останутся.';
+  String get deleteConnectionBody =>
+      'Сохранённый пароль тоже удалится. Доверенные ключи хоста и SSH-ключи останутся.';
 
   @override
   String deleteConnectionJumpers(String names) {
@@ -300,7 +311,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get deleteFilesBody => 'Папки удаляются вместе с содержимым. Это нельзя отменить.';
+  String get deleteFilesBody =>
+      'Папки удаляются вместе с содержимым. Это нельзя отменить.';
 
   @override
   String deleteFilesTitle(int count) {
@@ -315,7 +327,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get deleteKeyBody => 'Закрытый ключ будет стёрт с устройства. Если копии нет, восстановить его будет нельзя.';
+  String get deleteKeyBody =>
+      'Закрытый ключ будет стёрт с устройства. Если копии нет, восстановить его будет нельзя.';
 
   @override
   String deleteKeyTitle(String name) {
@@ -328,13 +341,15 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get deleteUntrackedBody => 'Файла ещё нет в git, поэтому он будет удалён.';
+  String get deleteUntrackedBody =>
+      'Файла ещё нет в git, поэтому он будет удалён.';
 
   @override
   String get deleteWorkspace => 'Удалить рабочую область';
 
   @override
-  String get deleteWorkspaceBody => 'Её вкладки закроются. Файлы на хосте не меняются.';
+  String get deleteWorkspaceBody =>
+      'Её вкладки закроются. Файлы на хосте не меняются.';
 
   @override
   String deleteWorkspaceTitle(String name) {
@@ -373,7 +388,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get discardChangesBody => 'Сделанные правки не сохранены.';
 
   @override
-  String get discardChangesGitBody => 'Всё изменённое после последнего коммита пропадёт. Это нельзя отменить.';
+  String get discardChangesGitBody =>
+      'Всё изменённое после последнего коммита пропадёт. Это нельзя отменить.';
 
   @override
   String discardChangesGitTitle(String name) {
@@ -424,6 +440,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editorFontSize => 'Размер текста в файлах';
+
+  @override
+  String get editorKeys => 'Клавиши редактора';
 
   @override
   String get emptyFolder => 'Пустая папка';
@@ -478,7 +497,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get explorer => 'Проводник';
 
   @override
-  String get exportPassphraseTitle => 'Парольная фраза для экспортируемого ключа';
+  String get exportPassphraseTitle =>
+      'Парольная фраза для экспортируемого ключа';
 
   @override
   String get exportPrivateKey => 'Экспортировать закрытый ключ';
@@ -489,6 +509,9 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get exportPrivateKeyWarning =>
       'Любой, у кого есть этот файл и его парольная фраза, сможет войти везде, где принимается этот ключ. Экспортируйте только для переноса на доверенное устройство. Затем вы зададите парольную фразу для файла.';
+
+  @override
+  String get extraKeys => 'Дополнительные клавиши';
 
   @override
   String get fetch => 'Получить (fetch)';
@@ -552,7 +575,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get folderPath => 'Папка';
 
   @override
-  String get foldersNotDownloaded => 'Папки пока не скачиваются; в очередь добавлены только файлы';
+  String get foldersNotDownloaded =>
+      'Папки пока не скачиваются; в очередь добавлены только файлы';
 
   @override
   String get fontSize => 'Размер шрифта';
@@ -564,7 +588,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forget => 'Забыть';
 
   @override
-  String get forgetHostBody => 'При следующем подключении nux покажет ключ сервера и снова спросит, доверять ли ему.';
+  String get forgetHostBody =>
+      'При следующем подключении nux покажет ключ сервера и снова спросит, доверять ли ему.';
 
   @override
   String forgetHostTitle(String host) {
@@ -626,7 +651,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forwardDynamic => 'SOCKS';
 
   @override
-  String get forwardDynamicHint => 'Прокси на этом устройстве: приложения выходят в интернет через сервер (ssh -D)';
+  String get forwardDynamicHint =>
+      'Прокси на этом устройстве: приложения выходят в интернет через сервер (ssh -D)';
 
   @override
   String get forwardFailed => 'Ошибка';
@@ -642,7 +668,8 @@ class AppLocalizationsRu extends AppLocalizations {
       'Порт на этом устройстве ведёт к тому, что доступно только серверу, например к его базе данных (ssh -L)';
 
   @override
-  String get forwardLowPort => 'Приложения Android могут слушать только порты от 1024';
+  String get forwardLowPort =>
+      'Приложения Android могут слушать только порты от 1024';
 
   @override
   String get forwardOff => 'Выключен';
@@ -665,13 +692,15 @@ class AppLocalizationsRu extends AppLocalizations {
       'Порт на сервере ведёт к тому, что доступно этому устройству, например к dev-серверу на телефоне (ssh -R)';
 
   @override
-  String get forwardRemoteRefused => 'Сервер отказался слушать этот порт (занят или проброс выключен в sshd_config)';
+  String get forwardRemoteRefused =>
+      'Сервер отказался слушать этот порт (занят или проброс выключен в sshd_config)';
 
   @override
   String get forwardShared => 'Разрешить другим устройствам в сети';
 
   @override
-  String get forwardSharedHint => 'Слушать на всех интерфейсах, а не только на этом устройстве';
+  String get forwardSharedHint =>
+      'Слушать на всех интерфейсах, а не только на этом устройстве';
 
   @override
   String get forwardStarting => 'Запуск…';
@@ -726,13 +755,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get generateKey => 'Создать ключ';
 
   @override
-  String get generateKeyHint => 'Новая пара ключей, созданная на этом устройстве';
+  String get generateKeyHint =>
+      'Новая пара ключей, созданная на этом устройстве';
 
   @override
   String get generating => 'Создание…';
 
   @override
-  String get generatingRsa => 'Создание RSA-ключа. На телефоне это может занять минуту.';
+  String get generatingRsa =>
+      'Создание RSA-ключа. На телефоне это может занять минуту.';
 
   @override
   String get gitCommand => 'Команда';
@@ -752,7 +783,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get gitSignInWrong => 'Удалённый репозиторий их не принял. Попробуйте ещё раз.';
+  String get gitSignInWrong =>
+      'Удалённый репозиторий их не принял. Попробуйте ещё раз.';
 
   @override
   String get goBack => 'Назад';
@@ -800,7 +832,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hostKeyChangedTitle => 'Ключ сервера изменился!';
 
   @override
-  String get hostKeyCompareHint => 'На сервере: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub';
+  String get hostKeyCompareHint =>
+      'На сервере: ssh-keygen -lf /etc/ssh/ssh_host_*_key.pub';
 
   @override
   String hostKeyNewTypeBody(String host) {
@@ -860,7 +893,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get importKeyPassphraseTitle => 'У этого ключа есть парольная фраза';
 
   @override
-  String get importKeyStaysEncrypted => 'nux сохранит его зашифрованным той же парольной фразой.';
+  String get importKeyStaysEncrypted =>
+      'nux сохранит его зашифрованным той же парольной фразой.';
 
   @override
   String get importedKey => 'Импортированный ключ';
@@ -881,7 +915,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invalidFileName => 'Имя не может содержать /';
 
   @override
-  String get invalidNetworkId => 'Идентификатор сети — 16 шестнадцатеричных цифр';
+  String get invalidNetworkId =>
+      'Идентификатор сети — 16 шестнадцатеричных цифр';
 
   @override
   String get invalidNumber => 'Введите число';
@@ -899,7 +934,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get jumpHost => 'Промежуточный хост';
 
   @override
-  String get jumpHostHint => 'Подключаться через другой сохранённый хост (как ProxyJump)';
+  String get jumpHostHint =>
+      'Подключаться через другой сохранённый хост (как ProxyJump)';
 
   @override
   String get justNow => 'только что';
@@ -908,7 +944,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get keepAlive => 'Keep-alive, секунды';
 
   @override
-  String get keepAliveHint => 'Пингует сервер, чтобы простаивающее соединение не обрывалось. 0 — выключить.';
+  String get keepAliveHint =>
+      'Пингует сервер, чтобы простаивающее соединение не обрывалось. 0 — выключить.';
 
   @override
   String get keepBoth => 'Оба';
@@ -934,7 +971,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get keyComment => 'Комментарий';
 
   @override
-  String get keyCommentHint => 'Добавляется в конец открытого ключа и помогает узнать его на серверах';
+  String get keyCommentHint =>
+      'Добавляется в конец открытого ключа и помогает узнать его на серверах';
 
   @override
   String get keyHasPassphrase => 'Защищён парольной фразой';
@@ -948,7 +986,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get keyInvalid => 'Это не закрытый ключ, который nux может прочитать';
 
   @override
-  String get keyIsPublic => 'Это открытый ключ. Импортируйте закрытый (файл без .pub).';
+  String get keyIsPublic =>
+      'Это открытый ключ. Импортируйте закрытый (файл без .pub).';
 
   @override
   String get keyNameHint => 'например, Телефон';
@@ -968,7 +1007,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get keyStorageHint => 'Закрытый ключ хранится в защищённом хранилище устройства';
+  String get keyStorageHint =>
+      'Закрытый ключ хранится в защищённом хранилище устройства';
 
   @override
   String get keyType => 'Тип';
@@ -985,6 +1025,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get keys => 'Ключи';
+
+  @override
+  String get keysCustom => 'Свои';
+
+  @override
+  String keysCustomHelp(String keys) {
+    return 'Один ряд на строку, клавиши через пробел. Варианты по долгому нажатию идут после клавиши через запятую: (,(),(( — это ( с вариантами () и ((. Обратная косая черта делает следующий символ обычным: \\, \\\\ \\(пробел). Удерживайте клавишу с вариантами, чтобы выбрать; остальные клавиши повторяются; удерживание Ctrl или Alt фиксирует их.\n\nСпециальные клавиши: $keys';
+  }
+
+  @override
+  String get keysOneRow => 'Один ряд';
+
+  @override
+  String get keysTwoRows => 'Два ряда';
+
+  @override
+  String get keysTwoRowsSymbols => 'Два ряда, больше символов';
 
   @override
   String get knownHosts => 'Известные хосты';
@@ -1133,7 +1190,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noHosts => 'Хостов пока нет';
 
   @override
-  String get noHostsHint => 'Добавьте сервер или введите user@host, чтобы подключиться сразу.';
+  String get noHostsHint =>
+      'Добавьте сервер или введите user@host, чтобы подключиться сразу.';
 
   @override
   String get noKeysHint =>
@@ -1164,7 +1222,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noWorkspace => 'Без рабочей области';
 
   @override
-  String get noWorkspaceCard => 'Открытые вкладки не относятся ни к одной рабочей области';
+  String get noWorkspaceCard =>
+      'Открытые вкладки не относятся ни к одной рабочей области';
 
   @override
   String get noWorkspaceHint =>
@@ -1189,16 +1248,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nothingFound => 'Ничего не найдено';
 
   @override
-  String get notificationsBlocked => 'Включите их в настройках Android: Приложения → nux → Уведомления';
+  String get notificationsBlocked =>
+      'Включите их в настройках Android: Приложения → nux → Уведомления';
 
   @override
   String get notificationsLabel => 'Уведомления';
 
   @override
-  String get notificationsOff => 'Выключены: фоновые подключения работают без уведомления';
+  String get notificationsOff =>
+      'Выключены: фоновые подключения работают без уведомления';
 
   @override
-  String get notificationsOn => 'Разрешены: уведомление показывает, что работает в фоне';
+  String get notificationsOn =>
+      'Разрешены: уведомление показывает, что работает в фоне';
 
   @override
   String get ok => 'ОК';
@@ -1272,7 +1334,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get passphraseChanged => 'Парольная фраза изменена';
 
   @override
-  String get passphraseOptionalHint => 'Необязательно. Спрашивается при использовании ключа.';
+  String get passphraseOptionalHint =>
+      'Необязательно. Спрашивается при использовании ключа.';
 
   @override
   String get passphraseRemoved => 'Парольная фраза удалена';
@@ -1292,7 +1355,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get passwordKeepHint => 'Пароль сохранён. Оставьте пустым, чтобы не менять.';
+  String get passwordKeepHint =>
+      'Пароль сохранён. Оставьте пустым, чтобы не менять.';
 
   @override
   String get passwordOrToken => 'Пароль или токен';
@@ -1394,7 +1458,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get publish => 'Опубликовать';
 
   @override
-  String get publishBranchBody => 'Этой ветки ещё нет на сервере. Отправить её в origin и отслеживать?';
+  String get publishBranchBody =>
+      'Этой ветки ещё нет на сервере. Отправить её в origin и отслеживать?';
 
   @override
   String publishBranchTitle(String branch) {
@@ -1411,7 +1476,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get push => 'Отправить (push)';
 
   @override
-  String get pushNothing => 'Нечего отправлять: на сервере уже есть все эти коммиты.';
+  String get pushNothing =>
+      'Нечего отправлять: на сервере уже есть все эти коммиты.';
 
   @override
   String pushPreviewTitle(String upstream) {
@@ -1502,7 +1568,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get requireUnlock => 'Требовать разблокировку устройства';
 
   @override
-  String get requireUnlockHint => 'Отпечаток, лицо или блокировка экрана перед каждым использованием';
+  String get requireUnlockHint =>
+      'Отпечаток, лицо или блокировка экрана перед каждым использованием';
 
   @override
   String get required => 'Обязательное поле';
@@ -1625,7 +1692,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get smallerText => 'Мельче';
 
   @override
-  String get socksPortHint => 'Укажите этот порт как SOCKS5-прокси в приложениях (обычно 1080)';
+  String get socksPortHint =>
+      'Укажите этот порт как SOCKS5-прокси в приложениях (обычно 1080)';
 
   @override
   String get sortByDate => 'По дате';
@@ -1774,7 +1842,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get tagMessage => 'Сообщение (необязательно, будет аннотированный тег)';
+  String get tagMessage =>
+      'Сообщение (необязательно, будет аннотированный тег)';
 
   @override
   String get tagName => 'Имя тега';
@@ -1786,13 +1855,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get targetHost => 'Куда';
 
   @override
-  String get targetHostLocalHint => 'Как его видит сервер: localhost — это сам сервер';
+  String get targetHostLocalHint =>
+      'Как его видит сервер: localhost — это сам сервер';
 
   @override
-  String get targetHostRemoteHint => 'Как его видит это устройство: localhost — это само устройство';
+  String get targetHostRemoteHint =>
+      'Как его видит это устройство: localhost — это само устройство';
 
   @override
-  String get targetHostZeroTierHint => 'Адрес устройства в ZeroTier, например 10.147.17.5';
+  String get targetHostZeroTierHint =>
+      'Адрес устройства в ZeroTier, например 10.147.17.5';
 
   @override
   String get terminal => 'Терминал';
@@ -1812,6 +1884,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get terminalHere => 'Терминал здесь';
 
   @override
+  String get terminalKeys => 'Клавиши терминала';
+
+  @override
   String get terminalLineSpacing => 'Межстрочный интервал в терминале';
 
   @override
@@ -1824,7 +1899,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get textSize => 'Размер текста';
 
   @override
-  String get textSizeHint => 'Также в меню ⋮ вкладки или щипком двумя пальцами по тексту.';
+  String get textSizeHint =>
+      'Также в меню ⋮ вкладки или щипком двумя пальцами по тексту.';
 
   @override
   String get theRemote => 'удалённый репозиторий';
@@ -1945,7 +2021,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get updateInstalling => 'Открываем установщик…';
 
   @override
-  String get updatePermission => 'Разрешите nux устанавливать приложения и попробуйте снова';
+  String get updatePermission =>
+      'Разрешите nux устанавливать приложения и попробуйте снова';
 
   @override
   String updateTo(String version) {
@@ -1959,7 +2036,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get updatesBeta => 'Бета-версии';
 
   @override
-  String get updatesBetaHint => 'Предлагать и предварительные версии. Они могут работать нестабильно.';
+  String get updatesBetaHint =>
+      'Предлагать и предварительные версии. Они могут работать нестабильно.';
 
   @override
   String get upload => 'Загрузить на сервер';
@@ -2015,7 +2093,8 @@ class AppLocalizationsRu extends AppLocalizations {
       'nux запускает собственный узел ZeroTier, независимый от приложения ZeroTier на телефоне, поэтому ему не нужно разрешение VPN. Сеть доступна только самому nux.';
 
   @override
-  String get ztAccessDenied => 'Нет доступа: разрешите этот узел в контроллере сети';
+  String get ztAccessDenied =>
+      'Нет доступа: разрешите этот узел в контроллере сети';
 
   @override
   String get ztAutoStart => 'Запускать вместе с nux';
@@ -2030,13 +2109,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ztNoNetworks => 'Сетей пока нет';
 
   @override
-  String get ztNoNetworksHint => 'Подключитесь по 16-значному идентификатору из my.zerotier.com или своего контроллера';
+  String get ztNoNetworksHint =>
+      'Подключитесь по 16-значному идентификатору из my.zerotier.com или своего контроллера';
 
   @override
   String get ztNode => 'Узел ZeroTier';
 
   @override
-  String get ztNodeIdHint => 'Идентификатор этого узла: разрешите его в контроллере сети';
+  String get ztNodeIdHint =>
+      'Идентификатор этого узла: разрешите его в контроллере сети';
 
   @override
   String get ztNotFound => 'Такой сети нет';
@@ -2048,7 +2129,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ztOnline => 'В сети';
 
   @override
-  String get ztRequesting => 'Ожидание контроллера сети (разрешите там этот узел)';
+  String get ztRequesting =>
+      'Ожидание контроллера сети (разрешите там этот узел)';
 
   @override
   String get ztStarting => 'Запуск…';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/keys/key_bar_layout.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
@@ -11,6 +12,7 @@ import '../../ssh/data/ssh_providers.dart';
 import '../../files/presentation/files_tab.dart';
 import '../../workspace/data/workspace.dart';
 import '../../settings/data/settings_repository.dart';
+import '../../settings/presentation/key_bar_settings.dart';
 import '../../workspace/domain/nux_tab.dart';
 import '../presentation/terminal_view.dart';
 import 'terminal_session.dart';
@@ -110,6 +112,7 @@ class TerminalTab extends NuxTab {
           enabled: session.state != TerminalState.connecting,
           onSelected: session.connect,
         ),
+      keyBarMenuItem(context, _ref, KeyBarFor.terminal),
     ];
   }
 
