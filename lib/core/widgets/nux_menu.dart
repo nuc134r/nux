@@ -282,16 +282,30 @@ class _MenuPanelState extends State<_MenuPanel> {
                         ),
                         NuxMenuDivider() => Divider(height: 9, indent: 16, endIndent: 16, color: scheme.outlineVariant),
                         NuxMenuCustom() => Builder(builder: item.builder),
+                        // Each button takes its share of the row and the full row height: easy to hit.
                         NuxMenuIcons() => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               for (final b in item.icons)
-                                IconButton(
-                                  tooltip: b.tooltip,
-                                  icon: Icon(b.icon),
-                                  onPressed: b.enabled ? () => Navigator.of(context).pop(b.onSelected) : null,
+                                Expanded(
+                                  child: Tooltip(
+                                    message: b.tooltip,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(14),
+                                      onTap: b.enabled ? () => Navigator.of(context).pop(b.onSelected) : null,
+                                      child: SizedBox(
+                                        height: 52,
+                                        child: Icon(
+                                          b.icon,
+                                          semanticLabel: b.tooltip,
+                                          color: b.enabled
+                                              ? scheme.onSurface
+                                              : scheme.onSurface.withValues(alpha: .38),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                             ],
                           ),
