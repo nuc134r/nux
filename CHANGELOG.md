@@ -3,6 +3,13 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.2
+
+- **Terminal and editor settings** pick colours and fonts from compact dropdowns (with a preview of each) instead of rows of chips.
+- **Editor ⋮ → View**: Wrap lines, Status bar (it can be turned off) and Extra keys, together.
+- The editor status bar keeps clear of rounded screen corners; its encoding and line-endings menus open above it (they came up empty).
+- Menus keep long choices (like "Two rows, more symbols") on one short line.
+
 ## 0.10.1
 
 - **Settings → Appearance → Terminal and editor**: colour schemes for the terminal (Solarized, Dracula, One Dark, Gruvbox, Nord, Monokai, Tokyo Night, GitHub Light) and the editor (GitHub, Monokai, Nord, Tokyo Night, Xcode, IntelliJ and more), fonts (JetBrains Mono, Fira Code, Hack, Source Code Pro), text size and line spacing, with live previews.

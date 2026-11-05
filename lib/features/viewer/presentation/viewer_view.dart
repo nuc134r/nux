@@ -343,7 +343,7 @@ class _CodeView extends ConsumerWidget {
       children: [
         Expanded(child: codeEditor),
         if (editing) EditorKeyBar(editor: editor),
-        if (!keyboard) _StatusBar(tab: tab, editor: editor, language: language),
+        if (!keyboard && (settings?.editorStatusBar ?? true)) _StatusBar(tab: tab, editor: editor, language: language),
       ],
     );
   }
@@ -379,6 +379,8 @@ class _StatusBar extends StatelessWidget {
       color: scheme.surfaceContainerLow,
       child: SafeArea(
         top: false,
+        // Rounded screen corners cut into the ends of a bottom bar: keep its text clear of them.
+        minimum: const EdgeInsets.symmetric(horizontal: 14),
         child: SizedBox(
           height: 28,
           child: Row(
@@ -404,6 +406,7 @@ class _StatusBar extends StatelessWidget {
                 tooltip: l10n.encoding,
                 onTap: () => showNuxMenu(
                   context,
+                  beside: true,
                   (_) => [
                     for (final e in TextEncoding.values)
                       NuxMenuAction(
@@ -422,6 +425,7 @@ class _StatusBar extends StatelessWidget {
                 tooltip: l10n.lineEndings,
                 onTap: () => showNuxMenu(
                   context,
+                  beside: true,
                   (_) => [
                     for (final e in LineEnding.values)
                       NuxMenuAction(

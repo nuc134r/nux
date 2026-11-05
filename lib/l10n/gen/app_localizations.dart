@@ -3302,6 +3302,12 @@ abstract class AppLocalizations {
   /// **'Stashes'**
   String get stashes;
 
+  /// No description provided for @statusBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Status bar'**
+  String get statusBar;
+
   /// No description provided for @stopAll.
   ///
   /// In en, this message translates to:

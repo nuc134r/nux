@@ -1207,6 +1207,7 @@
   "stashThem": "Stash them",
   "stashed": "Stashed",
   "stashes": "Stashes",
+  "statusBar": "Status bar",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
   "sudoNotAllowed": "This user may not use sudo on this server",

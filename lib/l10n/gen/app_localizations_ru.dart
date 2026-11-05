@@ -1944,6 +1944,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get stashes => 'Спрятанное (stash)';
 
   @override
+  String get statusBar => 'Строка состояния';
+
+  @override
   String get stopAll => 'Остановить все';
 
   @override

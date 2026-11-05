@@ -16,12 +16,20 @@ class NuxMenuAction extends NuxMenuItem {
     this.enabled = true,
     this.checked,
     this.hint,
+    this.leading,
+    this.labelStyle,
   });
 
   final IconData? icon;
   final String label;
   final VoidCallback onSelected;
   final bool enabled;
+
+  /// Drawn instead of [icon] (a colour swatch); a [checked] mark then goes at the end of the row.
+  final Widget? leading;
+
+  /// The label in its own style (a font name in that font).
+  final TextStyle? labelStyle;
 
   /// Shows a check mark when true (options in a submenu); null for plain actions.
   final bool? checked;
@@ -134,10 +142,11 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
           final double right = (constraints.maxWidth - anchor.right + 4)
               .clamp(8.0, math.max(8.0, constraints.maxWidth - menuWidth - 8))
               .toDouble();
-          // Beside a list item: below it, or above it when it sits in the lower part of the screen.
-          final above = beside && anchor.bottom > constraints.maxHeight * .55;
+          // Below the anchor (over it, or beside it under a list item), or, when the anchor sits in the
+          // lower part of the screen (a status bar, a field at the bottom), above it.
+          final above = anchor.center.dy > constraints.maxHeight * .55;
           final top = beside ? anchor.bottom + 4 : anchor.top + 4;
-          final bottom = constraints.maxHeight - anchor.top + 4;
+          final bottom = constraints.maxHeight - (beside ? anchor.top : anchor.bottom) + 4;
           final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeIn);
           return Stack(
             children: [
@@ -155,7 +164,7 @@ class _NuxMenuRoute extends PopupRoute<VoidCallback> {
                         minWidth: 220,
                         maxWidth: (constraints.maxWidth - 16).clamp(0, 320),
                         maxHeight: above
-                            ? anchor.top - media.padding.top - 8
+                            ? constraints.maxHeight - bottom - media.padding.top - 8
                             : constraints.maxHeight - top - media.padding.bottom - 8,
                       ),
                       child: _MenuPanel(items: _built ??= items(context)),
@@ -243,6 +252,8 @@ class _MenuPanelState extends State<_MenuPanel> {
                           enabled: item.enabled,
                           checked: item.checked,
                           hint: item.hint,
+                          leading: item.leading,
+                          labelStyle: item.labelStyle,
                           onTap: () => Navigator.of(context).pop(item.onSelected),
                         ),
                         NuxMenuSubmenu() => _Row(
@@ -289,7 +300,12 @@ class _Row extends StatelessWidget {
     this.hint,
     this.chevron = false,
     this.bold = false,
+    this.leading,
+    this.labelStyle,
   });
+
+  final Widget? leading;
+  final TextStyle? labelStyle;
 
   final IconData? icon;
   final String label;
@@ -306,7 +322,8 @@ class _Row extends StatelessWidget {
     final scheme = theme.colorScheme;
     final color = enabled ? scheme.onSurface : scheme.onSurface.withValues(alpha: .38);
     final muted = enabled ? scheme.onSurfaceVariant : color;
-    final leading = checked == null ? icon : (checked! ? Icons.check : null);
+    final custom = this.leading;
+    final leading = custom != null || checked == null ? icon : (checked! ? Icons.check : null);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: InkWell(
@@ -316,25 +333,41 @@ class _Row extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(12, 11, chevron ? 10 : 20, 11),
           child: Row(
             children: [
-              SizedBox(
-                width: 20,
-                child: leading == null
-                    ? null
-                    : Icon(leading, size: 20, color: checked == true ? scheme.primary : muted),
-              ),
+              if (custom != null)
+                custom
+              else
+                SizedBox(
+                  width: 20,
+                  child: leading == null
+                      ? null
+                      : Icon(leading, size: 20, color: checked == true ? scheme.primary : muted),
+                ),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   label,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: color,
-                    fontWeight: bold || checked == true ? FontWeight.w600 : null,
-                  ),
+                  style: theme.textTheme.bodyLarge
+                      ?.merge(labelStyle)
+                      .copyWith(color: color, fontWeight: bold || checked == true ? FontWeight.w600 : null),
                 ),
               ),
+              // A hint is a short reminder of the choice: one line, at most about a third of the row, so a
+              // long one ("Two rows, more symbols") never squeezes the label onto more lines.
               if (hint != null) ...[
                 const SizedBox(width: 12),
-                Text(hint!, style: theme.textTheme.bodyMedium?.copyWith(color: muted)),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 96),
+                  child: Text(
+                    hint!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+                  ),
+                ),
+              ],
+              if (custom != null && checked == true) ...[
+                const SizedBox(width: 8),
+                Icon(Icons.check, size: 20, color: scheme.primary),
               ],
               if (chevron) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: muted)],
             ],

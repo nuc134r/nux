@@ -4,6 +4,7 @@ import 'package:re_highlight/languages/dart.dart';
 import 'package:re_highlight/re_highlight.dart';
 
 import '../../../core/appearance/appearance.dart';
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../terminal/presentation/terminal_theme.dart';
@@ -31,26 +32,26 @@ class AppearanceScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                 child: _TerminalPreview(settings: s, appDark: appDark),
               ),
-              _Choices(
+              _Dropdown(
                 label: l10n.colors,
-                children: [
-                  _Swatch(
-                    name: l10n.followApp,
-                    background: terminalBackground(null, appDark: appDark),
-                    foreground: appDark ? Colors.white : Colors.black,
-                    selected: s.terminalTheme == null,
-                    onTap: () => repo.set(SettingKeys.terminalTheme, null),
+                options: [
+                  _Option(
+                    null,
+                    l10n.followApp,
+                    _Swatch(
+                      background: terminalBackground(null, appDark: appDark),
+                      accents: [appDark ? Colors.white : Colors.black],
+                    ),
                   ),
                   for (final t in terminalSchemes)
-                    _Swatch(
-                      name: t.name,
-                      background: t.background,
-                      foreground: t.foreground,
-                      accents: [t.ansi[1], t.ansi[2], t.ansi[4]],
-                      selected: s.terminalTheme == t.id,
-                      onTap: () => repo.set(SettingKeys.terminalTheme, t.id),
+                    _Option(
+                      t.id,
+                      t.name,
+                      _Swatch(background: t.background, accents: [t.ansi[1], t.ansi[2], t.ansi[4]]),
                     ),
                 ],
+                value: s.terminalTheme,
+                onChanged: (id) => repo.set(SettingKeys.terminalTheme, id),
               ),
               _FontChoice(
                 label: l10n.font,
@@ -83,29 +84,32 @@ class AppearanceScreen extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                 child: _EditorPreview(settings: s, appDark: appDark),
               ),
-              _Choices(
+              _Dropdown(
                 label: l10n.colors,
-                children: [
-                  _Swatch(
-                    name: l10n.followApp,
-                    background: Theme.of(context).colorScheme.surface,
-                    foreground: Theme.of(context).colorScheme.onSurface,
-                    selected: s.editorTheme == null,
-                    onTap: () => repo.set(SettingKeys.editorTheme, null),
+                options: [
+                  _Option(
+                    null,
+                    l10n.followApp,
+                    _Swatch(
+                      background: Theme.of(context).colorScheme.surface,
+                      accents: [Theme.of(context).colorScheme.onSurface],
+                    ),
                   ),
                   for (final t in editorThemes)
-                    _Swatch(
-                      name: t.name,
-                      background: t.background ?? (t.dark ? Colors.black : Colors.white),
-                      foreground: t.foreground ?? (t.dark ? Colors.white : Colors.black),
-                      accents: [
-                        for (final k in ['keyword', 'string', 'number'])
-                          if (t.styles[k]?.color != null) t.styles[k]!.color!,
-                      ],
-                      selected: s.editorTheme == t.id,
-                      onTap: () => repo.set(SettingKeys.editorTheme, t.id),
+                    _Option(
+                      t.id,
+                      t.name,
+                      _Swatch(
+                        background: t.background ?? (t.dark ? Colors.black : Colors.white),
+                        accents: [
+                          for (final k in ['keyword', 'string', 'number'])
+                            if (t.styles[k]?.color != null) t.styles[k]!.color!,
+                        ],
+                      ),
                     ),
                 ],
+                value: s.editorTheme,
+                onChanged: (id) => repo.set(SettingKeys.editorTheme, id),
               ),
               _FontChoice(label: l10n.font, value: s.editorFont, onChanged: (f) => repo.set(SettingKeys.editorFont, f)),
               _Slider(
@@ -267,84 +271,118 @@ class _EditorPreview extends StatelessWidget {
   }
 }
 
-/// A label, then choices that wrap.
-class _Choices extends StatelessWidget {
-  const _Choices({required this.label, required this.children});
+class _Option<T> {
+  const _Option(this.value, this.name, [this.preview, this.style]);
 
-  final String label;
-  final List<Widget> children;
+  final T value;
+  final String name;
 
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-    // Full width: a short row of choices stays at the start, not centred.
-    child: SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Wrap(spacing: 8, runSpacing: 8, children: children),
-        ],
-      ),
-    ),
-  );
+  /// Drawn before the name (a colour swatch).
+  final Widget? preview;
+
+  /// The name in its own style (a font in that font).
+  final TextStyle? style;
 }
 
-/// A colour scheme as a small card in its own colours.
-class _Swatch extends StatelessWidget {
-  const _Swatch({
-    required this.name,
-    required this.background,
-    required this.foreground,
-    required this.selected,
-    required this.onTap,
-    this.accents = const [],
-  });
+/// A setting as a compact row: its name, then the current choice; tapping opens the choices in a menu
+/// (each with its preview).
+class _Dropdown<T> extends StatelessWidget {
+  const _Dropdown({required this.label, required this.options, required this.value, required this.onChanged});
 
-  final String name;
-  final Color background;
-  final Color foreground;
-  final List<Color> accents;
-  final bool selected;
-  final VoidCallback onTap;
+  final String label;
+  final List<_Option<T>> options;
+  final T value;
+  final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Semantics(
-      selected: selected,
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: selected ? scheme.primary : scheme.outlineVariant, width: selected ? 2.5 : 1),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final c in accents)
-                Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.only(right: 4),
-                  decoration: BoxDecoration(color: c, shape: BoxShape.circle),
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final current = options.firstWhere((o) => o.value == value, orElse: () => options.first);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: theme.textTheme.titleSmall)),
+          Expanded(
+            flex: 2,
+            child: Builder(
+              builder: (anchor) => Material(
+                color: scheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => showNuxMenu(
+                    anchor,
+                    beside: true,
+                    (_) => [
+                      for (final o in options)
+                        NuxMenuAction(
+                          icon: null,
+                          leading: o.preview,
+                          label: o.name,
+                          labelStyle: o.style,
+                          checked: o.value == value,
+                          onSelected: () => onChanged(o.value),
+                        ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
+                    child: Row(
+                      children: [
+                        if (current.preview != null) ...[current.preview!, const SizedBox(width: 10)],
+                        Expanded(
+                          child: Text(
+                            current.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyLarge?.merge(current.style),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: scheme.onSurfaceVariant),
+                      ],
+                    ),
+                  ),
                 ),
-              if (accents.isNotEmpty) const SizedBox(width: 2),
-              Text(name, style: TextStyle(color: foreground, fontSize: 13)),
-              if (selected) ...[const SizedBox(width: 6), Icon(Icons.check, size: 16, color: foreground)],
-            ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
+
+/// A colour scheme in small: its background with a few of its colours as dots.
+class _Swatch extends StatelessWidget {
+  const _Swatch({required this.background, this.accents = const []});
+
+  final Color background;
+  final List<Color> accents;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 34,
+    height: 22,
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(6),
+      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (final c in accents.take(3))
+          Container(
+            width: 6,
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 1.5),
+            decoration: BoxDecoration(color: c, shape: BoxShape.circle),
+          ),
+      ],
+    ),
+  );
 }
 
 class _FontChoice extends StatelessWidget {
@@ -355,16 +393,11 @@ class _FontChoice extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   @override
-  Widget build(BuildContext context) => _Choices(
+  Widget build(BuildContext context) => _Dropdown<String>(
     label: label,
-    children: [
-      for (final f in monoFonts)
-        ChoiceChip(
-          label: Text(f, style: TextStyle(fontFamily: f)),
-          selected: f == value,
-          onSelected: (_) => onChanged(f),
-        ),
-    ],
+    options: [for (final f in monoFonts) _Option(f, f, null, TextStyle(fontFamily: f))],
+    value: value,
+    onChanged: onChanged,
   );
 }
 

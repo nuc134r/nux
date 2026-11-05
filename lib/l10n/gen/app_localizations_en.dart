@@ -1919,6 +1919,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stashes => 'Stashes';
 
   @override
+  String get statusBar => 'Status bar';
+
+  @override
   String get stopAll => 'Stop all';
 
   @override

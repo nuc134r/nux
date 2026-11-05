@@ -20,6 +20,7 @@ abstract final class SettingKeys {
   static const editorTheme = 'editorTheme';
   static const editorFont = 'editorFont';
   static const editorLineHeight = 'editorLineHeight';
+  static const editorStatusBar = 'editorStatusBar';
   static const terminalKeys = 'terminalKeys';
   static const terminalKeysCustom = 'terminalKeysCustom';
   static const editorKeys = 'editorKeys';
@@ -86,6 +87,9 @@ class AppSettingsState {
   String get editorFont => _font(values[SettingKeys.editorFont]);
 
   static String _font(String? f) => monoFonts.contains(f) ? f! : monoFonts.first;
+
+  /// The editor's status bar (cursor, encoding, line endings) is shown.
+  bool get editorStatusBar => values[SettingKeys.editorStatusBar] != 'false';
 
   /// Editor line height as a multiple of the font size.
   double get editorLineHeight =>

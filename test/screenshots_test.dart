@@ -169,6 +169,9 @@ void main() {
     }),
     'forward_rule': _Shot(ThemeMode.light, Routes.forward('sample')),
     'appearance': const _Shot(ThemeMode.dark, Routes.appearance),
+    'appearance_colors': _Shot(ThemeMode.dark, Routes.appearance, act: (tester, c) async {
+      await tester.tap(find.text('Like the app').first);
+    }),
     'log': const _Shot(ThemeMode.light, Routes.log),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),

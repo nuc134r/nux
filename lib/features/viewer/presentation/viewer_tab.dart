@@ -257,6 +257,7 @@ class ViewerTab extends NuxTab {
     final textual = document.kind == FileKind.text || document.kind == FileKind.markdown;
     final shownAsText = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
     final canEdit = shownAsText && !document.truncated && document.bytes != null;
+    final statusBar = _ref.read(appSettingsProvider).value?.editorStatusBar ?? true;
     return [
       if (editing) ...[
         NuxMenuAction(
@@ -357,10 +358,26 @@ class ViewerTab extends NuxTab {
           ),
         ],
       ],
-      if (editing) keyBarMenuItem(context, _ref, KeyBarFor.editor),
       const NuxMenuDivider(),
       NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !hasUnsavedChanges, onSelected: document.load),
-      if (textual)
+      // How the text is shown: wrapping, the status bar, the keys above the keyboard.
+      if (shownAsText)
+        NuxMenuSubmenu(
+          icon: Icons.visibility_outlined,
+          label: l10n.viewMenu,
+          items: [
+            NuxMenuAction(icon: null, label: l10n.wrapLines, checked: wrap, onSelected: () => setWrap(!wrap)),
+            NuxMenuAction(
+              icon: null,
+              label: l10n.statusBar,
+              checked: statusBar,
+              onSelected: () => _ref.read(settingsRepositoryProvider).set(SettingKeys.editorStatusBar, '${!statusBar}'),
+            ),
+            const NuxMenuDivider(),
+            keyBarMenuItem(context, _ref, KeyBarFor.editor),
+          ],
+        )
+      else if (textual)
         NuxMenuAction(
           icon: Icons.wrap_text,
           label: wrap ? l10n.noWrap : l10n.wrapLines,
