@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/keys/key_bar_layout.dart';
 import '../../settings/presentation/key_bar_settings.dart';
+import '../../workspace/data/workspace_access.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
@@ -185,12 +186,18 @@ class ViewerTab extends NuxTab {
   }
 
   /// Saves; called by the view, which handles [RemoteChangedException].
-  Future<void> save({bool force = false}) async {
+  Future<void> save({bool force = false, Future<void> Function(Uint8List data)? writer}) async {
     final text = _editor?.text ?? document.text;
-    await document.save(text, force: force);
+    await document.save(text, force: force, writer: writer);
     dirty = false;
     notifyListeners();
   }
+
+  /// Commands on the file's host (for Save as root), held until released.
+  Future<WorkspaceAccess> openHost() => _ref.read(workspaceOpenerProvider)(connectionId);
+
+  /// Set by the view: saves as root (sudo), asking for the password.
+  Future<void> Function()? onSaveAsRoot;
 
   /// Set by the view: saves with conflict handling and messages.
   Future<void> Function()? onSave;
@@ -246,6 +253,12 @@ class ViewerTab extends NuxTab {
           label: l10n.save,
           enabled: hasUnsavedChanges && !document.saving,
           onSelected: () => onSave?.call(),
+        ),
+        NuxMenuAction(
+          icon: Icons.admin_panel_settings_outlined,
+          label: l10n.saveAsRoot,
+          enabled: !document.saving,
+          onSelected: () => onSaveAsRoot?.call(),
         ),
         NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
         NuxMenuAction(

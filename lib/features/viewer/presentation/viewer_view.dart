@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nux_backend/nux_backend.dart' show BackendErrorKind, BackendException;
 import 'package:re_editor/re_editor.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 import 'package:re_highlight/styles/atom-one-dark.dart';
@@ -21,7 +22,9 @@ import '../../settings/data/settings_repository.dart';
 import '../../settings/presentation/text_size_controls.dart';
 import '../domain/languages.dart';
 import '../domain/line_diff.dart';
+import '../../workspace/data/workspace_access.dart';
 import '../domain/remote_document.dart';
+import '../domain/sudo_write.dart';
 import 'viewer_tab.dart';
 
 class ViewerView extends StatefulWidget {
@@ -80,15 +83,93 @@ class _ViewerViewState extends State<ViewerView> {
       } else if (choice == 'reload') {
         await _doc.load();
       }
+    } on BackendException catch (e) {
+      if (!mounted) return;
+      if (e.kind != BackendErrorKind.permissionDenied) {
+        showSnack(context, fileErrorText(l10n, e));
+        return;
+      }
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          icon: const Icon(Icons.lock_outline),
+          title: Text(l10n.cannotWriteTitle),
+          content: Text(l10n.cannotWriteBody(_doc.name)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.saveAsRoot)),
+          ],
+        ),
+      );
+      if (ok == true) await _saveAsRoot();
     } catch (e) {
       if (mounted) showSnack(context, fileErrorText(l10n, e));
     }
+  }
+
+  /// Saves through sudo: asks for the password when sudo needs one (checked before the file is written).
+  Future<void> _saveAsRoot() async {
+    final l10n = context.l10n;
+    WorkspaceAccess? host;
+    try {
+      host = await widget.tab.openHost();
+      final runner = host.runner;
+      String? password;
+      if (await sudoNeedsPassword(runner)) {
+        String? error;
+        while (true) {
+          if (!mounted) return;
+          password = await _askSudoPassword(error);
+          if (password == null) return;
+          try {
+            await sudoCheck(runner, password);
+            break;
+          } on SudoException catch (e) {
+            if (!e.wrongPassword) rethrow;
+            error = l10n.sudoWrongPassword;
+          }
+        }
+      }
+      await widget.tab.save(force: true, writer: (data) => sudoWrite(runner, _doc.path, data, password: password));
+      if (mounted) showSnack(context, l10n.savedAsRoot(_doc.name));
+    } on SudoException catch (e) {
+      if (mounted) showSnack(context, e.notAllowed ? l10n.sudoNotAllowed : l10n.errorGeneric(e.message));
+    } catch (e) {
+      if (mounted) showSnack(context, fileErrorText(l10n, e));
+    } finally {
+      host?.release();
+    }
+  }
+
+  Future<String?> _askSudoPassword(String? error) {
+    final l10n = context.l10n;
+    final field = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.saveAsRoot),
+        content: TextField(
+          controller: field,
+          autofocus: true,
+          obscureText: true,
+          autocorrect: false,
+          enableSuggestions: false,
+          decoration: InputDecoration(labelText: l10n.sudoPassword, errorText: error),
+          onSubmitted: (v) => Navigator.pop(context, v),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, field.text), child: Text(l10n.save)),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     widget.tab.onSave = _save;
+    widget.tab.onSaveAsRoot = _saveAsRoot;
     // Live tabs stay mounted: only the tab in front handles Back.
     final active = TabSwitcher.isActive(context);
     return ListenableBuilder(

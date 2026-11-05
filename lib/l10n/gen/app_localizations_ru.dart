@@ -147,6 +147,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cannotCarryTitle => 'Не удаётся перенести изменения';
 
   @override
+  String cannotWriteBody(String name) {
+    return 'Ваш пользователь не может записать $name. Сохранить как root через sudo? Владелец и права файла сохранятся.';
+  }
+
+  @override
+  String get cannotWriteTitle => 'Нет прав на запись';
+
+  @override
   String get carryThem => 'Перенести';
 
   @override
@@ -1272,6 +1280,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openAsWorkspace => 'Открыть как рабочую область';
 
   @override
+  String get openFileAt => 'Открыть файл';
+
+  @override
   String get openInBrowserTab => 'Открыть во вкладке браузера';
 
   @override
@@ -1366,6 +1377,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get paste => 'Вставить';
+
+  @override
+  String get pathOnServer => 'Путь на сервере';
 
   @override
   String get permExecute => 'Запуск';
@@ -1590,6 +1604,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get saveAs => 'Сохранить как…';
 
   @override
+  String get saveAsRoot => 'Сохранить как root';
+
+  @override
   String get savePassword => 'Сохранить пароль';
 
   @override
@@ -1601,6 +1618,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String savedAs(String name) {
     return 'Сохранено: $name';
+  }
+
+  @override
+  String savedAsRoot(String name) {
+    return '$name сохранён как root';
   }
 
   @override
@@ -1810,6 +1832,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get stopEditing => 'Закончить правку';
+
+  @override
+  String get sudoNotAllowed =>
+      'Этому пользователю нельзя использовать sudo на этом сервере';
+
+  @override
+  String get sudoPassword => 'Пароль для sudo';
+
+  @override
+  String get sudoWrongPassword => 'Неверный пароль';
 
   @override
   String switchWithChangesBody(int count) {

@@ -148,7 +148,9 @@ class RemoteDocument extends ChangeNotifier {
 
   /// Writes [text] back. Throws [RemoteChangedException] when the file changed on the server since it was
   /// loaded (unless [force]).
-  Future<void> save(String text, {bool force = false}) async {
+  ///
+  /// [writer] writes the bytes instead of the file system (Save as root).
+  Future<void> save(String text, {bool force = false, Future<void> Function(Uint8List data)? writer}) async {
     saving = true;
     _notify();
     FsHandle? handle;
@@ -160,7 +162,7 @@ class RemoteDocument extends ChangeNotifier {
         if (now.size != size || now.modified != modified) throw const RemoteChangedException();
       }
       final data = encodeText(text, encoding, lineEnding);
-      await fs.writeBytes(path, data);
+      await (writer ?? (d) => fs.writeBytes(path, d))(data);
       final after = await fs.stat(path);
       bytes = data;
       _text = text;

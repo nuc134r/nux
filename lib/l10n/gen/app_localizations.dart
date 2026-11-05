@@ -338,6 +338,18 @@ abstract class AppLocalizations {
   /// **'Can\'t carry the changes over'**
   String get cannotCarryTitle;
 
+  /// No description provided for @cannotWriteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your user may not write {name}. Save it as root with sudo? The file keeps its owner and permissions.'**
+  String cannotWriteBody(String name);
+
+  /// No description provided for @cannotWriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No permission to write'**
+  String get cannotWriteTitle;
+
   /// No description provided for @carryThem.
   ///
   /// In en, this message translates to:
@@ -2138,6 +2150,12 @@ abstract class AppLocalizations {
   /// **'Open as workspace'**
   String get openAsWorkspace;
 
+  /// No description provided for @openFileAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Open file'**
+  String get openFileAt;
+
   /// No description provided for @openInBrowserTab.
   ///
   /// In en, this message translates to:
@@ -2317,6 +2335,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paste'**
   String get paste;
+
+  /// No description provided for @pathOnServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Path on the server'**
+  String get pathOnServer;
 
   /// No description provided for @permExecute.
   ///
@@ -2708,6 +2732,12 @@ abstract class AppLocalizations {
   /// **'Save as…'**
   String get saveAs;
 
+  /// No description provided for @saveAsRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as root'**
+  String get saveAsRoot;
+
   /// No description provided for @savePassword.
   ///
   /// In en, this message translates to:
@@ -2731,6 +2761,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved {name}'**
   String savedAs(String name);
+
+  /// No description provided for @savedAsRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {name} as root'**
+  String savedAsRoot(String name);
 
   /// No description provided for @savedFile.
   ///
@@ -3085,6 +3121,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stop editing'**
   String get stopEditing;
+
+  /// No description provided for @sudoNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'This user may not use sudo on this server'**
+  String get sudoNotAllowed;
+
+  /// No description provided for @sudoPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password for sudo'**
+  String get sudoPassword;
+
+  /// No description provided for @sudoWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
+  String get sudoWrongPassword;
 
   /// No description provided for @switchWithChangesBody.
   ///

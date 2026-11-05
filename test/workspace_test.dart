@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flterm/flterm.dart' show TerminalView;
@@ -251,6 +252,19 @@ void main() {
     expect(copied, isNotEmpty);
     expect(terminal.hasSelection, isFalse);
     expect(find.widgetWithText(TextButton, 'Copy'), findsNothing);
+
+    // A selected file path offers Open: it opens in an editor tab, at the line from grep's output.
+    terminal.write(Uint8List.fromList(utf8.encode('\x1b[2J\x1b[H/srv/app/main.dart:12:')));
+    await tester.pump();
+    terminal.selectAll();
+    await tester.pump();
+    await tester.tap(find.widgetWithText(TextButton, 'Open'));
+    await settle(tester);
+    final opened = container.read(workspaceProvider).current;
+    expect(opened, isA<ViewerTab>());
+    expect((opened! as ViewerTab).path, '/srv/app/main.dart');
+    container.read(workspaceProvider).close(opened);
+    await settle(tester);
 
     // The terminal's menu opens a file browser on the same host.
     await tester.tap(find.byType(NuxMenuButton));

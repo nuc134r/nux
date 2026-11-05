@@ -33,7 +33,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] Spike on a real mid-range phone: flterm vs xterm2 (htop, vim, tmux, emoji, CJK, 10 MB `cat`)
 - [x] Terminal tab: flterm view, extra-keys bar with sticky Ctrl/Alt, font size setting, paste/copy all, URL links
 - [x] Terminal: pinch to zoom, text size and line spacing from the menu and settings, tap shows the keyboard
-- [ ] Terminal: volume keys as modifiers, copy mode with handles, open file paths in an editor tab (M5)
+- [x] Terminal: open file paths in an editor tab; [ ] volume keys as modifiers
 - [ ] Move a tab to another group from its menu
 - [x] Connection pool (shared per host, idle grace period), reconnect banner and "Enter to reconnect", keep-alive
 - [x] SSH integration tests against a throwaway local sshd (TOFU, exec, pty, changed key, jump host)
@@ -89,7 +89,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
   workspace card, project tree and git status (Version control); Open as workspace from the file browser
 - [x] Encoding (detect, reopen with, save with) and line endings (LF/CRLF/CR) in the editor
 - [x] Edit mode: undo/redo, auto-indent, bracket pairs (re_editor), find and replace, go to line, editor key bar
-- [ ] Save as root (`sudo tee`)
+- [x] Save as root (sudo, password through stdin)
 - [x] Remote change detection (size/mtime) with a reload / overwrite / show-changes (line diff) choice
 - [x] Quick open (fuzzy, `git ls-files` or `find`), search in files (`rg`, else `grep`, over exec) opening at the line
 - [ ] Search: Dart fallback for the local backend; replace in files

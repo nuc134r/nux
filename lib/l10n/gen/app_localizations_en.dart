@@ -146,6 +146,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cannotCarryTitle => 'Can\'t carry the changes over';
 
   @override
+  String cannotWriteBody(String name) {
+    return 'Your user may not write $name. Save it as root with sudo? The file keeps its owner and permissions.';
+  }
+
+  @override
+  String get cannotWriteTitle => 'No permission to write';
+
+  @override
   String get carryThem => 'Carry over';
 
   @override
@@ -1253,6 +1261,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openAsWorkspace => 'Open as workspace';
 
   @override
+  String get openFileAt => 'Open file';
+
+  @override
   String get openInBrowserTab => 'Open in browser tab';
 
   @override
@@ -1345,6 +1356,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paste => 'Paste';
+
+  @override
+  String get pathOnServer => 'Path on the server';
 
   @override
   String get permExecute => 'Run';
@@ -1567,6 +1581,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveAs => 'Save as…';
 
   @override
+  String get saveAsRoot => 'Save as root';
+
+  @override
   String get savePassword => 'Save password';
 
   @override
@@ -1578,6 +1595,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String savedAs(String name) {
     return 'Saved $name';
+  }
+
+  @override
+  String savedAsRoot(String name) {
+    return 'Saved $name as root';
   }
 
   @override
@@ -1785,6 +1807,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stopEditing => 'Stop editing';
+
+  @override
+  String get sudoNotAllowed => 'This user may not use sudo on this server';
+
+  @override
+  String get sudoPassword => 'Password for sudo';
+
+  @override
+  String get sudoWrongPassword => 'Wrong password';
 
   @override
   String switchWithChangesBody(int count) {

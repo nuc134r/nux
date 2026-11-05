@@ -8,6 +8,13 @@ import '../../../l10n/l10n.dart';
 import '../../settings/data/settings_repository.dart';
 import '../../settings/presentation/text_size_controls.dart';
 import '../../ssh/presentation/ssh_errors.dart';
+import '../../../core/widgets/widgets.dart';
+import '../../files/data/ssh_fs.dart';
+import '../../files/presentation/file_dialogs.dart';
+import '../../ssh/data/ssh_providers.dart';
+import '../../workspace/data/tab_factory.dart';
+import '../../workspace/data/workspace.dart';
+import '../domain/terminal_paths.dart';
 import '../domain/terminal_session.dart';
 import '../domain/terminal_tab.dart';
 import 'extra_keys_bar.dart';
@@ -70,6 +77,46 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
     });
   }
 
+  /// Opens a path from the output in an editor tab: relative to the shell's folder when the shell reports
+  /// it (OSC 7), else after asking where it is (starting from the home folder).
+  Future<void> _openPath(TerminalPath p) async {
+    final l10n = context.l10n;
+    final connectionId = widget.tab.connectionId;
+    final factory = ref.read(tabFactoryProvider);
+    final cwd = pwdPath(_session.terminal.pwd);
+    String? home;
+    if (p.path.startsWith('~') || (!p.path.startsWith('/') && cwd == null)) {
+      try {
+        final open =
+            factory.openOverride ??
+            sshFsOpener(ref.read(sshPoolProvider), () => ref.read(sshPrompterProvider), connectionId);
+        final handle = await open();
+        try {
+          home = await handle.fs.home();
+        } finally {
+          handle.release();
+        }
+      } catch (e) {
+        if (mounted) showSnack(context, l10n.errorGeneric('$e'));
+        return;
+      }
+    }
+    var path = resolveTerminalPath(p.path, cwd: cwd, home: home);
+    if (path == null) {
+      if (!mounted) return;
+      path = await askText(
+        context,
+        title: l10n.openFileAt,
+        label: l10n.pathOnServer,
+        initial: resolveTerminalPath(p.path, cwd: home ?? widget.tab.directory) ?? p.path,
+        confirm: l10n.open,
+      );
+      if (path == null || path.trim().isEmpty) return;
+    }
+    _session.terminal.clearSelection();
+    ref.read(workspaceProvider).open(factory.viewer(connectionId, path.trim(), line: p.line));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -115,10 +162,12 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
                       theme: theme,
                       autofocus: true,
                       linkSettings: _links,
+                      // A long press selects a whole path (with its :line), not a piece between slashes.
+                      gestureSettings: const TerminalGestureSettings(wordBoundaries: terminalWordBoundaries),
                     ),
                   ),
                 ),
-                Positioned(top: 8, left: 0, right: 0, child: Center(child: _SelectionBar(terminal: _session.terminal))),
+                Positioned(top: 8, left: 0, right: 0, child: Center(child: _SelectionBar(terminal: _session.terminal, onOpen: _openPath))),
               ],
             ),
           ),
@@ -132,9 +181,12 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
 /// Copy / Paste / Select all while text is selected (long press selects; flterm has no menu of its own).
 /// Rebuilds only when the selection appears or goes, not on every output chunk.
 class _SelectionBar extends StatefulWidget {
-  const _SelectionBar({required this.terminal});
+  const _SelectionBar({required this.terminal, required this.onOpen});
 
   final TerminalController terminal;
+
+  /// The selection is a file path: open it.
+  final ValueChanged<TerminalPath> onOpen;
 
   @override
   State<_SelectionBar> createState() => _SelectionBarState();
@@ -142,12 +194,14 @@ class _SelectionBar extends StatefulWidget {
 
 class _SelectionBarState extends State<_SelectionBar> {
   bool _shown = false;
+  TerminalPath? _path;
 
   @override
   void initState() {
     super.initState();
     widget.terminal.addListener(_changed);
     _shown = widget.terminal.hasSelection;
+    if (_shown) _path = parseTerminalPath(widget.terminal.selectedText());
   }
 
   @override
@@ -168,7 +222,14 @@ class _SelectionBarState extends State<_SelectionBar> {
 
   void _changed() {
     final now = widget.terminal.hasSelection;
-    if (now != _shown && mounted) setState(() => _shown = now);
+    // While shown, also when the selection grows into (or out of) a path.
+    final path = now ? parseTerminalPath(widget.terminal.selectedText()) : null;
+    if ((now != _shown || path != _path) && mounted) {
+      setState(() {
+        _shown = now;
+        _path = path;
+      });
+    }
   }
 
   Future<void> _copy() async {
@@ -188,6 +249,7 @@ class _SelectionBarState extends State<_SelectionBar> {
     if (!_shown) return const SizedBox.shrink();
     final labels = MaterialLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    final path = _path;
     return Material(
       color: scheme.surfaceContainerHighest,
       elevation: 4,
@@ -197,6 +259,7 @@ class _SelectionBarState extends State<_SelectionBar> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (path != null) TextButton(onPressed: () => widget.onOpen(path), child: Text(context.l10n.open)),
             TextButton(onPressed: _copy, child: Text(labels.copyButtonLabel)),
             TextButton(onPressed: _paste, child: Text(labels.pasteButtonLabel)),
             TextButton(onPressed: widget.terminal.selectAll, child: Text(labels.selectAllButtonLabel)),

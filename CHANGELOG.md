@@ -8,6 +8,8 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Side-by-side diffs**: old on the left, new on the right; on by default on wide screens, ⋮ → Side by side on any diff to switch.
 - **Extra keys you can set up** for the terminal and the editor (Settings → Extra keys, or ⋮ → Extra keys in the tab): one row, two rows, two rows with more symbols, or your own layout written as text.
 - **Hold a key** above the keyboard to repeat it (arrows, ⌫, symbols); keys with a dot offer more on a long press (`(` → `()`, `((`; `-` → `_`, `=`; `&` → `&&`, `2>&1` …): slide to one and let go. A pair like `()` puts the cursor inside. Hold Ctrl or Alt to keep it on.
+- **Open files from the terminal**: long-press a path in the output (`src/app.py:40` from grep or a compiler, `/etc/hosts`, `~/.bashrc`) and tap Open: it opens in an editor tab, at that line. A long press now selects the whole path.
+- **Save as root**: when your user may not write a file, saving offers to save it through sudo (also in ⋮ while editing). The sudo password is asked each time and goes to sudo directly, never stored.
 - **Switching branch with uncommitted changes** asks whether to carry them over or stash them; when the other branch changes the same files, it offers to stash.
 
 ## 0.10.0

@@ -78,6 +78,15 @@
     }
   },
   "cannotCarryTitle": "Can't carry the changes over",
+  "cannotWriteBody": "Your user may not write {name}. Save it as root with sudo? The file keeps its owner and permissions.",
+  "@cannotWriteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotWriteTitle": "No permission to write",
   "carryThem": "Carry over",
   "change": "Change",
   "changedOnServer": "Changed on the server",
@@ -828,6 +837,7 @@
   "ok": "OK",
   "open": "Open",
   "openAsWorkspace": "Open as workspace",
+  "openFileAt": "Open file",
   "openInBrowserTab": "Open in browser tab",
   "openInFileBrowser": "Open in file browser",
   "openInOtherApp": "Open in another app",
@@ -875,6 +885,7 @@
   "passwordOrToken": "Password or token",
   "passwordWrong": "The server did not accept the password",
   "paste": "Paste",
+  "pathOnServer": "Path on the server",
   "permExecute": "Run",
   "permGroup": "Group",
   "permOthers": "Others",
@@ -989,11 +1000,20 @@
   "save": "Save",
   "saveAndConnect": "Save and connect",
   "saveAs": "Save as…",
+  "saveAsRoot": "Save as root",
   "savePassword": "Save password",
   "savePasswordHint": "Kept in the device's secure storage",
   "saveWithEncoding": "Save with encoding",
   "savedAs": "Saved {name}",
   "@savedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savedAsRoot": "Saved {name} as root",
+  "@savedAsRoot": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -1117,6 +1137,9 @@
   "stashes": "Stashes",
   "stopAll": "Stop all",
   "stopEditing": "Stop editing",
+  "sudoNotAllowed": "This user may not use sudo on this server",
+  "sudoPassword": "Password for sudo",
+  "sudoWrongPassword": "Wrong password",
   "switchWithChangesBody": "{count, plural, one{You have {count} uncommitted change.} other{You have {count} uncommitted changes.}} Carry them over to the other branch, or stash them (they wait under Stashes)?",
   "@switchWithChangesBody": {
     "placeholders": {
