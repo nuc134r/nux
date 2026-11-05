@@ -206,6 +206,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closeWorkspace => 'Close workspace';
 
   @override
+  String get colors => 'Colors';
+
+  @override
   String get commit => 'Commit';
 
   @override
@@ -450,10 +453,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editHost => 'Edit host';
 
   @override
+  String get editor => 'Editor';
+
+  @override
   String get editorFontSize => 'File text size';
 
   @override
   String get editorKeys => 'Editor keys';
+
+  @override
+  String get editorLineSpacing => 'Editor line spacing';
 
   @override
   String get emptyFolder => 'Empty folder';
@@ -580,6 +589,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get folderPath => 'Folder';
+
+  @override
+  String get followApp => 'Like the app';
+
+  @override
+  String get font => 'Font';
 
   @override
   String get fontSize => 'Font size';
@@ -1878,6 +1893,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get terminal => 'Terminal';
+
+  @override
+  String get terminalAndEditor => 'Terminal and editor';
+
+  @override
+  String get terminalAndEditorHint =>
+      'Colors, fonts, text size and line spacing';
 
   @override
   String terminalConnecting(String address) {

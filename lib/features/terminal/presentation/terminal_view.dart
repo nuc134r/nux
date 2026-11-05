@@ -17,7 +17,9 @@ import '../../workspace/data/workspace.dart';
 import '../domain/terminal_paths.dart';
 import '../domain/terminal_session.dart';
 import '../domain/terminal_tab.dart';
+import '../../../core/appearance/appearance.dart';
 import 'extra_keys_bar.dart';
+import 'terminal_theme.dart';
 
 /// The terminal of a [TerminalTab]: starts the shell the first time it is shown.
 class TerminalTabView extends ConsumerStatefulWidget {
@@ -130,9 +132,11 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
     final lineHeight = ref.watch(
       appSettingsProvider.select((s) => s.value?.terminalLineHeight ?? AppSettingsState.defaultTerminalLineHeight),
     );
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final theme = (dark ? TerminalTheme.dark() : TerminalTheme.light()).copyWith(
-      fontFamily: 'JetBrains Mono',
+    final settings = ref.watch(appSettingsProvider).value;
+    final theme = terminalThemeFor(
+      schemeId: settings?.terminalTheme,
+      appDark: Theme.of(context).brightness == Brightness.dark,
+      font: settings?.terminalFont ?? monoFonts.first,
       fontSize: fontSize,
       lineHeight: lineHeight,
     );

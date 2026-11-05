@@ -110,6 +110,7 @@
   "closeOtherTabs": "Close other tabs",
   "closeTab": "Close tab",
   "closeWorkspace": "Close workspace",
+  "colors": "Colors",
   "commit": "Commit",
   "commitDetails": "Commit",
   "commitMessage": "Commit message",
@@ -289,8 +290,10 @@
   "edit": "Edit",
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
+  "editor": "Editor",
   "editorFontSize": "File text size",
   "editorKeys": "Editor keys",
+  "editorLineSpacing": "Editor line spacing",
   "emptyFolder": "Empty folder",
   "encoding": "Encoding",
   "equivalentCommand": "The same in a terminal",
@@ -428,6 +431,8 @@
     }
   },
   "folderPath": "Folder",
+  "followApp": "Like the app",
+  "font": "Font",
   "fontSize": "Font size",
   "forcePush": "Force (with lease)",
   "forget": "Forget",
@@ -1183,6 +1188,8 @@
   "targetHostRemoteHint": "As this device sees it: localhost is this device",
   "targetHostZeroTierHint": "The ZeroTier address of the device, like 10.147.17.5",
   "terminal": "Terminal",
+  "terminalAndEditor": "Terminal and editor",
+  "terminalAndEditorHint": "Colors, fonts, text size and line spacing",
   "terminalConnecting": "Connecting to {address}…",
   "@terminalConnecting": {
     "placeholders": {

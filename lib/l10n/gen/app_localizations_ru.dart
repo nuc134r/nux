@@ -207,6 +207,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get closeWorkspace => 'Закрыть рабочую область';
 
   @override
+  String get colors => 'Цвета';
+
+  @override
   String get commit => 'Коммит';
 
   @override
@@ -454,10 +457,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get editHost => 'Изменить хост';
 
   @override
+  String get editor => 'Редактор';
+
+  @override
   String get editorFontSize => 'Размер текста в файлах';
 
   @override
   String get editorKeys => 'Клавиши редактора';
+
+  @override
+  String get editorLineSpacing => 'Межстрочный интервал редактора';
 
   @override
   String get emptyFolder => 'Пустая папка';
@@ -588,6 +597,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get folderPath => 'Папка';
+
+  @override
+  String get followApp => 'Как в приложении';
+
+  @override
+  String get font => 'Шрифт';
 
   @override
   String get fontSize => 'Размер шрифта';
@@ -1906,6 +1921,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get terminal => 'Терминал';
+
+  @override
+  String get terminalAndEditor => 'Терминал и редактор';
+
+  @override
+  String get terminalAndEditorHint =>
+      'Цвета, шрифты, размер текста и межстрочный интервал';
 
   @override
   String terminalConnecting(String address) {

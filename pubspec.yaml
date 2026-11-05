@@ -77,3 +77,22 @@ flutter:
         - asset: assets/fonts/JetBrainsMono[wght].ttf
         - asset: assets/fonts/JetBrainsMono-Italic[wght].ttf
           style: italic
+    - family: Fira Code
+      fonts:
+        - asset: assets/fonts/FiraCode-Regular.ttf
+        - asset: assets/fonts/FiraCode-Bold.ttf
+          weight: 700
+    - family: Hack
+      fonts:
+        - asset: assets/fonts/Hack-Regular.ttf
+        - asset: assets/fonts/Hack-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Hack-Italic.ttf
+          style: italic
+    - family: Source Code Pro
+      fonts:
+        - asset: assets/fonts/SourceCodePro-Regular.otf
+        - asset: assets/fonts/SourceCodePro-Bold.otf
+          weight: 700
+        - asset: assets/fonts/SourceCodePro-It.otf
+          style: italic

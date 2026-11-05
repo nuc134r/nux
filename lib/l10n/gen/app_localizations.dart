@@ -446,6 +446,12 @@ abstract class AppLocalizations {
   /// **'Close workspace'**
   String get closeWorkspace;
 
+  /// No description provided for @colors.
+  ///
+  /// In en, this message translates to:
+  /// **'Colors'**
+  String get colors;
+
   /// No description provided for @commit.
   ///
   /// In en, this message translates to:
@@ -830,6 +836,12 @@ abstract class AppLocalizations {
   /// **'Edit host'**
   String get editHost;
 
+  /// No description provided for @editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor'**
+  String get editor;
+
   /// No description provided for @editorFontSize.
   ///
   /// In en, this message translates to:
@@ -841,6 +853,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Editor keys'**
   String get editorKeys;
+
+  /// No description provided for @editorLineSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor line spacing'**
+  String get editorLineSpacing;
 
   /// No description provided for @emptyFolder.
   ///
@@ -1027,6 +1045,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Folder'**
   String get folderPath;
+
+  /// No description provided for @followApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Like the app'**
+  String get followApp;
+
+  /// No description provided for @font.
+  ///
+  /// In en, this message translates to:
+  /// **'Font'**
+  String get font;
 
   /// No description provided for @fontSize.
   ///
@@ -3229,6 +3259,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Terminal'**
   String get terminal;
+
+  /// No description provided for @terminalAndEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal and editor'**
+  String get terminalAndEditor;
+
+  /// No description provided for @terminalAndEditorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Colors, fonts, text size and line spacing'**
+  String get terminalAndEditorHint;
 
   /// No description provided for @terminalConnecting.
   ///

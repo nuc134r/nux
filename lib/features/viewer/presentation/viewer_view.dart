@@ -6,11 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart' show BackendErrorKind, BackendException;
 import 'package:re_editor/re_editor.dart';
 import 'package:tab_switcher/tab_switcher.dart';
-import 'package:re_highlight/styles/atom-one-dark.dart';
-import 'package:re_highlight/styles/atom-one-light.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/appearance/appearance.dart';
 import '../../../core/keys/key_bar_layout.dart';
 import '../../../core/widgets/key_bar.dart';
 import '../../../core/widgets/nux_menu.dart';
@@ -270,6 +269,8 @@ class _CodeView extends ConsumerWidget {
     final language = languageFor(doc.path) ?? languageFromShebang(firstLine);
     final mode = language == null || text.length > RemoteDocument.highlightLimit ? null : modeFor(language);
     final dark = Theme.of(context).brightness == Brightness.dark;
+    final settings = ref.watch(appSettingsProvider).value;
+    final codeTheme = editorTheme(settings?.editorTheme, appDark: dark);
     final scheme = Theme.of(context).colorScheme;
     final editing = tab.editing;
     final codeEditor = CodeEditor(
@@ -313,15 +314,17 @@ class _CodeView extends ConsumerWidget {
       autofocus: tab.editing,
       wordWrap: tab.wrap,
       style: CodeEditorStyle(
-        fontFamily: monoFont,
+        fontFamily: settings?.editorFont ?? monoFont,
         fontSize: fontSize,
-        backgroundColor: scheme.surface,
-        textColor: scheme.onSurface,
+        fontHeight: settings?.editorLineHeight ?? AppSettingsState.defaultEditorLineHeight,
+        // A chosen theme brings its own colours; following the app keeps the app's surface.
+        backgroundColor: settings?.editorTheme == null ? scheme.surface : (codeTheme.background ?? scheme.surface),
+        textColor: settings?.editorTheme == null ? scheme.onSurface : (codeTheme.foreground ?? scheme.onSurface),
         codeTheme: mode == null
             ? null
             : CodeHighlightTheme(
                 languages: {language!: CodeHighlightThemeMode(mode: mode)},
-                theme: dark ? atomOneDarkTheme : atomOneLightTheme,
+                theme: codeTheme.styles,
               ),
       ),
       indicatorBuilder: (context, editingController, chunkController, notifier) => Row(

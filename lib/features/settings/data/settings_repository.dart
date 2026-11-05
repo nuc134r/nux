@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/database.dart';
+import '../../../core/appearance/appearance.dart';
 import '../../../core/keys/key_bar_layout.dart';
 
 abstract final class SettingKeys {
@@ -14,6 +15,11 @@ abstract final class SettingKeys {
   static const terminalLineHeight = 'terminalLineHeight';
   static const editorFontSize = 'editorFontSize';
   static const diffSideBySide = 'diffSideBySide';
+  static const terminalTheme = 'terminalTheme';
+  static const terminalFont = 'terminalFont';
+  static const editorTheme = 'editorTheme';
+  static const editorFont = 'editorFont';
+  static const editorLineHeight = 'editorLineHeight';
   static const terminalKeys = 'terminalKeys';
   static const terminalKeysCustom = 'terminalKeysCustom';
   static const editorKeys = 'editorKeys';
@@ -68,6 +74,24 @@ class AppSettingsState {
       (double.tryParse(values[SettingKeys.terminalLineHeight] ?? '') ?? defaultTerminalLineHeight).clamp(.8, 1.6);
 
   static const defaultTerminalLineHeight = .9;
+
+  /// Terminal colours: a [terminalSchemes] id, or null to follow the app's light or dark mode.
+  String? get terminalTheme => values[SettingKeys.terminalTheme];
+
+  /// Editor syntax theme: an [editorThemes] id, or null to follow the app.
+  String? get editorTheme => values[SettingKeys.editorTheme];
+
+  String get terminalFont => _font(values[SettingKeys.terminalFont]);
+
+  String get editorFont => _font(values[SettingKeys.editorFont]);
+
+  static String _font(String? f) => monoFonts.contains(f) ? f! : monoFonts.first;
+
+  /// Editor line height as a multiple of the font size.
+  double get editorLineHeight =>
+      (double.tryParse(values[SettingKeys.editorLineHeight] ?? '') ?? defaultEditorLineHeight).clamp(1.0, 2.0);
+
+  static const defaultEditorLineHeight = 1.3;
 
   /// Diffs with old and new side by side; null: when the screen is wide enough.
   bool? get diffSideBySide => switch (values[SettingKeys.diffSideBySide]) {

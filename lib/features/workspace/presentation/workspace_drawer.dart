@@ -13,6 +13,8 @@ import '../../connections/data/connection_repository.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/presentation/file_dialogs.dart';
 import '../../files/presentation/files_view.dart' show EntryDetails, fileIcon;
+import '../../ssh/data/ssh_connector.dart';
+import '../../ssh/presentation/ssh_errors.dart';
 import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../data/workspace_access.dart';
@@ -290,6 +292,15 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
     }
   }
 
+  /// Connects again after a failed open.
+  void _retry() {
+    _access?.release();
+    _access = null;
+    _children.clear();
+    setState(() => _error = null);
+    _connect();
+  }
+
   Future<void> _list(String dir) async {
     final access = _access;
     if (access == null) return;
@@ -399,7 +410,25 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
           child: _error != null
               ? Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(l10n.errorGeneric('$_error'), style: TextStyle(color: scheme.error)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        switch (_error) {
+                          final SshConnectException e => sshErrorText(l10n, e),
+                          final e => l10n.errorGeneric('$e'),
+                        },
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: scheme.error),
+                      ),
+                      const SizedBox(height: 12),
+                      FilledButton.tonalIcon(
+                        icon: const Icon(Icons.refresh),
+                        label: Text(l10n.tryAgain),
+                        onPressed: _retry,
+                      ),
+                    ],
+                  ),
                 )
               : RefreshIndicator(
                   onRefresh: _refresh,

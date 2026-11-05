@@ -9,6 +9,7 @@ import '../features/identities/presentation/generate_key_screen.dart';
 import '../features/identities/presentation/identities_screen.dart';
 import '../features/identities/presentation/identity_screen.dart';
 import '../core/keys/key_bar_layout.dart';
+import '../features/settings/presentation/appearance_screen.dart';
 import '../features/settings/presentation/key_bar_settings.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/updates/presentation/version_screen.dart';
@@ -24,6 +25,7 @@ abstract final class Routes {
   static const home = '/';
   static const settings = '/settings';
   static const version = '/settings/version';
+  static const appearance = '/settings/appearance';
   static String keyBar(KeyBarFor kind) => '/settings/keys/${kind.name}';
   static const newConnection = '/connections/new';
   static String connection(String id) => '/connections/$id';
@@ -42,6 +44,7 @@ abstract final class Routes {
     home,
     settings,
     version,
+    appearance,
     keyBar(KeyBarFor.terminal),
     keyBar(KeyBarFor.editor),
     newConnection,
@@ -63,6 +66,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.home, builder: (context, state) => const WorkspaceScreen()),
       GoRoute(path: Routes.settings, builder: (context, state) => const SettingsScreen()),
       GoRoute(path: Routes.version, builder: (context, state) => const VersionScreen()),
+      GoRoute(path: Routes.appearance, builder: (context, state) => const AppearanceScreen()),
       GoRoute(
         path: '/settings/keys/:kind',
         builder: (context, state) => KeyBarSettingsScreen(kind: KeyBarFor.values.byName(state.pathParameters['kind']!)),
