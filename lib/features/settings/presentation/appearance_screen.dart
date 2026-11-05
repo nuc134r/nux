@@ -277,13 +277,17 @@ class _Choices extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 8, children: children),
-      ],
+    // Full width: a short row of choices stays at the start, not centred.
+    child: SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.titleSmall),
+          const SizedBox(height: 8),
+          Wrap(spacing: 8, runSpacing: 8, children: children),
+        ],
+      ),
     ),
   );
 }
@@ -386,15 +390,22 @@ class _Slider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final v = value.clamp(min, max).toDouble();
+    // The title and value on one line, the slider under them across the whole width.
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 8, 0),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: Text(title, style: Theme.of(context).textTheme.titleSmall)),
-          SizedBox(width: 44, child: Text(label(v), textAlign: TextAlign.end)),
-          Expanded(
-            flex: 2,
+          Row(
+            children: [
+              Expanded(child: Text(title, style: Theme.of(context).textTheme.titleSmall)),
+              Text(label(v)),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: Slider(
+              padding: EdgeInsets.zero,
               value: v,
               min: min,
               max: max,

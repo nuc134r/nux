@@ -1163,6 +1163,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.';
 
   @override
+  String get logInMemory => 'Kept in memory only';
+
+  @override
   String logSize(String size, String max) {
     return '$size of up to $max';
   }

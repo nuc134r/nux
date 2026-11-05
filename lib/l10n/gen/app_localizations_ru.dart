@@ -1180,6 +1180,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сохраняется между запусками; старые строки удаляются. В отправленном журнале хосты и адреса скрыты; пароли и ключи не записываются никогда.';
 
   @override
+  String get logInMemory => 'Хранится только в памяти';
+
+  @override
   String logSize(String size, String max) {
     return '$size из максимум $max';
   }

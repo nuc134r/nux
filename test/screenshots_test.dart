@@ -55,6 +55,9 @@ void main() {
         .load();
     await (FontLoader('MaterialIcons')..addFont(material('MaterialIcons-Regular.otf'))).load();
     await (FontLoader('JetBrains Mono')..addFont(file('assets/fonts/JetBrainsMono[wght].ttf'))).load();
+    await (FontLoader('Fira Code')..addFont(file('assets/fonts/FiraCode-Regular.ttf'))).load();
+    await (FontLoader('Hack')..addFont(file('assets/fonts/Hack-Regular.ttf'))).load();
+    await (FontLoader('Source Code Pro')..addFont(file('assets/fonts/SourceCodePro-Regular.otf'))).load();
   });
 
   Future<void> terminalTab(WidgetTester tester, ProviderContainer c) async {
@@ -165,6 +168,8 @@ void main() {
       await tester.tap(find.byTooltip('Forwardings'));
     }),
     'forward_rule': _Shot(ThemeMode.light, Routes.forward('sample')),
+    'appearance': const _Shot(ThemeMode.dark, Routes.appearance),
+    'log': const _Shot(ThemeMode.light, Routes.log),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),
     'desktop': _Shot(ThemeMode.dark, Routes.home, size: _desktop, act: (tester, c) async {

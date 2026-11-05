@@ -816,6 +816,7 @@
   "logEmpty": "The log is empty",
   "logErrors": "Errors",
   "logHint": "Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.",
+  "logInMemory": "Kept in memory only",
   "logSize": "{size} of up to {max}",
   "@logSize": {
     "placeholders": {

@@ -78,7 +78,11 @@ class _LogScreenState extends ConsumerState<LogScreen> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.storage_outlined),
-                    title: Text(l10n.logSize(formatSize(log.bytesOnDisk), formatSize(log.maxBytesOnDisk))),
+                    title: Text(
+                      log.maxBytesOnDisk == 0
+                          ? l10n.logInMemory
+                          : l10n.logSize(formatSize(log.bytesOnDisk), formatSize(log.maxBytesOnDisk)),
+                    ),
                     subtitle: Text(l10n.logHint),
                   ),
                   Padding(

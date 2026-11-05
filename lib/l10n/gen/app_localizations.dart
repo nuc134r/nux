@@ -1970,6 +1970,12 @@ abstract class AppLocalizations {
   /// **'Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.'**
   String get logHint;
 
+  /// No description provided for @logInMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept in memory only'**
+  String get logInMemory;
+
   /// No description provided for @logSize.
   ///
   /// In en, this message translates to:
