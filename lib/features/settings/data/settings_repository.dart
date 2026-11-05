@@ -122,6 +122,15 @@ class SettingsRepository {
   Future<AppSettingsState> load() async =>
       AppSettingsState({for (final r in await _db.select(_db.appSettings).get()) r.key: r.value});
 
+  /// Replaces every setting with [values] (a restored backup), keeping those that belong to this device.
+  Future<void> replaceAll(Map<String, String> values, {Set<String> keep = const {}}) => _db.transaction(() async {
+    await (_db.delete(_db.appSettings)..where((s) => s.key.isNotIn(keep))).go();
+    for (final e in values.entries) {
+      if (keep.contains(e.key)) continue;
+      await _db.into(_db.appSettings).insertOnConflictUpdate(AppSettingsCompanion.insert(key: e.key, value: e.value));
+    }
+  });
+
   Future<void> set(String key, String? value) async {
     if (value == null) {
       await (_db.delete(_db.appSettings)..where((s) => s.key.equals(key))).go();

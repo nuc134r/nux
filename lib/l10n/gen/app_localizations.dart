@@ -230,6 +230,18 @@ abstract class AppLocalizations {
   /// **'nux offers the checked keys in order, then the password, then asks the server what else it wants.'**
   String get authenticationHint;
 
+  /// No description provided for @backgroundAllSet.
+  ///
+  /// In en, this message translates to:
+  /// **'All set'**
+  String get backgroundAllSet;
+
+  /// No description provided for @backgroundAllSetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Connections keep running in the background and show their notification. No action needed.'**
+  String get backgroundAllSetHint;
+
   /// No description provided for @backgroundChannel.
   ///
   /// In en, this message translates to:
@@ -241,6 +253,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stays connected while nux is in the background'**
   String get backgroundHint;
+
+  /// No description provided for @backupSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get backupSettings;
 
   /// No description provided for @batteryLabel.
   ///
@@ -404,11 +422,35 @@ abstract class AppLocalizations {
   /// **'Check for updates'**
   String get checkForUpdates;
 
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
   /// No description provided for @clearFinished.
   ///
   /// In en, this message translates to:
   /// **'Clear finished'**
   String get clearFinished;
+
+  /// No description provided for @clearLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear log'**
+  String get clearLog;
+
+  /// No description provided for @clearLogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything logged so far, from earlier launches too, is deleted.'**
+  String get clearLogBody;
+
+  /// No description provided for @clearLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear the log?'**
+  String get clearLogTitle;
 
   /// No description provided for @clearSelection.
   ///
@@ -955,6 +997,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.'**
   String get exportPrivateKeyWarning;
+
+  /// No description provided for @exportSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Export settings'**
+  String get exportSettings;
+
+  /// No description provided for @exportSettingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A file with your settings (no hosts, keys or passwords)'**
+  String get exportSettingsHint;
 
   /// No description provided for @extraKeys.
   ///
@@ -1880,11 +1934,53 @@ abstract class AppLocalizations {
   /// **'Load all'**
   String get loadAll;
 
+  /// No description provided for @logAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get logAll;
+
   /// No description provided for @logEmpty.
   ///
   /// In en, this message translates to:
   /// **'The log is empty'**
   String get logEmpty;
+
+  /// No description provided for @logErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors'**
+  String get logErrors;
+
+  /// No description provided for @logHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.'**
+  String get logHint;
+
+  /// No description provided for @logSize.
+  ///
+  /// In en, this message translates to:
+  /// **'{size} of up to {max}'**
+  String logSize(String size, String max);
+
+  /// No description provided for @logTileHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What nux did, for finding problems: size, preview, share'**
+  String get logTileHint;
+
+  /// No description provided for @logTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log'**
+  String get logTitle;
+
+  /// No description provided for @logWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Warnings'**
+  String get logWarnings;
 
   /// No description provided for @markResolved.
   ///
@@ -2119,6 +2215,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'None'**
   String get none;
+
+  /// No description provided for @notASettingsFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This is not a nux settings file'**
+  String get notASettingsFile;
 
   /// No description provided for @notCommittedYet.
   ///
@@ -2744,6 +2846,30 @@ abstract class AppLocalizations {
   /// **'Resolve conflicts'**
   String get resolveConflicts;
 
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
+
+  /// No description provided for @restoreSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore settings'**
+  String get restoreSettings;
+
+  /// No description provided for @restoreSettingsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{The file has {count} setting. It replaces your current settings.} other{The file has {count} settings. They replace your current settings.}}'**
+  String restoreSettingsBody(int count);
+
+  /// No description provided for @restoreSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore settings?'**
+  String get restoreSettingsTitle;
+
   /// No description provided for @resume.
   ///
   /// In en, this message translates to:
@@ -2857,6 +2983,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// No description provided for @settingsRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings restored'**
+  String get settingsRestored;
 
   /// No description provided for @share.
   ///

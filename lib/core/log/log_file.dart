@@ -41,6 +41,9 @@ class LogFile {
     _open();
   }
 
+  /// Bytes on disk (this file and the previous one).
+  int get bytes => [for (final f in [previous, current]) if (f.existsSync()) f.lengthSync()].fold(0, (a, b) => a + b);
+
   /// Everything kept, oldest first.
   String read() => [
     for (final f in [previous, current])

@@ -39,8 +39,11 @@
   "ascending": "Ascending",
   "authentication": "Sign in",
   "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
+  "backgroundAllSet": "All set",
+  "backgroundAllSetHint": "Connections keep running in the background and show their notification. No action needed.",
   "backgroundChannel": "Background connections",
   "backgroundHint": "Stays connected while nux is in the background",
+  "backupSettings": "Backup",
   "batteryLabel": "Battery optimisation",
   "batteryOff": "Optimised: some phones stop background connections anyway",
   "batteryOn": "Unrestricted: Android leaves background connections running",
@@ -103,7 +106,11 @@
   "changelogOffline": "GitHub is unreachable; showing the changelog of this version.",
   "changesSection": "Changes",
   "checkForUpdates": "Check for updates",
+  "clear": "Clear",
   "clearFinished": "Clear finished",
+  "clearLog": "Clear log",
+  "clearLogBody": "Everything logged so far, from earlier launches too, is deleted.",
+  "clearLogTitle": "Clear the log?",
   "clearSelection": "Clear selection",
   "clipboardEmpty": "The clipboard is empty",
   "close": "Close",
@@ -402,6 +409,8 @@
   "exportPrivateKey": "Export private key",
   "exportPrivateKeyHint": "As an encrypted OpenSSH file",
   "exportPrivateKeyWarning": "Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.",
+  "exportSettings": "Export settings",
+  "exportSettingsHint": "A file with your settings (no hosts, keys or passwords)",
   "extraKeys": "Extra keys",
   "fetch": "Fetch",
   "fetched": "Fetched",
@@ -778,7 +787,24 @@
   },
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
+  "logAll": "All",
   "logEmpty": "The log is empty",
+  "logErrors": "Errors",
+  "logHint": "Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.",
+  "logSize": "{size} of up to {max}",
+  "@logSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "logTileHint": "What nux did, for finding problems: size, preview, share",
+  "logTitle": "Log",
+  "logWarnings": "Warnings",
   "markResolved": "Save and mark resolved",
   "matchCase": "Match case",
   "merge": "Merge",
@@ -832,6 +858,7 @@
   "noWorkspaceHint": "A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.",
   "noWrap": "Don't wrap lines",
   "none": "None",
+  "notASettingsFile": "This is not a nux settings file",
   "notCommittedYet": "Not committed yet",
   "notGitRepo": "Not a git repository",
   "notNow": "Not now",
@@ -1002,6 +1029,17 @@
   "requireUnlockHint": "Fingerprint, face or screen lock before each use",
   "required": "Required",
   "resolveConflicts": "Resolve conflicts",
+  "restore": "Restore",
+  "restoreSettings": "Restore settings",
+  "restoreSettingsBody": "{count, plural, one{The file has {count} setting. It replaces your current settings.} other{The file has {count} settings. They replace your current settings.}}",
+  "@restoreSettingsBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "restoreSettingsTitle": "Restore settings?",
   "resume": "Resume",
   "save": "Save",
   "saveAndConnect": "Save and connect",
@@ -1052,6 +1090,7 @@
   "serverPort": "Port on the server",
   "serverVsYours": "Server → yours",
   "settings": "Settings",
+  "settingsRestored": "Settings restored",
   "share": "Share",
   "shareFile": "Share",
   "shareLog": "Share log",

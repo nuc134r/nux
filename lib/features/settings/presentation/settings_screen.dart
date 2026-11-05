@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart' show FilePicker;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,7 @@ import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/keys/key_bar_layout.dart';
 import '../data/settings_repository.dart';
+import '../domain/settings_backup.dart';
 import 'key_bar_settings.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -113,6 +115,22 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const _BackgroundIsland(),
           Island(
+            title: l10n.backupSettings,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.upload_file_outlined),
+                title: Text(l10n.exportSettings),
+                subtitle: Text(l10n.exportSettingsHint),
+                onTap: () => _exportSettings(context, ref),
+              ),
+              ListTile(
+                leading: const Icon(Icons.restore_page_outlined),
+                title: Text(l10n.restoreSettings),
+                onTap: () => _restoreSettings(context, ref),
+              ),
+            ],
+          ),
+          Island(
             title: l10n.about,
             children: [
               ListTile(
@@ -124,9 +142,10 @@ class SettingsScreen extends ConsumerWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.receipt_long_outlined),
-                title: Text(l10n.shareLog),
-                subtitle: Text(l10n.shareLogHint),
-                onTap: () => shareLog(context, ref),
+                title: Text(l10n.logTitle),
+                subtitle: Text(l10n.logTileHint),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.log),
               ),
               ListTile(
                 leading: const Icon(Icons.code),
@@ -149,6 +168,49 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Shares the settings as a file (to keep it, or to restore it on another device).
+Future<void> _exportSettings(BuildContext context, WidgetRef ref) async {
+  final values = (await ref.read(settingsRepositoryProvider).load()).values;
+  final stamp = DateTime.now().toIso8601String().substring(0, 10);
+  final file = File('${(await getTemporaryDirectory()).path}/nux-settings-$stamp.json');
+  await file.writeAsString(exportSettings(values, at: DateTime.now()));
+  await SharePlus.instance.share(
+    ShareParams(files: [XFile(file.path, mimeType: 'application/json')], fileNameOverrides: [posix.basename(file.path)]),
+  );
+}
+
+/// Replaces the settings with a picked settings file, after asking.
+Future<void> _restoreSettings(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final picked = await FilePicker.pickFiles();
+  if (picked.isEmpty || !context.mounted) return;
+  final Map<String, String> values;
+  try {
+    values = parseSettingsBackup(await picked.first.xFile.readAsString());
+  } on FormatException {
+    if (context.mounted) showSnack(context, l10n.notASettingsFile);
+    return;
+  } catch (e) {
+    if (context.mounted) showSnack(context, l10n.errorGeneric('$e'));
+    return;
+  }
+  if (!context.mounted) return;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.restoreSettingsTitle),
+      content: Text(l10n.restoreSettingsBody(values.length)),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.restore)),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  await ref.read(settingsRepositoryProvider).replaceAll(values, keep: deviceOnlySettings);
+  if (context.mounted) showSnack(context, l10n.settingsRestored);
 }
 
 Future<T?> _choose<T>(BuildContext context, String title, Map<T, String> options, T current) {
@@ -236,6 +298,19 @@ class _BackgroundIslandState extends ConsumerState<_BackgroundIsland> {
             )
           : null,
     );
+    // Everything allowed: one line saying so, not a list of settings to read through.
+    if (_notifications == true && _battery == true) {
+      return Island(
+        title: l10n.backgroundChannel,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.check_circle, color: Colors.green),
+            title: Text(l10n.backgroundAllSet),
+            subtitle: Text(l10n.backgroundAllSetHint),
+          ),
+        ],
+      );
+    }
     return Island(
       title: l10n.backgroundChannel,
       children: [

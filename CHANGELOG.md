@@ -7,6 +7,9 @@ shown in the app under Settings → App version. Write for people using the app,
 
 - **Settings → Appearance → Terminal and editor**: colour schemes for the terminal (Solarized, Dracula, One Dark, Gruvbox, Nord, Monokai, Tokyo Night, GitHub Light) and the editor (GitHub, Monokai, Nord, Tokyo Night, Xcode, IntelliJ and more), fonts (JetBrains Mono, Fira Code, Hack, Source Code Pro), text size and line spacing, with live previews.
 - The workspace drawer offers Try again when opening the workspace failed.
+- **Settings → Log**: how much space the log takes, the latest lines (filter to warnings or errors), Share and Clear.
+- **Settings → Backup**: export your settings to a file and restore them (on this or another device).
+- Background connections in Settings show a green "All set" when nothing needs your attention.
 - **Side-by-side diffs**: old on the left, new on the right; on by default on wide screens, ⋮ → Side by side on any diff to switch.
 - **Extra keys you can set up** for the terminal and the editor (Settings → Extra keys, or ⋮ → Extra keys in the tab): one row, two rows, two rows with more symbols, or your own layout written as text.
 - **Hold a key** above the keyboard to repeat it (arrows, ⌫, symbols); keys with a dot offer more on a long press (`(` → `()`, `((`; `-` → `_`, `=`; `&` → `&&`, `2>&1` …): slide to one and let go. A pair like `()` puts the cursor inside. Hold Ctrl or Alt to keep it on.

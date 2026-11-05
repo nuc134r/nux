@@ -84,10 +84,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'nux предлагает отмеченные ключи по порядку, затем пароль, затем спрашивает сервер, что ещё нужно.';
 
   @override
+  String get backgroundAllSet => 'Всё настроено';
+
+  @override
+  String get backgroundAllSetHint =>
+      'Подключения работают в фоне и показывают уведомление. Ничего делать не нужно.';
+
+  @override
   String get backgroundChannel => 'Фоновые подключения';
 
   @override
   String get backgroundHint => 'Остаётся на связи, пока nux в фоне';
+
+  @override
+  String get backupSettings => 'Резервная копия';
 
   @override
   String get batteryLabel => 'Оптимизация батареи';
@@ -186,7 +196,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get checkForUpdates => 'Проверить обновления';
 
   @override
+  String get clear => 'Очистить';
+
+  @override
   String get clearFinished => 'Убрать завершённые';
+
+  @override
+  String get clearLog => 'Очистить журнал';
+
+  @override
+  String get clearLogBody =>
+      'Всё записанное, включая прошлые запуски, будет удалено.';
+
+  @override
+  String get clearLogTitle => 'Очистить журнал?';
 
   @override
   String get clearSelection => 'Снять выделение';
@@ -533,6 +556,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get exportPrivateKeyWarning =>
       'Любой, у кого есть этот файл и его парольная фраза, сможет войти везде, где принимается этот ключ. Экспортируйте только для переноса на доверенное устройство. Затем вы зададите парольную фразу для файла.';
+
+  @override
+  String get exportSettings => 'Экспорт настроек';
+
+  @override
+  String get exportSettingsHint =>
+      'Файл с настройками (без хостов, ключей и паролей)';
 
   @override
   String get extraKeys => 'Дополнительные клавиши';
@@ -1127,7 +1157,32 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadAll => 'Загрузить всё';
 
   @override
+  String get logAll => 'Все';
+
+  @override
   String get logEmpty => 'Журнал пуст';
+
+  @override
+  String get logErrors => 'Ошибки';
+
+  @override
+  String get logHint =>
+      'Сохраняется между запусками; старые строки удаляются. В отправленном журнале хосты и адреса скрыты; пароли и ключи не записываются никогда.';
+
+  @override
+  String logSize(String size, String max) {
+    return '$size из максимум $max';
+  }
+
+  @override
+  String get logTileHint =>
+      'Что делал nux, для поиска проблем: размер, просмотр, отправка';
+
+  @override
+  String get logTitle => 'Журнал';
+
+  @override
+  String get logWarnings => 'Предупреждения';
 
   @override
   String get markResolved => 'Сохранить и отметить решённым';
@@ -1260,6 +1315,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get none => 'Нет';
+
+  @override
+  String get notASettingsFile => 'Это не файл настроек nux';
 
   @override
   String get notCommittedYet => 'Ещё не закоммичено';
@@ -1610,6 +1668,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resolveConflicts => 'Разрешить конфликты';
 
   @override
+  String get restore => 'Восстановить';
+
+  @override
+  String get restoreSettings => 'Восстановить настройки';
+
+  @override
+  String restoreSettingsBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'В файле $count настроек. Они заменят текущие настройки.',
+      few: 'В файле $count настройки. Они заменят текущие настройки.',
+      one: 'В файле $count настройка. Она заменит текущие настройки.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get restoreSettingsTitle => 'Восстановить настройки?';
+
+  @override
   String get resume => 'Продолжить';
 
   @override
@@ -1681,6 +1760,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settings => 'Настройки';
+
+  @override
+  String get settingsRestored => 'Настройки восстановлены';
 
   @override
   String get share => 'Поделиться';

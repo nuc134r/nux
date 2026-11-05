@@ -47,6 +47,15 @@ class Log extends ChangeNotifier {
 
   List<LogEntry> get entries => List.unmodifiable(_entries);
 
+  /// Bytes the log takes on disk (0 before [persistTo]).
+  int get bytesOnDisk => _file?.bytes ?? 0;
+
+  /// The most it keeps on disk: the file and the previous one.
+  int get maxBytesOnDisk => (_file?.maxBytes ?? 0) * 2;
+
+  /// The kept log as text, hosts not masked (for showing on this device).
+  String read() => _file?.read().trimRight() ?? _entries.join('\n');
+
   void d(String tag, String message) => add(LogLevel.debug, tag, message);
   void i(String tag, String message) => add(LogLevel.info, tag, message);
   void w(String tag, String message) => add(LogLevel.warning, tag, message);

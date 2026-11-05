@@ -83,10 +83,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'nux offers the checked keys in order, then the password, then asks the server what else it wants.';
 
   @override
+  String get backgroundAllSet => 'All set';
+
+  @override
+  String get backgroundAllSetHint =>
+      'Connections keep running in the background and show their notification. No action needed.';
+
+  @override
   String get backgroundChannel => 'Background connections';
 
   @override
   String get backgroundHint => 'Stays connected while nux is in the background';
+
+  @override
+  String get backupSettings => 'Backup';
 
   @override
   String get batteryLabel => 'Battery optimisation';
@@ -185,7 +195,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkForUpdates => 'Check for updates';
 
   @override
+  String get clear => 'Clear';
+
+  @override
   String get clearFinished => 'Clear finished';
+
+  @override
+  String get clearLog => 'Clear log';
+
+  @override
+  String get clearLogBody =>
+      'Everything logged so far, from earlier launches too, is deleted.';
+
+  @override
+  String get clearLogTitle => 'Clear the log?';
 
   @override
   String get clearSelection => 'Clear selection';
@@ -528,6 +551,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get exportPrivateKeyWarning =>
       'Anyone with this file and its passphrase can sign in wherever this key is accepted. Export only to move the key to a device you trust. You will choose a passphrase for the file next.';
+
+  @override
+  String get exportSettings => 'Export settings';
+
+  @override
+  String get exportSettingsHint =>
+      'A file with your settings (no hosts, keys or passwords)';
 
   @override
   String get extraKeys => 'Extra keys';
@@ -1110,7 +1140,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadAll => 'Load all';
 
   @override
+  String get logAll => 'All';
+
+  @override
   String get logEmpty => 'The log is empty';
+
+  @override
+  String get logErrors => 'Errors';
+
+  @override
+  String get logHint =>
+      'Kept across launches; older lines are dropped. Shared logs have hosts and addresses masked; passwords and keys are never logged.';
+
+  @override
+  String logSize(String size, String max) {
+    return '$size of up to $max';
+  }
+
+  @override
+  String get logTileHint =>
+      'What nux did, for finding problems: size, preview, share';
+
+  @override
+  String get logTitle => 'Log';
+
+  @override
+  String get logWarnings => 'Warnings';
 
   @override
   String get markResolved => 'Save and mark resolved';
@@ -1241,6 +1296,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get none => 'None';
+
+  @override
+  String get notASettingsFile => 'This is not a nux settings file';
 
   @override
   String get notCommittedYet => 'Not committed yet';
@@ -1587,6 +1645,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resolveConflicts => 'Resolve conflicts';
 
   @override
+  String get restore => 'Restore';
+
+  @override
+  String get restoreSettings => 'Restore settings';
+
+  @override
+  String restoreSettingsBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'The file has $count settings. They replace your current settings.',
+      one: 'The file has $count setting. It replaces your current settings.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get restoreSettingsTitle => 'Restore settings?';
+
+  @override
   String get resume => 'Resume';
 
   @override
@@ -1656,6 +1735,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String get settingsRestored => 'Settings restored';
 
   @override
   String get share => 'Share';

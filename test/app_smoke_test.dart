@@ -76,6 +76,8 @@ void main() {
     expect(find.text('Off: background connections run without their notification'), findsOneWidget);
     expect(find.widgetWithText(FilledButton, 'Allow'), findsNWidgets(2));
 
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Allow').first);
+    await settle(tester);
     await tester.tap(find.widgetWithText(FilledButton, 'Allow').first);
     await settle(tester);
     expect(access.asked, 1);
@@ -83,6 +85,8 @@ void main() {
         reason: 'Android stopped showing the prompt');
 
     access.battery = true;
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Allow').last);
+    await settle(tester);
     await tester.tap(find.widgetWithText(FilledButton, 'Allow').last);
     await settle(tester);
     expect(find.text('Unrestricted: Android leaves background connections running'), findsOneWidget);
