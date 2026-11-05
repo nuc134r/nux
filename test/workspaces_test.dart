@@ -124,6 +124,14 @@ void main() {
     expect(drawer('Staged  1'), findsNothing);
     final log = await tester.runAsync(() => Process.run('git', ['log', '-1', '--format=%s'], workingDirectory: root));
     expect((log!.stdout as String).trim(), 'Print one');
+    // The card shows the command that ran; tapping it opens its output with the earlier commands.
+    expect(find.descendant(of: find.byType(Drawer), matching: find.textContaining("git commit -q -m 'Print one'")), findsOneWidget);
+    await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.textContaining('git commit -q')));
+    await settle(tester);
+    expect(find.text('Git output'), findsOneWidget);
+    expect(find.text('Commands'), findsOneWidget, reason: 'stage, then commit');
+    Navigator.of(tester.element(find.text('Git output'))).pop();
+    await settle(tester);
     Navigator.of(tester.element(find.byType(Drawer))).pop(); // close the drawer
     await settle(tester);
 

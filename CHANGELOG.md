@@ -9,6 +9,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - **Editor ⋮ → View**: Wrap lines, Status bar (it can be turned off) and Extra keys, together.
 - The editor status bar keeps clear of rounded screen corners; its encoding and line-endings menus open above it (they came up empty).
 - Menus keep long choices (like "Two rows, more symbols") on one short line.
+- **Git progress and output**: while fetch, pull or push runs, the workspace card shows a progress bar and git's latest line ("Receiving objects: 45%"); a failure stays there. Tap it (or ⋮ → Git output) for the full output, live, with Cancel and Copy, and the earlier commands of the workspace with theirs.
 - The extra keys previews in Settings show every key (rows no longer get cut off on the right).
 - **Custom extra keys by drag and drop**: hold a key and drag it within or between rows, onto New row, or onto Remove; tap a key to change what it types and what a long press offers; + adds a key. Edit as text is still there.
 

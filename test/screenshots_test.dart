@@ -24,6 +24,8 @@ import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
 import 'package:nux/features/workspace/data/workspace_access.dart';
 import 'package:nux/features/workspace/data/workspace_repository.dart';
+import 'package:nux/features/workspace/domain/git_activity.dart';
+import 'package:nux/features/workspace/presentation/workspace_drawer.dart';
 
 import 'helpers.dart';
 
@@ -111,6 +113,34 @@ void main() {
       await settle(tester);
       await settle(tester);
       await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.text('lib')));
+    }),
+    // A pull in progress in the workspace card, and its output (sample text, example.com remote).
+    'git_output': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      addTearDown(() => root.deleteSync(recursive: true));
+      await useLocal(c, root);
+      _workspaceRoot = root.path;
+      final id = (await tester.runAsync(
+        () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
+      ))!;
+      final activity = c.read(workspaceDrawerStateProvider).gitActivity[id] = GitActivity();
+      final fetch = activity.start('git fetch -q --all --prune');
+      activity.output(fetch, 'Fetching origin\n');
+      activity.finish(fetch, 0);
+      final pull = activity.start('git pull -q --no-rebase --ff-only', cancel: () {});
+      activity.output(
+        pull,
+        'remote: Enumerating objects: 214, done.\nremote: Counting objects: 100% (214/214), done.\n'
+        'remote: Compressing objects: 100% (96/96), done.\nReceiving objects:  45% (97/214), 1.20 MiB | 2.31 MiB/s\r',
+      );
+      await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
+      await settle(tester);
+      c.read(workspaceProvider).gridOpen = true;
+      await settle(tester);
+      await tester.tap(find.byTooltip('Workspaces'));
+      await settle(tester);
+      await settle(tester);
+      await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.textContaining('git pull')));
     }),
     'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       await terminalTab(tester, c);

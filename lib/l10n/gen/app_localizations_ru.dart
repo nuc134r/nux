@@ -841,12 +841,35 @@ class AppLocalizationsRu extends AppLocalizations {
       'Создание RSA-ключа. На телефоне это может занять минуту.';
 
   @override
+  String get gitCancelled => 'отменено';
+
+  @override
   String get gitCommand => 'Команда';
+
+  @override
+  String get gitEarlier => 'Команды';
+
+  @override
+  String gitExitCode(int code) {
+    return 'код $code';
+  }
 
   @override
   String gitFailed(String command, String message) {
     return 'git $command: $message';
   }
+
+  @override
+  String get gitNoOutput => '(нет вывода)';
+
+  @override
+  String get gitOutput => 'Вывод git';
+
+  @override
+  String get gitOutputEmpty => 'Команд git ещё не было';
+
+  @override
+  String get gitOutputShow => 'Вывод';
 
   @override
   String get gitSignInBody =>

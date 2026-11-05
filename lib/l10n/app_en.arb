@@ -604,7 +604,17 @@
   "generateKeyHint": "A new key pair made on this device",
   "generating": "Generating…",
   "generatingRsa": "Generating an RSA key. This can take a minute on a phone.",
+  "gitCancelled": "cancelled",
   "gitCommand": "Command",
+  "gitEarlier": "Commands",
+  "gitExitCode": "exit {code}",
+  "@gitExitCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
   "gitFailed": "git {command}: {message}",
   "@gitFailed": {
     "placeholders": {
@@ -616,6 +626,10 @@
       }
     }
   },
+  "gitNoOutput": "(no output)",
+  "gitOutput": "Git output",
+  "gitOutputEmpty": "No git commands yet",
+  "gitOutputShow": "Output",
   "gitSignInBody": "The remote asks for a username and password. On GitHub, GitLab and similar, use an access token as the password.",
   "gitSignInTitle": "Sign in to {remote}",
   "@gitSignInTitle": {

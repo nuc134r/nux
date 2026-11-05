@@ -826,12 +826,35 @@ class AppLocalizationsEn extends AppLocalizations {
       'Generating an RSA key. This can take a minute on a phone.';
 
   @override
+  String get gitCancelled => 'cancelled';
+
+  @override
   String get gitCommand => 'Command';
+
+  @override
+  String get gitEarlier => 'Commands';
+
+  @override
+  String gitExitCode(int code) {
+    return 'exit $code';
+  }
 
   @override
   String gitFailed(String command, String message) {
     return 'git $command: $message';
   }
+
+  @override
+  String get gitNoOutput => '(no output)';
+
+  @override
+  String get gitOutput => 'Git output';
+
+  @override
+  String get gitOutputEmpty => 'No git commands yet';
+
+  @override
+  String get gitOutputShow => 'Output';
 
   @override
   String get gitSignInBody =>

@@ -23,7 +23,9 @@ import '../../../core/secure/secret_store.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
 import 'git_panel.dart';
+import '../domain/git_activity.dart';
 import '../domain/git_model.dart';
+import 'git_activity_view.dart';
 import 'git_screens.dart';
 import '../../viewer/presentation/viewer_tab.dart';
 import '../../../app/router.dart';
@@ -36,6 +38,9 @@ class WorkspaceDrawerState {
 
   /// The file last opened from the drawer or a finder, per workspace (the tree scrolls to it).
   final Map<String, String> lastOpened = {};
+
+  /// The git commands run in each workspace, with their output (kept while the app runs).
+  final Map<String, GitActivity> gitActivity = {};
 }
 
 /// Height of a tree row (fixed, so the tree can scroll straight to a file).
@@ -148,11 +153,14 @@ class _NoWorkspace extends ConsumerWidget {
 
 /// The workspace's name, host and folder, and its branch, with ⋮ for switching and managing.
 class _Card extends StatelessWidget {
-  const _Card({required this.title, this.subtitle, this.footer, this.menu});
+  const _Card({required this.title, this.subtitle, this.footer, this.activity, this.menu});
 
   final String title;
   final String? subtitle;
   final Widget? footer;
+
+  /// Under the footer: the git command running (or just finished).
+  final Widget? activity;
 
   /// Its ⋮ menu; none when null.
   final List<NuxMenuItem> Function(BuildContext)? menu;
@@ -183,6 +191,7 @@ class _Card extends StatelessWidget {
                   ),
                 ],
                 if (footer != null) ...[const SizedBox(height: 8), footer!],
+                ?activity,
               ],
             ),
           ),
@@ -223,6 +232,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
           _access!.runner,
           ws.rootPath,
           credentials: _gitCredentials,
+          activity: _activity,
           askCredentials: (remote, {required retry}) async {
             final c = await askGitCredentials(context, ref, ws, remote, retry: retry);
             if (c != null) _gitCredentials = c;
@@ -236,6 +246,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   /// Remembered (in the secret store) or given this session, for fetch / pull / push.
   GitCredentials? _gitCredentials;
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
+  GitActivity get _activity => _state.gitActivity.putIfAbsent(ws.id, GitActivity.new);
   Set<String> get _expanded => _state.expanded.putIfAbsent(ws.id, () => {});
 
   @override
@@ -404,6 +415,7 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
                     ),
                   ),
                 ),
+          activity: git == null ? null : GitActivityStrip(activity: _activity),
           menu: (_) => _menu(context),
         ),
         Expanded(
@@ -525,6 +537,12 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
         ),
         const NuxMenuDivider(),
         NuxMenuAction(icon: Icons.history, label: l10n.history, onSelected: () => showHistory(context, _repo!)),
+        NuxMenuAction(
+          icon: Icons.terminal,
+          label: l10n.gitOutput,
+          enabled: _activity.runs.isNotEmpty,
+          onSelected: () => showGitOutput(context, _activity),
+        ),
         NuxMenuAction(
           icon: Icons.inventory_2_outlined,
           label: l10n.stashChanges,

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/features/viewer/domain/line_diff.dart';
+import 'package:nux/features/workspace/domain/git_activity.dart';
 import 'package:nux/features/workspace/domain/git_model.dart';
 import 'package:nux/features/workspace/domain/git_repo.dart';
 import 'package:nux/features/workspace/domain/git_status.dart';
@@ -91,6 +92,32 @@ void main() {
     await git.pull(rebase: true);
     expect(File('${dir.path}/b.txt').existsSync(), isTrue);
     await git.push();
+  });
+
+  test('activity: changes are recorded with their output, network commands live; reads are not', () async {
+    final remote = Directory(Directory.systemTemp.createTempSync('nux-remote-').resolveSymbolicLinksSync());
+    addTearDown(() => remote.deleteSync(recursive: true));
+    await sh(remote.path, 'git init -q --bare -b main');
+    await sh(dir.path, 'git remote add origin ${remote.path}');
+    final activity = GitActivity();
+    final repo = GitRepo(LocalRunner(), dir.path, activity: activity);
+    await repo.push(setUpstream: true);
+    await repo.log();
+    await repo.fetch();
+    File('${dir.path}/c.txt').writeAsStringSync('c\n');
+    await repo.stage(['${dir.path}/c.txt']);
+    expect(activity.runs.map((r) => r.command), [
+      'git push -q -u origin HEAD',
+      'git fetch -q --all --prune',
+      'git add -A -- ${dir.path}/c.txt',
+    ]);
+    final push = activity.runs.first;
+    expect(push.ok, isTrue);
+    expect(push.output, contains('HEAD -> main'), reason: 'git push prints the ref update when not quiet');
+    expect(activity.current, isNull);
+    expect(GitRepo.changes('-c core.editor=true rebase --continue'), isTrue);
+    expect(GitRepo.changes('stash list --format=x'), isFalse);
+    expect(GitRepo.changes('log -1'), isFalse);
   });
 
   test('credentials reach git through stdin, not the command line', () async {

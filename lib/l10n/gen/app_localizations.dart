@@ -1388,17 +1388,59 @@ abstract class AppLocalizations {
   /// **'Generating an RSA key. This can take a minute on a phone.'**
   String get generatingRsa;
 
+  /// No description provided for @gitCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'cancelled'**
+  String get gitCancelled;
+
   /// No description provided for @gitCommand.
   ///
   /// In en, this message translates to:
   /// **'Command'**
   String get gitCommand;
 
+  /// No description provided for @gitEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Commands'**
+  String get gitEarlier;
+
+  /// No description provided for @gitExitCode.
+  ///
+  /// In en, this message translates to:
+  /// **'exit {code}'**
+  String gitExitCode(int code);
+
   /// No description provided for @gitFailed.
   ///
   /// In en, this message translates to:
   /// **'git {command}: {message}'**
   String gitFailed(String command, String message);
+
+  /// No description provided for @gitNoOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'(no output)'**
+  String get gitNoOutput;
+
+  /// No description provided for @gitOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Git output'**
+  String get gitOutput;
+
+  /// No description provided for @gitOutputEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No git commands yet'**
+  String get gitOutputEmpty;
+
+  /// No description provided for @gitOutputShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Output'**
+  String get gitOutputShow;
 
   /// No description provided for @gitSignInBody.
   ///

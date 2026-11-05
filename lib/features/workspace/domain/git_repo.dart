@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:nux_backend/nux_backend.dart';
 
+import 'git_activity.dart';
 import 'git_model.dart';
 import 'git_status.dart';
 
@@ -50,7 +51,11 @@ typedef GitCredentials = ({String username, String password});
 /// a password fails at once (instead of hanging); [askCredentials] is then asked and the command retried
 /// with them, passed through stdin to a one-off credential helper (never in a command line or a file).
 class GitRepo {
-  GitRepo(this._runner, this.folder, {this.credentials, this.askCredentials});
+  GitRepo(this._runner, this.folder, {this.credentials, this.askCredentials, this.activity});
+
+  /// Where commands that change something are recorded with their output (network ones live, with
+  /// progress); null records nothing.
+  final GitActivity? activity;
 
   final ProcessRunner _runner;
   final String folder;
@@ -79,9 +84,21 @@ class GitRepo {
   Future<String> _git(String args, {bool okOnOne = false, bool network = false}) async {
     lastCommand = 'git $args';
     final creds = network ? credentials : null;
-    final r = creds == null
-        ? await _runner.run('cd ${shellQuote(folder)} && $_env git $args')
-        : await _runWithCredentials(args, creds);
+    final activity = this.activity;
+    final record = activity != null && changes(args);
+    final CommandResult r;
+    if (record && network) {
+      r = await _stream(args, creds, activity);
+    } else {
+      r = creds == null
+          ? await _runner.run('cd ${shellQuote(folder)} && $_env git $args')
+          : await _runWithCredentials(args, creds);
+      if (record) {
+        final run = activity.start('git $args');
+        activity.output(run, [r.stdout, r.stderr].where((t) => t.trim().isNotEmpty).join('\n'));
+        activity.finish(run, r.exitCode);
+      }
+    }
     if (r.ok || (okOnOne && r.exitCode == 1)) return r.stdout;
     final out = '${r.stderr}\n${r.stdout}';
     final error = GitException(
@@ -106,6 +123,48 @@ class GitRepo {
       }
     }
     throw error;
+  }
+
+  /// Whether `git args` changes something (and is worth recording), as opposed to reading.
+  static bool changes(String args) {
+    final words = args.split(' ').where((w) => w.isNotEmpty).toList();
+    while (words.length > 1 && words.first == '-c') {
+      words.removeRange(0, 2);
+    }
+    final verb = words.firstOrNull ?? '';
+    if (verb == 'stash') return !args.contains('stash list');
+    if (verb == 'tag') return !args.contains('--sort');
+    return const {
+      'add', 'restore', 'rm', 'clean', 'commit', 'switch', 'fetch', 'pull', 'push', 'merge', 'rebase', //
+      'cherry-pick', 'revert', 'apply', 'branch', 'clone',
+    }.contains(verb);
+  }
+
+  /// Runs a network command with its output going to [activity] as it comes (progress included), and
+  /// stoppable from there.
+  Future<CommandResult> _stream(String args, GitCredentials? creds, GitActivity activity) async {
+    // Progress instead of quiet: git prints it only when asked, as stderr is not a terminal here.
+    final verb = args.split(' ').first;
+    final live = const {'fetch', 'pull', 'push'}.contains(verb)
+        ? args.replaceFirst(' -q', ' --progress')
+        : args.replaceFirst(' -q', '');
+    final p = await _runner.start(
+      creds == null ? 'cd ${shellQuote(folder)} && $_env git $live' : withCredentialsCommand(folder, live),
+    );
+    final run = activity.start('git $args', cancel: p.kill);
+    final out = StringBuffer(), err = StringBuffer();
+    Future<void> pipe(Stream<List<int>> s, StringBuffer into) =>
+        s.transform(utf8.decoder).forEach((chunk) {
+          into.write(chunk);
+          activity.output(run, chunk);
+        });
+    final done = Future.wait([pipe(p.stdout.cast(), out), pipe(p.stderr.cast(), err)]);
+    if (creds != null) p.stdin.add(utf8.encode('${creds.username}\n${creds.password}\n'));
+    await p.stdin.close();
+    await done;
+    final code = await p.exitCode;
+    activity.finish(run, code);
+    return CommandResult(exitCode: code, stdout: '$out', stderr: '$err');
   }
 
   Future<CommandResult> _runWithCredentials(String args, GitCredentials c) async {
