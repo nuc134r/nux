@@ -16,6 +16,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
+  String get activity => 'Activity';
+
+  @override
+  String activityDisconnected(String host) {
+    return '$host: connection lost';
+  }
+
+  @override
+  String activityDownload(String name) {
+    return 'Download $name';
+  }
+
+  @override
+  String get activityEarlier => 'Earlier';
+
+  @override
+  String get activityEmpty =>
+      'Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.';
+
+  @override
+  String activityForwardBack(String name) {
+    return 'Forwarding $name works again';
+  }
+
+  @override
+  String activityForwardFailed(String name) {
+    return 'Forwarding $name stopped';
+  }
+
+  @override
+  String activityNew(int count) {
+    return '$count new';
+  }
+
+  @override
+  String get activityNow => 'Running';
+
+  @override
+  String activityRunning(int count) {
+    return '$count running';
+  }
+
+  @override
+  String activityUpdate(String version) {
+    return 'nux $version is available';
+  }
+
+  @override
+  String activityUpload(String name) {
+    return 'Upload $name';
+  }
+
+  @override
   String get addForward => 'Add forwarding';
 
   @override
@@ -421,6 +474,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detachedHead => 'detached HEAD';
+
+  @override
+  String get details => 'Details';
 
   @override
   String get devicePort => 'Port on this device';

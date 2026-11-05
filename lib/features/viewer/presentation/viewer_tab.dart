@@ -274,18 +274,21 @@ class ViewerTab extends NuxTab {
             onSelected: () => onSaveAsRoot?.call(),
           ),
         NuxMenuAction(icon: Icons.check, label: l10n.doneEditing, onSelected: () => exitEditing(context)),
-        NuxMenuAction(
-          icon: Icons.undo,
-          label: l10n.undoEdit,
-          enabled: _editor?.canUndo ?? false,
-          onSelected: () => _editor?.undo(),
-        ),
-        NuxMenuAction(
-          icon: Icons.redo,
-          label: l10n.redoEdit,
-          enabled: _editor?.canRedo ?? false,
-          onSelected: () => _editor?.redo(),
-        ),
+        // Undo and Redo on one line.
+        NuxMenuIcons([
+          NuxMenuIcon(
+            icon: Icons.undo,
+            tooltip: l10n.undoEdit,
+            enabled: _editor?.canUndo ?? false,
+            onSelected: () => _editor?.undo(),
+          ),
+          NuxMenuIcon(
+            icon: Icons.redo,
+            tooltip: l10n.redoEdit,
+            enabled: _editor?.canRedo ?? false,
+            onSelected: () => _editor?.redo(),
+          ),
+        ]),
       ] else if (canEdit)
         NuxMenuAction(icon: Icons.edit_outlined, label: l10n.edit, onSelected: () => setEditing(true)),
       if (shownAsText) NuxMenuAction(icon: Icons.search, label: l10n.find, onSelected: () => _finder?.findMode()),

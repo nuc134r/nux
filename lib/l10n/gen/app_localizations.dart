@@ -110,6 +110,78 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// No description provided for @activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get activity;
+
+  /// No description provided for @activityDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'{host}: connection lost'**
+  String activityDisconnected(String host);
+
+  /// No description provided for @activityDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download {name}'**
+  String activityDownload(String name);
+
+  /// No description provided for @activityEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get activityEarlier;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.'**
+  String get activityEmpty;
+
+  /// No description provided for @activityForwardBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding {name} works again'**
+  String activityForwardBack(String name);
+
+  /// No description provided for @activityForwardFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Forwarding {name} stopped'**
+  String activityForwardFailed(String name);
+
+  /// No description provided for @activityNew.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new'**
+  String activityNew(int count);
+
+  /// No description provided for @activityNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get activityNow;
+
+  /// No description provided for @activityRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} running'**
+  String activityRunning(int count);
+
+  /// No description provided for @activityUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'nux {version} is available'**
+  String activityUpdate(String version);
+
+  /// No description provided for @activityUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload {name}'**
+  String activityUpload(String name);
+
   /// No description provided for @addForward.
   ///
   /// In en, this message translates to:
@@ -775,6 +847,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'detached HEAD'**
   String get detachedHead;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
 
   /// No description provided for @devicePort.
   ///

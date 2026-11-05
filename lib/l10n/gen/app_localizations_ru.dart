@@ -16,6 +16,59 @@ class AppLocalizationsRu extends AppLocalizations {
   String get about => 'О приложении';
 
   @override
+  String get activity => 'Активность';
+
+  @override
+  String activityDisconnected(String host) {
+    return '$host: соединение потеряно';
+  }
+
+  @override
+  String activityDownload(String name) {
+    return 'Скачивание $name';
+  }
+
+  @override
+  String get activityEarlier => 'Ранее';
+
+  @override
+  String get activityEmpty =>
+      'Пока пусто. Здесь появятся команды git, передачи файлов, перенаправления, обновления и сообщения.';
+
+  @override
+  String activityForwardBack(String name) {
+    return 'Перенаправление $name снова работает';
+  }
+
+  @override
+  String activityForwardFailed(String name) {
+    return 'Перенаправление $name остановлено';
+  }
+
+  @override
+  String activityNew(int count) {
+    return 'новых: $count';
+  }
+
+  @override
+  String get activityNow => 'Выполняется';
+
+  @override
+  String activityRunning(int count) {
+    return 'выполняется: $count';
+  }
+
+  @override
+  String activityUpdate(String version) {
+    return 'Доступна версия nux $version';
+  }
+
+  @override
+  String activityUpload(String name) {
+    return 'Загрузка $name';
+  }
+
+  @override
   String get addForward => 'Добавить проброс';
 
   @override
@@ -425,6 +478,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get detachedHead => 'отсоединённый HEAD';
+
+  @override
+  String get details => 'Подробнее';
 
   @override
   String get devicePort => 'Порт на этом устройстве';

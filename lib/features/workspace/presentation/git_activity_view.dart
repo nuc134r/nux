@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/activity/activity_center.dart';
 import '../../../l10n/l10n.dart';
 import '../domain/git_activity.dart';
 
@@ -279,4 +280,54 @@ class _GitOutputSheetState extends State<_GitOutputSheet> {
       ),
     );
   }
+}
+
+/// Reports [activity]'s commands to the Activity center: fetch, pull, push and clone as operations (with
+/// progress and Cancel), other commands only when they fail. Returns [activity].
+GitActivity reportGitActivity(GitActivity activity, ActivityCenter center, String workspace) {
+  final entries = Expando<ActivityEntry>();
+  final seen = Expando<bool>();
+  const long = {'fetch', 'pull', 'push', 'clone'};
+  activity.addListener(() {
+    for (final run in activity.runs) {
+      final entry = entries[run];
+      if (entry != null) {
+        if (run.running) {
+          center.update(entry, progress: run.progress, subtitle: run.lastLine.isEmpty ? null : run.lastLine);
+        } else if (entry.running) {
+          final state = run.cancelled
+              ? ActivityState.cancelled
+              : run.ok
+              ? ActivityState.done
+              : ActivityState.failed;
+          center.finish(entry, state, subtitle: run.lastLine, unread: state == ActivityState.failed);
+        }
+        continue;
+      }
+      if (seen[run] == true) continue;
+      final verb = run.command.split(' ').skip(1).firstWhere((w) => !w.startsWith('-'), orElse: () => '');
+      if (long.contains(verb)) {
+        entries[run] = center.start(
+          ActivitySource.git,
+          run.command,
+          subtitle: workspace,
+          cancel: run.cancel == null ? null : () => activity.cancel(run),
+          open: (context) => showGitOutput(context, activity, run),
+        );
+        continue;
+      }
+      if (run.running) continue;
+      seen[run] = true;
+      if (!run.ok && !run.cancelled) {
+        center.event(
+          ActivitySource.git,
+          run.command,
+          subtitle: run.lastLine,
+          state: ActivityState.failed,
+          open: (context) => showGitOutput(context, activity, run),
+        );
+      }
+    }
+  });
+  return activity;
 }

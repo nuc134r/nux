@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/keys/key_bar_layout.dart';
+import '../../../core/activity/activity_center.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
+import '../../ssh/presentation/ssh_errors.dart';
 import '../../files/presentation/files_tab.dart';
 import '../../workspace/data/workspace.dart';
 import '../../settings/data/settings_repository.dart';
@@ -29,9 +31,27 @@ class TerminalTab extends NuxTab {
           log: _ref.read(logProvider),
         ) {
     session.addListener(notifyListeners);
+    session.addListener(_reportDrop);
   }
 
   static const kindName = 'terminal';
+
+  TerminalState _lastState = TerminalState.idle;
+
+  /// A connected session that closes on an error (not by Disconnect) is an Activity event.
+  void _reportDrop() {
+    final before = _lastState;
+    _lastState = session.state;
+    if (before != TerminalState.connected || session.state != TerminalState.closed || session.error == null) return;
+    final l10n = currentL10n.value;
+    _ref.read(activityCenterProvider).event(
+      ActivitySource.ssh,
+      l10n.activityDisconnected(title),
+      subtitle: sshErrorText(l10n, session.error!),
+      state: ActivityState.failed,
+      retry: session.connect,
+    );
+  }
 
   @override
   final String id;

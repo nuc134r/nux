@@ -12,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nux_backend/nux_backend.dart' show CommandResult, FileEntry, FileSystem, LocalFileSystem, ProcessRunner, RunningProcess;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
+import 'package:nux/core/activity/activity_center.dart';
+import 'package:nux/core/widgets/nux_menu.dart';
 import 'package:nux/core/keys/key_bar_layout.dart';
 import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/connections/domain/host_key_check.dart';
@@ -141,6 +143,28 @@ void main() {
       await settle(tester);
       await settle(tester);
       await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.textContaining('git pull')));
+    }),
+    // The Activity sheet with sample entries (example.com host names only).
+    'activity': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final a = c.read(activityCenterProvider);
+      a.finish(a.start(ActivitySource.git, 'git push -q', subtitle: 'demo'), ActivityState.done, unread: false);
+      a.event(ActivitySource.other, 'Saved deploy.sh', unread: false);
+      a.event(
+        ActivitySource.forwarding,
+        'Forwarding Database stopped',
+        subtitle: 'Port 5432 is already in use on this device',
+        state: ActivityState.failed,
+        retry: () {},
+      );
+      a.event(ActivitySource.update, 'nux 0.11.0 is available');
+      final up = a.start(ActivitySource.transfer, 'Upload backup.tar', subtitle: '/srv/app', cancel: () {});
+      a.update(up, progress: .35);
+      final pull = a.start(ActivitySource.git, 'git pull -q --no-rebase --ff-only', subtitle: 'demo', cancel: () {});
+      a.update(pull, progress: .45, subtitle: 'Receiving objects:  45% (97/214)');
+      await settle(tester);
+      await tester.tap(find.byType(NuxMenuButton).first);
+      await settle(tester);
+      await tester.tap(find.text('Activity'));
     }),
     'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       await terminalTab(tester, c);

@@ -2,6 +2,74 @@
   "@@locale": "en",
   "abortOperation": "Abort",
   "about": "About",
+  "activity": "Activity",
+  "activityDisconnected": "{host}: connection lost",
+  "@activityDisconnected": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "activityDownload": "Download {name}",
+  "@activityDownload": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityEarlier": "Earlier",
+  "activityEmpty": "Nothing yet. Git commands, transfers, forwardings, updates and messages show up here.",
+  "activityForwardBack": "Forwarding {name} works again",
+  "@activityForwardBack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityForwardFailed": "Forwarding {name} stopped",
+  "@activityForwardFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityNew": "{count} new",
+  "@activityNew": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityNow": "Running",
+  "activityRunning": "{count} running",
+  "@activityRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityUpdate": "nux {version} is available",
+  "@activityUpdate": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUpload": "Upload {name}",
+  "@activityUpload": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "addForward": "Add forwarding",
   "addHost": "Add host",
   "addKey": "Add key",
@@ -289,6 +357,7 @@
   },
   "destinationHere": "Destination (on this device)",
   "detachedHead": "detached HEAD",
+  "details": "Details",
   "devicePort": "Port on this device",
   "discard": "Discard",
   "discardChanges": "Discard changes",

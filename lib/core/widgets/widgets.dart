@@ -1,6 +1,9 @@
 export 'package:tab_switcher/tab_switcher.dart' show StartEllipsisText;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../activity/activity_center.dart';
 
 /// A titled card grouping list tiles (settings sections and similar).
 class Island extends StatelessWidget {
@@ -45,6 +48,14 @@ class SectionTitle extends StatelessWidget {
 }
 
 void showSnack(BuildContext context, String text) {
+  // Kept in Activity too: a snackbar is easily missed (or hidden under the drawer).
+  try {
+    ProviderScope.containerOf(context, listen: false)
+        .read(activityCenterProvider)
+        .event(ActivitySource.other, text, unread: false);
+  } catch (_) {
+    // No app around it (a widget test of one screen).
+  }
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(text)));

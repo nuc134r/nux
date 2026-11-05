@@ -1,6 +1,9 @@
 import 'package:dartssh2/dartssh2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/activity/activity_center.dart';
+import '../presentation/forwarding_widgets.dart' show forwardErrorText;
+
 import '../../../core/background/background_providers.dart';
 import '../../../core/background/keep_alive.dart';
 import '../../../core/log/log.dart';
@@ -96,8 +99,35 @@ final forwardingManagerProvider = Provider((ref) {
     },
   );
   ref.onDispose(manager.dispose);
+  _reportForwardings(manager, ref.read(activityCenterProvider));
   return manager;
 });
+
+/// A forwarding that stops on an error, or works again after one, is an Activity event (with Try again).
+void _reportForwardings(ForwardingManager manager, ActivityCenter center) {
+  final last = <String, ForwardState>{};
+  manager.addListener(() {
+    for (final rule in manager.rules.values) {
+      final s = manager.status(rule.id);
+      final before = last[rule.id];
+      last[rule.id] = s.state;
+      if (before == s.state) continue;
+      final l10n = currentL10n.value;
+      final name = rule.label.isNotEmpty ? rule.label : rule.describe();
+      if (s.state == ForwardState.failed) {
+        center.event(
+          ActivitySource.forwarding,
+          l10n.activityForwardFailed(name),
+          subtitle: s.error == null ? null : forwardErrorText(l10n, s.error!, rule),
+          state: ActivityState.failed,
+          retry: () => manager.start(rule),
+        );
+      } else if (s.state == ForwardState.active && before == ForwardState.reconnecting) {
+        center.event(ActivitySource.forwarding, l10n.activityForwardBack(name), state: ActivityState.done, unread: false);
+      }
+    }
+  });
+}
 
 /// Starts the "start with nux" rules once, after launch.
 final forwardingAutoStartProvider = FutureProvider<void>((ref) async {

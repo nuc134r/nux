@@ -79,6 +79,9 @@ class ForwardingManager extends ChangeNotifier {
 
   int get activeCount => _status.values.where((s) => s.on).length;
 
+  /// The rules started so far, by id.
+  Map<String, ForwardRule> get rules => Map.unmodifiable(_rules);
+
   bool anyOn(String connectionId) => _rules.values.any((r) => r.connectionId == connectionId && status(r.id).on);
 
   int get bytesIn => _status.values.fold(0, (sum, s) => sum + (s.stats?.bytesIn ?? 0));

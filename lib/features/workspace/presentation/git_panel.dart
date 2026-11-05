@@ -9,6 +9,7 @@ import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
 import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffLayoutAction;
 import '../domain/git_model.dart';
+import 'git_activity_view.dart';
 import '../domain/git_repo.dart';
 import '../domain/git_status.dart';
 
@@ -66,7 +67,16 @@ Future<bool> runGit(
     }
     return true;
   } on GitException catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text(l10n.gitFailed(e.command, e.toString()))));
+    final activity = repo?.activity;
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(l10n.gitFailed(e.command, e.toString())),
+        // The whole output, in the git output sheet.
+        action: activity == null
+            ? null
+            : SnackBarAction(label: l10n.details, onPressed: () => showGitOutput(navigator.context, activity)),
+      ),
+    );
     return false;
   } catch (e) {
     messenger.showSnackBar(SnackBar(content: Text(l10n.errorGeneric('$e'))));

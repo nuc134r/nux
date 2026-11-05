@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart';
 
+import '../../../core/activity/activity_center.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
@@ -246,7 +247,10 @@ class _WorkspaceViewState extends ConsumerState<_WorkspaceView> {
   /// Remembered (in the secret store) or given this session, for fetch / pull / push.
   GitCredentials? _gitCredentials;
   WorkspaceDrawerState get _state => ref.read(workspaceDrawerStateProvider);
-  GitActivity get _activity => _state.gitActivity.putIfAbsent(ws.id, GitActivity.new);
+  GitActivity get _activity => _state.gitActivity.putIfAbsent(
+    ws.id,
+    () => reportGitActivity(GitActivity(), ref.read(activityCenterProvider), ws.name),
+  );
   Set<String> get _expanded => _state.expanded.putIfAbsent(ws.id, () => {});
 
   @override

@@ -50,6 +50,23 @@ class NuxMenuSubmenu extends NuxMenuItem {
   final String? hint;
 }
 
+/// One button of a [NuxMenuIcons] row.
+class NuxMenuIcon {
+  const NuxMenuIcon({required this.icon, required this.tooltip, required this.onSelected, this.enabled = true});
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onSelected;
+  final bool enabled;
+}
+
+/// Related actions as icons on one line (Back / Forward / Reload, Undo / Redo); each closes the menu.
+class NuxMenuIcons extends NuxMenuItem {
+  const NuxMenuIcons(this.icons);
+
+  final List<NuxMenuIcon> icons;
+}
+
 class NuxMenuDivider extends NuxMenuItem {
   const NuxMenuDivider();
 }
@@ -265,6 +282,20 @@ class _MenuPanelState extends State<_MenuPanel> {
                         ),
                         NuxMenuDivider() => Divider(height: 9, indent: 16, endIndent: 16, color: scheme.outlineVariant),
                         NuxMenuCustom() => Builder(builder: item.builder),
+                        NuxMenuIcons() => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              for (final b in item.icons)
+                                IconButton(
+                                  tooltip: b.tooltip,
+                                  icon: Icon(b.icon),
+                                  onPressed: b.enabled ? () => Navigator.of(context).pop(b.onSelected) : null,
+                                ),
+                            ],
+                          ),
+                        ),
                       },
                   ],
                 ),

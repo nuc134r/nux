@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.3
+
+- **Activity**: one place for what nux is doing and what happened: git fetch / pull / push with progress, uploads and downloads, forwardings that stopped (with Try again), dropped connections, updates, failed git commands and every message a snackbar showed. Running operations can be cancelled from there. Open it from ⋮ → Activity in any tab or the tab overview, or by tapping nux's notification. The tab count shows a small spinner while something runs and a dot when something new happened (red for a failure). It is kept until nux restarts.
+- A failed git action's message has **Details** with git's whole output.
+- **Undo and Redo** sit on one line in the editor's menu.
+
 ## 0.10.2
 
 - **Terminal and editor settings** pick colours and fonts from compact dropdowns (with a preview of each) instead of rows of chips.

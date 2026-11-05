@@ -6,7 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 
 import '../../../app/router.dart';
+import '../../../core/activity/activity_center.dart';
+import '../../../core/activity/activity_view.dart';
 import '../../../core/background/background_providers.dart';
+import '../../../core/background/keep_alive.dart' show notificationOpened;
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../browser/domain/address.dart';
@@ -18,12 +21,22 @@ import '../../settings/presentation/text_size_controls.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
+import '../../updates/data/update_service.dart';
 import '../../updates/presentation/update_ui.dart';
 import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../domain/nux_tab.dart';
 import 'workspace_drawer.dart';
 import 'workspace_find.dart';
+
+/// Shows Activity when the background notification is tapped.
+final _notificationTapProvider = Provider<void>((ref) {
+  final sub = notificationOpened.stream.listen((_) {
+    final context = rootNavigatorKey.currentContext;
+    if (context != null && context.mounted) showActivity(context);
+  });
+  ref.onDispose(sub.cancel);
+});
 
 /// The scaffold holding the workspace drawer (tabs have scaffolds of their own).
 final _scaffold = GlobalKey<ScaffoldState>();
@@ -58,6 +71,18 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(backgroundResyncProvider);
     // Files other apps open with or share to nux.
     ref.watch(incomingHandlerProvider);
+    // Tapping nux's notification opens Activity.
+    ref.watch(_notificationTapProvider);
+    // An available update is an Activity event.
+    ref.listen(availableUpdateProvider, (before, now) {
+      final release = now.value;
+      if (release == null || before?.value?.version == release.version) return;
+      ref.read(activityCenterProvider).event(
+        ActivitySource.update,
+        l10n.activityUpdate(release.version),
+        open: (context) => context.push(Routes.version),
+      );
+    });
     return _KeyboardOnlyOnTop(
       child: Scaffold(
         key: _scaffold,
@@ -170,7 +195,7 @@ class _Header extends ConsumerWidget {
           ),
         ),
         // Only the tab count and the menu: every action lives in the menu.
-        TabCountButton(controller: controller, tooltip: l10n.showTabs),
+        TabCountButton(controller: controller, tooltip: l10n.showTabs, badge: const ActivityBadge()),
         _MenuButton(
           tab: tab,
           items: (_) {
@@ -182,6 +207,7 @@ class _Header extends ConsumerWidget {
               label: l10n.settings,
               onSelected: () => context.push(Routes.settings),
             );
+            final activity = activityMenuItem(context, ref.read(activityCenterProvider));
             // In a workspace: find a file or text in it, from any tab.
             final ws = ref.read(workspaceSwitcherProvider).current;
             final find = [
@@ -202,6 +228,7 @@ class _Header extends ConsumerWidget {
                 // No divider above Settings when it is the only entry (e.g. the hosts tab).
                 if (sizeKind != null || entries.isNotEmpty) const NuxMenuDivider(),
                 if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
+                activity,
                 settings,
               ];
             }
@@ -233,6 +260,7 @@ class _Header extends ConsumerWidget {
                 onSelected: () => context.push(Routes.zerotier),
               ),
               const NuxMenuDivider(),
+              activity,
               settings,
             ];
           },
