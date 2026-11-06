@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.5
+
+- A new version shows in Activity (with the dot on the tab count) instead of as a card on Home; tapping it opens Settings → update.
+
 ## 0.10.4
 
 - **Forwardings in Activity**: turning one on shows it starting (Cancel turns it off), a dropped connection shows the reconnecting attempts and "Works again", a forwarding that gives up is a failure with Try again, and turning one off is noted.

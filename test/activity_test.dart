@@ -11,6 +11,10 @@ import 'package:nux/core/secure/secret_store.dart';
 import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
 
+import 'package:nux/features/updates/data/update_service.dart';
+import 'package:nux/features/updates/domain/release.dart';
+import 'package:nux/features/updates/presentation/version_screen.dart';
+
 import 'helpers.dart';
 
 void main() {
@@ -79,6 +83,31 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Close all tabs'));
     await settle(tester);
     expect(tabs.isEmpty, isTrue);
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
+
+  testWidgets('an update is an Activity entry (no card on Home); tapping it opens the update screen', (tester) async {
+    final c = ProviderContainer(
+      overrides: [
+        ...testOverrides(),
+        availableUpdateProvider.overrideWith(
+          (ref) async => const Release(version: '9.9.9', pageUrl: 'https://example.com/r', apks: {}),
+        ),
+      ],
+    );
+    addTearDown(c.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    await settle(tester);
+    expect(find.text('Update'), findsNothing, reason: 'no update card');
+    await tester.tap(find.byType(NuxMenuButton).first);
+    await settle(tester);
+    await tester.tap(find.text('Activity'));
+    await settle(tester);
+    await tester.tap(find.text('nux 9.9.9 is available'));
+    await settle(tester);
+    expect(find.byType(VersionScreen), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });

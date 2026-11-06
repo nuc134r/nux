@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../l10n/l10n.dart';
-import '../../updates/presentation/update_ui.dart';
 
 /// Start screen. Connections, forwardings and workspaces arrive here in the next milestones;
 /// until then it says so instead of showing controls that do nothing.
@@ -27,7 +26,6 @@ class HomeScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          const UpdateBanner(),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
             child: Column(

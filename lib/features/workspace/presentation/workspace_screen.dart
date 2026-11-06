@@ -21,7 +21,6 @@ import '../../ssh/data/ssh_providers.dart';
 import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/data/update_service.dart';
-import '../../updates/presentation/update_ui.dart';
 import '../data/tab_factory.dart';
 import '../data/workspace.dart';
 import '../domain/nux_tab.dart';
@@ -68,7 +67,12 @@ class WorkspaceScreen extends ConsumerWidget {
       ref.read(activityCenterProvider).event(
         ActivitySource.update,
         l10n.activityUpdate(release.version),
-        open: (context) => context.push(Routes.version),
+        // Settings → update (closing the Activity sheet first).
+        open: (context) {
+          final router = GoRouter.of(context);
+          Navigator.of(context).pop();
+          router.push(Routes.version);
+        },
       );
     });
     return _KeyboardOnlyOnTop(
@@ -312,7 +316,6 @@ class _NoTabs extends ConsumerWidget {
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           child: Column(
             children: [
-              const UpdateBanner(),
               // Centred in the free space, with the way out (the hosts) right under the text.
               Padding(
                 padding: EdgeInsets.fromLTRB(24, math.max(48, constraints.maxHeight / 2 - 160), 24, 24),

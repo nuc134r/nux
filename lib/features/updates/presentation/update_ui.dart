@@ -4,61 +4,9 @@ import 'package:ota_update/ota_update.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../settings/data/settings_repository.dart';
 import '../data/update_service.dart';
 import '../domain/release.dart';
 
-/// Home screen card shown when a newer release is out (Android).
-class UpdateBanner extends ConsumerWidget {
-  const UpdateBanner({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final release = ref.watch(availableUpdateProvider).value;
-    if (release == null) return const SizedBox.shrink();
-    return Card(
-      margin: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-      color: theme.colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.system_update, color: theme.colorScheme.onPrimaryContainer),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.updateAvailable(release.version),
-                    style: theme.textTheme.titleSmall?.copyWith(color: theme.colorScheme.onPrimaryContainer),
-                  ),
-                ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Wrap(
-                spacing: 4,
-                children: [
-                  TextButton(
-                    onPressed: () =>
-                        ref.read(settingsRepositoryProvider).set(SettingKeys.dismissedUpdate, release.version),
-                    child: Text(l10n.later),
-                  ),
-                  TextButton(onPressed: () => showReleaseDialog(context, ref, release), child: Text(l10n.whatsNew)),
-                  FilledButton(onPressed: () => installUpdate(context, ref, release), child: Text(l10n.update)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 Future<void> showReleaseDialog(BuildContext context, WidgetRef ref, Release release) {
   final l10n = context.l10n;

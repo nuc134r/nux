@@ -17,7 +17,6 @@ import '../../ssh/data/ssh_providers.dart';
 import '../../forwarding/data/forward_rule_repository.dart';
 import '../../forwarding/data/forwarding_providers.dart';
 import '../../forwarding/presentation/forwarding_widgets.dart';
-import '../../updates/presentation/update_ui.dart';
 import '../data/workspace.dart';
 import '../data/workspace_repository.dart';
 import '../domain/nux_tab.dart';
@@ -288,7 +287,6 @@ class _HostsViewState extends ConsumerState<_HostsView> {
         builder: (context, _) => ListView(
           padding: const EdgeInsets.only(top: 4, bottom: 16),
           children: [
-            const UpdateBanner(),
             if (all.isEmpty) const _Empty(),
             for (final (i, c) in all.indexed) ...[
               if (c.groupName != null && (i == 0 || all[i - 1].groupName != c.groupName))
