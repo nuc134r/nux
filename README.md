@@ -4,14 +4,20 @@
 Terminals, file browsers, editors, git and port forwardings all open as Chrome-style tabs that keep their state,
 grouped into workspaces. Built with Flutter; Android first.
 
-<p>
-  <img src="docs/screenshots/terminal.png" width="200" alt="SSH terminal with the extra keys bar">
-  <img src="docs/screenshots/tabs.png" width="200" alt="Tab overview">
-  <img src="docs/screenshots/workspace.png" width="200" alt="Workspace drawer with the project tree">
-  <img src="docs/screenshots/activity.png" width="200" alt="Activity: what runs and what happened">
-</p>
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/terminal.png" width="200" alt="SSH terminal with the extra keys bar"><br><sub>SSH terminal with the extra keys bar</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/tabs.png" width="200" alt="Tab overview"><br><sub>Tab overview</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/workspace.png" width="200" alt="Workspace drawer with the project tree"><br><sub>Workspace drawer with the project tree</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/activity.png" width="200" alt="Activity: what runs and what happened"><br><sub>Activity: what runs and what happened</sub></td>
+  </tr>
+</table>
 
-<img src="docs/screenshots/tablet_editor.png" width="820" alt="The editor on a tablet, with the tab strip">
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/tablet_editor.png" width="840" alt="The editor on a tablet, with the tab strip"><br><sub>The editor on a tablet, with the tab strip</sub></td>
+  </tr>
+</table>
 
 ## Features
 
@@ -62,12 +68,14 @@ grouped into workspaces. Built with Flutter; Android first.
 - Sign-in for HTTPS remotes (an access token works as the password); the credentials reach git through its
   input, never a command line or a file. Every action can show the git command that does the same.
 
-<p>
-  <img src="docs/screenshots/git_output.png" width="200" alt="A git pull with live progress">
-  <img src="docs/screenshots/viewer.png" width="200" alt="The editor">
-  <img src="docs/screenshots/files.png" width="200" alt="The file browser">
-  <img src="docs/screenshots/markdown.png" width="200" alt="Markdown preview">
-</p>
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/git_output.png" width="200" alt="A git pull with live progress"><br><sub>A git pull with live progress</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/viewer.png" width="200" alt="The editor"><br><sub>The editor</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/files.png" width="200" alt="The file browser"><br><sub>The file browser</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/markdown.png" width="200" alt="Markdown preview"><br><sub>Markdown preview</sub></td>
+  </tr>
+</table>
 
 ### Port forwarding
 - Local (`-L`), remote (`-R`) and dynamic SOCKS (`-D`) forwardings over SSH, attached to their host and
@@ -76,12 +84,14 @@ grouped into workspaces. Built with Flutter; Android first.
 - Start with nux, reconnect after a drop, reachable from the LAN if you want, and open a forwarded web port
   in a browser tab.
 
-<p>
-  <img src="docs/screenshots/hosts.png" width="200" alt="Home with hosts and their forwardings">
-  <img src="docs/screenshots/forward_rule.png" width="200" alt="Editing a forwarding">
-  <img src="docs/screenshots/key.png" width="200" alt="An SSH key">
-  <img src="docs/screenshots/host_key.png" width="200" alt="A changed host key">
-</p>
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/hosts.png" width="200" alt="Home with hosts and their forwardings"><br><sub>Home with hosts and their forwardings</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/forward_rule.png" width="200" alt="Editing a forwarding"><br><sub>Editing a forwarding</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/key.png" width="200" alt="An SSH key"><br><sub>An SSH key</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/host_key.png" width="200" alt="A changed host key"><br><sub>A changed host key</sub></td>
+  </tr>
+</table>
 
 ### Settings
 - Light and dark themes, English and Russian.
@@ -90,16 +100,22 @@ grouped into workspaces. Built with Flutter; Android first.
 - Export and restore settings, a log you can read, filter and share (hosts masked, secrets never logged),
   and in-app updates from the GitHub releases.
 
-<p>
-  <img src="docs/screenshots/appearance.png" width="200" alt="Terminal and editor appearance">
-  <img src="docs/screenshots/keys_custom.png" width="200" alt="Custom extra keys">
-  <img src="docs/screenshots/menu.png" width="200" alt="A tab's menu">
-  <img src="docs/screenshots/log.png" width="200" alt="The log">
-</p>
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/appearance.png" width="200" alt="Terminal and editor appearance"><br><sub>Terminal and editor appearance</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/keys_custom.png" width="200" alt="Custom extra keys"><br><sub>Custom extra keys</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/menu.png" width="200" alt="A tab's menu"><br><sub>A tab's menu</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/log.png" width="200" alt="The log"><br><sub>The log</sub></td>
+  </tr>
+</table>
 
 ### On a tablet
 
-<img src="docs/screenshots/tablet_tabs.png" width="820" alt="The tab overview on a tablet">
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/tablet_tabs.png" width="840" alt="The tab overview on a tablet"><br><sub>The tab overview on a tablet</sub></td>
+  </tr>
+</table>
 
 ## Privacy and security
 
