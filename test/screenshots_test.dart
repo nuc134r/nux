@@ -35,6 +35,9 @@ const _enabled = bool.fromEnvironment('SCREENSHOTS');
 const _outDir = 'docs/screenshots';
 const _phone = Size(412, 892);
 const _desktop = Size(1280, 800);
+
+/// A 10" tablet in landscape, framed like a device (with a status bar).
+const _tablet = Size(1280, 800);
 const _statusBar = 32.0;
 
 const _demo = '\x1b[1;32mdev@build\x1b[0m:\x1b[1;34m~/src/nux\x1b[0m\$ git status -sb\r\n'
@@ -167,10 +170,47 @@ void main() {
       await tester.tap(find.text('Activity'));
     }),
     'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      // Each tab is shown once, so the overview has its picture.
+      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
+      for (var i = 0; i < 3; i++) {
+        await settle(tester);
+      }
       await terminalTab(tester, c);
-      await settle(tester);
-      c.read(workspaceProvider).open(container(c).terminal('sample'), foreground: false);
+      for (var i = 0; i < 3; i++) {
+        await settle(tester);
+      }
       c.read(workspaceProvider).gridOpen = true;
+    }),
+    // Tablet: the tab overview with a few kinds of tabs.
+    'tablet_tabs': _Shot(ThemeMode.dark, Routes.home, size: _tablet, tablet: true, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      final tabs = c.read(workspaceProvider);
+      // Each tab is shown once, so the overview has its picture.
+      for (final open in [
+        () async => terminalTab(tester, c),
+        () async => tabs.open(container(c).files('sample', path: root.path)),
+        () async => tabs.open(container(c).viewer('sample', '${root.path}/lib/main.dart')),
+        () async => tabs.open(container(c).viewer('sample', '${root.path}/README.md')),
+      ]) {
+        await open();
+        for (var i = 0; i < 3; i++) {
+          await settle(tester);
+        }
+      }
+      tabs.gridOpen = true;
+    }),
+    // Tablet: the editor with the tab strip (several files and a terminal open).
+    'tablet_editor': _Shot(ThemeMode.light, Routes.home, size: _tablet, tablet: true, act: (tester, c) async {
+      final root = sampleProject();
+      await useLocal(c, root);
+      final tabs = c.read(workspaceProvider);
+      for (final f in ['README.md', 'deploy.sh', 'lib/main.dart']) {
+        tabs.open(container(c).viewer('sample', '${root.path}/$f'));
+        await settle(tester);
+      }
     }),
     'files': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
       final root = sampleProject();
@@ -251,8 +291,8 @@ void main() {
           await insertSamples(db, secrets);
           await SettingsRepository(db).set(SettingKeys.themeMode, shot.theme.name);
         });
-        final phone = shot.size == _phone;
-        final dpr = phone ? 2.5 : 1.5;
+        final phone = shot.size == _phone || shot.tablet;
+        final dpr = shot.size == _phone ? 2.5 : 1.5;
         tester.view.physicalSize = shot.size * dpr;
         tester.view.devicePixelRatio = dpr;
         if (phone) tester.view.padding = FakeViewPadding(top: _statusBar * dpr, bottom: 16 * dpr);
@@ -338,9 +378,10 @@ class _CounterAppState extends State<CounterApp> {
 ''';
 
 class _Shot {
-  const _Shot(this.theme, this.path, {this.size = _phone, this.act});
+  const _Shot(this.theme, this.path, {this.size = _phone, this.act, this.tablet = false});
 
   final ThemeMode theme;
+  final bool tablet;
   final String path;
   final Size size;
   final Future<void> Function(WidgetTester tester, ProviderContainer container)? act;
