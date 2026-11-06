@@ -2510,6 +2510,12 @@ abstract class AppLocalizations {
   /// **'Open file'**
   String get openFileAt;
 
+  /// No description provided for @openInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'In another app'**
+  String get openInApp;
+
   /// No description provided for @openInBrowserTab.
   ///
   /// In en, this message translates to:
@@ -2527,6 +2533,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open in another app'**
   String get openInOtherApp;
+
+  /// No description provided for @openInTab.
+  ///
+  /// In en, this message translates to:
+  /// **'In a tab'**
+  String get openInTab;
 
   /// No description provided for @openLinkQuestion.
   ///

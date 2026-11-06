@@ -1483,6 +1483,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openFileAt => 'Open file';
 
   @override
+  String get openInApp => 'In another app';
+
+  @override
   String get openInBrowserTab => 'Open in browser tab';
 
   @override
@@ -1490,6 +1493,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openInOtherApp => 'Open in another app';
+
+  @override
+  String get openInTab => 'In a tab';
 
   @override
   String get openLinkQuestion => 'Open this link?';

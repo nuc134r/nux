@@ -1503,6 +1503,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openFileAt => 'Открыть файл';
 
   @override
+  String get openInApp => 'В другом приложении';
+
+  @override
   String get openInBrowserTab => 'Открыть во вкладке браузера';
 
   @override
@@ -1510,6 +1513,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get openInOtherApp => 'Открыть в другом приложении';
+
+  @override
+  String get openInTab => 'Во вкладке';
 
   @override
   String get openLinkQuestion => 'Открыть ссылку?';

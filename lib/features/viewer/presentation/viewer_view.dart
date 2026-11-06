@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nux_backend/nux_backend.dart' show BackendErrorKind, BackendException;
 import 'package:re_editor/re_editor.dart';
 import 'package:tab_switcher/tab_switcher.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/appearance/appearance.dart';
@@ -15,6 +14,7 @@ import '../../../core/widgets/key_bar.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
+import '../../browser/presentation/open_link.dart';
 import '../../files/domain/file_listing.dart';
 import '../../files/presentation/files_view.dart' show fileErrorText;
 import '../../settings/data/settings_repository.dart';
@@ -776,9 +776,7 @@ class _MarkdownView extends ConsumerWidget {
         selectable: true,
         onTapLink: (text, href, title) {
           final uri = href == null ? null : Uri.tryParse(href);
-          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
-            launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
+          if (uri != null) askOpenLink(context, uri);
         },
         styleSheet: base.copyWith(
           code: TextStyle(fontFamily: monoFont, fontSize: fontSize),

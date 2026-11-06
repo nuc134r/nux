@@ -2,9 +2,9 @@ import 'package:flterm/flterm.dart' hide Key;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../l10n/l10n.dart';
+import '../../browser/presentation/open_link.dart';
 import '../../settings/data/settings_repository.dart';
 import '../../settings/presentation/text_size_controls.dart';
 import '../../ssh/presentation/ssh_errors.dart';
@@ -45,30 +45,9 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
 
   Future<void> _openLink(ActivatedLink link) async {
     final uri = link.uri ?? Uri.tryParse(link.text);
-    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) return;
-    final open = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        final l10n = context.l10n;
-        return AlertDialog(
-          title: Text(l10n.openLinkQuestion),
-          content: SelectableText(uri.toString()),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: uri.toString()));
-                Navigator.pop(context, false);
-              },
-              child: Text(l10n.copy),
-            ),
-            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.open)),
-          ],
-        );
-      },
-    );
-    if (open ?? false) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (uri != null) await askOpenLink(context, uri);
   }
+
 
   @override
   void initState() {

@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.6
+
+- **Links** tapped in a terminal or a Markdown file ask where to open them: **In a tab** (nux's browser) or **In another app**; Copy is there too.
+
 ## 0.10.5
 
 - A new version shows in Activity (with the dot on the tab count) instead of as a card on Home; tapping it opens Settings → update.
