@@ -19,7 +19,7 @@ import '../domain/terminal_session.dart';
 import '../domain/terminal_tab.dart';
 import '../../../core/appearance/appearance.dart';
 import 'extra_keys_bar.dart';
-import 'settled_size.dart';
+//import 'settled_size.dart';
 import 'terminal_theme.dart';
 
 /// The terminal of a [TerminalTab]: starts the shell the first time it is shown.
