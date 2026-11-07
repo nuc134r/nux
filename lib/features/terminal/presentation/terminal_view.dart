@@ -139,7 +139,7 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
               children: [
                 Positioned.fill(
                   // Resized once the keyboard has finished sliding, not on every frame of it.
-                  child: SettledSize(
+                  child: /*SettledSize(*/
                     child: PinchTextSize(
                       kind: TextSizeKind.terminal,
                       child: TerminalView(
@@ -150,7 +150,7 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
                         // A long press selects a whole path (with its :line), not a piece between slashes.
                         gestureSettings: const TerminalGestureSettings(wordBoundaries: terminalWordBoundaries),
                       ),
-                    ),
+                    /*),*/
                   ),
                 ),
                 Positioned(
