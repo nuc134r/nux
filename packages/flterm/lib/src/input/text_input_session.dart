@@ -45,6 +45,7 @@ final class TextInputSession with DeltaTextInputClient {
   ValueChanged<int>? _onDelete;
   ValueChanged<String>? _onPreeditChanged;
   ValueChanged<String>? _onTextCommitted;
+  ValueChanged<String>? _onPaste;
   TextEditingValue _value = _sentinel;
   int? _viewId;
 
@@ -77,6 +78,10 @@ final class TextInputSession with DeltaTextInputClient {
   set onDelete(ValueChanged<int>? callback) => _onDelete = callback;
 
   set onNewline(VoidCallback? callback) => _onNewline = callback;
+
+  /// Text with line breaks committed at once (a paste from the keyboard's clipboard): handled as a paste
+  /// (bracketed when the program asks), not typed line by line (nux patch).
+  set onPaste(ValueChanged<String>? callback) => _onPaste = callback;
 
   set onPreeditChanged(ValueChanged<String>? callback) {
     _onPreeditChanged = callback;
@@ -305,6 +310,12 @@ final class TextInputSession with DeltaTextInputClient {
     }
 
     _clearNewlineActionSuppression();
+
+    final paste = _onPaste;
+    if (paste != null && _newlinePattern.hasMatch(text)) {
+      paste(text);
+      return;
+    }
 
     var offset = 0;
     for (final match in _newlinePattern.allMatches(text)) {

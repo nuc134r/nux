@@ -572,6 +572,8 @@ final class TerminalSession extends TerminalController with ChangeNotifier {
   void paste(String text) {
     _checkNotDisposed();
     if (text.isEmpty) return;
+    // nux patch: Windows line endings would be two Enters each.
+    text = text.replaceAll('\r\n', '\n');
     final bracketed = _terminal.modeGet(const .bracketedPaste());
     if (!_emitOutput(pasteEncode(text, bracketed: bracketed))) return;
     _scrollToBottomOnInput();

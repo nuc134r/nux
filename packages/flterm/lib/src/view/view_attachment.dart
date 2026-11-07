@@ -48,6 +48,7 @@ final class ViewAttachment extends ChangeNotifier {
       ..onTextCommitted = _controller._handleTextCommitted
       ..onDelete = _controller._handleTextDeleted
       ..onNewline = _controller._handleTextNewline
+      ..onPaste = _controller.paste
       ..onPreeditChanged = _handlePreeditChanged;
     selectionInput = _controller.createSelectionInteraction();
     _interaction = ValueNotifier(_readInteractionState());

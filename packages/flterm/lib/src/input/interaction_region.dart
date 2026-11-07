@@ -3,7 +3,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:libghostty/libghostty.dart'
-    show Mods, MouseAction, MouseButton, Position, Selection;
+    show
+        Mods,
+        MouseAction,
+        MouseButton,
+        Position,
+        Selection,
+        SelectionGestureBehaviors;
 import 'package:meta/meta.dart';
 
 import '../foundation.dart';
@@ -371,8 +377,15 @@ final class _InteractionRegionState extends State<InteractionRegion> {
     _startDrag(
       details.localPosition,
       rectangle: widget.settings.longPressSelectionShape == .rectangle,
-      beginPress: _pressCell == null,
+      beginPress: false,
       timeStamp: _interactionTimeStamp,
+    );
+    // nux patch: a long press selects the word under the finger (the tap-down only pressed a cell, which
+    // selects nothing until a drag), so the handles have something to hold at once.
+    _handleSelectionPress(
+      details.localPosition,
+      _interactionTimeStamp,
+      behaviors: _longPressBehaviors,
     );
     if (widget.settings.touchSelectionHandles && !_selectionHandlesVisible) {
       _visibleHandleSelectionSnapshot = _selectionSnapshotOf(
@@ -412,7 +425,18 @@ final class _InteractionRegionState extends State<InteractionRegion> {
     }
   }
 
-  void _handleSelectionPress(Offset position, Duration? timeStamp) {
+  /// Word on a long press, whatever counts as a repeat of the tap-down before it (nux patch).
+  static const _longPressBehaviors = SelectionGestureBehaviors(
+    singleClick: .word,
+    doubleClick: .word,
+    tripleClick: .line,
+  );
+
+  void _handleSelectionPress(
+    Offset position,
+    Duration? timeStamp, {
+    SelectionGestureBehaviors? behaviors,
+  }) {
     final settings = widget.settings;
     final cell = widget.metrics.cellAt(position);
     _updateSelection(
@@ -420,7 +444,7 @@ final class _InteractionRegionState extends State<InteractionRegion> {
         SelectionPressInput(
           pixelX: position.dx,
           pixelY: position.dy,
-          behaviors: settings.selectionBehaviors,
+          behaviors: behaviors ?? settings.selectionBehaviors,
           wordBoundaries: settings.wordBoundaries,
           repeatDistance: kDoubleTapSlop,
           repeatInterval: kDoubleTapTimeout,

@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.10.7
+
+- **Terminal paste**: text with several lines pasted from the keyboard's clipboard arrives as one paste (the shell shows it before running it) instead of being typed line by line; Windows line endings no longer count twice.
+- **Terminal and the keyboard**: while the keyboard slides in or out the terminal keeps its size and is resized once at the end, so the server gets one new window size and lines no longer repeat on screen.
+- **Long press in the terminal** selects the word under your finger and shows the handles at once, without dragging.
+
 ## 0.10.6
 
 - **Links** tapped in a terminal or a Markdown file ask where to open them: **In a tab** (nux's browser) or **In another app**; Copy is there too.
