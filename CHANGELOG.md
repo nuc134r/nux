@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.7
+
+- Back in an archive goes up a folder, and in a database table returns to the tables, before it leaves the file.
+
 ## 0.11.6
 
 - **Archives** open as folders you can walk through: tar (gz, xz, bz2, zst), zip, jar and apk, 7z, rar and deb. Tap a file to open it (unpacked on the server), long-press to extract it; ⋮ → Extract to unpacks everything next to the archive. A single compressed file (`log.gz`) opens decompressed. Tapping an archive in the file browser opens it.

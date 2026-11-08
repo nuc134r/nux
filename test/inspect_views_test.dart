@@ -81,6 +81,14 @@ void main() {
     await tester.pump();
     expect(find.text('docs'), findsOneWidget);
     expect(find.text('readme.txt'), findsOneWidget);
+    // Back goes up a folder (not out of the file).
+    await tester.binding.handlePopRoute();
+    await tester.pump();
+    expect(find.text('readme.txt'), findsNothing);
+    expect(find.text('src'), findsOneWidget);
+    expect(tabs.current, archive);
+    await tester.tap(find.text('src'));
+    await tester.pump();
     await tester.tap(find.text('readme.txt'));
     for (var i = 0; i < 100 && tabs.current == archive; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
@@ -120,6 +128,11 @@ void main() {
       await tester.tap(find.text('users'));
       await _waitFor(tester, find.text('Ada'));
       expect(find.text('name'), findsOneWidget);
+      // Back returns to the tables.
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(find.text('Ada'), findsNothing);
+      expect(find.text('users'), findsOneWidget);
     }
 
     // A program's details from the server.

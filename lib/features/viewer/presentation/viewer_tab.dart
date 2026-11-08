@@ -139,6 +139,29 @@ class ViewerTab extends NuxTab {
   /// An archive operation is running.
   bool busy = false;
 
+  /// The folder shown inside an archive ('' for its top); Back goes up first.
+  String archiveDir = '';
+
+  /// The database table shown as rows; Back returns to the tables first.
+  String? databaseTable;
+
+  void setArchiveDir(String dir) {
+    archiveDir = dir;
+    notifyListeners();
+  }
+
+  void setDatabaseTable(String? table) {
+    databaseTable = table;
+    notifyListeners();
+  }
+
+  /// Back steps out of a folder of an archive or a table of a database before leaving the file.
+  bool get _backInside => switch (inspecting) {
+    InspectType.archive => archiveDir.isNotEmpty,
+    InspectType.database => databaseTable != null,
+    _ => false,
+  };
+
   /// Runs [script] on the file's host.
   Future<CommandResult> runOnHost(String script) async {
     final host = await openHost();
@@ -276,12 +299,20 @@ class ViewerTab extends NuxTab {
   }
 
   /// Whether Back is handled by this tab (rather than leaving the app).
-  bool get handlesBack => editing || openerId != null;
+  bool get handlesBack => editing || _backInside || openerId != null;
 
   /// Back: leaves edit mode, else closes this tab and returns to the tab that opened it.
   Future<void> back(BuildContext context) async {
     if (editing) {
       await exitEditing(context);
+      return;
+    }
+    if (_backInside) {
+      if (inspecting == InspectType.archive) {
+        setArchiveDir(archiveDir.contains('/') ? archiveDir.substring(0, archiveDir.lastIndexOf('/')) : '');
+      } else {
+        setDatabaseTable(null);
+      }
       return;
     }
     final tabs = _ref.read(workspaceProvider);

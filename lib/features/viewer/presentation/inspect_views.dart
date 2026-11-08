@@ -79,7 +79,8 @@ class ArchiveView extends StatefulWidget {
 }
 
 class _ArchiveViewState extends State<ArchiveView> {
-  String _dir = '';
+  String get _dir => widget.tab.archiveDir;
+  set _dir(String dir) => widget.tab.setArchiveDir(dir);
   late Future<ArchiveListing> _listing = widget.tab.listing();
 
   @override
@@ -180,59 +181,51 @@ class _ArchiveViewState extends State<ArchiveView> {
         if (listing == null) return const Center(child: CircularProgressIndicator());
         if (listing.entries.isEmpty) return Center(child: Text(l10n.archiveEmpty));
         final nodes = listing.children(_dir);
-        return PopScope(
-          // Back goes up a folder first.
-          canPop: _dir.isEmpty,
-          onPopInvokedWithResult: (didPop, _) {
-            if (!didPop) setState(() => _dir = _parent(_dir));
-          },
-          child: Column(
-            children: [
-              Material(
-                color: theme.colorScheme.surfaceContainer,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary),
-                  title: Text(_dir.isEmpty ? l10n.archiveFiles(listing.fileCount) : '/$_dir'),
-                  subtitle: _dir.isEmpty ? null : Text(l10n.archiveFiles(listing.fileCount)),
-                ),
+        // Back goes up a folder first: ViewerTab.back.
+        return Column(
+          children: [
+            Material(
+              color: theme.colorScheme.surfaceContainer,
+              child: ListTile(
+                dense: true,
+                leading: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary),
+                title: Text(_dir.isEmpty ? l10n.archiveFiles(listing.fileCount) : '/$_dir'),
+                subtitle: _dir.isEmpty ? null : Text(l10n.archiveFiles(listing.fileCount)),
               ),
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.builder(
-                    itemCount: nodes.length + (_dir.isEmpty ? 0 : 1),
-                    itemBuilder: (context, i) {
-                      if (_dir.isNotEmpty && i == 0) {
-                        return ListTile(
-                          leading: const Icon(Icons.arrow_upward),
-                          title: const Text('..'),
-                          onTap: () => setState(() => _dir = _parent(_dir)),
-                        );
-                      }
-                      final node = nodes[i - (_dir.isEmpty ? 0 : 1)];
-                      final link = node.entry?.link;
+            ),
+            Expanded(
+              child: Scrollbar(
+                child: ListView.builder(
+                  itemCount: nodes.length + (_dir.isEmpty ? 0 : 1),
+                  itemBuilder: (context, i) {
+                    if (_dir.isNotEmpty && i == 0) {
                       return ListTile(
-                        leading: Icon(node.isDir ? Icons.folder_outlined : Icons.insert_drive_file_outlined),
-                        title: Text(node.name),
-                        subtitle: link != null
-                            ? Text('→ $link', maxLines: 1, overflow: TextOverflow.ellipsis)
-                            : node.entry?.modified == null
-                            ? null
-                            : Text(node.entry!.modified!),
-                        trailing: node.size == null || (node.isDir && node.size == 0)
-                            ? null
-                            : Text(formatSize(node.size!), style: theme.textTheme.bodySmall),
-                        onTap: widget.tab.busy
-                            ? null
-                            : () => node.isDir ? setState(() => _dir = node.path) : _open(listing, node),
-                        onLongPress: widget.tab.busy ? null : () => _actions(listing, node),
+                        leading: const Icon(Icons.arrow_upward),
+                        title: const Text('..'),
+                        onTap: () => _dir = _parent(_dir),
                       );
-                    },
-                  ),
+                    }
+                    final node = nodes[i - (_dir.isEmpty ? 0 : 1)];
+                    final link = node.entry?.link;
+                    return ListTile(
+                      leading: Icon(node.isDir ? Icons.folder_outlined : Icons.insert_drive_file_outlined),
+                      title: Text(node.name),
+                      subtitle: link != null
+                          ? Text('→ $link', maxLines: 1, overflow: TextOverflow.ellipsis)
+                          : node.entry?.modified == null
+                          ? null
+                          : Text(node.entry!.modified!),
+                      trailing: node.size == null || (node.isDir && node.size == 0)
+                          ? null
+                          : Text(formatSize(node.size!), style: theme.textTheme.bodySmall),
+                      onTap: widget.tab.busy ? null : () => node.isDir ? _dir = node.path : _open(listing, node),
+                      onLongPress: widget.tab.busy ? null : () => _actions(listing, node),
+                    );
+                  },
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -256,9 +249,14 @@ class DatabaseView extends StatefulWidget {
 class _DatabaseViewState extends State<DatabaseView> {
   static const _page = 100;
 
-  late Future<List<Map<String, Object?>>> _tables = _query(sqliteTablesQuery);
+  late Future<List<Map<String, Object?>>> _tables = _loadTables();
+
+  /// Kept so the list shows at once when Back returns from a table.
+  List<Map<String, Object?>>? _loadedTables;
+
+  Future<List<Map<String, Object?>>> _loadTables() => _query(sqliteTablesQuery).then((t) => _loadedTables = t);
   final _counts = <String, int>{};
-  String? _table;
+  String? get _table => widget.tab.databaseTable;
   List<Map<String, Object?>> _rows = [];
   Object? _error;
   bool _loading = false;
@@ -280,10 +278,10 @@ class _DatabaseViewState extends State<DatabaseView> {
 
   Future<void> _open(String table) async {
     setState(() {
-      _table = table;
       _rows = [];
       _error = null;
     });
+    widget.tab.setDatabaseTable(table);
     await _load();
   }
 
@@ -309,23 +307,19 @@ class _DatabaseViewState extends State<DatabaseView> {
   Widget build(BuildContext context) {
     final table = _table;
     if (table != null) {
-      return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, _) {
-          if (!didPop) setState(() => _table = null);
-        },
-        child: _rowsView(context, table),
-      );
+      // Back returns to the tables first: ViewerTab.back.
+      return _rowsView(context, table);
     }
     final l10n = context.l10n;
     return FutureBuilder<List<Map<String, Object?>>>(
       future: _tables,
+      initialData: _loadedTables,
       builder: (context, snap) {
         if (snap.hasError) {
           return _Failure(
             error: snap.error!,
             tab: widget.tab,
-            retry: () => setState(() => _tables = _query(sqliteTablesQuery)),
+            retry: () => setState(() => _tables = _loadTables()),
           );
         }
         final tables = snap.data;
@@ -389,7 +383,7 @@ class _DatabaseViewState extends State<DatabaseView> {
             leading: IconButton(
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => setState(() => _table = null),
+              onPressed: () => widget.tab.setDatabaseTable(null),
             ),
             title: Text(table),
             subtitle: _counts[table] == null || _counts[table]! < 0
