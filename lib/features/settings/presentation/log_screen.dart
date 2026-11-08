@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme.dart';
 import '../../../core/log/log.dart';
+import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/domain/file_listing.dart' show formatSize;
-import 'settings_screen.dart' show shareLog;
+import 'settings_screen.dart' show saveLog, shareLog;
 
 enum _Level { all, warnings, errors }
 
@@ -47,7 +48,21 @@ class _LogScreenState extends ConsumerState<LogScreen> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.logTitle)),
+      appBar: AppBar(
+        title: Text(l10n.logTitle),
+        actions: [
+          NuxMenuButton(
+            tooltip: l10n.more,
+            items: (_) => [
+              NuxMenuAction(
+                icon: Icons.save_alt,
+                label: l10n.saveLogToFolder,
+                onSelected: () => saveLog(context, ref),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: log,
         builder: (context, _) {

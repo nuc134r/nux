@@ -9,6 +9,7 @@ shown in the app under Settings → App version. Write for people using the app,
 - A native crash (one in the terminal, ZeroTier or system code) is now logged on the next start with where it happened, so it can be found and fixed. Earlier crashes still kept by Android are reported once more with that detail.
 - A dropped connection no longer logs three "Uncaught error" lines.
 - Shared logs mask every host name, not only those ending in common domains.
+- **Log → ⋮ → Save to folder** saves the log (hosts masked, as when shared) where you pick.
 
 ## 0.11.3
 

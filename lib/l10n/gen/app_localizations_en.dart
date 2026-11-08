@@ -1839,6 +1839,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveAsRoot => 'Save as root';
 
   @override
+  String get saveLogToFolder => 'Save to folder';
+
+  @override
   String get savePassword => 'Save password';
 
   @override

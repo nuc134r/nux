@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart' show FilePicker;
 import 'package:flutter/material.dart';
@@ -338,12 +340,29 @@ class _BackgroundIslandState extends ConsumerState<_BackgroundIsland> {
 }
 
 /// Shares the log (this and earlier launches, hosts masked) as a text file.
+/// `nux-log-2026-11-08T19-29-17.txt`.
+String _logFileName() =>
+    'nux-log-${DateTime.now().toIso8601String().replaceAll(RegExp(r'[:.]'), '-').substring(0, 19)}.txt';
+
+/// Saves the log (hosts masked, as when shared) where the user picks, with the system's save dialog.
+Future<void> saveLog(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final text = ref.read(logProvider).export();
+  if (text.isEmpty) return showSnack(context, l10n.logEmpty);
+  final name = _logFileName();
+  try {
+    final saved = await FilePicker.saveFile(fileName: name, bytes: Uint8List.fromList(utf8.encode(text)));
+    if (saved != null && context.mounted) showSnack(context, l10n.savedAs(name));
+  } catch (e) {
+    if (context.mounted) showSnack(context, l10n.errorGeneric('$e'));
+  }
+}
+
 Future<void> shareLog(BuildContext context, WidgetRef ref) async {
   final l10n = context.l10n;
   final text = ref.read(logProvider).export();
   if (text.isEmpty) return showSnack(context, l10n.logEmpty);
-  final stamp = DateTime.now().toIso8601String().replaceAll(RegExp(r'[:.]'), '-').substring(0, 19);
-  final file = File('${(await getTemporaryDirectory()).path}/nux-log-$stamp.txt');
+  final file = File('${(await getTemporaryDirectory()).path}/${_logFileName()}');
   await file.writeAsString(text);
   await SharePlus.instance.share(
     ShareParams(

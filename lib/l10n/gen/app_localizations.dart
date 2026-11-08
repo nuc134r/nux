@@ -3146,6 +3146,12 @@ abstract class AppLocalizations {
   /// **'Save as root'**
   String get saveAsRoot;
 
+  /// No description provided for @saveLogToFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to folder'**
+  String get saveLogToFolder;
+
   /// No description provided for @savePassword.
   ///
   /// In en, this message translates to:

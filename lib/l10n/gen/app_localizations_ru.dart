@@ -1863,6 +1863,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get saveAsRoot => 'Сохранить как root';
 
   @override
+  String get saveLogToFolder => 'Сохранить в папку';
+
+  @override
   String get savePassword => 'Сохранить пароль';
 
   @override

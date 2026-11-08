@@ -508,6 +508,7 @@
   "saveAndConnect": "Сохранить и подключиться",
   "saveAs": "Сохранить как…",
   "saveAsRoot": "Сохранить как root",
+  "saveLogToFolder": "Сохранить в папку",
   "savePassword": "Сохранить пароль",
   "savePasswordHint": "Хранится в защищённом хранилище устройства",
   "saveWithEncoding": "Сохранить в кодировке",
