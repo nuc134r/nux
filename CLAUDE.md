@@ -7,7 +7,8 @@ Flutter is pinned with FVM (`.fvmrc`, 3.47.9): run `fvm flutter …` / `fvm dart
 ## Stack
 - **Pub workspace**: the app at the root, own packages in `packages/` (`nux_backend`: pure-Dart backend interfaces;
   `tab_switcher`: Chrome-style tabs, Flutter — test it with `flutter test`; `flterm`: vendored terminal widget
-  with line-height and tap-to-show-keyboard patches, see its README — keep the diff small).
+  with line-height and tap-to-show-keyboard patches, see its README — keep the diff small; `re_editor`: vendored
+  code editor with keyboard fixes, likewise).
   One `pubspec.lock` for everything. `build_runner` is held at 2.16.x because `flutter_test` pins `analyzer` below 14.
 - **Riverpod 3** with hand-written providers (`Override` is imported from `package:flutter_riverpod/misc.dart`)
 - **Drift** (SQLite) — schema in `lib/core/db/tables.dart`

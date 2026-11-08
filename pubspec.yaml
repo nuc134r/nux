@@ -13,6 +13,7 @@ workspace:
   - packages/nux_backend
   - packages/tab_switcher
   - packages/flterm
+  - packages/re_editor
 
 dependencies:
   flutter:
@@ -51,7 +52,8 @@ dependencies:
   share_plus: ^13.3.1
   file_picker: ^13.3.2
   device_info_plus: ^13.3.0
-  re_editor: ^0.10.0
+  re_editor:
+    path: packages/re_editor
   re_highlight: ^0.0.3
   flutter_markdown_plus: ^1.0.12
   flutter_foreground_task: ^11.0.3

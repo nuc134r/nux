@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nux/app/app.dart';
@@ -11,6 +11,7 @@ import 'package:nux/features/viewer/presentation/viewer_view.dart';
 import 'package:nux/features/workspace/data/tab_factory.dart';
 import 'package:nux/features/workspace/data/workspace.dart';
 import 'package:nux_backend/nux_backend.dart';
+import 'package:re_editor/re_editor.dart';
 
 import 'helpers.dart';
 
@@ -117,5 +118,60 @@ void main() {
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 5));
+  });
+
+  testWidgets('a cursor moved in front of the line (space bar swipe) deletes nothing; backspace there joins lines', (
+    tester,
+  ) async {
+    final editor = CodeLineEditingController.fromText('ab\ncd');
+    addTearDown(editor.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: CodeEditor(controller: editor, autofocus: true)),
+      ),
+    );
+    await tester.pump();
+    editor.selection = const CodeLineSelection.collapsed(index: 1, offset: 1);
+    await tester.pump();
+    final client = tester.testTextInput.log.lastWhere((c) => c.method == 'TextInput.setClient').arguments[0] as int;
+
+    // The keyboard sees the line with an invisible prefix: '​cd', the cursor after 'c' at 2.
+    Future<void> delta(Map<String, Object> d) => tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      SystemChannels.textInput.name,
+      SystemChannels.textInput.codec.encodeMethodCall(
+        MethodCall('TextInputClient.updateEditingStateWithDeltas', [
+          client,
+          {
+            'deltas': [
+              {
+                'oldText': '​cd',
+                'deltaText': '',
+                'deltaStart': -1,
+                'deltaEnd': -1,
+                'selectionBase': 0,
+                'selectionExtent': 0,
+                'selectionAffinity': 'TextAffinity.downstream',
+                'selectionIsDirectional': false,
+                'composingBase': -1,
+                'composingExtent': -1,
+                ...d,
+              },
+            ],
+          },
+        ]),
+      ),
+      (_) {},
+    );
+
+    await delta({}); // the cursor swiped to the very start, in front of the prefix
+    await tester.pump();
+    expect(editor.text, 'ab\ncd');
+    expect(editor.selection, const CodeLineSelection.collapsed(index: 1, offset: 0));
+
+    await delta({'oldText': '​cd', 'deltaStart': 0, 'deltaEnd': 1}); // backspace removes the prefix
+    await tester.pump();
+    expect(editor.text, 'abcd');
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
   });
 }
