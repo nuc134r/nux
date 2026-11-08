@@ -22,7 +22,9 @@ import '../../zerotier/data/zerotier_service.dart';
 import '../../terminal/domain/terminal_tab.dart';
 import '../../updates/data/update_service.dart';
 import '../data/tab_factory.dart';
+import '../../../core/db/database.dart' show Workspace;
 import '../data/workspace.dart';
+import '../data/workspace_repository.dart';
 import '../domain/nux_tab.dart';
 import 'workspace_drawer.dart';
 import 'workspace_find.dart';
@@ -259,18 +261,35 @@ class _Header extends ConsumerWidget {
               ),
               const NuxMenuDivider(),
               if (find.isNotEmpty) ...[...find, const NuxMenuDivider()],
+              // The workspace: switch to another (or a new one), or close it.
+              NuxMenuSubmenu(
+                icon: Icons.swap_horiz,
+                label: l10n.switchWorkspace,
+                hint: ws?.name,
+                items: [
+                  for (final w in ref.read(workspacesProvider).value ?? const <Workspace>[])
+                    NuxMenuAction(
+                      icon: null,
+                      label: w.name,
+                      checked: w.id == ws?.id,
+                      onSelected: () => ref.read(workspaceSwitcherProvider).switchTo(w.id),
+                    ),
+                  const NuxMenuDivider(),
+                  NuxMenuAction(icon: Icons.add, label: l10n.newWorkspace, onSelected: () => newWorkspace(context, ref)),
+                ],
+              ),
+              if (ws != null)
+                NuxMenuAction(
+                  icon: Icons.close,
+                  label: l10n.closeWorkspace,
+                  onSelected: () => ref.read(workspaceSwitcherProvider).switchTo(null),
+                ),
+              const NuxMenuDivider(),
               NuxMenuAction(
                 icon: Icons.home_outlined,
                 label: l10n.home,
                 onSelected: () => controller.open(ref.read(tabFactoryProvider).hosts()),
               ),
-              NuxMenuAction(icon: Icons.key, label: l10n.keys, onSelected: () => context.push(Routes.keys)),
-              NuxMenuAction(
-                icon: Icons.lan_outlined,
-                label: 'ZeroTier',
-                onSelected: () => context.push(Routes.zerotier),
-              ),
-              const NuxMenuDivider(),
               activity,
               settings,
             ];

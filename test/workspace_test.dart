@@ -130,12 +130,17 @@ void main() {
     await settle(tester);
     await tester.tap(find.byTooltip('More'));
     await settle(tester);
-    for (final label in ['Home', 'Keys', 'ZeroTier', 'Settings']) {
+    // The overview's menu: tabs, the workspace, then Home with Activity and Settings (Keys and ZeroTier live in
+    // Settings).
+    for (final label in ['Close all tabs', 'Switch workspace', 'Home', 'Activity', 'Settings']) {
       expect(find.descendant(of: find.byType(Material).last, matching: find.text(label)), findsOneWidget, reason: label);
     }
-    await tester.tap(find.text('ZeroTier').last);
+    for (final label in ['Keys', 'ZeroTier']) {
+      expect(find.descendant(of: find.byType(Material).last, matching: find.text(label)), findsNothing, reason: label);
+    }
+    await tester.tap(find.text('Switch workspace').last);
     await settle(tester);
-    expect(find.text('Start with nux'), findsWidgets);
+    expect(find.text('New workspace'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
