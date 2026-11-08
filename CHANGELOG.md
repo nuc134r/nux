@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.5
+
+- Catching the cause of the crashes: nux now asks Android to guard a sample of its memory, so when something corrupts it the crash report says what and where (the allocation and the code that freed it). Crash reports in the log name library files instead of masking them as hosts.
+
 ## 0.11.4
 
 - *Switch workspace* (tab overview ⋮ and the workspace drawer) lists the workspaces right away; it was empty until Home's list had been opened.

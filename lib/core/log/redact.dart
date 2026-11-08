@@ -54,5 +54,6 @@ final _anyHost = RegExp(r'\b(?:[a-z0-9-]+\.)+([a-z]{2,24})\b(?![.(])');
 const _notHosts = {
   'dart', 'kt', 'java', 'so', 'js', 'ts', 'json', 'yaml', 'yml', 'txt', 'log', 'md', 'png', 'jpg', 'svg', //
   'html', 'css', 'py', 'sh', 'cc', 'cpp', 'xml', 'gradle', 'apk', 'zip', 'gz', 'tar', 'lock', 'toml', 'ini',
-  'conf', 'pem', 'pub', 'key', 'arb', 'db', 'sqlite', 'tmp', 'bak', 'csv', 'pdf',
+  'conf', 'pem', 'pub', 'key', 'arb', 'db', 'sqlite', 'tmp', 'bak', 'csv', 'pdf', 'oat', 'odex', 'vdex', 'art',
+  'jar', 'dex',
 };

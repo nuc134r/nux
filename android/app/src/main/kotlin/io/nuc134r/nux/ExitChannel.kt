@@ -190,8 +190,10 @@ internal object Tombstone {
         var signal = ""
         var abort = ""
         val threads = mutableMapOf<Long, Pair<String, List<String>>>()
+        val causes = mutableListOf<String>()
         Reader(bytes).fields { field, _, value, sub ->
             when (field) {
+                15 -> sub?.let { causes.add(cause(it)) }
                 6 -> tid = value
                 10 -> sub?.let { s ->
                     var name = ""
@@ -212,7 +214,41 @@ internal object Tombstone {
         return buildString {
             append("$signal in thread $name")
             if (abort.isNotEmpty()) append("\nAbort: ${abort.take(500)}")
+            for (c in causes) append("\n$c")
             for ((n, frame) in frames.take(24).withIndex()) append("\n#${n.toString().padStart(2, '0')} $frame")
+        }
+    }
+
+    /**
+     * A cause found by GWP-ASan or MTE (enabled in the manifest): what went wrong and where the memory was
+     * allocated and freed, which names the code that corrupted it.
+     */
+    private fun cause(r: Reader): String {
+        var text = ""
+        val alloc = mutableListOf<String>()
+        val free = mutableListOf<String>()
+        var size = 0L
+        r.fields { f, _, _, sub ->
+            when (f) {
+                1 -> text = sub!!.string()
+                2 -> sub!!.fields { g, _, _, error ->
+                    if (g == 3) error!!.fields { h, _, v, frame ->
+                        when (h) {
+                            2 -> size = v
+                            4 -> alloc.add(frame(frame!!))
+                            6 -> free.add(frame(frame!!))
+                        }
+                    }
+                }
+            }
+        }
+        return buildString {
+            append("Cause: $text")
+            if (size > 0) append(" (object of $size bytes)")
+            if (alloc.isNotEmpty()) append("\nAllocated at:")
+            for ((n, f) in alloc.take(16).withIndex()) append("\n  #${n.toString().padStart(2, '0')} $f")
+            if (free.isNotEmpty()) append("\nFreed at:")
+            for ((n, f) in free.take(16).withIndex()) append("\n  #${n.toString().padStart(2, '0')} $f")
         }
     }
 
@@ -222,24 +258,27 @@ internal object Tombstone {
         r.fields { f, _, _, sub ->
             when (f) {
                 2 -> name = sub!!.string()
-                4 -> {
-                    var pc = 0L
-                    var function = ""
-                    var offset = 0L
-                    var file = ""
-                    sub!!.fields { g, _, v, s ->
-                        when (g) {
-                            1 -> pc = v
-                            4 -> function = s!!.string()
-                            5 -> offset = v
-                            6 -> file = s!!.string().substringAfterLast('/')
-                        }
-                    }
-                    val fn = if (function.isEmpty()) "" else " ($function+$offset)"
-                    frames.add("pc ${pc.toString(16).padStart(8, '0')} $file$fn")
-                }
+                4 -> frames.add(frame(sub!!))
             }
         }
         return name to frames
+    }
+
+    /** `pc 0007184c libc.so (abort+160)`: BacktraceFrame's relative pc, file and function. */
+    private fun frame(r: Reader): String {
+        var pc = 0L
+        var function = ""
+        var offset = 0L
+        var file = ""
+        r.fields { g, _, v, s ->
+            when (g) {
+                1 -> pc = v
+                4 -> function = s!!.string()
+                5 -> offset = v
+                6 -> file = s!!.string().substringAfterLast('/')
+            }
+        }
+        val fn = if (function.isEmpty()) "" else " ($function+$offset)"
+        return "pc ${pc.toString(16).padStart(8, '0')} $file$fn"
     }
 }

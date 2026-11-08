@@ -19,7 +19,11 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:gwpAsanMode="always">
+        <!-- gwpAsanMode: a sample of native allocations is guarded, so heap corruption (seen as "Scudo ERROR:
+             corrupted chunk header" crashes) is caught where it happens, with the allocation and free
+             stacks in the crash record that ExitChannel.kt logs. Cheap; drop it once the cause is fixed. -->
         <!-- Background connections (flutter_foreground_task). specialUse: SSH sessions and tunnels fit no
              other type, and dataSync is limited to 6 hours a day on Android 15+. -->
         <service
