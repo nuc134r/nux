@@ -3,6 +3,13 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.4
+
+- *Switch workspace* (tab overview ⋮ and the workspace drawer) lists the workspaces right away; it was empty until Home's list had been opened.
+- A native crash (one in the terminal, ZeroTier or system code) is now logged on the next start with where it happened, so it can be found and fixed. Earlier crashes still kept by Android are reported once more with that detail.
+- A dropped connection no longer logs three "Uncaught error" lines.
+- Shared logs mask every host name, not only those ending in common domains.
+
 ## 0.11.3
 
 - **Tab order**: long-press a card in the tab overview (or a tab in the tablet strip) and drag it to move it. A long press without moving still opens the tab's sheet.

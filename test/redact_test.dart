@@ -22,6 +22,15 @@ void main() {
     expect(redact(line), line);
     expect(redact(line, maskHosts: true), 'connect [user]@[host] and [ip] via [ip]');
     expect(redact('ping example.org', maskHosts: true), 'ping [host]');
+    // Any top-level domain, in the places the log names hosts.
+    expect(
+      redact('Connecting to db.example.xyz:1348 ... address = box.example.pw, port = 1', maskHosts: true),
+      'Connecting to [host]:1348 ... address = [host], port = 1',
+    );
+    // Stack traces and package ids stay readable.
+    const frame = '#0 TerminalState.terminate (package:dartssh2/src/utils/terminal_state.dart:30) io.nuc134r.nux';
+    expect(redact(frame, maskHosts: true), frame);
+    expect(redact('stop com.example.app due to x', maskHosts: true), 'stop [host] due to x');
     expect(redact('fe80::1 and 2001:db8:0:0:0:0:0:1', maskHosts: true), '[ip] and [ip]');
     expect(redact('at 2026-11-02T22:15:31.160 took 1:30', maskHosts: true), 'at 2026-11-02T22:15:31.160 took 1:30');
   });

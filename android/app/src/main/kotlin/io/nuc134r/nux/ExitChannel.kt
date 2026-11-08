@@ -19,7 +19,8 @@ import java.io.StringWriter
 object ExitChannel {
     private const val CHANNEL = "nux/exits"
     private const val PREFS = "nux_exits"
-    private const val SEEN = "seen"
+    // v2: tombstones are read now; report the earlier native crashes again, with their stacks.
+    private const val SEEN = "seen_v2"
     private const val CRASH_FILE = "last_crash.txt"
     private var channel: MethodChannel? = null
     private var handlerInstalled = false
@@ -77,6 +78,7 @@ object ExitChannel {
                         "status" to info.status,
                         "importance" to info.importance,
                         "process" to info.processName,
+                        "trace" to if (info.reason == ApplicationExitReason.CRASH_NATIVE) nativeTrace(info) else null,
                     )
                 )
             }
@@ -88,6 +90,16 @@ object ExitChannel {
         }
         prefs.edit().putLong(SEEN, newest).apply()
         return exits
+    }
+
+    /** The crashing thread's signal and stack from a native crash's tombstone (Android 12+). */
+    private fun nativeTrace(info: android.app.ApplicationExitInfo): String? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
+        return try {
+            info.traceInputStream?.use { Tombstone.summary(it.readBytes()) }
+        } catch (e: Exception) {
+            "Tombstone unreadable: $e"
+        }
     }
 
     private fun reasonName(reason: Int): String = when (reason) {
@@ -129,4 +141,105 @@ private object ApplicationExitReason {
     const val FREEZER = 14
     const val PACKAGE_STATE_CHANGE = 15
     const val PACKAGE_UPDATED = 16
+}
+
+/**
+ * Reads the parts of an Android tombstone (system/core/debuggerd/proto/tombstone.proto) that say where a
+ * native crash happened: the signal, the abort message and the crashing thread's frames. A minimal
+ * protobuf reader, so no library is needed.
+ */
+internal object Tombstone {
+    private class Reader(val b: ByteArray, var i: Int = 0, val end: Int = b.size) {
+        fun more() = i < end
+        fun varint(): Long {
+            var shift = 0
+            var r = 0L
+            while (true) {
+                val x = b[i++].toInt() and 0xff
+                r = r or ((x and 0x7f).toLong() shl shift)
+                if (x and 0x80 == 0) return r
+                shift += 7
+            }
+        }
+
+        /** Calls [f] with each field number, wire type and (for length-delimited fields) a sub-reader. */
+        fun fields(f: (Int, Int, Long, Reader?) -> Unit) {
+            while (more()) {
+                val key = varint()
+                val field = (key ushr 3).toInt()
+                when (val type = (key and 7).toInt()) {
+                    0 -> f(field, type, varint(), null)
+                    1 -> { i += 8; f(field, type, 0, null) }
+                    5 -> { i += 4; f(field, type, 0, null) }
+                    2 -> {
+                        val len = varint().toInt()
+                        val sub = Reader(b, i, i + len)
+                        i += len
+                        f(field, type, 0, sub)
+                    }
+                    else -> return
+                }
+            }
+        }
+
+        fun string() = String(b, i, end - i, Charsets.UTF_8)
+    }
+
+    fun summary(bytes: ByteArray): String {
+        var tid = 0L
+        var signal = ""
+        var abort = ""
+        val threads = mutableMapOf<Long, Pair<String, List<String>>>()
+        Reader(bytes).fields { field, _, value, sub ->
+            when (field) {
+                6 -> tid = value
+                10 -> sub?.let { s ->
+                    var name = ""
+                    var code = ""
+                    s.fields { f, _, _, v -> if (f == 2) name = v!!.string() else if (f == 4) code = v!!.string() }
+                    signal = "$name $code".trim()
+                }
+                14 -> abort = sub?.string() ?: ""
+                16 -> sub?.let { entry ->
+                    var key = 0L
+                    var thread: Pair<String, List<String>>? = null
+                    entry.fields { f, _, v, t -> if (f == 1) key = v else if (f == 2) thread = thread(t!!) }
+                    thread?.let { threads[key] = it }
+                }
+            }
+        }
+        val (name, frames) = threads[tid] ?: ("?" to emptyList())
+        return buildString {
+            append("$signal in thread $name")
+            if (abort.isNotEmpty()) append("\nAbort: ${abort.take(500)}")
+            for ((n, frame) in frames.take(24).withIndex()) append("\n#${n.toString().padStart(2, '0')} $frame")
+        }
+    }
+
+    private fun thread(r: Reader): Pair<String, List<String>> {
+        var name = ""
+        val frames = mutableListOf<String>()
+        r.fields { f, _, _, sub ->
+            when (f) {
+                2 -> name = sub!!.string()
+                4 -> {
+                    var pc = 0L
+                    var function = ""
+                    var offset = 0L
+                    var file = ""
+                    sub!!.fields { g, _, v, s ->
+                        when (g) {
+                            1 -> pc = v
+                            4 -> function = s!!.string()
+                            5 -> offset = v
+                            6 -> file = s!!.string().substringAfterLast('/')
+                        }
+                    }
+                    val fn = if (function.isEmpty()) "" else " ($function+$offset)"
+                    frames.add("pc ${pc.toString(16).padStart(8, '0')} $file$fn")
+                }
+            }
+        }
+        return name to frames
+    }
 }

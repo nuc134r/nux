@@ -126,7 +126,7 @@ class SshConnector {
         try {
           final client = await _authenticate(c, socket, prompter, retry: attempt > 1);
           final j = jump;
-          unawaited(client.done.whenComplete(() => j?.close()));
+          client.done.whenComplete(() => j?.close()).ignore();
           return client;
         } on _PasswordRejected {
           log.w('ssh', 'Password rejected (attempt $attempt)');

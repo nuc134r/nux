@@ -16,7 +16,11 @@ String redact(String text, {bool maskHosts = false}) {
         .replaceAllMapped(_userAtHost, (m) => '[user]@[host]')
         .replaceAll(_ipv4, '[ip]')
         .replaceAll(_ipv6, '[ip]')
-        .replaceAll(_hostName, '[host]');
+        .replaceAll(_hostName, '[host]')
+        .replaceAllMapped(
+          _anyHost,
+          (m) => _notHosts.contains(m[1]) || m[0]!.startsWith('io.nuc134r') ? m[0]! : '[host]',
+        );
   }
   return out;
 }
@@ -43,3 +47,12 @@ final _hostName = RegExp(
   r'\b(?:[a-z0-9-]+\.)+(?:com|net|org|io|dev|local|lan|home|internal|ru|de|uk|app|cloud)\b',
   caseSensitive: false,
 );
+
+// Any other lowercase dotted name (a TLD list misses most hosts); stack traces stay readable: their
+// class names are capitalised and their files end in an extension listed in [_notHosts].
+final _anyHost = RegExp(r'\b(?:[a-z0-9-]+\.)+([a-z]{2,24})\b(?![.(])');
+const _notHosts = {
+  'dart', 'kt', 'java', 'so', 'js', 'ts', 'json', 'yaml', 'yml', 'txt', 'log', 'md', 'png', 'jpg', 'svg', //
+  'html', 'css', 'py', 'sh', 'cc', 'cpp', 'xml', 'gradle', 'apk', 'zip', 'gz', 'tar', 'lock', 'toml', 'ini',
+  'conf', 'pem', 'pub', 'key', 'arb', 'db', 'sqlite', 'tmp', 'bak', 'csv', 'pdf',
+};

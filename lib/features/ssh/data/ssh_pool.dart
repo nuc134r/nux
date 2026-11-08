@@ -74,7 +74,8 @@ class SshPool extends ChangeNotifier {
       e.future.then((client) {
         if (_entries[connectionId] != e) return;
         e.client = client;
-        client.done.whenComplete(() => _closed(connectionId, client));
+        // A dropped connection completes done with its error; that is handled here, not uncaught.
+        client.done.whenComplete(() => _closed(connectionId, client)).ignore();
         _notify();
       }, onError: (Object error) {
         if (_entries[connectionId] == e) _entries.remove(connectionId);

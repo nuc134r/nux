@@ -69,7 +69,7 @@ class FileBrowser extends ChangeNotifier {
           error = const BackendException(BackendErrorKind.disconnected, 'Connection closed');
           _notify();
         }
-      });
+      }).ignore();
       return h;
     }, onError: (Object e) {
       _opening = null;

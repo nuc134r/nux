@@ -115,7 +115,7 @@ class ForwardingManager extends ChangeNotifier {
         ..attempt = 0;
       log.i('forwarding', 'Started ${rule.describe()}');
       _changed();
-      unawaited(lease.done.whenComplete(() => _dropped(rule, lease)));
+      lease.done.whenComplete(() => _dropped(rule, lease)).ignore();
     } catch (e) {
       await _teardown(rule.id);
       // Configuration problems will not fix themselves; connection problems might.

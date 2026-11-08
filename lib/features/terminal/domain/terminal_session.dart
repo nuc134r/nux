@@ -109,8 +109,8 @@ class TerminalSession extends ChangeNotifier {
       _pty = pty;
       _output = pty.output.listen(terminal.write);
       _set(TerminalState.connected);
-      unawaited(pty.done.whenComplete(_closed));
-      unawaited(lease.done.whenComplete(_closed));
+      pty.done.whenComplete(_closed).ignore();
+      lease.done.whenComplete(_closed).ignore();
     } on SshConnectException catch (e) {
       _fail(e);
     } catch (e, st) {

@@ -63,6 +63,8 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(backgroundResyncProvider);
     // How the previous run ended (a crash leaves nothing in the log by itself).
     ref.watch(previousExitsProvider);
+    // Kept loaded: the Switch workspace menus read it (they were empty until Home's list had loaded it).
+    ref.listen(workspacesProvider, (_, _) {});
     // Files other apps open with or share to nux.
     ref.watch(incomingHandlerProvider);
     // An available update is an Activity event.
