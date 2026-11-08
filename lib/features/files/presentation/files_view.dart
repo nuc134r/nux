@@ -16,6 +16,7 @@ import '../../workspace/data/workspace.dart';
 import '../data/bookmark_repository.dart';
 import '../data/files_providers.dart';
 import '../domain/file_browser.dart';
+import '../../viewer/domain/inspect.dart';
 import '../domain/file_listing.dart';
 import '../domain/transfers.dart';
 import 'file_dialogs.dart';
@@ -59,9 +60,20 @@ String fileErrorText(AppLocalizations l10n, Object e) => switch (e) {
 IconData fileIcon(FileEntry e) {
   if (e.isBrowsable) return e.type == FileType.link ? Icons.folder_special_outlined : Icons.folder;
   if (e.type == FileType.link) return Icons.link;
+  switch (inspectTypeFor(e.name)) {
+    case InspectType.database:
+      return Icons.table_chart_outlined;
+    case InspectType.media:
+      return Icons.movie_outlined;
+    case InspectType.pdf:
+      return Icons.picture_as_pdf_outlined;
+    default:
+  }
   return switch (fileKindByName(e.name)) {
     FileKind.image => Icons.image_outlined,
     FileKind.markdown => Icons.article_outlined,
+    FileKind.svg => Icons.draw_outlined,
+    FileKind.html => Icons.html,
     FileKind.archive => Icons.inventory_2_outlined,
     FileKind.binary => Icons.memory,
     FileKind.text => Icons.description_outlined,
@@ -107,8 +119,6 @@ class _FilesViewState extends ConsumerState<FilesView> {
     if (_b.selecting) return _b.toggleSelected(e);
     if (e.isBrowsable) {
       _b.cd(e.path);
-    } else if (fileKindByName(e.name) == FileKind.archive) {
-      _entryActions(e);
     } else {
       ref
           .read(workspaceProvider)

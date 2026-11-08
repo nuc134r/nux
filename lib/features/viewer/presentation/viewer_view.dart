@@ -26,6 +26,7 @@ import '../../workspace/data/workspace_access.dart';
 import '../domain/remote_document.dart';
 import '../domain/sudo_write.dart';
 import '../domain/text_encoding.dart';
+import 'inspect_views.dart';
 import 'viewer_tab.dart';
 
 class ViewerView extends StatefulWidget {
@@ -215,10 +216,11 @@ class _ViewerViewState extends State<ViewerView> {
           }
           return const Center(child: CircularProgressIndicator());
         }
+        final inspecting = widget.tab.inspecting;
         return Column(
           children: [
-            if (doc.loading) const LinearProgressIndicator(minHeight: 2),
-            if (doc.truncated)
+            if (doc.loading || widget.tab.busy) const LinearProgressIndicator(minHeight: 2),
+            if (doc.truncated && inspecting == null)
               Material(
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 child: ListTile(
@@ -230,7 +232,10 @@ class _ViewerViewState extends State<ViewerView> {
               ),
             Expanded(
               child: switch (doc.kind) {
+                _ when inspecting != null => InspectView(tab: widget.tab, type: inspecting),
                 FileKind.image => _ImageView(doc: doc),
+                FileKind.svg when widget.tab.rendered => SvgView(text: doc.text),
+                FileKind.html when widget.tab.rendered => HtmlView(text: doc.text),
                 FileKind.markdown when widget.tab.rendered => PinchTextSize(
                   kind: TextSizeKind.editor,
                   child: _MarkdownView(text: doc.text),

@@ -104,7 +104,7 @@ class RemoteDocument extends ChangeNotifier {
     FileKind.image => 32 << 20,
     FileKind.binary || FileKind.archive => 256 << 10,
     // Text lays out line by line in the editor: past ~0.5 MB opening a file stutters on phones.
-    FileKind.text || FileKind.markdown => 512 << 10,
+    FileKind.text || FileKind.markdown || FileKind.svg || FileKind.html => 512 << 10,
   };
 
   /// Loads the file; [all] ignores the size limit.
@@ -134,9 +134,7 @@ class RemoteDocument extends ChangeNotifier {
       if (bytes!.length > _decodeInIsolate) _apply(await compute(_decodeAs, (bytes!, _chosenEncoding)));
       formatChanged = false;
       generation++;
-      kind = (named == FileKind.text || named == FileKind.markdown) && !forceText && looksBinary(bytes!)
-          ? FileKind.binary
-          : named;
+      kind = named.isTextual && !forceText && looksBinary(bytes!) ? FileKind.binary : named;
     } catch (e) {
       error = e;
     } finally {

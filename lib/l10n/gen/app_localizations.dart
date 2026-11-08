@@ -308,6 +308,18 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get appearance;
 
+  /// No description provided for @archiveEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The archive is empty'**
+  String get archiveEmpty;
+
+  /// No description provided for @archiveFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 file} other{{count} files}}'**
+  String archiveFiles(int count);
+
   /// No description provided for @ascending.
   ///
   /// In en, this message translates to:
@@ -746,6 +758,36 @@ abstract class AppLocalizations {
   /// **'Customize…'**
   String get customizeKeys;
 
+  /// No description provided for @databaseEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No tables'**
+  String get databaseEmpty;
+
+  /// No description provided for @databaseNoRows.
+  ///
+  /// In en, this message translates to:
+  /// **'No rows'**
+  String get databaseNoRows;
+
+  /// No description provided for @databaseRows.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 row} other{{count} rows}}'**
+  String databaseRows(int count);
+
+  /// No description provided for @databaseShown.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {count} rows'**
+  String databaseShown(int shown, int count);
+
+  /// No description provided for @databaseTables.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 table or view} other{{count} tables and views}}'**
+  String databaseTables(int count);
+
   /// No description provided for @daysAgo.
   ///
   /// In en, this message translates to:
@@ -889,6 +931,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Details'**
   String get details;
+
+  /// No description provided for @detailsDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get detailsDocument;
+
+  /// No description provided for @detailsFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get detailsFile;
+
+  /// No description provided for @detailsLibraries.
+  ///
+  /// In en, this message translates to:
+  /// **'Libraries'**
+  String get detailsLibraries;
+
+  /// No description provided for @detailsMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get detailsMedia;
+
+  /// No description provided for @detailsMetadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata'**
+  String get detailsMetadata;
+
+  /// No description provided for @detailsProgram.
+  ///
+  /// In en, this message translates to:
+  /// **'Program'**
+  String get detailsProgram;
+
+  /// No description provided for @detailsStrings.
+  ///
+  /// In en, this message translates to:
+  /// **'Readable text in the file'**
+  String get detailsStrings;
+
+  /// No description provided for @detailsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get detailsText;
 
   /// No description provided for @devicePort.
   ///
@@ -1160,6 +1250,18 @@ abstract class AppLocalizations {
   /// **'Extra keys'**
   String get extraKeys;
 
+  /// No description provided for @extractTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract to {folder}'**
+  String extractTo(String folder);
+
+  /// No description provided for @extractedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Extracted to {folder}'**
+  String extractedTo(String folder);
+
   /// No description provided for @fetch.
   ///
   /// In en, this message translates to:
@@ -1171,6 +1273,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fetched'**
   String get fetched;
+
+  /// No description provided for @fileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get fileDetails;
 
   /// No description provided for @fileDisconnected.
   ///
@@ -2144,6 +2252,12 @@ abstract class AppLocalizations {
   /// **'Load all'**
   String get loadAll;
 
+  /// No description provided for @loadMoreRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get loadMoreRows;
+
   /// No description provided for @logAll.
   ///
   /// In en, this message translates to:
@@ -2263,6 +2377,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name (optional)'**
   String get nameOptional;
+
+  /// No description provided for @needsTool.
+  ///
+  /// In en, this message translates to:
+  /// **'This needs one of these on the server: {tools}'**
+  String needsTool(String tools);
 
   /// No description provided for @newBranch.
   ///
@@ -2407,6 +2527,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No transfers'**
   String get noTransfers;
+
+  /// No description provided for @noWebView.
+  ///
+  /// In en, this message translates to:
+  /// **'Web pages are not shown on this device'**
+  String get noWebView;
 
   /// No description provided for @noWorkspace.
   ///
@@ -3278,6 +3404,12 @@ abstract class AppLocalizations {
   /// **'Show as text'**
   String get showAsText;
 
+  /// No description provided for @showBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Show bytes'**
+  String get showBytes;
+
   /// No description provided for @showChanges.
   ///
   /// In en, this message translates to:
@@ -3289,6 +3421,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show hidden files'**
   String get showHiddenFiles;
+
+  /// No description provided for @showPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Show preview'**
+  String get showPreview;
 
   /// No description provided for @showRendered.
   ///
@@ -3571,6 +3709,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wrong password'**
   String get sudoWrongPassword;
+
+  /// No description provided for @svgUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'This SVG cannot be drawn'**
+  String get svgUnreadable;
 
   /// No description provided for @switchWithChangesBody.
   ///

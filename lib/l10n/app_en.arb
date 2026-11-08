@@ -115,6 +115,15 @@
   "appTitle": "nux",
   "appVersion": "App version",
   "appearance": "Appearance",
+  "archiveEmpty": "The archive is empty",
+  "archiveFiles": "{count, plural, =1{1 file} other{{count} files}}",
+  "@archiveFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "ascending": "Ascending",
   "authentication": "Sign in",
   "authenticationHint": "nux offers the checked keys in order, then the password, then asks the server what else it wants.",
@@ -277,6 +286,35 @@
     }
   },
   "customizeKeys": "Customize…",
+  "databaseEmpty": "No tables",
+  "databaseNoRows": "No rows",
+  "databaseRows": "{count, plural, =1{1 row} other{{count} rows}}",
+  "@databaseRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "databaseShown": "{shown} of {count} rows",
+  "@databaseShown": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "databaseTables": "{count, plural, =1{1 table or view} other{{count} tables and views}}",
+  "@databaseTables": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "{count} d ago",
   "@daysAgo": {
     "placeholders": {
@@ -378,6 +416,14 @@
   "destinationHere": "Destination (on this device)",
   "detachedHead": "detached HEAD",
   "details": "Details",
+  "detailsDocument": "Document",
+  "detailsFile": "File",
+  "detailsLibraries": "Libraries",
+  "detailsMedia": "Media",
+  "detailsMetadata": "Metadata",
+  "detailsProgram": "Program",
+  "detailsStrings": "Readable text in the file",
+  "detailsText": "Text",
   "devicePort": "Port on this device",
   "discard": "Discard",
   "discardChanges": "Discard changes",
@@ -529,8 +575,25 @@
   "exportSettings": "Export settings",
   "exportSettingsHint": "A file with your settings (no hosts, keys or passwords)",
   "extraKeys": "Extra keys",
+  "extractTo": "Extract to {folder}",
+  "@extractTo": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "extractedTo": "Extracted to {folder}",
+  "@extractedTo": {
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
   "fetch": "Fetch",
   "fetched": "Fetched",
+  "fileDetails": "Details",
   "fileDisconnected": "The connection was lost",
   "fileExists": "Something with this name already exists",
   "fileNotFound": "Not found",
@@ -922,6 +985,7 @@
   },
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
+  "loadMoreRows": "Load more",
   "logAll": "All",
   "logEmpty": "The log is empty",
   "logErrors": "Errors",
@@ -966,6 +1030,14 @@
   },
   "nameField": "Name",
   "nameOptional": "Name (optional)",
+  "needsTool": "This needs one of these on the server: {tools}",
+  "@needsTool": {
+    "placeholders": {
+      "tools": {
+        "type": "String"
+      }
+    }
+  },
   "newBranch": "New branch",
   "newBrowserTab": "New browser tab",
   "newFolder": "New folder",
@@ -990,6 +1062,7 @@
   "noTabsHint": "Open the hosts list or connect to a server.",
   "noTags": "No tags",
   "noTransfers": "No transfers",
+  "noWebView": "Web pages are not shown on this device",
   "noWorkspace": "No workspace",
   "noWorkspaceCard": "The open tabs belong to no workspace",
   "noWorkspaceHint": "A workspace is a folder on a host with its own tabs, project tree and git status. Open one from a file browser (⋮ → Open as workspace) or add it here.",
@@ -1239,8 +1312,10 @@
   "shareLogHint": "What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden",
   "show": "Show",
   "showAsText": "Show as text",
+  "showBytes": "Show bytes",
   "showChanges": "Show changes",
   "showHiddenFiles": "Show hidden files",
+  "showPreview": "Show preview",
   "showRendered": "Show formatted",
   "showSource": "Show source",
   "showTabs": "Show tabs",
@@ -1329,6 +1404,7 @@
   "sudoNotAllowed": "This user may not use sudo on this server",
   "sudoPassword": "Password for sudo",
   "sudoWrongPassword": "Wrong password",
+  "svgUnreadable": "This SVG cannot be drawn",
   "switchWithChangesBody": "{count, plural, one{You have {count} uncommitted change.} other{You have {count} uncommitted changes.}} Carry them over to the other branch, or stash them (they wait under Stashes)?",
   "@switchWithChangesBody": {
     "placeholders": {

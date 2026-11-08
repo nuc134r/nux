@@ -140,6 +140,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appearance => 'Appearance';
 
   @override
+  String get archiveEmpty => 'The archive is empty';
+
+  @override
+  String archiveFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get ascending => 'Ascending';
 
   @override
@@ -403,6 +417,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customizeKeys => 'Customize…';
 
   @override
+  String get databaseEmpty => 'No tables';
+
+  @override
+  String get databaseNoRows => 'No rows';
+
+  @override
+  String databaseRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rows',
+      one: '1 row',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String databaseShown(int shown, int count) {
+    return '$shown of $count rows';
+  }
+
+  @override
+  String databaseTables(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tables and views',
+      one: '1 table or view',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String daysAgo(int count) {
     return '$count d ago';
   }
@@ -506,6 +553,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get details => 'Details';
+
+  @override
+  String get detailsDocument => 'Document';
+
+  @override
+  String get detailsFile => 'File';
+
+  @override
+  String get detailsLibraries => 'Libraries';
+
+  @override
+  String get detailsMedia => 'Media';
+
+  @override
+  String get detailsMetadata => 'Metadata';
+
+  @override
+  String get detailsProgram => 'Program';
+
+  @override
+  String get detailsStrings => 'Readable text in the file';
+
+  @override
+  String get detailsText => 'Text';
 
   @override
   String get devicePort => 'Port on this device';
@@ -667,10 +738,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extraKeys => 'Extra keys';
 
   @override
+  String extractTo(String folder) {
+    return 'Extract to $folder';
+  }
+
+  @override
+  String extractedTo(String folder) {
+    return 'Extracted to $folder';
+  }
+
+  @override
   String get fetch => 'Fetch';
 
   @override
   String get fetched => 'Fetched';
+
+  @override
+  String get fileDetails => 'Details';
 
   @override
   String get fileDisconnected => 'The connection was lost';
@@ -1280,6 +1364,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadAll => 'Load all';
 
   @override
+  String get loadMoreRows => 'Load more';
+
+  @override
   String get logAll => 'All';
 
   @override
@@ -1354,6 +1441,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameOptional => 'Name (optional)';
 
   @override
+  String needsTool(String tools) {
+    return 'This needs one of these on the server: $tools';
+  }
+
+  @override
   String get newBranch => 'New branch';
 
   @override
@@ -1426,6 +1518,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noTransfers => 'No transfers';
+
+  @override
+  String get noWebView => 'Web pages are not shown on this device';
 
   @override
   String get noWorkspace => 'No workspace';
@@ -1920,10 +2015,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showAsText => 'Show as text';
 
   @override
+  String get showBytes => 'Show bytes';
+
+  @override
   String get showChanges => 'Show changes';
 
   @override
   String get showHiddenFiles => 'Show hidden files';
+
+  @override
+  String get showPreview => 'Show preview';
 
   @override
   String get showRendered => 'Show formatted';
@@ -2083,6 +2184,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sudoWrongPassword => 'Wrong password';
+
+  @override
+  String get svgUnreadable => 'This SVG cannot be drawn';
 
   @override
   String switchWithChangesBody(int count) {

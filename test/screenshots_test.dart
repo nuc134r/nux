@@ -9,7 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nux_backend/nux_backend.dart' show CommandResult, FileEntry, FileSystem, LocalFileSystem, ProcessRunner, RunningProcess;
+import 'package:nux_backend/nux_backend.dart'
+    show CommandResult, FileEntry, FileSystem, LocalFileSystem, ProcessRunner, RunningProcess;
 import 'package:nux/app/app.dart';
 import 'package:nux/app/router.dart';
 import 'package:nux/core/activity/activity_center.dart';
@@ -30,6 +31,7 @@ import 'package:nux/features/workspace/domain/git_activity.dart';
 import 'package:nux/features/workspace/presentation/workspace_drawer.dart';
 
 import 'helpers.dart';
+import 'local_runner.dart';
 
 const _enabled = bool.fromEnvironment('SCREENSHOTS');
 const _outDir = 'docs/screenshots';
@@ -40,7 +42,8 @@ const _desktop = Size(1280, 800);
 const _tablet = Size(1280, 800);
 const _statusBar = 32.0;
 
-const _demo = '\x1b[1;32mdev@build\x1b[0m:\x1b[1;34m~/src/nux\x1b[0m\$ git status -sb\r\n'
+const _demo =
+    '\x1b[1;32mdev@build\x1b[0m:\x1b[1;34m~/src/nux\x1b[0m\$ git status -sb\r\n'
     '## \x1b[32mmain\x1b[0m...\x1b[31morigin/main\x1b[0m [ahead 2]\r\n'
     ' \x1b[31mM\x1b[0m lib/features/terminal/terminal_view.dart\r\n'
     '\x1b[32mA\x1b[0m  lib/features/ssh/ssh_pool.dart\r\n'
@@ -98,187 +101,319 @@ void main() {
 
   final shots = <String, _Shot>{
     'hosts': const _Shot(ThemeMode.dark, Routes.home),
-    'host_menu': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      await tester.tap(find.text('Build server'));
-    }),
+    'host_menu': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        await tester.tap(find.text('Build server'));
+      },
+    ),
     'terminal': _Shot(ThemeMode.dark, Routes.home, act: terminalTab),
-    'workspace': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      addTearDown(() => root.deleteSync(recursive: true));
-      await useLocal(c, root);
-      _workspaceRoot = root.path;
-      final id = (await tester.runAsync(
-        () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
-      ))!;
-      await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
-      await settle(tester);
-      c.read(workspaceProvider).gridOpen = true;
-      await settle(tester);
-      await tester.tap(find.byTooltip('Workspaces'));
-      await settle(tester);
-      await settle(tester);
-      await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.text('lib')));
-    }),
+    'workspace': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        addTearDown(() => root.deleteSync(recursive: true));
+        await useLocal(c, root);
+        _workspaceRoot = root.path;
+        final id = (await tester.runAsync(
+          () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
+        ))!;
+        await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
+        await settle(tester);
+        c.read(workspaceProvider).gridOpen = true;
+        await settle(tester);
+        await tester.tap(find.byTooltip('Workspaces'));
+        await settle(tester);
+        await settle(tester);
+        await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.text('lib')));
+      },
+    ),
     // A pull in progress in the workspace card, and its output (sample text, example.com remote).
-    'git_output': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      addTearDown(() => root.deleteSync(recursive: true));
-      await useLocal(c, root);
-      _workspaceRoot = root.path;
-      final id = (await tester.runAsync(
-        () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
-      ))!;
-      final activity = c.read(workspaceDrawerStateProvider).gitActivity[id] = GitActivity();
-      final fetch = activity.start('git fetch -q --all --prune');
-      activity.output(fetch, 'Fetching origin\n');
-      activity.finish(fetch, 0);
-      final pull = activity.start('git pull -q --no-rebase --ff-only', cancel: () {});
-      activity.output(
-        pull,
-        'remote: Enumerating objects: 214, done.\nremote: Counting objects: 100% (214/214), done.\n'
-        'remote: Compressing objects: 100% (96/96), done.\nReceiving objects:  45% (97/214), 1.20 MiB | 2.31 MiB/s\r',
-      );
-      await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
-      await settle(tester);
-      c.read(workspaceProvider).gridOpen = true;
-      await settle(tester);
-      await tester.tap(find.byTooltip('Workspaces'));
-      await settle(tester);
-      await settle(tester);
-      await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.textContaining('git pull')));
-    }),
+    'git_output': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        addTearDown(() => root.deleteSync(recursive: true));
+        await useLocal(c, root);
+        _workspaceRoot = root.path;
+        final id = (await tester.runAsync(
+          () => c.read(workspaceRepositoryProvider).create(name: 'demo', connectionId: 'sample', rootPath: root.path),
+        ))!;
+        final activity = c.read(workspaceDrawerStateProvider).gitActivity[id] = GitActivity();
+        final fetch = activity.start('git fetch -q --all --prune');
+        activity.output(fetch, 'Fetching origin\n');
+        activity.finish(fetch, 0);
+        final pull = activity.start('git pull -q --no-rebase --ff-only', cancel: () {});
+        activity.output(
+          pull,
+          'remote: Enumerating objects: 214, done.\nremote: Counting objects: 100% (214/214), done.\n'
+          'remote: Compressing objects: 100% (96/96), done.\nReceiving objects:  45% (97/214), 1.20 MiB | 2.31 MiB/s\r',
+        );
+        await tester.runAsync(() => c.read(workspaceSwitcherProvider).switchTo(id));
+        await settle(tester);
+        c.read(workspaceProvider).gridOpen = true;
+        await settle(tester);
+        await tester.tap(find.byTooltip('Workspaces'));
+        await settle(tester);
+        await settle(tester);
+        await tester.tap(find.descendant(of: find.byType(Drawer), matching: find.textContaining('git pull')));
+      },
+    ),
     // The Activity sheet with sample entries (example.com host names only).
-    'activity': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final a = c.read(activityCenterProvider);
-      a.finish(a.start(ActivitySource.git, 'git push -q', subtitle: 'demo'), ActivityState.done, unread: false);
-      a.event(ActivitySource.other, 'Saved deploy.sh', unread: false);
-      a.event(
-        ActivitySource.forwarding,
-        'Forwarding Database stopped',
-        subtitle: 'Port 5432 is already in use on this device',
-        state: ActivityState.failed,
-        retry: () {},
-      );
-      a.event(ActivitySource.update, 'nux 0.11.0 is available');
-      final up = a.start(ActivitySource.transfer, 'Upload backup.tar', subtitle: '/srv/app', cancel: () {});
-      a.update(up, progress: .35);
-      final pull = a.start(ActivitySource.git, 'git pull -q --no-rebase --ff-only', subtitle: 'demo', cancel: () {});
-      a.update(pull, progress: .45, subtitle: 'Receiving objects:  45% (97/214)');
-      await settle(tester);
-      await tester.tap(find.byType(NuxMenuButton).first);
-      await settle(tester);
-      await tester.tap(find.text('Activity'));
-    }),
-    'tabs': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      // Each tab is shown once, so the overview has its picture.
-      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
-      for (var i = 0; i < 3; i++) {
+    'activity': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final a = c.read(activityCenterProvider);
+        a.finish(a.start(ActivitySource.git, 'git push -q', subtitle: 'demo'), ActivityState.done, unread: false);
+        a.event(ActivitySource.other, 'Saved deploy.sh', unread: false);
+        a.event(
+          ActivitySource.forwarding,
+          'Forwarding Database stopped',
+          subtitle: 'Port 5432 is already in use on this device',
+          state: ActivityState.failed,
+          retry: () {},
+        );
+        a.event(ActivitySource.update, 'nux 0.11.0 is available');
+        final up = a.start(ActivitySource.transfer, 'Upload backup.tar', subtitle: '/srv/app', cancel: () {});
+        a.update(up, progress: .35);
+        final pull = a.start(ActivitySource.git, 'git pull -q --no-rebase --ff-only', subtitle: 'demo', cancel: () {});
+        a.update(pull, progress: .45, subtitle: 'Receiving objects:  45% (97/214)');
         await settle(tester);
-      }
-      await terminalTab(tester, c);
-      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.byType(NuxMenuButton).first);
         await settle(tester);
-      }
-      c.read(workspaceProvider).gridOpen = true;
-    }),
-    // Tablet: the tab overview with a few kinds of tabs.
-    'tablet_tabs': _Shot(ThemeMode.dark, Routes.home, size: _tablet, tablet: true, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      final tabs = c.read(workspaceProvider);
-      // Each tab is shown once, so the overview has its picture.
-      for (final open in [
-        () async => terminalTab(tester, c),
-        () async => tabs.open(container(c).files('sample', path: root.path)),
-        () async => tabs.open(container(c).viewer('sample', '${root.path}/lib/main.dart')),
-        () async => tabs.open(container(c).viewer('sample', '${root.path}/README.md')),
-      ]) {
-        await open();
+        await tester.tap(find.text('Activity'));
+      },
+    ),
+    'tabs': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        // Each tab is shown once, so the overview has its picture.
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
         for (var i = 0; i < 3; i++) {
           await settle(tester);
         }
-      }
-      tabs.gridOpen = true;
-    }),
+        await terminalTab(tester, c);
+        for (var i = 0; i < 3; i++) {
+          await settle(tester);
+        }
+        c.read(workspaceProvider).gridOpen = true;
+      },
+    ),
+    // Tablet: the tab overview with a few kinds of tabs.
+    'tablet_tabs': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      size: _tablet,
+      tablet: true,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        final tabs = c.read(workspaceProvider);
+        // Each tab is shown once, so the overview has its picture.
+        for (final open in [
+          () async => terminalTab(tester, c),
+          () async => tabs.open(container(c).files('sample', path: root.path)),
+          () async => tabs.open(container(c).viewer('sample', '${root.path}/lib/main.dart')),
+          () async => tabs.open(container(c).viewer('sample', '${root.path}/README.md')),
+        ]) {
+          await open();
+          for (var i = 0; i < 3; i++) {
+            await settle(tester);
+          }
+        }
+        tabs.gridOpen = true;
+      },
+    ),
     // Tablet: the editor with the tab strip (several files and a terminal open).
-    'tablet_editor': _Shot(ThemeMode.light, Routes.home, size: _tablet, tablet: true, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      final tabs = c.read(workspaceProvider);
-      for (final f in ['README.md', 'deploy.sh', 'lib/main.dart']) {
-        tabs.open(container(c).viewer('sample', '${root.path}/$f'));
+    'tablet_editor': _Shot(
+      ThemeMode.light,
+      Routes.home,
+      size: _tablet,
+      tablet: true,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        final tabs = c.read(workspaceProvider);
+        for (final f in ['README.md', 'deploy.sh', 'lib/main.dart']) {
+          tabs.open(container(c).viewer('sample', '${root.path}/$f'));
+          await settle(tester);
+        }
+      },
+    ),
+    'files': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
+      },
+    ),
+    'viewer': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
+      },
+    ),
+    'archive': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        _workspaceRoot = root.path;
+        await tester.runAsync(
+          () =>
+              Process.run('tar', ['-czf', '${root.path}/release.tar.gz', '-C', root.path, 'lib', 'test', 'README.md']),
+        );
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/release.tar.gz'));
         await settle(tester);
-      }
-    }),
-    'files': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
-    }),
-    'viewer': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/lib/main.dart'));
-    }),
-    'menu': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
-      await settle(tester);
-      await tester.tap(find.byTooltip('More'));
-    }),
-    'menu_sort': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
-      await settle(tester);
-      await tester.tap(find.byTooltip('More'));
-      await settle(tester);
-      await tester.tap(find.text('Sort'));
-    }),
-    'markdown': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      final root = sampleProject();
-      await useLocal(c, root);
-      c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/README.md'));
-    }),
-    'host_key': _Shot(ThemeMode.light, Routes.home, act: (tester, c) async {
-      showDialog<void>(
-        context: rootNavigatorKey.currentContext!,
-        builder: (context) => const HostKeyDialog(
-          question: HostKeyQuestion(
-            host: 'build.example.com',
-            port: 22,
-            keyType: 'ssh-ed25519',
-            fingerprint: 'SHA256:Zx3Fh0cY0tM9vYQm1T3H3m1v9b1gQ8x6xw7Qq2c0kDg',
-            status: HostKeyStatus.changed,
-            knownFingerprints: ['ssh-ed25519 SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'],
+        await settle(tester);
+        await tester.tap(find.text('lib'));
+      },
+    ),
+    'database': _Shot(
+      ThemeMode.light,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        _workspaceRoot = root.path;
+        await tester.runAsync(
+          () => Process.run('python3', [
+            '-c',
+            'import sqlite3,sys\nc=sqlite3.connect(sys.argv[1])\n'
+                'c.execute("create table hosts (id integer primary key, name text, address text, port integer)")\n'
+                'c.executemany("insert into hosts (name, address, port) values (?,?,?)", '
+                '[("build", "192.0.2.10", 22), ("db", "192.0.2.11", 22), ("web", "web.example.com", 2222), '
+                '("backup", "2001:db8::5", 22)])\n'
+                'c.execute("create table events (at text, what text)")\nc.commit()',
+            '${root.path}/app.db',
+          ]),
+        );
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/app.db'));
+        await settle(tester);
+        await settle(tester);
+        await settle(tester);
+        await tester.tap(find.text('hosts'));
+      },
+    ),
+    'details': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        _workspaceRoot = root.path;
+        await tester.runAsync(
+          () => Process.run('ffmpeg', [
+            '-v', 'error', '-f', 'lavfi', '-i', 'testsrc=duration=3:size=640x360:rate=30', //
+            '-f', 'lavfi', '-i', 'sine=duration=3', '-metadata', 'title=Demo', '-shortest', '${root.path}/demo.mp4',
+          ]),
+        );
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/demo.mp4'));
+      },
+    ),
+    'menu': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
+        await settle(tester);
+        await tester.tap(find.byTooltip('More'));
+      },
+    ),
+    'menu_sort': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        c.read(workspaceProvider).open(container(c).files('sample', path: root.path));
+        await settle(tester);
+        await tester.tap(find.byTooltip('More'));
+        await settle(tester);
+        await tester.tap(find.text('Sort'));
+      },
+    ),
+    'markdown': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        final root = sampleProject();
+        await useLocal(c, root);
+        c.read(workspaceProvider).open(container(c).viewer('sample', '${root.path}/README.md'));
+      },
+    ),
+    'host_key': _Shot(
+      ThemeMode.light,
+      Routes.home,
+      act: (tester, c) async {
+        showDialog<void>(
+          context: rootNavigatorKey.currentContext!,
+          builder: (context) => const HostKeyDialog(
+            question: HostKeyQuestion(
+              host: 'build.example.com',
+              port: 22,
+              keyType: 'ssh-ed25519',
+              fingerprint: 'SHA256:Zx3Fh0cY0tM9vYQm1T3H3m1v9b1gQ8x6xw7Qq2c0kDg',
+              status: HostKeyStatus.changed,
+              knownFingerprints: ['ssh-ed25519 SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'],
+            ),
           ),
-        ),
-      );
-    }),
+        );
+      },
+    ),
     'editor': _Shot(ThemeMode.light, Routes.connection('sample')),
-    'forwarding': _Shot(ThemeMode.dark, Routes.home, act: (tester, c) async {
-      await tester.tap(find.byTooltip('Forwardings'));
-    }),
+    'forwarding': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      act: (tester, c) async {
+        await tester.tap(find.byTooltip('Forwardings'));
+      },
+    ),
     'forward_rule': _Shot(ThemeMode.light, Routes.forward('sample')),
     'appearance': const _Shot(ThemeMode.dark, Routes.appearance),
-    'appearance_colors': _Shot(ThemeMode.dark, Routes.appearance, act: (tester, c) async {
-      await tester.tap(find.text('Like the app').first);
-    }),
+    'appearance_colors': _Shot(
+      ThemeMode.dark,
+      Routes.appearance,
+      act: (tester, c) async {
+        await tester.tap(find.text('Like the app').first);
+      },
+    ),
     'log': const _Shot(ThemeMode.light, Routes.log),
     'keys': _Shot(ThemeMode.dark, Routes.keyBar(KeyBarFor.terminal)),
-    'keys_custom': _Shot(ThemeMode.dark, Routes.keyBar(KeyBarFor.editor), act: (tester, c) async {
-      await tester.tap(find.text('Custom'));
-      await settle(tester);
-      await tester.scrollUntilVisible(find.text('Add row'), 300, scrollable: find.byType(Scrollable).first);
-    }),
+    'keys_custom': _Shot(
+      ThemeMode.dark,
+      Routes.keyBar(KeyBarFor.editor),
+      act: (tester, c) async {
+        await tester.tap(find.text('Custom'));
+        await settle(tester);
+        await tester.scrollUntilVisible(find.text('Add row'), 300, scrollable: find.byType(Scrollable).first);
+      },
+    ),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),
-    'desktop': _Shot(ThemeMode.dark, Routes.home, size: _desktop, act: (tester, c) async {
-      await terminalTab(tester, c);
-    }),
+    'desktop': _Shot(
+      ThemeMode.dark,
+      Routes.home,
+      size: _desktop,
+      act: (tester, c) async {
+        await terminalTab(tester, c);
+      },
+    ),
   };
 
   for (final MapEntry(key: name, value: shot) in shots.entries) {
@@ -413,7 +548,10 @@ class _Frame extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 children: [
-                  Text('10:24', style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.w500, color: color)),
+                  Text(
+                    '10:24',
+                    style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.w500, color: color),
+                  ),
                   const Spacer(),
                   Icon(Icons.signal_cellular_alt, size: 16, color: color),
                   const SizedBox(width: 4),
@@ -437,16 +575,16 @@ class _Owned implements FileSystem {
   final FileSystem _fs;
 
   FileEntry _own(FileEntry e) => FileEntry(
-        path: e.path,
-        type: e.type,
-        size: e.size,
-        modified: e.modified,
-        mode: e.mode,
-        linkTarget: e.linkTarget,
-        targetIsDirectory: e.targetIsDirectory,
-        owner: 'dev',
-        group: 'dev',
-      );
+    path: e.path,
+    type: e.type,
+    size: e.size,
+    modified: e.modified,
+    mode: e.mode,
+    linkTarget: e.linkTarget,
+    targetIsDirectory: e.targetIsDirectory,
+    owner: 'dev',
+    group: 'dev',
+  );
 
   @override
   Future<String> home() => _fs.home();
@@ -462,10 +600,15 @@ class _Owned implements FileSystem {
   @override
   Future<void> writeBytes(String path, Uint8List bytes) => _fs.writeBytes(path, bytes);
   @override
-  Future<void> writeStream(String path, Stream<List<int>> data, {int offset = 0, void Function(int written)? onProgress}) =>
-      _fs.writeStream(path, data, offset: offset, onProgress: onProgress);
+  Future<void> writeStream(
+    String path,
+    Stream<List<int>> data, {
+    int offset = 0,
+    void Function(int written)? onProgress,
+  }) => _fs.writeStream(path, data, offset: offset, onProgress: onProgress);
   @override
-  Future<void> createDirectory(String path, {bool recursive = false}) => _fs.createDirectory(path, recursive: recursive);
+  Future<void> createDirectory(String path, {bool recursive = false}) =>
+      _fs.createDirectory(path, recursive: recursive);
   @override
   Future<void> rename(String from, String to) => _fs.rename(from, to);
   @override
@@ -481,11 +624,14 @@ String _workspaceRoot = '/';
 class _FakeGit implements ProcessRunner {
   @override
   Future<CommandResult> run(String command, {String? workingDirectory, Map<String, String>? environment}) async =>
-      CommandResult(
-        exitCode: 0,
-        stdout: '$_workspaceRoot\n## main...origin/main [ahead 1]\x00 M lib/main.dart\x00?? deploy.sh\x00',
-        stderr: '',
-      );
+      // Previews (archives, databases, details) run for real; git answers with a fixed status.
+      !command.contains('git ')
+      ? LocalRunner().run(command, workingDirectory: workingDirectory, environment: environment)
+      : CommandResult(
+          exitCode: 0,
+          stdout: '$_workspaceRoot\n## main...origin/main [ahead 1]\x00 M lib/main.dart\x00?? deploy.sh\x00',
+          stderr: '',
+        );
 
   @override
   Future<RunningProcess> start(String command, {String? workingDirectory, Map<String, String>? environment}) =>

@@ -3,6 +3,15 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.6
+
+- **Archives** open as folders you can walk through: tar (gz, xz, bz2, zst), zip, jar and apk, 7z, rar and deb. Tap a file to open it (unpacked on the server), long-press to extract it; ⋮ → Extract to unpacks everything next to the archive. A single compressed file (`log.gz`) opens decompressed. Tapping an archive in the file browser opens it.
+- **SQLite databases** show their tables and views with row counts; a table opens as rows (100 at a time, tap a cell for its full value). Read-only.
+- **Details** from the server for media (duration, codecs, resolution, tags), PDFs (info and the text of the first pages), pictures (EXIF) and programs (ELF header, libraries, readable text): shown for media and PDFs, ⋮ → Details for pictures and other binaries. ⋮ → Show bytes still shows the hex view.
+- **SVG** files are drawn (pinch to zoom); ⋮ → Show source edits them.
+- **HTML** files can be shown rendered (⋮ → Show rendered), without scripts.
+- These use the server's own tools (tar, unzip, 7z, sqlite3 or Python, ffprobe, pdfinfo, exiftool, readelf, file, strings); when none is there the viewer says which would do.
+
 ## 0.11.5
 
 - Catching the cause of the crashes: nux now asks Android to guard a sample of its memory, so when something corrupts it the crash report says what and where (the allocation and the code that freed it). Crash reports in the log name library files instead of masking them as hosts.

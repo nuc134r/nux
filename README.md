@@ -52,8 +52,10 @@ grouped into workspaces. Built with Flutter; Android first.
 ### Editor
 - Syntax highlighting for many languages, line numbers, folding, word wrap, find and replace (case, regex),
   go to line, auto-indent and bracket pairs.
-- Encodings and line endings (read and save as), a status bar with the cursor position, Markdown preview,
-  images, and a hex view for binary files.
+- Encodings and line endings (read and save as), a status bar with the cursor position, Markdown, SVG and
+  HTML previews, images, and a hex view for binary files.
+- **Previews from the server**: archives as folders (open or extract any file), SQLite tables and rows, and
+  details for media, PDFs (with their text), photos and programs, using the host's own tools.
 - Notices when the file changed on the server and shows the difference before you overwrite it.
   **Save as root** through sudo when your user may not write a file.
 
@@ -74,6 +76,12 @@ grouped into workspaces. Built with Flutter; Android first.
     <td align="center" width="25%"><img src="docs/screenshots/viewer.png" width="200" alt="The editor"><br><sub>The editor</sub></td>
     <td align="center" width="25%"><img src="docs/screenshots/files.png" width="200" alt="The file browser"><br><sub>The file browser</sub></td>
     <td align="center" width="25%"><img src="docs/screenshots/markdown.png" width="200" alt="Markdown preview"><br><sub>Markdown preview</sub></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><img src="docs/screenshots/archive.png" width="200" alt="An archive as folders"><br><sub>An archive as folders</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/database.png" width="200" alt="A SQLite table"><br><sub>A SQLite table</sub></td>
+    <td align="center" width="25%"><img src="docs/screenshots/details.png" width="200" alt="Details of a video"><br><sub>Details of a video</sub></td>
+    <td></td>
   </tr>
 </table>
 

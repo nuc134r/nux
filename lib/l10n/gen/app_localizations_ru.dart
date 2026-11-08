@@ -141,6 +141,21 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appearance => 'Оформление';
 
   @override
+  String get archiveEmpty => 'Архив пуст';
+
+  @override
+  String archiveFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count файлов',
+      few: '$count файла',
+      one: '$count файл',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get ascending => 'По возрастанию';
 
   @override
@@ -407,6 +422,41 @@ class AppLocalizationsRu extends AppLocalizations {
   String get customizeKeys => 'Настроить…';
 
   @override
+  String get databaseEmpty => 'Нет таблиц';
+
+  @override
+  String get databaseNoRows => 'Нет строк';
+
+  @override
+  String databaseRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count строк',
+      few: '$count строки',
+      one: '$count строка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String databaseShown(int shown, int count) {
+    return '$shown из $count строк';
+  }
+
+  @override
+  String databaseTables(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count таблиц и представлений',
+      few: '$count таблицы и представления',
+      one: '$count таблица или представление',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String daysAgo(int count) {
     return '$count дн. назад';
   }
@@ -511,6 +561,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get details => 'Подробнее';
+
+  @override
+  String get detailsDocument => 'Документ';
+
+  @override
+  String get detailsFile => 'Файл';
+
+  @override
+  String get detailsLibraries => 'Библиотеки';
+
+  @override
+  String get detailsMedia => 'Медиа';
+
+  @override
+  String get detailsMetadata => 'Метаданные';
+
+  @override
+  String get detailsProgram => 'Программа';
+
+  @override
+  String get detailsStrings => 'Читаемый текст в файле';
+
+  @override
+  String get detailsText => 'Текст';
 
   @override
   String get devicePort => 'Порт на этом устройстве';
@@ -673,10 +747,23 @@ class AppLocalizationsRu extends AppLocalizations {
   String get extraKeys => 'Дополнительные клавиши';
 
   @override
+  String extractTo(String folder) {
+    return 'Распаковать в $folder';
+  }
+
+  @override
+  String extractedTo(String folder) {
+    return 'Распаковано в $folder';
+  }
+
+  @override
   String get fetch => 'Получить (fetch)';
 
   @override
   String get fetched => 'Получено';
+
+  @override
+  String get fileDetails => 'Сведения';
 
   @override
   String get fileDisconnected => 'Соединение потеряно';
@@ -1298,6 +1385,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadAll => 'Загрузить всё';
 
   @override
+  String get loadMoreRows => 'Загрузить ещё';
+
+  @override
   String get logAll => 'Все';
 
   @override
@@ -1373,6 +1463,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get nameOptional => 'Название (необязательно)';
 
   @override
+  String needsTool(String tools) {
+    return 'Для этого на сервере нужен один из инструментов: $tools';
+  }
+
+  @override
   String get newBranch => 'Новая ветка';
 
   @override
@@ -1445,6 +1540,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noTransfers => 'Передач нет';
+
+  @override
+  String get noWebView => 'На этом устройстве веб-страницы не показываются';
 
   @override
   String get noWorkspace => 'Без рабочей области';
@@ -1946,10 +2044,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get showAsText => 'Показать как текст';
 
   @override
+  String get showBytes => 'Показать байты';
+
+  @override
   String get showChanges => 'Показать изменения';
 
   @override
   String get showHiddenFiles => 'Показать скрытые файлы';
+
+  @override
+  String get showPreview => 'Показать просмотр';
 
   @override
   String get showRendered => 'Показать с оформлением';
@@ -2110,6 +2214,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sudoWrongPassword => 'Неверный пароль';
+
+  @override
+  String get svgUnreadable => 'Этот SVG не удаётся нарисовать';
 
   @override
   String switchWithChangesBody(int count) {

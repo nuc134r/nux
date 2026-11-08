@@ -28,6 +28,7 @@ import '../../ssh/data/ssh_providers.dart';
 import '../../settings/data/settings_repository.dart';
 import '../../workspace/data/workspace.dart';
 import '../../workspace/domain/nux_tab.dart';
+import '../domain/inspect.dart';
 import '../domain/remote_document.dart';
 import '../domain/text_encoding.dart';
 import 'viewer_view.dart';
@@ -76,7 +77,119 @@ class ViewerTab extends NuxTab {
 
   /// View state that outlives the widget (kept while the tab is parked).
   bool wrap = false;
-  bool rendered = true;
+  bool? _rendered;
+
+  /// Markdown and SVG open rendered, HTML as source.
+  bool get rendered => _rendered ?? document.kind != FileKind.html;
+
+  /// The bytes instead of what the server describes (an archive's files, a database's tables...).
+  bool showBytes = false;
+
+  /// The server's details on a picture or program instead of the picture or bytes.
+  bool showDetails = false;
+
+  /// Shows the bytes when a preview cannot be made.
+  void showBytesInstead() {
+    showBytes = true;
+    showDetails = false;
+    notifyListeners();
+  }
+
+  /// What the server can describe about this file; null for files on no host or that the viewer shows.
+  InspectType? get inspectType {
+    if (content != null) return null;
+    return inspectTypeFor(path) ?? (document.kind == FileKind.binary ? InspectType.executable : null);
+  }
+
+  /// Whether the description is shown when the file opens (archives, databases, media, PDFs, pictures
+  /// Flutter cannot draw); the rest show it on request ([details]).
+  bool get _describedByDefault => switch (inspectType) {
+    InspectType.archive || InspectType.database || InspectType.media || InspectType.pdf => true,
+    InspectType.image => !drawableImageExt.contains(posix.extension(path).toLowerCase().replaceFirst('.', '')),
+    _ => false,
+  };
+
+  /// What the view shows instead of the file itself; null shows the file.
+  InspectType? get inspecting {
+    final type = inspectType;
+    if (type == null) return null;
+    return (_describedByDefault ? !showBytes : showDetails) ? type : null;
+  }
+
+  Future<ArchiveListing>? _listing;
+
+  /// The archive's files, listed once by the server.
+  Future<ArchiveListing> listing() =>
+      _listing ??= runOnHost(archiveListScript(path)).then((r) => parseArchiveListing(path, r))
+        ..catchError((Object _) {
+          _listing = null;
+          return ArchiveListing('', const []);
+        }).ignore();
+
+  Future<List<DetailSection>>? _details;
+
+  /// What the server says about the file (type, media streams, PDF info, ELF header...).
+  Future<List<DetailSection>> fileDetails() =>
+      _details ??= runOnHost(detailsScript(path, inspectType)).then((r) => parseDetails(r.stdout))
+        ..catchError((Object _) {
+          _details = null;
+          return const <DetailSection>[];
+        }).ignore();
+
+  /// An archive operation is running.
+  bool busy = false;
+
+  /// Runs [script] on the file's host.
+  Future<CommandResult> runOnHost(String script) async {
+    final host = await openHost();
+    try {
+      return await host.runner.run(script);
+    } finally {
+      host.release();
+    }
+  }
+
+  Future<T> _busy<T>(Future<T> Function() work) async {
+    busy = true;
+    notifyListeners();
+    try {
+      return await work();
+    } finally {
+      busy = false;
+      notifyListeners();
+    }
+  }
+
+  /// Unpacks [node] into a temporary folder on the host and opens it in a new tab.
+  Future<void> openFromArchive(ArchiveListing listing, ArchiveNode node) => _busy(() async {
+    final names = listing.tool == 'single' ? const <String>[] : listing.namesUnder(node.path);
+    final r = await runOnHost(archiveExtractToTempScript(path, listing.tool, names));
+    final dir = r.stdout.trim();
+    if (!r.ok || dir.isEmpty) throw InspectException(r.stderr.trim().isEmpty ? 'exit ${r.exitCode}' : r.stderr.trim());
+    // On the same host: this tab's way of reading files reads it too.
+    _ref
+        .read(workspaceProvider)
+        .open(ViewerTab(_ref, connectionId: connectionId, path: '$dir/${node.path}', open: _open, openerId: id));
+  });
+
+  /// Where [extract] unpacks to: a folder named after the archive next to it (a single compressed file
+  /// goes next to it).
+  String get extractDestination =>
+      inspectTypeFor(path) == InspectType.archive && archiveFormatFor(path) == ArchiveFormat.single
+      ? posix.dirname(path)
+      : posix.join(posix.dirname(path), archiveStem(path));
+
+  /// Unpacks [node] (everything when null) into [extractDestination]; returns that folder.
+  Future<String> extract(ArchiveListing listing, [ArchiveNode? node]) => _busy(() async {
+    final names = node == null || listing.tool == 'single' ? const <String>[] : listing.namesUnder(node.path);
+    final dest = extractDestination;
+    final r = await runOnHost(archiveExtractAllScript(path, listing.tool, dest, names));
+    if (!r.ok) throw InspectException(r.stderr.trim().isEmpty ? 'exit ${r.exitCode}' : r.stderr.trim());
+    return dest;
+  });
+
+  /// Set by the archive view: extracts everything, with progress and a message.
+  Future<void> Function()? onExtractAll;
 
   CodeLineEditingController? _editor;
   CodeFindController? _finder;
@@ -234,10 +347,21 @@ class ViewerTab extends NuxTab {
   }
 
   @override
-  IconData get icon => switch (document.kind) {
+  IconData get icon => switch (inspectTypeFor(path)) {
+    InspectType.archive => Icons.inventory_2_outlined,
+    InspectType.database => Icons.table_chart_outlined,
+    InspectType.media => Icons.movie_outlined,
+    InspectType.pdf => Icons.picture_as_pdf_outlined,
+    _ => _kindIcon,
+  };
+
+  IconData get _kindIcon => switch (document.kind) {
     FileKind.image => Icons.image_outlined,
     FileKind.markdown => Icons.article_outlined,
-    FileKind.binary || FileKind.archive => Icons.memory,
+    FileKind.svg => Icons.draw_outlined,
+    FileKind.html => Icons.html,
+    FileKind.archive => Icons.inventory_2_outlined,
+    FileKind.binary => Icons.memory,
     FileKind.text => Icons.description_outlined,
   };
 
@@ -250,20 +374,20 @@ class ViewerTab extends NuxTab {
   }
 
   void setRendered(bool v) {
-    rendered = v;
+    _rendered = v;
     notifyListeners();
   }
 
   @override
   // Pictures and hex dumps have no text size to change.
-  TextSizeKind? get textSizeKind =>
-      document.kind == FileKind.text || document.kind == FileKind.markdown ? TextSizeKind.editor : null;
+  TextSizeKind? get textSizeKind => document.kind.isTextual && inspecting == null ? TextSizeKind.editor : null;
 
   @override
   List<NuxMenuItem> menuEntries(BuildContext context) {
     final l10n = context.l10n;
-    final textual = document.kind == FileKind.text || document.kind == FileKind.markdown;
-    final shownAsText = document.kind == FileKind.text || (document.kind == FileKind.markdown && !rendered);
+    final textual = document.kind.isTextual;
+    final shownAsText = textual && !(document.kind.renders && rendered);
+    final type = inspectType;
     final canEdit = shownAsText && !document.truncated && document.bytes != null;
     final statusBar = _ref.read(appSettingsProvider).value?.editorStatusBar ?? true;
     return [
@@ -304,7 +428,34 @@ class ViewerTab extends NuxTab {
         NuxMenuAction(icon: Icons.find_replace, label: l10n.replace, onSelected: () => _finder?.replaceMode()),
       if (shownAsText && _editor != null)
         NuxMenuAction(icon: Icons.format_list_numbered, label: l10n.goToLine, onSelected: () => goToLine(context)),
-      if (document.kind == FileKind.markdown)
+      if (type != null)
+        if (_describedByDefault)
+          NuxMenuAction(
+            icon: showBytes ? Icons.preview_outlined : Icons.memory,
+            label: showBytes ? l10n.showPreview : l10n.showBytes,
+            onSelected: () {
+              showBytes = !showBytes;
+              notifyListeners();
+            },
+          )
+        else
+          NuxMenuAction(
+            icon: Icons.info_outline,
+            label: l10n.fileDetails,
+            checked: showDetails,
+            onSelected: () {
+              showDetails = !showDetails;
+              notifyListeners();
+            },
+          ),
+      if (inspecting == InspectType.archive)
+        NuxMenuAction(
+          icon: Icons.unarchive_outlined,
+          label: l10n.extractTo('${posix.basename(extractDestination)}/'),
+          enabled: !busy,
+          onSelected: () => onExtractAll?.call(),
+        ),
+      if (document.kind.renders && inspecting == null)
         NuxMenuAction(
           icon: rendered ? Icons.code : Icons.article_outlined,
           label: rendered ? l10n.showSource : l10n.showRendered,
@@ -370,7 +521,16 @@ class ViewerTab extends NuxTab {
         ],
       ],
       const NuxMenuDivider(),
-      NuxMenuAction(icon: Icons.refresh, label: l10n.reload, enabled: !hasUnsavedChanges, onSelected: document.load),
+      NuxMenuAction(
+        icon: Icons.refresh,
+        label: l10n.reload,
+        enabled: !hasUnsavedChanges,
+        onSelected: () {
+          _listing = null;
+          _details = null;
+          document.load();
+        },
+      ),
       // How the text is shown: wrapping, the status bar, the keys above the keyboard.
       if (shownAsText)
         NuxMenuSubmenu(
@@ -394,7 +554,7 @@ class ViewerTab extends NuxTab {
           label: wrap ? l10n.noWrap : l10n.wrapLines,
           onSelected: () => setWrap(!wrap),
         ),
-      if (document.kind == FileKind.binary)
+      if (document.kind == FileKind.binary && inspecting == null)
         NuxMenuAction(icon: Icons.notes, label: l10n.showAsText, onSelected: document.showAsText),
       NuxMenuAction(
         icon: Icons.share_outlined,

@@ -81,16 +81,39 @@ String formatSize(int bytes) {
 }
 
 /// How a file is opened.
-enum FileKind { text, image, markdown, archive, binary }
+enum FileKind {
+  text,
+  image,
+  markdown,
+
+  /// Drawn by the viewer, or edited as text.
+  svg,
+
+  /// Shown as text, or rendered in a web view.
+  html,
+  archive,
+  binary;
+
+  /// Shown and edited as text (some also have a rendered view).
+  bool get isTextual => this == text || this == markdown || this == svg || this == html;
+
+  /// Has a rendered view besides the source.
+  bool get renders => this == markdown || this == svg || this == html;
+}
 
 const _imageExt = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'ico'};
-const _archiveExt = {'zip', 'gz', 'tgz', 'xz', 'bz2', 'zst', '7z', 'rar', 'tar', 'jar', 'apk', 'deb', 'rpm'};
+const _archiveExt = {
+  'zip', 'gz', 'tgz', 'xz', 'bz2', 'zst', 'lz4', '7z', 'rar', 'tar', 'tbz2', 'txz', 'tzst', 'jar', 'apk', 'aar', //
+  'war', 'whl', 'deb', 'rpm', 'cab', 'iso',
+};
 const _binaryExt = {'so', 'o', 'a', 'class', 'exe', 'dll', 'bin', 'pdf', 'mp3', 'mp4', 'mkv', 'wav', 'ogg', 'ttf', 'otf', 'woff', 'woff2', 'sqlite', 'db'};
 
 FileKind fileKindByName(String name) {
   final ext = posix.extension(name).toLowerCase().replaceFirst('.', '');
   if (_imageExt.contains(ext)) return FileKind.image;
   if (ext == 'md' || ext == 'markdown') return FileKind.markdown;
+  if (ext == 'svg') return FileKind.svg;
+  if (ext == 'html' || ext == 'htm' || ext == 'xhtml') return FileKind.html;
   if (_archiveExt.contains(ext)) return FileKind.archive;
   if (_binaryExt.contains(ext)) return FileKind.binary;
   return FileKind.text;
