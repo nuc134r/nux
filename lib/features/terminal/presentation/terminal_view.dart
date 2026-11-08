@@ -19,7 +19,6 @@ import '../domain/terminal_session.dart';
 import '../domain/terminal_tab.dart';
 import '../../../core/appearance/appearance.dart';
 import 'extra_keys_bar.dart';
-//import 'settled_size.dart';
 import 'terminal_theme.dart';
 
 /// The terminal of a [TerminalTab]: starts the shell the first time it is shown.
@@ -138,19 +137,16 @@ class _TerminalTabViewState extends ConsumerState<TerminalTabView> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  // Resized once the keyboard has finished sliding, not on every frame of it.
-                  child: /*SettledSize(
-                    child: */PinchTextSize(
-                      kind: TextSizeKind.terminal,
-                      child: TerminalView(
-                        controller: _session.terminal,
-                        theme: theme,
-                        autofocus: true,
-                        linkSettings: _links,
-                        // A long press selects a whole path (with its :line), not a piece between slashes.
-                        gestureSettings: const TerminalGestureSettings(wordBoundaries: terminalWordBoundaries),
-                      ),
-                    /*),*/
+                  child: PinchTextSize(
+                    kind: TextSizeKind.terminal,
+                    child: TerminalView(
+                      controller: _session.terminal,
+                      theme: theme,
+                      autofocus: true,
+                      linkSettings: _links,
+                      // A long press selects a whole path (with its :line), not a piece between slashes.
+                      gestureSettings: const TerminalGestureSettings(wordBoundaries: terminalWordBoundaries),
+                    ),
                   ),
                 ),
                 Positioned(

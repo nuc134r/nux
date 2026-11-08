@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.2
+
+- The terminal follows the keyboard right away again: holding its size until the keyboard settled did not stop repeated lines and made it lag.
+
 ## 0.10.7
 
 - **Terminal paste**: text with several lines pasted from the keyboard's clipboard arrives as one paste (the shell shows it before running it) instead of being typed line by line; Windows line endings no longer count twice.

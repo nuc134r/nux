@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flterm/flterm.dart' hide Key;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nux/features/terminal/presentation/settled_size.dart';
 
 void main() {
   testWidgets('a long press selects the word under the finger, without a drag', (tester) async {
@@ -52,32 +51,4 @@ void main() {
     c.dispose();
   });
 
-  testWidgets('while the keyboard slides in, the terminal keeps its size and is resized once at the end', (tester) async {
-    final sizes = <Size>[];
-    Widget app(double height) => MaterialApp(
-      home: Align(
-        alignment: Alignment.topLeft,
-        child: SizedBox(
-          width: 400,
-          height: height,
-          child: SettledSize(
-            child: LayoutBuilder(
-              builder: (context, box) {
-                if (sizes.isEmpty || sizes.last != box.biggest) sizes.add(box.biggest);
-                return const SizedBox.expand();
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pumpWidget(app(580));
-    for (var h = 560.0; h >= 300; h -= 20) {
-      await tester.pumpWidget(app(h));
-      await tester.pump(const Duration(milliseconds: 16));
-    }
-    expect(sizes, [const Size(400, 580)], reason: 'held while the size changes');
-    await tester.pump(const Duration(milliseconds: 200));
-    expect(sizes, [const Size(400, 580), const Size(400, 300)]);
-  });
 }
