@@ -7,7 +7,9 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
-import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffLayoutAction;
+import '../../settings/data/settings_repository.dart' show TextSizeKind;
+import '../../settings/presentation/text_size_controls.dart';
+import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffMenuItems;
 import '../domain/git_model.dart';
 import 'git_activity_view.dart';
 import '../domain/git_repo.dart';
@@ -684,54 +686,57 @@ class _DiffScreenState extends ConsumerState<_DiffScreen> {
               child: Text(widget.staged ? l10n.unstage : l10n.stage),
             ),
           ),
-          NuxMenuButton(tooltip: l10n.more, items: (context) => [diffLayoutAction(context, ref)]),
+          NuxMenuButton(tooltip: l10n.more, items: (context) => diffMenuItems(context, ref)),
         ],
       ),
-      body: FutureBuilder<String>(
-        future: _diff,
-        builder: (context, snap) {
-          if (snap.hasError) return Center(child: Text(l10n.errorGeneric('${snap.error}')));
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-          final lines = parseUnifiedDiff(snap.data!);
-          if (lines.isEmpty) return Center(child: Text(l10n.binaryOrEmptyDiff));
-          final untracked = widget.change.worktreeKind == GitChangeKind.untracked && !widget.staged;
-          final patch = PatchHunks.parse(snap.data!);
-          if (untracked || patch.hunks.length < 2) return DiffLinesView(lines: lines);
-          // Several parts: each can be staged (or unstaged) on its own.
-          return ListView(
-            children: [
-              for (final (i, hunk) in patch.hunks.indexed)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 8, 8, 0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              hunk.split('\n').first,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.labelSmall,
+      body: PinchTextSize(
+        kind: TextSizeKind.diff,
+        child: FutureBuilder<String>(
+          future: _diff,
+          builder: (context, snap) {
+            if (snap.hasError) return Center(child: Text(l10n.errorGeneric('${snap.error}')));
+            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+            final lines = parseUnifiedDiff(snap.data!);
+            if (lines.isEmpty) return Center(child: Text(l10n.binaryOrEmptyDiff));
+            final untracked = widget.change.worktreeKind == GitChangeKind.untracked && !widget.staged;
+            final patch = PatchHunks.parse(snap.data!);
+            if (untracked || patch.hunks.length < 2) return DiffLinesView(lines: lines);
+            // Several parts: each can be staged (or unstaged) on its own.
+            return ListView(
+              children: [
+                for (final (i, hunk) in patch.hunks.indexed)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 8, 0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                hunk.split('\n').first,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              widget.onHunk(patch.patchFor(i));
-                            },
-                            child: Text(widget.staged ? l10n.unstageHunk : l10n.stageHunk),
-                          ),
-                        ],
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                widget.onHunk(patch.patchFor(i));
+                              },
+                              child: Text(widget.staged ? l10n.unstageHunk : l10n.stageHunk),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    DiffLinesView(lines: parseUnifiedDiff('${patch.header}$hunk'), shrinkWrap: true),
-                  ],
-                ),
-            ],
-          );
-        },
+                      DiffLinesView(lines: parseUnifiedDiff('${patch.header}$hunk'), shrinkWrap: true),
+                    ],
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

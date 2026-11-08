@@ -540,10 +540,15 @@ class DiffView extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 8),
             child: FilledButton(onPressed: () => Navigator.pop(context, 'overwrite'), child: Text(l10n.overwrite)),
           ),
-          NuxMenuButton(tooltip: l10n.more, items: (context) => [diffLayoutAction(context, ref)]),
+          NuxMenuButton(tooltip: l10n.more, items: (context) => diffMenuItems(context, ref)),
         ],
       ),
-      body: hunks.isEmpty ? Center(child: Text(l10n.noDifferences)) : DiffLinesView(lines: hunks),
+      body: hunks.isEmpty
+          ? Center(child: Text(l10n.noDifferences))
+          : PinchTextSize(
+              kind: TextSizeKind.diff,
+              child: DiffLinesView(lines: hunks),
+            ),
     );
   }
 }
@@ -563,6 +568,12 @@ NuxMenuAction diffLayoutAction(BuildContext context, WidgetRef ref) {
   );
 }
 
+/// A diff screen's menu entries: the layout and the text size (pinching the diff changes it too).
+List<NuxMenuItem> diffMenuItems(BuildContext context, WidgetRef ref) => [
+  diffLayoutAction(context, ref),
+  textSizeMenuItem(TextSizeKind.diff),
+];
+
 /// Diff lines with their numbers, removed ones red and added ones green; null is a "⋯" gap between hunks.
 /// Side by side (see [diffSideBySideOn]) the old lines are on the left and the new on the right.
 class DiffLinesView extends ConsumerWidget {
@@ -577,7 +588,13 @@ class DiffLinesView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final mono = theme.textTheme.bodySmall?.copyWith(fontFamily: monoFont, fontFeatures: noLigatures, height: 1.4);
+    final fontSize = watchTextSize(ref, TextSizeKind.diff);
+    final mono = theme.textTheme.bodySmall?.copyWith(
+      fontFamily: monoFont,
+      fontFeatures: noLigatures,
+      fontSize: fontSize,
+      height: 1.4,
+    );
     final numbers = mono?.copyWith(color: scheme.onSurfaceVariant);
     final split = diffSideBySideOn(context, ref.watch(appSettingsProvider).value);
     final rows = split ? sideBySide(lines) : null;
@@ -603,7 +620,7 @@ class DiffLinesView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 32,
+                    width: fontSize * 2.7,
                     child: Text('${old ? line.oldLine : line.newLine}', textAlign: TextAlign.right, style: numbers),
                   ),
                   const SizedBox(width: 6),
@@ -645,10 +662,13 @@ class DiffLinesView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 40,
+                width: fontSize * 3.4,
                 child: Text('${line.newLine ?? line.oldLine}', textAlign: TextAlign.right, style: numbers),
               ),
-              SizedBox(width: 18, child: Text(' $sign', style: mono)),
+              SizedBox(
+                width: fontSize * 1.5,
+                child: Text(' $sign', style: mono),
+              ),
               Expanded(child: Text(line.text, style: mono)),
             ],
           ),

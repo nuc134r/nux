@@ -15,6 +15,7 @@ abstract final class SettingKeys {
   static const terminalLineHeight = 'terminalLineHeight';
   static const editorFontSize = 'editorFontSize';
   static const diffSideBySide = 'diffSideBySide';
+  static const diffFontSize = 'diffFontSize';
   static const terminalTheme = 'terminalTheme';
   static const terminalFont = 'terminalFont';
   static const editorTheme = 'editorTheme';
@@ -34,7 +35,8 @@ abstract final class SettingKeys {
 /// Text that has its own size setting, changed in Settings, from a tab's menu or by pinching.
 enum TextSizeKind {
   terminal(SettingKeys.terminalFontSize, 14),
-  editor(SettingKeys.editorFontSize, 13);
+  editor(SettingKeys.editorFontSize, 13),
+  diff(SettingKeys.diffFontSize, 12);
 
   const TextSizeKind(this.key, this.defaultSize);
 

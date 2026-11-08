@@ -11,7 +11,9 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../files/presentation/file_dialogs.dart';
-import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffLayoutAction;
+import '../../settings/data/settings_repository.dart' show TextSizeKind;
+import '../../settings/presentation/text_size_controls.dart';
+import '../../viewer/presentation/viewer_view.dart' show DiffLinesView, diffMenuItems;
 import '../domain/git_model.dart';
 import '../domain/git_repo.dart';
 import 'git_panel.dart';
@@ -221,42 +223,45 @@ class _CommitScreen extends ConsumerWidget {
                 label: l10n.copyHash,
                 onSelected: () => Clipboard.setData(ClipboardData(text: commit.hash)),
               ),
-              diffLayoutAction(context, ref),
+              ...diffMenuItems(context, ref),
             ],
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: Future.wait([repo.message(commit.hash), repo.show(commit.hash)]),
-        builder: (context, snap) {
-          if (snap.hasError) return Center(child: Text(l10n.errorGeneric('${snap.error}')));
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-          final message = snap.data![0] as String;
-          final files = snap.data![1] as List<FileDiff>;
-          return ListView(
-            padding: const EdgeInsets.only(bottom: 16),
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: SelectableText(message, style: theme.textTheme.bodyLarge),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Text(
-                  '${commit.author} <${commit.email}> · ${_when(context, commit.time)}',
-                  style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+      body: PinchTextSize(
+        kind: TextSizeKind.diff,
+        child: FutureBuilder(
+          future: Future.wait([repo.message(commit.hash), repo.show(commit.hash)]),
+          builder: (context, snap) {
+            if (snap.hasError) return Center(child: Text(l10n.errorGeneric('${snap.error}')));
+            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+            final message = snap.data![0] as String;
+            final files = snap.data![1] as List<FileDiff>;
+            return ListView(
+              padding: const EdgeInsets.only(bottom: 16),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                  child: SelectableText(message, style: theme.textTheme.bodyLarge),
                 ),
-              ),
-              for (final f in files)
-                ExpansionTile(
-                  title: Text(posix.basename(f.path), maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: posix.dirname(f.path) == '.' ? null : StartEllipsisText(posix.dirname(f.path)),
-                  initiallyExpanded: files.length <= 3,
-                  children: [DiffLinesView(lines: f.lines, shrinkWrap: true)],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    '${commit.author} <${commit.email}> · ${_when(context, commit.time)}',
+                    style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                  ),
                 ),
-            ],
-          );
-        },
+                for (final f in files)
+                  ExpansionTile(
+                    title: Text(posix.basename(f.path), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    subtitle: posix.dirname(f.path) == '.' ? null : StartEllipsisText(posix.dirname(f.path)),
+                    initiallyExpanded: files.length <= 3,
+                    children: [DiffLinesView(lines: f.lines, shrinkWrap: true)],
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
