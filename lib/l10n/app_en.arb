@@ -3,6 +3,7 @@
   "abortOperation": "Abort",
   "about": "About",
   "activity": "Activity",
+  "activityAppCrashed": "nux closed unexpectedly last time",
   "activityDisconnected": "{host}: connection lost",
   "@activityDisconnected": {
     "placeholders": {

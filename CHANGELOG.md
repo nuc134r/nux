@@ -3,6 +3,17 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.3
+
+- **Tab order**: long-press a card in the tab overview (or a tab in the tablet strip) and drag it to move it. A long press without moving still opens the tab's sheet.
+- The tab overview's ⋮ has the workspace actions: switch to another workspace (or make a new one) and close the current one. Home sits with Activity and Settings; Keys and ZeroTier are in Settings.
+- Home's workspace list and a tab's long-press sheet show the whole host and path instead of cutting them.
+- Diffs have their own text size: ⋮ → Text size on the diff and commit screens, or pinch the diff.
+- Editor: when the keyboard comes up, the cursor's line scrolls to the middle of what stays visible.
+- Editor: swiping the keyboard's space bar to move the cursor no longer deletes a character at the start of a line.
+- Fixed a crash when connections opened right after starting nux: the background service could be told to update before it had started, and Android closed the app.
+- When nux closed unexpectedly (a crash, or Android stopping it), the next start says so in Activity and writes the reason to the log.
+
 ## 0.11.2
 
 - The terminal follows the keyboard right away again: holding its size until the keyboard settled did not stop repeated lines and made it lag.

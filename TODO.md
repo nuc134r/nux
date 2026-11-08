@@ -128,14 +128,16 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] F-Droid: `NUX_UPDATER=false` flavour, build-from-source paths for all native libs, fastlane metadata
 
 ## Small usability fixes
-- [ ] empty tab switcher workspace actions: switch, close. remove keys and zerotier, put home in the same block as settings and actions 
-- [ ] when clicking text editor, after keyboard appears the selected line should scroll into view to be centered
-- [ ] when swiping keyboard space button to move cursor in the editor it sometimes deletes symbols
-- [ ] sudden crashes on opening connections right after opening the app (opening drawer/starting ssh sessions). no logs, might be related to the service
-- [ ] home tab workspace list: show all lines of host + path
-- [ ] tab switcher tab longpress sheet: show full host + path as well
-- [ ] diff page font size configuration
-- [ ] tab reordering 
+- [x] empty tab switcher workspace actions: switch, close. remove keys and zerotier, put home in the same block as settings and actions 
+- [x] when clicking text editor, after keyboard appears the selected line should scroll into view to be centered
+- [x] when swiping keyboard space button to move cursor in the editor it sometimes deletes symbols
+- [x] sudden crashes on opening connections right after opening the app (opening drawer/starting ssh sessions). no logs, might be related to the service
+  (likely the service start being overwritten by an update; calls are now one at a time. How the last run ended is
+  logged on the next start, so reopen this with that log line if it still happens)
+- [x] home tab workspace list: show all lines of host + path
+- [x] tab switcher tab longpress sheet: show full host + path as well
+- [x] diff page font size configuration
+- [x] tab reordering 
 
 ## Owner actions (outside this repo)
 - [ ] Revoke the SSH key that `lamp_studio` commit `8fa47a2` hardcoded; rewrite or keep that repo private

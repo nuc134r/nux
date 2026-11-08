@@ -653,8 +653,14 @@ class _TabGridState extends State<_TabGrid> with SingleTickerProviderStateMixin 
   );
   String? _focus;
 
-  /// The card being swiped (drawn above the others).
+  /// The card being swiped or moved (drawn above the others).
   String? _dragging;
+
+  /// Moving a card (long press, then drag): where it was picked up and how far the finger went.
+  String? _moving;
+  Rect _moveStart = Rect.zero;
+  Offset _moveBy = Offset.zero;
+  bool _moved = false;
   bool _opening = true;
   bool _picking = false;
 
@@ -698,6 +704,48 @@ class _TabGridState extends State<_TabGrid> with SingleTickerProviderStateMixin 
     setState(() => _focus = tab.id);
     await _zoom.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInCubic);
     if (mounted) controller.select(tab);
+  }
+
+  void _moveStartAt(SwitcherTab tab, Rect rect) {
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _moving = _dragging = tab.id;
+      _moveStart = rect;
+      _moveBy = Offset.zero;
+      _moved = false;
+    });
+  }
+
+  /// The finger moved [by] from where the card was picked up: the card follows it, and takes the place
+  /// of the card under its centre (in the same section; [TabSwitcherController.move] keeps pinned tabs first).
+  void _moveUpdate(SwitcherTab tab, Offset by, Map<String, Rect> rects) {
+    if (by.distance > 8) _moved = true;
+    final centre = _moveStart.center + by;
+    final over = controller.tabs.where((t) => t != tab && (rects[t.id]?.contains(centre) ?? false)).firstOrNull;
+    if (over != null && controller.isPinned(over) == controller.isPinned(tab)) {
+      controller.move(tab, controller.tabs.indexOf(over));
+      HapticFeedback.selectionClick();
+    }
+    // Near the top or bottom edge the grid scrolls along.
+    final scroll = _scroll;
+    if (scroll != null && scroll.hasClients) {
+      final y = centre.dy - scroll.offset;
+      final edge = scroll.position.viewportDimension;
+      final step = y < 48 ? -12.0 : (y > edge - 48 ? 12.0 : 0.0);
+      if (step != 0) {
+        final before = scroll.offset;
+        scroll.jumpTo((before + step).clamp(0, scroll.position.maxScrollExtent));
+        _moveStart = _moveStart.translate(0, scroll.offset - before);
+      }
+    }
+    setState(() => _moveBy = by);
+  }
+
+  void _moveEnd(SwitcherTab tab) {
+    final moved = _moved;
+    setState(() => _moving = _dragging = null);
+    // A long press that never moved is the tab's menu.
+    if (!moved) widget.onMenu(tab);
   }
 
   @override
@@ -764,26 +812,38 @@ class _TabGridState extends State<_TabGrid> with SingleTickerProviderStateMixin 
               for (final t in tabs)
                 AnimatedPositioned.fromRect(
                   key: ValueKey(t.id),
-                  rect: rects[t.id]!,
-                  duration: const Duration(milliseconds: 280),
+                  // A card being moved follows the finger; let go, it slides into its place.
+                  rect: t.id == _moving ? _moveStart.shift(_moveBy) : rects[t.id]!,
+                  duration: t.id == _moving ? Duration.zero : const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
-                  child: _SwipeCard(
-                    width: cardW,
-                    enabled: !controller.isPinned(t),
-                    onDragStart: () => setState(() => _dragging = t.id),
-                    onDragEnd: () => setState(() => _dragging = null),
-                    mayClose: () => widget.mayClose(t),
-                    onDismissed: () => widget.onDismissed(t),
-                    child: _TabCard(
-                      tab: t,
-                      current: t == current,
-                      pinned: controller.isPinned(t),
-                      preview: controller.preview(t),
-                      noPreview: strings.noPreview,
-                      closeTooltip: strings.close,
-                      onTap: () => _open(t),
-                      onClose: () => widget.onClose(t),
-                      onMenu: () => widget.onMenu(t),
+                  child: GestureDetector(
+                    onLongPressStart: (_) => _moveStartAt(t, rects[t.id]!),
+                    onLongPressMoveUpdate: (d) => _moveUpdate(t, d.offsetFromOrigin, rects),
+                    onLongPressEnd: (_) => _moveEnd(t),
+                    onLongPressCancel: () {
+                      if (_moving == t.id) setState(() => _moving = _dragging = null);
+                    },
+                    child: AnimatedScale(
+                      scale: t.id == _moving ? 1.05 : 1,
+                      duration: const Duration(milliseconds: 150),
+                      child: _SwipeCard(
+                        width: cardW,
+                        enabled: !controller.isPinned(t),
+                        onDragStart: () => setState(() => _dragging = t.id),
+                        onDragEnd: () => setState(() => _dragging = null),
+                        mayClose: () => widget.mayClose(t),
+                        onDismissed: () => widget.onDismissed(t),
+                        child: _TabCard(
+                          tab: t,
+                          current: t == current,
+                          pinned: controller.isPinned(t),
+                          preview: controller.preview(t),
+                          noPreview: strings.noPreview,
+                          closeTooltip: strings.close,
+                          onTap: () => _open(t),
+                          onClose: () => widget.onClose(t),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -957,7 +1017,6 @@ class _TabCard extends StatelessWidget {
     required this.closeTooltip,
     required this.onTap,
     required this.onClose,
-    required this.onMenu,
   });
 
   final SwitcherTab tab;
@@ -968,7 +1027,6 @@ class _TabCard extends StatelessWidget {
   final String closeTooltip;
   final VoidCallback onTap;
   final VoidCallback onClose;
-  final VoidCallback onMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -981,9 +1039,9 @@ class _TabCard extends StatelessWidget {
         side: current ? BorderSide(color: scheme.primary, width: 2) : BorderSide.none,
       ),
       clipBehavior: Clip.antiAlias,
+      // Long press (the menu, or moving the card) is the grid's.
       child: InkWell(
         onTap: onTap,
-        onLongPress: onMenu,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -1045,7 +1103,7 @@ class _TabCard extends StatelessWidget {
   }
 }
 
-class _TabStrip extends StatelessWidget {
+class _TabStrip extends StatefulWidget {
   const _TabStrip({
     required this.controller,
     required this.topPadding,
@@ -1061,12 +1119,38 @@ class _TabStrip extends StatelessWidget {
   final Widget? trailing;
 
   @override
+  State<_TabStrip> createState() => _TabStripState();
+}
+
+/// Long press and drag moves a tab along the strip; a long press without moving is its menu.
+class _TabStripState extends State<_TabStrip> {
+  final _keys = <String, GlobalKey>{};
+  bool _moved = false;
+
+  TabSwitcherController get controller => widget.controller;
+
+  void _move(SwitcherTab tab, LongPressMoveUpdateDetails d) {
+    if (d.offsetFromOrigin.distance > 8) _moved = true;
+    for (final t in controller.tabs) {
+      if (t == tab || controller.isPinned(t) != controller.isPinned(tab)) continue;
+      final box = _keys[t.id]?.currentContext?.findRenderObject() as RenderBox?;
+      if (box == null || !box.hasSize) continue;
+      if ((box.localToGlobal(Offset.zero) & box.size).contains(d.globalPosition)) {
+        controller.move(tab, controller.tabs.indexOf(t));
+        HapticFeedback.selectionClick();
+        return;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _keys.removeWhere((id, _) => !controller.tabs.any((t) => t.id == id));
     final scheme = Theme.of(context).colorScheme;
     return Material(
       color: scheme.surfaceContainer,
       child: Padding(
-        padding: EdgeInsets.only(top: topPadding),
+        padding: EdgeInsets.only(top: widget.topPadding),
         child: SizedBox(
           height: 40,
           child: Row(
@@ -1078,21 +1162,31 @@ class _TabStrip extends StatelessWidget {
                   children: [
                     for (final t in controller.tabs)
                       Padding(
-                        key: ValueKey(t.id),
+                        key: _keys.putIfAbsent(t.id, GlobalKey.new),
                         padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: _StripTab(
-                          tab: t,
-                          current: t == controller.current,
-                          pinned: controller.isPinned(t),
-                          onTap: () => controller.select(t),
-                          onClose: () => onClose(t),
-                          onMenu: () => onMenu(t),
+                        child: GestureDetector(
+                          onLongPressStart: (_) {
+                            _moved = false;
+                            HapticFeedback.mediumImpact();
+                          },
+                          onLongPressMoveUpdate: (d) => _move(t, d),
+                          onLongPressEnd: (_) {
+                            if (!_moved) widget.onMenu(t);
+                          },
+                          child: _StripTab(
+                            tab: t,
+                            current: t == controller.current,
+                            pinned: controller.isPinned(t),
+                            onTap: () => controller.select(t),
+                            onClose: () => widget.onClose(t),
+                            onMenu: () => widget.onMenu(t),
+                          ),
                         ),
                       ),
                   ],
                 ),
               ),
-              ?trailing,
+              ?widget.trailing,
             ],
           ),
         ),
@@ -1127,7 +1221,6 @@ class _StripTab extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
         onTap: onTap,
-        onLongPress: onMenu,
         onSecondaryTap: onMenu,
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: pinned ? 56 : 220, minWidth: pinned ? 40 : 120),

@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'Activity'**
   String get activity;
 
+  /// No description provided for @activityAppCrashed.
+  ///
+  /// In en, this message translates to:
+  /// **'nux closed unexpectedly last time'**
+  String get activityAppCrashed;
+
   /// No description provided for @activityDisconnected.
   ///
   /// In en, this message translates to:

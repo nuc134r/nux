@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tab_switcher/tab_switcher.dart';
@@ -276,5 +277,62 @@ void main() {
     final mid = tester.getTopLeft(find.text('Tab a'));
     await tester.pumpAndSettle();
     expect(tester.getTopLeft(find.text('Tab a')), mid);
+  });
+
+  testWidgets('a long press and drag moves a card; a long press alone opens its sheet', (tester) async {
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    c
+      ..open(CounterTab('a'))
+      ..open(CounterTab('b'))
+      ..open(CounterTab('c'))
+      ..gridOpen = true;
+    await tester.pumpWidget(app(c));
+    await tester.pumpAndSettle();
+    expect([for (final t in c.tabs) t.id], ['a', 'b', 'c']);
+
+    // Hold a, drag it onto c (the next row).
+    final gesture = await tester.startGesture(tester.getCenter(find.text('Tab a')));
+    await tester.pump(kLongPressTimeout + const Duration(milliseconds: 50));
+    final to = tester.getCenter(find.text('Tab c'));
+    final from = tester.getCenter(find.text('Tab a'));
+    for (var i = 1; i <= 10; i++) {
+      await gesture.moveTo(Offset.lerp(from, to, i / 10)!);
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect([for (final t in c.tabs) t.id], ['b', 'c', 'a']);
+    expect(find.byType(BottomSheet), findsNothing);
+
+    await tester.longPress(find.text('Tab b'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    expect([for (final t in c.tabs) t.id], ['b', 'c', 'a']);
+  });
+
+  testWidgets('a long press and drag moves a tab along the strip', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = TabSwitcherController();
+    addTearDown(c.dispose);
+    c
+      ..open(CounterTab('a'))
+      ..open(CounterTab('b'))
+      ..open(CounterTab('c'));
+    await tester.pumpWidget(app(c));
+    final gesture = await tester.startGesture(tester.getCenter(find.text('Tab c')));
+    await tester.pump(kLongPressTimeout + const Duration(milliseconds: 50));
+    final from = tester.getCenter(find.text('Tab c'));
+    final to = tester.getCenter(find.text('Tab a'));
+    for (var i = 1; i <= 10; i++) {
+      await gesture.moveTo(Offset.lerp(from, to, i / 10)!);
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(c.tabs.first.id, 'c');
+    expect(find.byType(BottomSheet), findsNothing);
   });
 }

@@ -19,6 +19,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get activity => 'Активность';
 
   @override
+  String get activityAppCrashed => 'В прошлый раз nux неожиданно закрылся';
+
+  @override
   String activityDisconnected(String host) {
     return '$host: соединение потеряно';
   }

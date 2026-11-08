@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.FlutterEngine
 class MainActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ContentChannel.attach(NuxEngine.get(this), this) // the engine exists before super.onCreate looks it up
+        ExitChannel.attach(NuxEngine.get(this), this)
         super.onCreate(savedInstanceState)
         current = this
         // "Open with" / "Share to" nux (not when the activity is only being recreated).

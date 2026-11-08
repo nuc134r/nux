@@ -19,6 +19,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activity => 'Activity';
 
   @override
+  String get activityAppCrashed => 'nux closed unexpectedly last time';
+
+  @override
   String activityDisconnected(String host) {
     return '$host: connection lost';
   }

@@ -113,12 +113,25 @@ class ForegroundServiceKeepAlive implements KeepAlive {
   @override
   Stream<void> get stopRequested => _stop.stream;
 
+  /// One service call at a time. The plugin keeps the requested action (start, update, stop) in one
+  /// stored value that the service reads when the call reaches it, so an update sent while a start is
+  /// on its way replaced the start: the service never went to the foreground, and Android ended nux.
+  Future<void> _queue = Future.value();
+  bool _updateQueued = false;
+
+  Future<void> _serial(Future<void> Function() call) {
+    final next = _queue.then((_) => call()).catchError((Object e) => log('Background service: $e'));
+    return _queue = next;
+  }
+
   @override
-  Future<void> start({required String title, required String text, required String stopLabel}) async {
+  Future<void> start({required String title, required String text, required String stopLabel}) {
     _wanted = (title: title, text: text, stopLabel: stopLabel);
     _stopPressed = null;
-    await _askOnce();
-    await _ensure(withButtons: true);
+    return _serial(() async {
+      await _askOnce();
+      await _ensure(withButtons: true);
+    });
   }
 
   @override
@@ -128,13 +141,21 @@ class ForegroundServiceKeepAlive implements KeepAlive {
     _wanted = (title: title, text: text, stopLabel: wanted.stopLabel);
     final pressed = _stopPressed;
     if (pressed != null && DateTime.now().difference(pressed) < const Duration(seconds: 10)) return;
-    await _ensure(withButtons: false);
+    // Updates come often (traffic): one waiting in the queue shows the latest text anyway.
+    if (_updateQueued) return;
+    _updateQueued = true;
+    await _serial(() {
+      _updateQueued = false;
+      return _ensure(withButtons: false);
+    });
   }
 
   @override
-  Future<void> stop() async {
+  Future<void> stop() {
     _wanted = null;
-    if (await FlutterForegroundTask.isRunningService) await FlutterForegroundTask.stopService();
+    return _serial(() async {
+      if (_wanted == null && await FlutterForegroundTask.isRunningService) await FlutterForegroundTask.stopService();
+    });
   }
 
   /// Notification permission (Android 13+) and, once, the battery exemption (Termux asks the same: some

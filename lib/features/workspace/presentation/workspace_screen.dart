@@ -9,6 +9,7 @@ import '../../../app/router.dart';
 import '../../../core/activity/activity_center.dart';
 import '../../../core/activity/activity_view.dart';
 import '../../../core/background/background_providers.dart';
+import '../../../core/platform/exits.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../browser/domain/address.dart';
@@ -60,6 +61,8 @@ class WorkspaceScreen extends ConsumerWidget {
     // Open terminals and file browsers keep nux running in the background (with a notification).
     ref.watch(sshKeepAliveProvider);
     ref.watch(backgroundResyncProvider);
+    // How the previous run ended (a crash leaves nothing in the log by itself).
+    ref.watch(previousExitsProvider);
     // Files other apps open with or share to nux.
     ref.watch(incomingHandlerProvider);
     // An available update is an Activity event.

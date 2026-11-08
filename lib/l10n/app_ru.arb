@@ -3,6 +3,7 @@
   "abortOperation": "Прервать",
   "about": "О приложении",
   "activity": "Активность",
+  "activityAppCrashed": "В прошлый раз nux неожиданно закрылся",
   "activityDisconnected": "{host}: соединение потеряно",
   "activityDownload": "Скачивание {name}",
   "activityEarlier": "Ранее",
