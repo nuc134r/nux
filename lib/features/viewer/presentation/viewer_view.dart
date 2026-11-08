@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -341,12 +342,99 @@ class _CodeView extends ConsumerWidget {
     final keyboard = MediaQuery.viewInsetsOf(context).bottom > 0;
     return Column(
       children: [
-        Expanded(child: codeEditor),
+        Expanded(
+          child: _CenterCursorOnKeyboard(editor: editor, enabled: editing, child: codeEditor),
+        ),
         if (editing) EditorKeyBar(editor: editor),
         if (!keyboard && (settings?.editorStatusBar ?? true)) _StatusBar(tab: tab, editor: editor, language: language),
       ],
     );
   }
+}
+
+/// When the keyboard comes up over the editor, scrolls the cursor's line to the middle of what is left.
+class _CenterCursorOnKeyboard extends StatefulWidget {
+  const _CenterCursorOnKeyboard({required this.editor, required this.enabled, required this.child});
+
+  final CodeLineEditingController editor;
+  final bool enabled;
+  final Widget child;
+
+  @override
+  State<_CenterCursorOnKeyboard> createState() => _CenterCursorOnKeyboardState();
+}
+
+class _CenterCursorOnKeyboardState extends State<_CenterCursorOnKeyboard> with WidgetsBindingObserver {
+  double _inset = 0;
+  bool _opening = false;
+  Timer? _settle;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  // The screens above remove the keyboard from MediaQuery, so this watches the window.
+  @override
+  void didChangeMetrics() {
+    if (!mounted) return;
+    final inset = View.of(context).viewInsets.bottom;
+    if (inset == _inset) return;
+    if (_inset == 0 && inset > 0) _opening = true;
+    if (inset == 0) _opening = false;
+    _inset = inset;
+    // The keyboard animates in: wait until its height stops changing.
+    _settle?.cancel();
+    if (_opening && widget.enabled) _settle = Timer(const Duration(milliseconds: 120), _center);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _settle?.cancel();
+    super.dispose();
+  }
+
+  void _center() {
+    _opening = false;
+    if (!mounted) return;
+    // re_editor centres only a cursor that is out of view, so this asks its render object (private, hence
+    // dynamic) where the cursor is and scrolls the editor's vertical scrollable.
+    RenderBox? field;
+    ScrollPosition? vertical;
+    void visit(Element e) {
+      final render = e.renderObject;
+      if (field == null && render is RenderBox && render.runtimeType.toString() == '_CodeFieldRender') field = render;
+      if (vertical == null && e is StatefulElement && e.state is ScrollableState) {
+        final position = (e.state as ScrollableState).position;
+        if (position.axis == Axis.vertical) vertical = position;
+      }
+      if (field == null || vertical == null) e.visitChildren(visit);
+    }
+
+    context.visitChildElements(visit);
+    final box = field, position = vertical;
+    if (box == null || position == null || !box.hasSize) return;
+    try {
+      final offset = (box as dynamic).calculateTextPositionViewportOffset(widget.editor.selection.extent) as Offset?;
+      if (offset == null) {
+        widget.editor.makeCursorCenterIfInvisible();
+        return;
+      }
+      final lineHeight = (box as dynamic).lineHeight as double;
+      final target = (position.pixels + offset.dy + lineHeight / 2 - box.size.height / 2).clamp(
+        position.minScrollExtent,
+        position.maxScrollExtent,
+      );
+      position.animateTo(target, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+    } on NoSuchMethodError {
+      widget.editor.makeCursorCenterIfInvisible();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Under the editor: cursor position (and selection), language, encoding and line endings. Encoding and
