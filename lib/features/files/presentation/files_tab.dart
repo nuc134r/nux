@@ -79,6 +79,9 @@ class FilesTab extends NuxTab {
   String? get subtitle => connection == null ? browser.path : '${connection!.name} · ${browser.path ?? ''}';
 
   @override
+  String? get details => connection == null ? browser.path : '${connection!.name}\n${browser.path ?? ''}';
+
+  @override
   IconData get icon => Icons.folder_outlined;
 
   @override

@@ -79,6 +79,13 @@ class TerminalTab extends NuxTab {
   }
 
   @override
+  String? get details => [
+    if (session.connection case final c?) '${c.name} · ${c.address}',
+    if (session.remoteTitle.isNotEmpty) session.remoteTitle,
+    ?directory,
+  ].join('\n');
+
+  @override
   IconData get icon => switch (session.state) {
         TerminalState.connecting => Icons.sync,
         TerminalState.closed => Icons.link_off,

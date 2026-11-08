@@ -255,12 +255,9 @@ class _TabSwitcherState extends State<TabSwitcher> {
           children: [
             ListTile(
               leading: Icon(tab.icon ?? Icons.tab),
-              title: Text(tab.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-              subtitle: tab.subtitle == null
-                  ? null
-                  : tab.subtitle!.contains('/')
-                  ? StartEllipsisText(tab.subtitle!)
-                  : Text(tab.subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis),
+              title: Text(tab.title),
+              // All of it here: the host and the whole path, on as many lines as it needs.
+              subtitle: tab.details == null ? null : Text(tab.details!),
             ),
             const Divider(height: 1),
             for (final a in extra)

@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
-import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/host_ping.dart';
@@ -219,8 +218,9 @@ class _WorkspacesView extends ConsumerWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.titleMedium,
                                 ),
-                                StartEllipsisText(
-                                  '${hosts[w.connectionId] ?? ''} · ${w.rootPath}',
+                                // The host, then the whole path (wrapped, never cut).
+                                Text(
+                                  '${hosts[w.connectionId] ?? ''}\n${w.rootPath}',
                                   style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
                                 ),
                               ],

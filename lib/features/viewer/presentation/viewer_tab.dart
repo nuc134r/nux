@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/keys/key_bar_layout.dart';
 import '../../settings/presentation/key_bar_settings.dart';
+import '../../connections/data/connection_repository.dart';
 import '../../workspace/data/workspace_access.dart';
 import '../../files/presentation/file_sharing.dart';
 import '../../../core/platform/content.dart';
@@ -224,6 +225,13 @@ class ViewerTab extends NuxTab {
 
   @override
   String? get subtitle => content != null ? content!.name : posix.dirname(path);
+
+  @override
+  String? get details {
+    if (content != null) return content!.name;
+    final host = _ref.read(connectionsProvider).value?.where((c) => c.id == connectionId).firstOrNull;
+    return host == null ? path : '${host.name}\n$path';
+  }
 
   @override
   IconData get icon => switch (document.kind) {

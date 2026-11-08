@@ -14,6 +14,10 @@ abstract class SwitcherTab extends ChangeNotifier {
 
   String? get subtitle => null;
 
+  /// Shown in full in the tab's long-press sheet (where the subtitle is cut to one line elsewhere): e.g.
+  /// the host and the whole path. Defaults to [subtitle].
+  String? get details => subtitle;
+
   IconData? get icon => null;
 
   /// Tabs with the same group are shown together in the grid.
