@@ -6,6 +6,7 @@ shown in the app under Settings → App version. Write for people using the app,
 ## 0.11.7
 
 - Back in an archive goes up a folder, and in a database table returns to the tables, before it leaves the file.
+- Big photos no longer freeze the app while they open: they are drawn at up to twice the screen's size (sharp when zoomed), the bytes are not decoded as text for nothing, and the spinner shows how much has arrived.
 
 ## 0.11.6
 

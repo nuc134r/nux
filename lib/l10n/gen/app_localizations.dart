@@ -2258,6 +2258,12 @@ abstract class AppLocalizations {
   /// **'Load more'**
   String get loadMoreRows;
 
+  /// No description provided for @loadedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{loaded} of {total}'**
+  String loadedOf(String loaded, String total);
+
   /// No description provided for @logAll.
   ///
   /// In en, this message translates to:

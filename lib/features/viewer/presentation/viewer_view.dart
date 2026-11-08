@@ -214,7 +214,20 @@ class _ViewerViewState extends State<ViewerView> {
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          // How much has arrived (a big picture takes a while over SSH).
+          final total = min(doc.size, RemoteDocument.limitFor(fileKindByName(doc.path)));
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(value: total > 256 << 10 && doc.received > 0 ? doc.received / total : null),
+                if (total > 256 << 10 && doc.received > 0) ...[
+                  const SizedBox(height: 12),
+                  Text(l10n.loadedOf(formatSize(doc.received), formatSize(total))),
+                ],
+              ],
+            ),
+          );
         }
         final inspecting = widget.tab.inspecting;
         return Column(
@@ -909,11 +922,15 @@ class _ImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A phone photo decoded at full size (12+ megapixels, ~50 MB of pixels) stalls drawing while it is
+    // uploaded: decode at most twice the screen's size (up to 4096 px), plenty for zooming in.
+    final mq = MediaQuery.of(context);
+    final limit = (mq.size.longestSide * mq.devicePixelRatio * 2).round().clamp(1024, 4096);
     return InteractiveViewer(
       maxScale: 8,
       child: Center(
-        child: Image.memory(
-          doc.bytes!,
+        child: Image(
+          image: ResizeImage(MemoryImage(doc.bytes!), width: limit, height: limit, policy: ResizeImagePolicy.fit),
           gaplessPlayback: true,
           errorBuilder: (context, error, stack) => Text(context.l10n.imageUnreadable),
         ),

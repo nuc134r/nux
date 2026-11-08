@@ -986,6 +986,17 @@
   "linkTargetLabel": "Points to",
   "loadAll": "Load all",
   "loadMoreRows": "Load more",
+  "loadedOf": "{loaded} of {total}",
+  "@loadedOf": {
+    "placeholders": {
+      "loaded": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "logAll": "All",
   "logEmpty": "The log is empty",
   "logErrors": "Errors",

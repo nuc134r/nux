@@ -360,6 +360,7 @@
   "linkTargetLabel": "Ссылается на",
   "loadAll": "Загрузить всё",
   "loadMoreRows": "Загрузить ещё",
+  "loadedOf": "{loaded} из {total}",
   "logAll": "Все",
   "logEmpty": "Журнал пуст",
   "logErrors": "Ошибки",

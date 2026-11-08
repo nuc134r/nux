@@ -1388,6 +1388,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loadMoreRows => 'Загрузить ещё';
 
   @override
+  String loadedOf(String loaded, String total) {
+    return '$loaded из $total';
+  }
+
+  @override
   String get logAll => 'Все';
 
   @override

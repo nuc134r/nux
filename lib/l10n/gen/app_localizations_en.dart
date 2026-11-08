@@ -1367,6 +1367,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadMoreRows => 'Load more';
 
   @override
+  String loadedOf(String loaded, String total) {
+    return '$loaded of $total';
+  }
+
+  @override
   String get logAll => 'All';
 
   @override

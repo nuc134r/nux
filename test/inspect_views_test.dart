@@ -150,4 +150,45 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await settle(tester);
   });
+
+  testWidgets('a big photo is decoded no larger than twice the screen', (tester) async {
+    final db = memoryDb();
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => insertSamples(db, secrets));
+    final root = Directory.systemTemp.createTempSync('nux-photo-').path;
+    addTearDown(() => Directory(root).deleteSync(recursive: true));
+    if (!_has('python3')) return markTestSkipped('needs python3 to write the picture');
+    // A 6000×4000 PNG of noise: several megabytes, like a phone photo.
+    await tester.runAsync(
+      () => Process.run('python3', [
+        '-c',
+        'import zlib,struct,os,sys\n'
+            'w,h=6000,4000\n'
+            'raw=b"".join(b"\\0"+os.urandom(w*3)[:w*3] if y%50==0 else b"\\0"+bytes(w*3) for y in range(h))\n'
+            'c=lambda t,d: struct.pack(">I",len(d))+t+d+struct.pack(">I",zlib.crc32(t+d)&0xffffffff)\n'
+            'open(sys.argv[1],"wb").write(b"\\x89PNG\\r\\n\\x1a\\n"+c(b"IHDR",struct.pack(">IIBBBBB",w,h,8,2,0,0,0))'
+            '+c(b"IDAT",zlib.compress(raw,1))+c(b"IEND",b""))',
+        '$root/photo.png',
+      ]),
+    );
+    final c = ProviderContainer(
+      overrides: testOverrides(db: db, secrets: secrets),
+    );
+    addTearDown(c.dispose);
+    c.read(tabFactoryProvider).openOverride = () async => FsHandle(LocalFileSystem(root), release: () {});
+    await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
+    await settle(tester);
+    final photo = c.read(tabFactoryProvider).viewer('sample', '$root/photo.png');
+    c.read(workspaceProvider).open(photo);
+    await _waitFor(tester, find.byType(Image));
+    final image = tester.widget<Image>(find.byType(Image)).image;
+    expect(image, isA<ResizeImage>());
+    final view = tester.view;
+    final limit = (view.physicalSize.longestSide * 2).round().clamp(1024, 4096);
+    expect((image as ResizeImage).width, limit);
+    expect(image.policy, ResizeImagePolicy.fit);
+
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+  });
 }

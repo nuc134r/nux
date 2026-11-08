@@ -36,6 +36,9 @@ class RemoteDocument extends ChangeNotifier {
 
   bool saving = false;
 
+  /// Bytes read so far while [loading] (for a progress bar).
+  int received = 0;
+
   /// Detected from the name, then corrected by the content (a text-named file full of NULs is binary).
   FileKind kind = FileKind.text;
 
@@ -122,16 +125,27 @@ class RemoteDocument extends ChangeNotifier {
       final named = fileKindByName(path);
       final limit = all ? size : limitFor(named);
       final out = BytesBuilder(copy: false);
+      received = 0;
+      var shown = 0;
       await for (final chunk in fs.openRead(path)) {
         final room = limit - out.length;
         if (room <= 0) break;
         out.add(chunk.length > room ? Uint8List.sublistView(chunk, 0, room) : chunk);
+        received = out.length;
+        // Progress every 256 KB, not every chunk.
+        if (received - shown >= 256 << 10) {
+          shown = received;
+          _notify();
+        }
         if (out.length >= limit) break;
       }
       bytes = out.takeBytes();
-      // Large text is decoded off the UI thread (the getter would do it during the first frame).
+      // Large text is decoded off the UI thread (the getter would do it during the first frame). Pictures
+      // and other binary files are not text: decoding them would only copy megabytes back and forth.
       _text = null;
-      if (bytes!.length > _decodeInIsolate) _apply(await compute(_decodeAs, (bytes!, _chosenEncoding)));
+      if (bytes!.length > _decodeInIsolate && (named.isTextual || forceText)) {
+        _apply(await compute(_decodeAs, (bytes!, _chosenEncoding)));
+      }
       formatChanged = false;
       generation++;
       kind = named.isTextual && !forceText && looksBinary(bytes!) ? FileKind.binary : named;
@@ -186,8 +200,16 @@ class RemoteDocument extends ChangeNotifier {
   }
 
   /// Shows a binary-looking file as text anyway.
-  void showAsText() {
+  Future<void> showAsText() async {
     forceText = true;
+    final b = bytes;
+    // Large files are decoded off the UI thread (it was skipped on load for binary-looking files).
+    if (_text == null && b != null && b.length > _decodeInIsolate) {
+      loading = true;
+      _notify();
+      _apply(await compute(_decodeAs, (b, _chosenEncoding)));
+      loading = false;
+    }
     kind = FileKind.text;
     _notify();
   }
