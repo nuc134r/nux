@@ -135,6 +135,7 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] home tab workspace list: show all lines of host + path
 - [ ] tab switcher tab longpress sheet: show full host + path as well
 - [ ] diff page font size configuration
+- [ ] tab reordering 
 
 ## Owner actions (outside this repo)
 - [ ] Revoke the SSH key that `lamp_studio` commit `8fa47a2` hardcoded; rewrite or keep that repo private
