@@ -75,11 +75,25 @@ void main() {
       addTearDown(() => Directory(temp).deleteSync(recursive: true));
       expect(File('$temp/src/readme.txt').readAsStringSync(), 'hello\n');
     }
+    // Each fallback in turn, with the tools before it hidden.
+    String without(List<String> tools) {
+      var script = archiveListScript(archive);
+      for (final t in tools) {
+        script = script.replaceAll('command -v $t ', 'command -v no-such-$t ');
+      }
+      return script;
+    }
+
+    if (_has('7z') || _has('7zz') || _has('7za')) {
+      final listing = parseArchiveListing(archive, await runner.run(without(['unzip', 'bsdtar'])));
+      expect(listing.tool, '7z');
+      expect(listing.children('src').map((n) => n.name), ['docs', 'readme.txt']);
+      final temp = (await runner.run(archiveExtractToTempScript(archive, '7z', ['src/readme.txt']))).stdout;
+      addTearDown(() => Directory(temp).deleteSync(recursive: true));
+      expect(File('$temp/src/readme.txt').readAsStringSync(), 'hello\n');
+    }
     if (_has('python3')) {
-      final out = await runner.run(
-        archiveListScript(archive).replaceFirst('command -v unzip', 'command -v no-such-unzip'),
-      );
-      final listing = parseArchiveListing(archive, out);
+      final listing = parseArchiveListing(archive, await runner.run(without(['unzip', 'bsdtar', '7z', '7zz', '7za'])));
       expect(listing.tool, 'pyzip');
       expect(listing.children('src/docs').single.name, 'guide with space.md');
       final temp = (await runner.run(archiveExtractToTempScript(archive, 'pyzip', ['src/docs/guide with space.md'])))
