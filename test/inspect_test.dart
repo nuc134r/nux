@@ -79,7 +79,7 @@ void main() {
     String without(List<String> tools) {
       var script = archiveListScript(archive);
       for (final t in tools) {
-        script = script.replaceAll('command -v $t ', 'command -v no-such-$t ');
+        script = script.replaceAll(RegExp('command -v $t\\b'), 'command -v no-such-$t');
       }
       return script;
     }
