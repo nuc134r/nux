@@ -38,6 +38,20 @@ class ZeroTierService extends ChangeNotifier {
 
   bool get running => _node.running;
   bool get starting => _starting;
+
+  /// Starting or stopping: the switch waits (libzt does not take a restart while it tears down).
+  bool get busy => _starting || _stopping;
+  bool _stopping = false;
+
+  /// Starts and stops run one after the other, never interleaved.
+  Future<void> _queue = Future.value();
+
+  Future<void> _serial(Future<void> Function() op) {
+    final next = _queue.then((_) => op());
+    _queue = next.catchError((Object _) {});
+    return next;
+  }
+
   ZeroTierNodeState? get state => _state;
 
   /// Completes when the running node stops.
@@ -58,9 +72,13 @@ class ZeroTierService extends ChangeNotifier {
     _notify();
   }
 
-  Future<void> start() async {
+  Future<void> start() {
     _turnedOff = false;
-    if (_node.running || _starting) return;
+    return _serial(_start);
+  }
+
+  Future<void> _start() async {
+    if (_node.running || _starting || _turnedOff) return;
     _starting = true;
     _notify();
     try {
@@ -87,16 +105,28 @@ class ZeroTierService extends ChangeNotifier {
   }
 
   /// Turns the node off until [start] is called again.
-  Future<void> stop() async {
+  Future<void> stop() {
     _turnedOff = true;
+    return _serial(_stop);
+  }
+
+  Future<void> _stop() async {
+    // Already off: nothing to tear down (repeated taps used to restart libzt over and over).
+    if (!_node.running) return;
+    _stopping = true;
     unawaited(_watch?.cancel());
     _watch = null;
     final stopping = _node.stop();
     _state = null;
     if (!_stopped.isCompleted) _stopped.complete();
-    _log.i('zerotier', 'Node stopped');
     _notify();
-    await stopping;
+    try {
+      await stopping;
+    } finally {
+      _stopping = false;
+      _log.i('zerotier', 'Node stopped');
+      _notify();
+    }
   }
 
   Future<void> join(String id) async {

@@ -73,7 +73,8 @@ class ZeroTierScreen extends ConsumerWidget {
                     title: Text(l10n.ztNode),
                     subtitle: Text(status),
                     value: service.running || service.starting,
-                    onChanged: (v) async {
+                    // Off while the node starts or stops: libzt takes one change at a time.
+                    onChanged: service.busy ? null : (v) async {
                       try {
                         v ? await service.start() : await service.stop();
                       } catch (e) {

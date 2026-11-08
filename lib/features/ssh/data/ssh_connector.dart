@@ -15,6 +15,7 @@ import '../../identities/data/identity_repository.dart';
 import '../../identities/domain/key_import.dart';
 import '../../identities/domain/key_material.dart';
 import '../domain/ssh_prompter.dart';
+import 'ssh_transport_tuning.dart';
 
 /// Opens the transport to a host. The default is a TCP socket; ZeroTier plugs in here later.
 typedef SshSocketFactory = Future<SSHSocket> Function(String host, int port, Duration timeout);
@@ -186,7 +187,8 @@ class SshConnector {
     final address = c.address;
 
     final client = SSHClient(
-      socket,
+      PacedSocket(socket),
+      algorithms: nuxSshAlgorithms,
       username: c.username,
       identities: keys,
       keepAliveInterval: c.keepAliveSeconds > 0 ? Duration(seconds: c.keepAliveSeconds) : null,
