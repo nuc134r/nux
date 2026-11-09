@@ -19,6 +19,14 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
+    packaging {
+        jniLibs {
+            // libzt is built with its symbols while memory_guard is on (pubspec.yaml), so a crash in it
+            // names the function; the release build would strip them otherwise.
+            keepDebugSymbols += "**/libzt.so"
+        }
+    }
+
     compileOptions {
         // Required by ota_update (in-app updates).
         isCoreLibraryDesugaringEnabled = true

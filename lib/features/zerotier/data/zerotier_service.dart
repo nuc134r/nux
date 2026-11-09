@@ -24,6 +24,14 @@ class ZeroTierService extends ChangeNotifier {
 
   bool _storageSet = false;
   StreamSubscription<ZeroTierNodeState>? _watch;
+
+  /// Logs what libzt's guarded allocator holds (built with memory_guard, see pubspec.yaml).
+  Timer? _guardLog;
+
+  void _logGuard(String when) {
+    final stats = ZeroTierMemoryGuard.stats();
+    if (stats != null) _log.i('zerotier', 'Memory guard $when: $stats');
+  }
   ZeroTierNodeState? _state;
   bool _starting = false;
   bool _disposed = false;
@@ -94,6 +102,9 @@ class ZeroTierService extends ChangeNotifier {
         _node.join(parseNetworkId(n)!);
       }
       _log.i('zerotier', 'Node started');
+      _logGuard('on start');
+      _guardLog?.cancel();
+      _guardLog = Timer.periodic(const Duration(minutes: 10), (_) => _logGuard('while running'));
       _watch = _node.watch().listen((s) {
         _state = s;
         _notify();
@@ -124,7 +135,10 @@ class ZeroTierService extends ChangeNotifier {
       await stopping;
     } finally {
       _stopping = false;
+      _guardLog?.cancel();
+      _guardLog = null;
       _log.i('zerotier', 'Node stopped');
+      _logGuard('after stop');
       _notify();
     }
   }
@@ -172,6 +186,7 @@ class ZeroTierService extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _watch?.cancel();
+    _guardLog?.cancel();
     super.dispose();
   }
 }

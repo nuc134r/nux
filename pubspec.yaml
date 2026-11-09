@@ -40,7 +40,7 @@ dependencies:
   zerotier_sockets:
     git:
       url: https://github.com/nuc134r/zerotier_sockets_flutter.git
-      ref: b2f5bc8d9c2a15cbe406fd9b261ac13f4892c002
+      ref: 1ef70af70853e4865c2bf57ad9d89f2d04417546
   dartssh2: ^4.1.0
   flterm:
     path: packages/flterm
@@ -99,3 +99,11 @@ flutter:
           weight: 700
         - asset: assets/fonts/SourceCodePro-It.otf
           style: italic
+
+# libzt with a guarded allocator while the heap-corruption crashes are hunted: an overrun or a write after
+# free inside ZeroTier then faults at once, in libzt, with its function in the crash report (see
+# zerotier_sockets' hook/build.dart). Small cost; turn off once the cause is known.
+hooks:
+  user_defines:
+    zerotier_sockets:
+      memory_guard: true

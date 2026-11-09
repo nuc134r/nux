@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.9
+
+- **Memory checking for ZeroTier**, to find the crashes: ZeroTier's library now gets its memory from a guarded allocator. If it writes past a buffer or into memory it already freed, it stops right there and the next start's crash report names the ZeroTier function, instead of quietly damaging memory and crashing later somewhere else. Its numbers are in the log (`Memory guard ...`). It costs a little memory and speed while ZeroTier runs; it will be turned off once the cause is found.
+
 ## 0.11.8
 
 - **Much faster and smoother SSH**: connections now prefer ChaCha20-Poly1305 (then AES-CTR) over AES-GCM, which was about 15–20 times slower in nux's SSH library and kept the app busy for seconds per few MB. Incoming data is handed over in small pieces, so the screen keeps drawing while a file downloads. A 6 MB file took 6 s before and takes about 0.3 s now (measured over loopback).
