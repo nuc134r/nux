@@ -139,6 +139,33 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [x] diff page font size configuration
 - [x] tab reordering 
 
+## Upstream issues / PRs (patched or worked around here; filing them lets us drop the patches)
+Check each project's open issues and latest commits first: it may be fixed or reported already.
+- [ ] **libzt** (zerotier/libzt) — issue + PR: `NodeService::sendEventToUser` copies ZeroTier's structs into
+  smaller libzt ones without bounds: peers 64 paths → 16 (`ZT_MAX_PEER_NETWORK_PATHS` vs
+  `ZTS_MAX_PEER_NETWORK_PATHS`), assigned addresses 32 → 16, routes 128 → 32; peers also by `memcpy` between
+  different layouts (garbage `ifname` pointer). A peer with more than 16 paths overflows the heap (the random
+  crashes, caught with `memory_guard` in `native_ss_to_zts_ss`). The PR is `zerotier_sockets`'
+  `hook/patches/0001-event-copies-overflow.patch`. Pinned version: 1.8.10 (`a6f6886`).
+- [ ] **libzt** — issue: `zts_net_get_name` (`NodeService::getNetworkName`) accepts only `len == 127`, not "at
+  least"; the docs suggest any big enough buffer.
+- [ ] **re_editor** (reqable/re-editor) — issue + PR: on Android/iOS a cursor moved in front of the IME prefix
+  (space-bar swipe to the line start) is taken as Backspace and deletes a character (`_code_input.dart`: delete only
+  when the prefix is gone). Small PR: `_CodeCursorBlinkController` sets its value after dispose (the 100 ms
+  `Future.delayed`). Both are the `nux:` patches in `packages/re_editor`; drop the vendored copy once merged.
+- [ ] **dartssh2** — issue (maybe PR): the default cipher order prefers AES-GCM, ~15–20× slower than
+  ChaCha20-Poly1305 in its pure-Dart crypto (6 MB SFTP: 6.1 s vs 0.3 s, AOT, loopback); put ChaCha20 first or
+  speed up GHASH. Also `_processPackets` decrypts a whole socket burst at once (its awaits only reach
+  microtasks), blocking Flutter frames for hundreds of ms; yield every packet or ~32 KB. Worked around by
+  `nuxSshAlgorithms` and `PacedSocket` (`lib/features/ssh/data/ssh_transport_tuning.dart`).
+- [ ] **libghostty** (Dart bindings) — issue: `kittyImageMediumTempFile` is read as a string, but ghostty's header
+  says the output type is `bool *`.
+- [ ] **flterm** — optional PRs for our patches (line height, tap shows the keyboard, long press selects a word,
+  multi-line paste as one paste; see `packages/flterm/README.md`) so the vendored copy can go.
+- [ ] **go_router** — only with a minimal repro: in nux it gave every route a `NoTransitionPage` (its
+  `isMaterialApp` check failed under `MaterialApp.router`); worked around with explicit `MaterialPage`s. Cause not
+  pinned down, may be ours.
+
 ## Owner actions (outside this repo)
 - [ ] Revoke the SSH key that `lamp_studio` commit `8fa47a2` hardcoded; rewrite or keep that repo private
 - [ ] Remove the personal path from garage2 `docs/RELEASING.md`
