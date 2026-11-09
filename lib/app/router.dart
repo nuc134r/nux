@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,40 +62,36 @@ abstract final class Routes {
   ];
 }
 
+/// A screen as a [MaterialPage], so it opens with the theme's page transition. Left to itself go_router
+/// did not recognise the MaterialApp and gave every screen a page without any transition.
+GoRoute _screen(String path, Widget Function(GoRouterState state) build) => GoRoute(
+  path: path,
+  pageBuilder: (context, state) =>
+      MaterialPage<void>(key: state.pageKey, name: state.name ?? state.path, child: build(state)),
+);
+
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
     routes: [
-      GoRoute(path: Routes.home, builder: (context, state) => const WorkspaceScreen()),
-      GoRoute(path: Routes.settings, builder: (context, state) => const SettingsScreen()),
-      GoRoute(path: Routes.version, builder: (context, state) => const VersionScreen()),
-      GoRoute(path: Routes.appearance, builder: (context, state) => const AppearanceScreen()),
-      GoRoute(path: Routes.log, builder: (context, state) => const LogScreen()),
-      GoRoute(
-        path: '/settings/keys/:kind',
-        builder: (context, state) => KeyBarSettingsScreen(kind: KeyBarFor.values.byName(state.pathParameters['kind']!)),
+      _screen(Routes.home, (state) => const WorkspaceScreen()),
+      _screen(Routes.settings, (state) => const SettingsScreen()),
+      _screen(Routes.version, (state) => const VersionScreen()),
+      _screen(Routes.appearance, (state) => const AppearanceScreen()),
+      _screen(Routes.log, (state) => const LogScreen()),
+      _screen(
+        '/settings/keys/:kind',
+        (state) => KeyBarSettingsScreen(kind: KeyBarFor.values.byName(state.pathParameters['kind']!)),
       ),
-      GoRoute(path: Routes.newConnection, builder: (context, state) => const ConnectionEditorScreen()),
-      GoRoute(
-        path: '/connections/:id',
-        builder: (context, state) => ConnectionEditorScreen(connectionId: state.pathParameters['id']),
-      ),
-      GoRoute(path: Routes.keys, builder: (context, state) => const IdentitiesScreen()),
-      GoRoute(path: Routes.newKey, builder: (context, state) => const GenerateKeyScreen()),
-      GoRoute(
-        path: '/keys/:id',
-        builder: (context, state) => IdentityScreen(identityId: state.pathParameters['id']!),
-      ),
-      GoRoute(path: Routes.knownHosts, builder: (context, state) => const KnownHostsScreen()),
-      GoRoute(
-        path: '/forwarding/new',
-        builder: (context, state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']!),
-      ),
-      GoRoute(
-        path: '/forwarding/:id',
-        builder: (context, state) => ForwardRuleEditor(ruleId: state.pathParameters['id']),
-      ),
-      GoRoute(path: Routes.zerotier, builder: (context, state) => const ZeroTierScreen()),
+      _screen(Routes.newConnection, (state) => const ConnectionEditorScreen()),
+      _screen('/connections/:id', (state) => ConnectionEditorScreen(connectionId: state.pathParameters['id'])),
+      _screen(Routes.keys, (state) => const IdentitiesScreen()),
+      _screen(Routes.newKey, (state) => const GenerateKeyScreen()),
+      _screen('/keys/:id', (state) => IdentityScreen(identityId: state.pathParameters['id']!)),
+      _screen(Routes.knownHosts, (state) => const KnownHostsScreen()),
+      _screen('/forwarding/new', (state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']!)),
+      _screen('/forwarding/:id', (state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
+      _screen(Routes.zerotier, (state) => const ZeroTierScreen()),
     ],
   );
   ref.onDispose(router.dispose);

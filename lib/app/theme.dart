@@ -19,15 +19,13 @@ ThemeData buildTheme(Brightness brightness) {
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
-        TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
-        TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.android: SubtlePageTransitionsBuilder(),
+        TargetPlatform.windows: SubtlePageTransitionsBuilder(),
+        TargetPlatform.linux: SubtlePageTransitionsBuilder(),
       },
     ),
     listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.symmetric(horizontal: 16)),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    ),
+    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
     appBarTheme: AppBarTheme(backgroundColor: scheme.surface, scrolledUnderElevation: 2),
     // Floating a little above the bottom edge, swiped away sideways.
     snackBarTheme: const SnackBarThemeData(
@@ -44,4 +42,33 @@ ThemeData buildTheme(Brightness brightness) {
       thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .3)),
     ),
   );
+}
+
+/// Screens fade in while sliding a little from the right, and back out the same way: quick and quiet.
+class SubtlePageTransitionsBuilder extends PageTransitionsBuilder {
+  const SubtlePageTransitionsBuilder();
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 260);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 200);
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeInCubic);
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween(begin: const Offset(.06, 0), end: Offset.zero).animate(curved),
+        child: child,
+      ),
+    );
+  }
 }

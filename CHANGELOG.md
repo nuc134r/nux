@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.10
+
+- Screens (Settings and everything opened from it, hosts, keys, forwardings) open with a short fade and slide instead of appearing at once, and close the same way.
+- The git sign-in dialog no longer remembers the credentials for the workspace unless you tick the box.
+
 ## 0.11.9
 
 - **Memory checking for ZeroTier**, to find the crashes: ZeroTier's library now gets its memory from a guarded allocator. If it writes past a buffer or into memory it already freed, it stops right there and the next start's crash report names the ZeroTier function, instead of quietly damaging memory and crashing later somewhere else. Its numbers are in the log (`Memory guard ...`). It costs a little memory and speed while ZeroTier runs; it will be turned off once the cause is found.

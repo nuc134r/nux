@@ -871,7 +871,7 @@ Future<GitCredentials?> askGitCredentials(
   final l10n = context.l10n;
   final user = TextEditingController();
   final pass = TextEditingController();
-  var remember = true;
+  var remember = false;
   final ok = await showDialog<bool>(
     context: context,
     builder: (context) => StatefulBuilder(
