@@ -17,11 +17,12 @@ ThemeData buildTheme(Brightness brightness) {
       color: scheme.surfaceContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
+    // Android's own transitions: the zoom, and on Android 14+ the back-gesture preview while swiping back.
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: SubtlePageTransitionsBuilder(),
-        TargetPlatform.windows: SubtlePageTransitionsBuilder(),
-        TargetPlatform.linux: SubtlePageTransitionsBuilder(),
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+        TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+        TargetPlatform.linux: ZoomPageTransitionsBuilder(),
       },
     ),
     listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.symmetric(horizontal: 16)),
@@ -42,33 +43,4 @@ ThemeData buildTheme(Brightness brightness) {
       thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .3)),
     ),
   );
-}
-
-/// Screens fade in while sliding a little from the right, and back out the same way: quick and quiet.
-class SubtlePageTransitionsBuilder extends PageTransitionsBuilder {
-  const SubtlePageTransitionsBuilder();
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 260);
-
-  @override
-  Duration get reverseTransitionDuration => const Duration(milliseconds: 200);
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic, reverseCurve: Curves.easeInCubic);
-    return FadeTransition(
-      opacity: curved,
-      child: SlideTransition(
-        position: Tween(begin: const Offset(.06, 0), end: Offset.zero).animate(curved),
-        child: child,
-      ),
-    );
-  }
 }

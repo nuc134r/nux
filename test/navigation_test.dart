@@ -10,7 +10,7 @@ import 'package:nux/features/settings/presentation/settings_screen.dart';
 import 'helpers.dart';
 
 void main() {
-  testWidgets('screens open with a short fade and slide, and close the same way', (tester) async {
+  testWidgets("screens open and close with Android's page transition", (tester) async {
     final db = memoryDb();
     await tester.runAsync(() => insertSamples(db, MemorySecretStore()));
     final c = ProviderContainer(overrides: testOverrides(db: db));
@@ -18,29 +18,27 @@ void main() {
     await tester.pumpWidget(UncontrolledProviderScope(container: c, child: const NuxApp()));
     await settle(tester);
 
-    double opacity(Finder screen) => tester
-        .widget<FadeTransition>(find.ancestor(of: screen, matching: find.byType(FadeTransition)).first)
-        .opacity
-        .value;
+    // The route's own animation: mid-way shortly after a push, done once it has settled.
+    double progress(Type screen) => ModalRoute.of(tester.element(find.byType(screen)))!.animation!.value;
 
     for (final (route, type) in [(Routes.settings, SettingsScreen), (Routes.appearance, AppearanceScreen)]) {
       c.read(routerProvider).push(route);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 60));
-      final screen = find.byType(type);
-      expect(opacity(screen), inExclusiveRange(0, 1), reason: '$route fades in');
-      expect(tester.getRect(screen).left, greaterThan(0), reason: '$route slides in from the right');
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(opacity(screen), 1);
-      expect(tester.getRect(screen).left, 0);
+      expect(progress(type), inExclusiveRange(0, 1), reason: '$route animates in');
+      await tester.pumpAndSettle();
+      expect(progress(type), 1);
     }
+    expect(
+      Theme.of(tester.element(find.byType(AppearanceScreen))).pageTransitionsTheme.builders[TargetPlatform.android],
+      isA<PredictiveBackPageTransitionsBuilder>(),
+    );
 
-    // Back fades the screen out again.
     c.read(routerProvider).pop();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 60));
-    expect(opacity(find.byType(AppearanceScreen)), inExclusiveRange(0, 1));
-    await tester.pump(const Duration(milliseconds: 300));
+    expect(progress(AppearanceScreen), inExclusiveRange(0, 1), reason: 'animates out');
+    await tester.pumpAndSettle();
     expect(find.byType(AppearanceScreen), findsNothing);
     expect(find.byType(SettingsScreen), findsOneWidget);
 

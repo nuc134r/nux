@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.12
+
+- Screens now open and close with Android's own transition (the zoom), and on Android 14+ show the back-gesture preview while you swipe back, instead of nux's own fade and slide.
+
 ## 0.11.11
 
 - **Fixed the random crashes.** ZeroTier's library wrote past the end of a buffer whenever a ZeroTier peer had more than 16 network paths (or a network more than 16 addresses or 32 routes), damaging memory that belonged to the rest of the app; nux then crashed later, in unrelated places. The memory checking added in 0.11.9 caught it in the act. The checking stays on for now, to make sure nothing else is lurking.
