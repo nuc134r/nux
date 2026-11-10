@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tab_switcher/tab_switcher.dart';
 
+import '../../../app/background_quit_provider.dart';
 import '../../../app/router.dart';
 import '../../../core/activity/activity_center.dart';
 import '../../../core/activity/activity_view.dart';
@@ -61,6 +62,8 @@ class WorkspaceScreen extends ConsumerWidget {
     // Open terminals and file browsers keep nux running in the background (with a notification).
     ref.watch(sshKeepAliveProvider);
     ref.watch(backgroundResyncProvider);
+    // With no screen and nothing running in the background, nux quits instead of idling.
+    ref.watch(backgroundQuitProvider);
     // How the previous run ended (a crash leaves nothing in the log by itself).
     ref.watch(previousExitsProvider);
     // Kept loaded: the Switch workspace menus read it (they were empty until Home's list had loaded it).

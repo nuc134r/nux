@@ -31,6 +31,11 @@ class KeepAliveHub {
   /// Ids of the slots that keep the service running.
   Set<String> get active => _active.keys.toSet();
 
+  final _changes = StreamController<void>.broadcast();
+
+  /// Fires when [active] may have changed.
+  Stream<void> get changes => _changes.stream;
+
   void _set(String id, _Entry e) {
     _active[id] = e;
     _sync();
@@ -48,6 +53,7 @@ class KeepAliveHub {
   }
 
   void _sync() {
+    _changes.add(null);
     if (_active.isEmpty) {
       if (!_on) return;
       _on = false;
