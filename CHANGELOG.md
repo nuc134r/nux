@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.13
+
+- Screen transitions are quicker (200 ms), and swiping back no longer previews the previous screen.
+
 ## 0.11.12
 
 - Screens now open and close with Android's own transition (the zoom), and on Android 14+ show the back-gesture preview while you swipe back, instead of nux's own fade and slide.

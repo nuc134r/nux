@@ -62,7 +62,7 @@ abstract final class Routes {
   ];
 }
 
-/// A screen as a [MaterialPage], so it opens with the theme's page transition (and the back gesture preview). Left to itself go_router
+/// A screen as a [MaterialPage], so it opens with the theme's page transition. Left to itself go_router
 /// did not recognise the MaterialApp and gave every screen a page without any transition.
 GoRoute _screen(String path, Widget Function(GoRouterState state) build) => GoRoute(
   path: path,

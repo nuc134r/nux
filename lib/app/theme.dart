@@ -17,12 +17,12 @@ ThemeData buildTheme(Brightness brightness) {
       color: scheme.surfaceContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-    // Android's own transitions: the zoom, and on Android 14+ the back-gesture preview while swiping back.
+    // Android's zoom transition, quicker than the default; no back-gesture preview.
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-        TargetPlatform.windows: ZoomPageTransitionsBuilder(),
-        TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+        TargetPlatform.android: QuickZoomPageTransitionsBuilder(),
+        TargetPlatform.windows: QuickZoomPageTransitionsBuilder(),
+        TargetPlatform.linux: QuickZoomPageTransitionsBuilder(),
       },
     ),
     listTileTheme: const ListTileThemeData(contentPadding: EdgeInsets.symmetric(horizontal: 16)),
@@ -43,4 +43,15 @@ ThemeData buildTheme(Brightness brightness) {
       thumbColor: WidgetStatePropertyAll(scheme.onSurface.withValues(alpha: .3)),
     ),
   );
+}
+
+/// Android's zoom page transition, at 200 ms in and 160 ms out instead of 300.
+class QuickZoomPageTransitionsBuilder extends ZoomPageTransitionsBuilder {
+  const QuickZoomPageTransitionsBuilder();
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 200);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 160);
 }
