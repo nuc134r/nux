@@ -27,6 +27,9 @@ abstract final class SettingKeys {
   static const editorKeys = 'editorKeys';
   static const editorKeysCustom = 'editorKeysCustom';
 
+  /// Saved terminal commands (JSON); unset means the presets.
+  static const terminalSnippets = 'terminalSnippets';
+
   /// The preset id and custom layout settings of a key bar.
   static (String, String) keyBar(KeyBarFor kind) =>
       kind == KeyBarFor.terminal ? (terminalKeys, terminalKeysCustom) : (editorKeys, editorKeysCustom);

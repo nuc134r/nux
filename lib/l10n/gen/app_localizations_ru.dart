@@ -95,6 +95,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addRow => 'Добавить ряд';
 
   @override
+  String get addSnippet => 'Добавить сниппет';
+
+  @override
   String get addressHint => 'Адрес или поиск';
 
   @override
@@ -657,6 +660,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editKey => 'Клавиша';
+
+  @override
+  String get editSnippet => 'Изменить сниппет';
 
   @override
   String get editor => 'Редактор';
@@ -1927,6 +1933,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get required => 'Обязательное поле';
 
   @override
+  String get resetSnippets => 'Вернуть стандартные';
+
+  @override
+  String get resetSnippetsQuestion => 'Заменить ваши сниппеты стандартными?';
+
+  @override
   String get resolveConflicts => 'Разрешить конфликты';
 
   @override
@@ -2086,6 +2098,70 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get smallerText => 'Мельче';
+
+  @override
+  String get snippetCommand => 'Команда';
+
+  @override
+  String get snippetCpu => 'Процессы по процессору';
+
+  @override
+  String get snippetDirs => 'Самые большие папки здесь';
+
+  @override
+  String get snippetDisk => 'Место на дисках';
+
+  @override
+  String get snippetDocker => 'Контейнеры Docker';
+
+  @override
+  String get snippetFailed => 'Упавшие службы';
+
+  @override
+  String get snippetFiles => 'Большие файлы здесь (больше 50 МБ)';
+
+  @override
+  String get snippetFree => 'Использование памяти';
+
+  @override
+  String get snippetIp => 'Сетевые адреса';
+
+  @override
+  String get snippetLog => 'Последние записи журнала';
+
+  @override
+  String get snippetMem => 'Процессы по памяти';
+
+  @override
+  String get snippetName => 'Название';
+
+  @override
+  String get snippetPorts => 'Открытые порты';
+
+  @override
+  String get snippetUptime => 'Время работы и нагрузка';
+
+  @override
+  String get snippets => 'Сниппеты';
+
+  @override
+  String snippetsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count команд',
+      few: '$count команды',
+      one: '$count команда',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get snippetsEmpty => 'Сниппетов пока нет';
+
+  @override
+  String get snippetsHint =>
+      'Нажмите, чтобы выполнить · удерживайте, чтобы вставить без запуска';
 
   @override
   String get socksPortHint =>

@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.14
+
+- **Snippets**: saved terminal commands you run in two taps from a terminal tab's ⋮ → Snippets (a long press types the command without running it, to edit it first). It comes with useful presets (disk space, biggest folders, large files, processes by memory or CPU, open ports, the system log, failed services, Docker containers and more); add, edit, reorder and delete them in Settings → Snippets.
+- nux no longer keeps running after you close it with nothing to do: once the app is closed (Back or the notification's Stop) and no terminal or forwarding is active, it disconnects, stops ZeroTier and quits.
+
 ## 0.11.13
 
 - Screen transitions are quicker (200 ms), and swiping back no longer previews the previous screen.

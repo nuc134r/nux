@@ -21,6 +21,7 @@ import '../../../core/keys/key_bar_layout.dart';
 import '../data/settings_repository.dart';
 import '../domain/settings_backup.dart';
 import 'key_bar_settings.dart';
+import '../../terminal/presentation/snippets_view.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -99,6 +100,13 @@ class SettingsScreen extends ConsumerWidget {
           Island(
             title: l10n.extraKeys,
             children: [
+              ListTile(
+                leading: const Icon(Icons.bolt_outlined),
+                title: Text(l10n.snippets),
+                subtitle: Text(l10n.snippetsCount(snippetsOf(l10n, settings).length)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.snippets),
+              ),
               ListTile(
                 leading: const Icon(Icons.terminal),
                 title: Text(l10n.terminalKeys),

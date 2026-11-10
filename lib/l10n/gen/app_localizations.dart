@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'Add row'**
   String get addRow;
 
+  /// No description provided for @addSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add snippet'**
+  String get addSnippet;
+
   /// No description provided for @addressHint.
   ///
   /// In en, this message translates to:
@@ -1111,6 +1117,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Key'**
   String get editKey;
+
+  /// No description provided for @editSnippet.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit snippet'**
+  String get editSnippet;
 
   /// No description provided for @editor.
   ///
@@ -3218,6 +3230,18 @@ abstract class AppLocalizations {
   /// **'Required'**
   String get required;
 
+  /// No description provided for @resetSnippets.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to presets'**
+  String get resetSnippets;
+
+  /// No description provided for @resetSnippetsQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace your snippets with the presets?'**
+  String get resetSnippetsQuestion;
+
   /// No description provided for @resolveConflicts.
   ///
   /// In en, this message translates to:
@@ -3487,6 +3511,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Smaller text'**
   String get smallerText;
+
+  /// No description provided for @snippetCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'Command'**
+  String get snippetCommand;
+
+  /// No description provided for @snippetCpu.
+  ///
+  /// In en, this message translates to:
+  /// **'Processes by CPU'**
+  String get snippetCpu;
+
+  /// No description provided for @snippetDirs.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest folders here'**
+  String get snippetDirs;
+
+  /// No description provided for @snippetDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Disk space'**
+  String get snippetDisk;
+
+  /// No description provided for @snippetDocker.
+  ///
+  /// In en, this message translates to:
+  /// **'Docker containers'**
+  String get snippetDocker;
+
+  /// No description provided for @snippetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed services'**
+  String get snippetFailed;
+
+  /// No description provided for @snippetFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Large files here (over 50 MB)'**
+  String get snippetFiles;
+
+  /// No description provided for @snippetFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory use'**
+  String get snippetFree;
+
+  /// No description provided for @snippetIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Network addresses'**
+  String get snippetIp;
+
+  /// No description provided for @snippetLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent system log'**
+  String get snippetLog;
+
+  /// No description provided for @snippetMem.
+  ///
+  /// In en, this message translates to:
+  /// **'Processes by memory'**
+  String get snippetMem;
+
+  /// No description provided for @snippetName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get snippetName;
+
+  /// No description provided for @snippetPorts.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening ports'**
+  String get snippetPorts;
+
+  /// No description provided for @snippetUptime.
+  ///
+  /// In en, this message translates to:
+  /// **'Uptime and load'**
+  String get snippetUptime;
+
+  /// No description provided for @snippets.
+  ///
+  /// In en, this message translates to:
+  /// **'Snippets'**
+  String get snippets;
+
+  /// No description provided for @snippetsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 command} other{{count} commands}}'**
+  String snippetsCount(int count);
+
+  /// No description provided for @snippetsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No snippets yet'**
+  String get snippetsEmpty;
+
+  /// No description provided for @snippetsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to run · hold to type without running'**
+  String get snippetsHint;
 
   /// No description provided for @socksPortHint.
   ///

@@ -13,6 +13,7 @@ import '../features/settings/presentation/appearance_screen.dart';
 import '../features/settings/presentation/key_bar_settings.dart';
 import '../features/settings/presentation/log_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
+import '../features/terminal/presentation/snippets_view.dart';
 import '../features/updates/presentation/version_screen.dart';
 import '../features/workspace/presentation/workspace_screen.dart';
 import '../features/zerotier/presentation/zerotier_screen.dart';
@@ -28,6 +29,7 @@ abstract final class Routes {
   static const version = '/settings/version';
   static const appearance = '/settings/appearance';
   static const log = '/settings/log';
+  static const snippets = '/settings/snippets';
   static String keyBar(KeyBarFor kind) => '/settings/keys/${kind.name}';
   static const newConnection = '/connections/new';
   static String connection(String id) => '/connections/$id';
@@ -48,6 +50,7 @@ abstract final class Routes {
     version,
     appearance,
     log,
+    snippets,
     keyBar(KeyBarFor.terminal),
     keyBar(KeyBarFor.editor),
     newConnection,
@@ -79,6 +82,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       _screen(Routes.version, (state) => const VersionScreen()),
       _screen(Routes.appearance, (state) => const AppearanceScreen()),
       _screen(Routes.log, (state) => const LogScreen()),
+      _screen(Routes.snippets, (state) => const SnippetsScreen()),
       _screen(
         '/settings/keys/:kind',
         (state) => KeyBarSettingsScreen(kind: KeyBarFor.values.byName(state.pathParameters['kind']!)),

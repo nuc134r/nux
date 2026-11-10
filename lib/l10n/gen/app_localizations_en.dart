@@ -95,6 +95,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addRow => 'Add row';
 
   @override
+  String get addSnippet => 'Add snippet';
+
+  @override
   String get addressHint => 'Address or search';
 
   @override
@@ -649,6 +652,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editKey => 'Key';
+
+  @override
+  String get editSnippet => 'Edit snippet';
 
   @override
   String get editor => 'Editor';
@@ -1900,6 +1906,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get required => 'Required';
 
   @override
+  String get resetSnippets => 'Reset to presets';
+
+  @override
+  String get resetSnippetsQuestion => 'Replace your snippets with the presets?';
+
+  @override
   String get resolveConflicts => 'Resolve conflicts';
 
   @override
@@ -2057,6 +2069,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smallerText => 'Smaller text';
+
+  @override
+  String get snippetCommand => 'Command';
+
+  @override
+  String get snippetCpu => 'Processes by CPU';
+
+  @override
+  String get snippetDirs => 'Biggest folders here';
+
+  @override
+  String get snippetDisk => 'Disk space';
+
+  @override
+  String get snippetDocker => 'Docker containers';
+
+  @override
+  String get snippetFailed => 'Failed services';
+
+  @override
+  String get snippetFiles => 'Large files here (over 50 MB)';
+
+  @override
+  String get snippetFree => 'Memory use';
+
+  @override
+  String get snippetIp => 'Network addresses';
+
+  @override
+  String get snippetLog => 'Recent system log';
+
+  @override
+  String get snippetMem => 'Processes by memory';
+
+  @override
+  String get snippetName => 'Name';
+
+  @override
+  String get snippetPorts => 'Listening ports';
+
+  @override
+  String get snippetUptime => 'Uptime and load';
+
+  @override
+  String get snippets => 'Snippets';
+
+  @override
+  String snippetsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count commands',
+      one: '1 command',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get snippetsEmpty => 'No snippets yet';
+
+  @override
+  String get snippetsHint => 'Tap to run · hold to type without running';
 
   @override
   String get socksPortHint =>

@@ -8,6 +8,7 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../core/db/database.dart';
 import '../../../core/log/log.dart';
 import '../../../l10n/l10n.dart';
+import '../presentation/snippets_view.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../ssh/data/ssh_providers.dart';
 import '../../ssh/presentation/ssh_errors.dart';
@@ -112,6 +113,12 @@ class TerminalTab extends NuxTab {
         label: l10n.browseFiles,
         // Built directly: this tab's ref belongs to the tab factory, which cannot read itself.
         onSelected: () => _ref.read(workspaceProvider).open(FilesTab(_ref, connectionId: connectionId)),
+      ),
+      NuxMenuAction(
+        icon: Icons.bolt_outlined,
+        label: l10n.snippets,
+        enabled: connected,
+        onSelected: () => showSnippetsSheet(context, send: session.terminal.sendText),
       ),
       NuxMenuAction(
         icon: Icons.content_paste,

@@ -85,6 +85,7 @@
   "addKey": "Add key",
   "addPortForwarding": "Add port forwarding",
   "addRow": "Add row",
+  "addSnippet": "Add snippet",
   "addressHint": "Address or search",
   "addressVia": "{address} via {jump}",
   "@addressVia": {
@@ -460,6 +461,7 @@
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
   "editKey": "Key",
+  "editSnippet": "Edit snippet",
   "editor": "Editor",
   "editorFontSize": "File text size",
   "editorKeys": "Editor keys",
@@ -1253,6 +1255,8 @@
   "requireUnlock": "Require device unlock",
   "requireUnlockHint": "Fingerprint, face or screen lock before each use",
   "required": "Required",
+  "resetSnippets": "Reset to presets",
+  "resetSnippetsQuestion": "Replace your snippets with the presets?",
   "resolveConflicts": "Resolve conflicts",
   "restore": "Restore",
   "restoreSettings": "Restore settings",
@@ -1336,6 +1340,31 @@
   "sizeLabel": "Size",
   "skipKey": "Skip this key",
   "smallerText": "Smaller text",
+  "snippetCommand": "Command",
+  "snippetCpu": "Processes by CPU",
+  "snippetDirs": "Biggest folders here",
+  "snippetDisk": "Disk space",
+  "snippetDocker": "Docker containers",
+  "snippetFailed": "Failed services",
+  "snippetFiles": "Large files here (over 50 MB)",
+  "snippetFree": "Memory use",
+  "snippetIp": "Network addresses",
+  "snippetLog": "Recent system log",
+  "snippetMem": "Processes by memory",
+  "snippetName": "Name",
+  "snippetPorts": "Listening ports",
+  "snippetUptime": "Uptime and load",
+  "snippets": "Snippets",
+  "snippetsCount": "{count, plural, =1{1 command} other{{count} commands}}",
+  "@snippetsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "snippetsEmpty": "No snippets yet",
+  "snippetsHint": "Tap to run · hold to type without running",
   "socksPortHint": "Point apps' SOCKS5 proxy setting at this port (1080 is the usual one)",
   "sortByDate": "Sort by date",
   "sortByName": "Sort by name",
