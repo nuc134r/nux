@@ -16,6 +16,7 @@ import '../features/settings/presentation/settings_screen.dart';
 import '../features/terminal/presentation/snippets_view.dart';
 import '../features/updates/presentation/version_screen.dart';
 import '../features/workspace/presentation/workspace_screen.dart';
+import '../features/zerotier/presentation/zerotier_details.dart';
 import '../features/zerotier/presentation/zerotier_screen.dart';
 
 /// The navigator dialogs from background work (SSH prompts) are shown on.
@@ -42,6 +43,8 @@ abstract final class Routes {
   static String newForward(String connectionId) => '/forwarding/new?connection=$connectionId';
   static String forward(String id) => '/forwarding/$id';
   static const zerotier = '/zerotier';
+  static const zerotierNode = '/zerotier/node';
+  static String zerotierNetwork(String id) => '/zerotier/networks/$id';
 
   /// Every screen, with `sample` ids (the smoke test creates rows with those ids).
   static final all = [
@@ -62,6 +65,8 @@ abstract final class Routes {
     newForward('sample'),
     forward('sample'),
     zerotier,
+    zerotierNode,
+    zerotierNetwork('8056c2e21c000001'),
   ];
 }
 
@@ -96,6 +101,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       _screen('/forwarding/new', (state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']!)),
       _screen('/forwarding/:id', (state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
       _screen(Routes.zerotier, (state) => const ZeroTierScreen()),
+      _screen(Routes.zerotierNode, (state) => const ZeroTierNodeScreen()),
+      _screen('/zerotier/networks/:id', (state) => ZeroTierNetworkScreen(id: state.pathParameters['id']!)),
     ],
   );
   ref.onDispose(router.dispose);

@@ -4352,11 +4352,65 @@ abstract class AppLocalizations {
   /// **'Not authorized: allow this node in the network\'s controller'**
   String get ztAccessDenied;
 
+  /// No description provided for @ztAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Addresses'**
+  String get ztAddresses;
+
   /// No description provided for @ztAutoStart.
   ///
   /// In en, this message translates to:
   /// **'Start with nux'**
   String get ztAutoStart;
+
+  /// No description provided for @ztBroadcast.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast'**
+  String get ztBroadcast;
+
+  /// No description provided for @ztDetailsWhenRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn the node on to see the details'**
+  String get ztDetailsWhenRunning;
+
+  /// No description provided for @ztLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'{ms} ms'**
+  String ztLatency(int ms);
+
+  /// No description provided for @ztMac.
+  ///
+  /// In en, this message translates to:
+  /// **'MAC address'**
+  String get ztMac;
+
+  /// No description provided for @ztMemoryGuard.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory checking'**
+  String get ztMemoryGuard;
+
+  /// No description provided for @ztMemoryGuardStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} allocations held, {mb} MB mapped'**
+  String ztMemoryGuardStats(int count, int mb);
+
+  /// No description provided for @ztMtu.
+  ///
+  /// In en, this message translates to:
+  /// **'MTU'**
+  String get ztMtu;
+
+  /// No description provided for @ztNetworkId.
+  ///
+  /// In en, this message translates to:
+  /// **'Network ID'**
+  String get ztNetworkId;
 
   /// No description provided for @ztNetworkIdle.
   ///
@@ -4370,6 +4424,12 @@ abstract class AppLocalizations {
   /// **'Networks'**
   String get ztNetworks;
 
+  /// No description provided for @ztNoAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'None assigned yet'**
+  String get ztNoAddresses;
+
   /// No description provided for @ztNoNetworks.
   ///
   /// In en, this message translates to:
@@ -4382,11 +4442,35 @@ abstract class AppLocalizations {
   /// **'Join one with its 16-digit id from my.zerotier.com or your own controller'**
   String get ztNoNetworksHint;
 
+  /// No description provided for @ztNoPeers.
+  ///
+  /// In en, this message translates to:
+  /// **'No peers yet: the node has not reached ZeroTier\'s servers'**
+  String get ztNoPeers;
+
+  /// No description provided for @ztNoRoutes.
+  ///
+  /// In en, this message translates to:
+  /// **'No routes yet'**
+  String get ztNoRoutes;
+
   /// No description provided for @ztNode.
   ///
   /// In en, this message translates to:
   /// **'ZeroTier node'**
   String get ztNode;
+
+  /// No description provided for @ztNodeDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Node details'**
+  String get ztNodeDetails;
+
+  /// No description provided for @ztNodeId.
+  ///
+  /// In en, this message translates to:
+  /// **'Node ID'**
+  String get ztNodeId;
 
   /// No description provided for @ztNodeIdHint.
   ///
@@ -4400,11 +4484,23 @@ abstract class AppLocalizations {
   /// **'No such network'**
   String get ztNotFound;
 
+  /// No description provided for @ztOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get ztOff;
+
   /// No description provided for @ztOffline.
   ///
   /// In en, this message translates to:
   /// **'Started, looking for ZeroTier\'s servers…'**
   String get ztOffline;
+
+  /// No description provided for @ztOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get ztOn;
 
   /// No description provided for @ztOnline.
   ///
@@ -4412,11 +4508,83 @@ abstract class AppLocalizations {
   /// **'Online'**
   String get ztOnline;
 
+  /// No description provided for @ztPeerDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct: {path}'**
+  String ztPeerDirect(String path);
+
+  /// No description provided for @ztPeerLeaf.
+  ///
+  /// In en, this message translates to:
+  /// **'Node (network member or controller)'**
+  String get ztPeerLeaf;
+
+  /// No description provided for @ztPeerMoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon (custom root)'**
+  String get ztPeerMoon;
+
+  /// No description provided for @ztPeerPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'Root server'**
+  String get ztPeerPlanet;
+
+  /// No description provided for @ztPeerRelayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Relayed through a root server'**
+  String get ztPeerRelayed;
+
+  /// No description provided for @ztPeers.
+  ///
+  /// In en, this message translates to:
+  /// **'Peers'**
+  String get ztPeers;
+
+  /// No description provided for @ztPort.
+  ///
+  /// In en, this message translates to:
+  /// **'UDP port'**
+  String get ztPort;
+
+  /// No description provided for @ztPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private: members need authorizing'**
+  String get ztPrivate;
+
+  /// No description provided for @ztPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public: anyone can join'**
+  String get ztPublic;
+
   /// No description provided for @ztRequesting.
   ///
   /// In en, this message translates to:
   /// **'Waiting for the network\'s controller (authorize this node there)'**
   String get ztRequesting;
+
+  /// No description provided for @ztRouteDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'In the network itself'**
+  String get ztRouteDirect;
+
+  /// No description provided for @ztRouteVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Through {gateway}'**
+  String ztRouteVia(String gateway);
+
+  /// No description provided for @ztRoutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Routes'**
+  String get ztRoutes;
 
   /// No description provided for @ztStarting.
   ///
@@ -4424,11 +4592,29 @@ abstract class AppLocalizations {
   /// **'Starting…'**
   String get ztStarting;
 
+  /// No description provided for @ztStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get ztStatus;
+
   /// No description provided for @ztStopped.
   ///
   /// In en, this message translates to:
   /// **'Off'**
   String get ztStopped;
+
+  /// No description provided for @ztType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get ztType;
+
+  /// No description provided for @ztVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'version {version}'**
+  String ztVersion(String version);
 
   /// No description provided for @ztWaitingAddress.
   ///

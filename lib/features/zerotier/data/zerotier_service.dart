@@ -32,6 +32,7 @@ class ZeroTierService extends ChangeNotifier {
     final stats = ZeroTierMemoryGuard.stats();
     if (stats != null) _log.i('zerotier', 'Memory guard $when: $stats');
   }
+
   ZeroTierNodeState? _state;
   bool _starting = false;
   bool _disposed = false;
@@ -66,6 +67,19 @@ class ZeroTierService extends ChangeNotifier {
   Future<void> get stopped => _stopped.future;
 
   ZeroTierNetworkState? network(String id) => _state?.networks.where((n) => n.idHex == id).firstOrNull;
+
+  /// A joined network's addresses, routes, MAC and MTU; null while the node is off. Asks libzt each time.
+  ZeroTierNetworkDetails? details(String id) {
+    final parsed = parseNetworkId(id);
+    return running && parsed != null ? _node.details(parsed) : null;
+  }
+
+  /// The peers the node knows; empty while it is off. Asks libzt each time.
+  List<ZeroTierPeer> peers() => running ? _node.peers() : const [];
+
+  int? get port => running ? _node.port : null;
+
+  ZeroTierMemoryGuardStats? guardStats() => running ? ZeroTierMemoryGuard.stats() : null;
 
   Future<void> load() async {
     final s = await _settings.load();

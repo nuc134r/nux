@@ -1647,18 +1647,87 @@
   "zerotierNetwork": "ZeroTier network",
   "ztAbout": "nux runs its own ZeroTier node, separate from any ZeroTier app on this phone, so it needs no VPN permission. Its traffic only reaches the networks below, only for nux.",
   "ztAccessDenied": "Not authorized: allow this node in the network's controller",
+  "ztAddresses": "Addresses",
   "ztAutoStart": "Start with nux",
+  "ztBroadcast": "Broadcast",
+  "ztDetailsWhenRunning": "Turn the node on to see the details",
+  "ztLatency": "{ms} ms",
+  "@ztLatency": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "ztMac": "MAC address",
+  "ztMemoryGuard": "Memory checking",
+  "ztMemoryGuardStats": "{count} allocations held, {mb} MB mapped",
+  "@ztMemoryGuardStats": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "mb": {
+        "type": "int"
+      }
+    }
+  },
+  "ztMtu": "MTU",
+  "ztNetworkId": "Network ID",
   "ztNetworkIdle": "The node is off",
   "ztNetworks": "Networks",
+  "ztNoAddresses": "None assigned yet",
   "ztNoNetworks": "No networks yet",
   "ztNoNetworksHint": "Join one with its 16-digit id from my.zerotier.com or your own controller",
+  "ztNoPeers": "No peers yet: the node has not reached ZeroTier's servers",
+  "ztNoRoutes": "No routes yet",
   "ztNode": "ZeroTier node",
+  "ztNodeDetails": "Node details",
+  "ztNodeId": "Node ID",
   "ztNodeIdHint": "This node's id: authorize it in your network's controller",
   "ztNotFound": "No such network",
+  "ztOff": "Off",
   "ztOffline": "Started, looking for ZeroTier's servers…",
+  "ztOn": "On",
   "ztOnline": "Online",
+  "ztPeerDirect": "Direct: {path}",
+  "@ztPeerDirect": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "ztPeerLeaf": "Node (network member or controller)",
+  "ztPeerMoon": "Moon (custom root)",
+  "ztPeerPlanet": "Root server",
+  "ztPeerRelayed": "Relayed through a root server",
+  "ztPeers": "Peers",
+  "ztPort": "UDP port",
+  "ztPrivate": "Private: members need authorizing",
+  "ztPublic": "Public: anyone can join",
   "ztRequesting": "Waiting for the network's controller (authorize this node there)",
+  "ztRouteDirect": "In the network itself",
+  "ztRouteVia": "Through {gateway}",
+  "@ztRouteVia": {
+    "placeholders": {
+      "gateway": {
+        "type": "String"
+      }
+    }
+  },
+  "ztRoutes": "Routes",
   "ztStarting": "Starting…",
+  "ztStatus": "Status",
   "ztStopped": "Off",
+  "ztType": "Type",
+  "ztVersion": "version {version}",
+  "@ztVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "ztWaitingAddress": "Joined, waiting for an address"
 }

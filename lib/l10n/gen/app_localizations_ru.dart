@@ -2622,13 +2622,47 @@ class AppLocalizationsRu extends AppLocalizations {
       'Нет доступа: разрешите этот узел в контроллере сети';
 
   @override
+  String get ztAddresses => 'Адреса';
+
+  @override
   String get ztAutoStart => 'Запускать вместе с nux';
+
+  @override
+  String get ztBroadcast => 'Широковещание';
+
+  @override
+  String get ztDetailsWhenRunning => 'Включите узел, чтобы увидеть подробности';
+
+  @override
+  String ztLatency(int ms) {
+    return '$ms мс';
+  }
+
+  @override
+  String get ztMac => 'MAC-адрес';
+
+  @override
+  String get ztMemoryGuard => 'Проверка памяти';
+
+  @override
+  String ztMemoryGuardStats(int count, int mb) {
+    return 'Занято блоков: $count, отображено $mb МБ';
+  }
+
+  @override
+  String get ztMtu => 'MTU';
+
+  @override
+  String get ztNetworkId => 'ID сети';
 
   @override
   String get ztNetworkIdle => 'Узел выключен';
 
   @override
   String get ztNetworks => 'Сети';
+
+  @override
+  String get ztNoAddresses => 'Пока не назначены';
 
   @override
   String get ztNoNetworks => 'Сетей пока нет';
@@ -2638,7 +2672,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Подключитесь по 16-значному идентификатору из my.zerotier.com или своего контроллера';
 
   @override
+  String get ztNoPeers =>
+      'Пиров пока нет: узел ещё не связался с серверами ZeroTier';
+
+  @override
+  String get ztNoRoutes => 'Маршрутов пока нет';
+
+  @override
   String get ztNode => 'Узел ZeroTier';
+
+  @override
+  String get ztNodeDetails => 'Сведения об узле';
+
+  @override
+  String get ztNodeId => 'ID узла';
 
   @override
   String get ztNodeIdHint =>
@@ -2648,20 +2695,77 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ztNotFound => 'Такой сети нет';
 
   @override
+  String get ztOff => 'Выкл.';
+
+  @override
   String get ztOffline => 'Запущен, ищет серверы ZeroTier…';
 
   @override
+  String get ztOn => 'Вкл.';
+
+  @override
   String get ztOnline => 'В сети';
+
+  @override
+  String ztPeerDirect(String path) {
+    return 'Напрямую: $path';
+  }
+
+  @override
+  String get ztPeerLeaf => 'Узел (участник сети или контроллер)';
+
+  @override
+  String get ztPeerMoon => 'Луна (свой корневой сервер)';
+
+  @override
+  String get ztPeerPlanet => 'Корневой сервер';
+
+  @override
+  String get ztPeerRelayed => 'Через корневой сервер';
+
+  @override
+  String get ztPeers => 'Пиры';
+
+  @override
+  String get ztPort => 'UDP-порт';
+
+  @override
+  String get ztPrivate => 'Закрытая: участников нужно авторизовать';
+
+  @override
+  String get ztPublic => 'Открытая: присоединиться может любой';
 
   @override
   String get ztRequesting =>
       'Ожидание контроллера сети (разрешите там этот узел)';
 
   @override
+  String get ztRouteDirect => 'Внутри самой сети';
+
+  @override
+  String ztRouteVia(String gateway) {
+    return 'Через $gateway';
+  }
+
+  @override
+  String get ztRoutes => 'Маршруты';
+
+  @override
   String get ztStarting => 'Запуск…';
 
   @override
+  String get ztStatus => 'Состояние';
+
+  @override
   String get ztStopped => 'Выключен';
+
+  @override
+  String get ztType => 'Тип';
+
+  @override
+  String ztVersion(String version) {
+    return 'версия $version';
+  }
 
   @override
   String get ztWaitingAddress => 'Подключено, ожидание адреса';

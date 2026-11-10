@@ -40,7 +40,7 @@ dependencies:
   zerotier_sockets:
     git:
       url: https://github.com/nuc134r/zerotier_sockets_flutter.git
-      ref: dcac6cb68fd2f24d40fd7f7f5469306765c7afde
+      ref: b1be1900e14de32e44fcefaa77cd0287bea85cdd
   dartssh2: ^4.1.0
   flterm:
     path: packages/flterm

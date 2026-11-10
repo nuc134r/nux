@@ -2584,13 +2584,47 @@ class AppLocalizationsEn extends AppLocalizations {
       'Not authorized: allow this node in the network\'s controller';
 
   @override
+  String get ztAddresses => 'Addresses';
+
+  @override
   String get ztAutoStart => 'Start with nux';
+
+  @override
+  String get ztBroadcast => 'Broadcast';
+
+  @override
+  String get ztDetailsWhenRunning => 'Turn the node on to see the details';
+
+  @override
+  String ztLatency(int ms) {
+    return '$ms ms';
+  }
+
+  @override
+  String get ztMac => 'MAC address';
+
+  @override
+  String get ztMemoryGuard => 'Memory checking';
+
+  @override
+  String ztMemoryGuardStats(int count, int mb) {
+    return '$count allocations held, $mb MB mapped';
+  }
+
+  @override
+  String get ztMtu => 'MTU';
+
+  @override
+  String get ztNetworkId => 'Network ID';
 
   @override
   String get ztNetworkIdle => 'The node is off';
 
   @override
   String get ztNetworks => 'Networks';
+
+  @override
+  String get ztNoAddresses => 'None assigned yet';
 
   @override
   String get ztNoNetworks => 'No networks yet';
@@ -2600,7 +2634,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Join one with its 16-digit id from my.zerotier.com or your own controller';
 
   @override
+  String get ztNoPeers =>
+      'No peers yet: the node has not reached ZeroTier\'s servers';
+
+  @override
+  String get ztNoRoutes => 'No routes yet';
+
+  @override
   String get ztNode => 'ZeroTier node';
+
+  @override
+  String get ztNodeDetails => 'Node details';
+
+  @override
+  String get ztNodeId => 'Node ID';
 
   @override
   String get ztNodeIdHint =>
@@ -2610,20 +2657,77 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ztNotFound => 'No such network';
 
   @override
+  String get ztOff => 'Off';
+
+  @override
   String get ztOffline => 'Started, looking for ZeroTier\'s servers…';
 
   @override
+  String get ztOn => 'On';
+
+  @override
   String get ztOnline => 'Online';
+
+  @override
+  String ztPeerDirect(String path) {
+    return 'Direct: $path';
+  }
+
+  @override
+  String get ztPeerLeaf => 'Node (network member or controller)';
+
+  @override
+  String get ztPeerMoon => 'Moon (custom root)';
+
+  @override
+  String get ztPeerPlanet => 'Root server';
+
+  @override
+  String get ztPeerRelayed => 'Relayed through a root server';
+
+  @override
+  String get ztPeers => 'Peers';
+
+  @override
+  String get ztPort => 'UDP port';
+
+  @override
+  String get ztPrivate => 'Private: members need authorizing';
+
+  @override
+  String get ztPublic => 'Public: anyone can join';
 
   @override
   String get ztRequesting =>
       'Waiting for the network\'s controller (authorize this node there)';
 
   @override
+  String get ztRouteDirect => 'In the network itself';
+
+  @override
+  String ztRouteVia(String gateway) {
+    return 'Through $gateway';
+  }
+
+  @override
+  String get ztRoutes => 'Routes';
+
+  @override
   String get ztStarting => 'Starting…';
 
   @override
+  String get ztStatus => 'Status';
+
+  @override
   String get ztStopped => 'Off';
+
+  @override
+  String get ztType => 'Type';
+
+  @override
+  String ztVersion(String version) {
+    return 'version $version';
+  }
 
   @override
   String get ztWaitingAddress => 'Joined, waiting for an address';
