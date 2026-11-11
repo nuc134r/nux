@@ -5,12 +5,9 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.11.17
 
-- Fixed a memory leak in ZeroTier of a few megabytes an hour (about 50 MB a day of uptime): its library built every status event, about 19 KB each, and threw it away without freeing it, because nux does not listen to those events.
-
-## 0.11.16
-
 - **Less battery in the background.** Android killed nux for using too much CPU while it sat in the background with nothing to do: the ZeroTier node kept running. Now, two minutes after you leave nux with no terminal or forwarding in use, the node stops, and it starts again when you come back (or when a connection needs it). The memory checking added for the ZeroTier crash hunt is off too: it found the bug fixed in 0.11.11 and has caught nothing since, and it made every one of ZeroTier's allocations much more expensive.
 - A ZeroTier host's menu shows how it is reached: **Direct** (with the public address and port the traffic goes to) or **Relayed** through a ZeroTier root server, with ZeroTier's own latency.
+- Fixed a memory leak in ZeroTier of a few megabytes an hour (about 50 MB a day of uptime): its library built every status event, about 19 KB each, and threw it away without freeing it, because nux does not listen to those events.
 
 ## 0.11.15
 
