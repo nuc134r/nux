@@ -147,6 +147,12 @@ Check each project's open issues and latest commits first: it may be fixed or re
   different layouts (garbage `ifname` pointer). A peer with more than 16 paths overflows the heap (the random
   crashes, caught with `memory_guard` in `native_ss_to_zts_ss`). The PR is `zerotier_sockets`'
   `hook/patches/0001-event-copies-overflow.patch`. Pinned version: 1.8.10 (`a6f6886`).
+- [ ] **libzt** — issue + PR: without an event handler, `NodeService::sendEventToUser` still builds every event
+  (`zts_net_info_t` is ~19 KB: 1024 multicast slots) and `Events::enqueue` returns at once without freeing it: a leak
+  of megabytes an hour. Patch 0004 returns before building when events are disabled.
+- [ ] **libzt** — issue + PR: `getAllAssignedAddr` copies up to 32 addresses into a caller's 16-entry array, and
+  `zts_core_query_*` read `_nets` without the lock unless the caller holds `zts_core_lock_obtain()` (whose lock
+  order against `service_m` is the reverse of the getters'). Patch 0002 adds locked text queries instead.
 - [ ] **libzt** — issue: `zts_net_get_name` (`NodeService::getNetworkName`) accepts only `len == 127`, not "at
   least"; the docs suggest any big enough buffer.
 - [ ] **re_editor** (reqable/re-editor) — issue + PR: on Android/iOS a cursor moved in front of the IME prefix
