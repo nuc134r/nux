@@ -2590,6 +2590,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ztAutoStart => 'Start with nux';
 
   @override
+  String get ztBadgeDirect => 'Direct';
+
+  @override
+  String get ztBadgeRelayed => 'Relayed';
+
+  @override
   String get ztBroadcast => 'Broadcast';
 
   @override

@@ -711,6 +711,8 @@
   "ztAccessDenied": "Нет доступа: разрешите этот узел в контроллере сети",
   "ztAddresses": "Адреса",
   "ztAutoStart": "Запускать вместе с nux",
+  "ztBadgeDirect": "Напрямую",
+  "ztBadgeRelayed": "Через ретранслятор",
   "ztBroadcast": "Широковещание",
   "ztCopyAddress": "Копировать адрес ZeroTier",
   "ztDetailsWhenRunning": "Включите узел, чтобы увидеть подробности",

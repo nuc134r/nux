@@ -64,6 +64,7 @@ class WorkspaceScreen extends ConsumerWidget {
     ref.watch(backgroundResyncProvider);
     // With no screen and nothing running in the background, nux quits instead of idling.
     ref.watch(backgroundQuitProvider);
+    ref.watch(zeroTierIdleSuspendProvider);
     // How the previous run ended (a crash leaves nothing in the log by itself).
     ref.watch(previousExitsProvider);
     // Kept loaded: the Switch workspace menus read it (they were empty until Home's list had loaded it).

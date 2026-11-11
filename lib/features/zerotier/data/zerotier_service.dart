@@ -80,6 +80,13 @@ class ZeroTierService extends ChangeNotifier {
   /// The peers the node knows; empty while it is off. Asks libzt each time.
   List<ZeroTierPeer> peers() => running ? _node.peers() : const [];
 
+  /// The peer behind a host at [ip] in network [networkId], once nux knows its address and the node
+  /// talks to it; null otherwise.
+  ZeroTierPeer? peerAt(String networkId, String ip) {
+    final address = memberAddress(networkId, ip);
+    return address == null ? null : peers().where((p) => p.address == address).firstOrNull;
+  }
+
   int? get port => running ? _node.port : null;
 
   ZeroTierMemoryGuardStats? guardStats() => running ? ZeroTierMemoryGuard.stats() : null;
@@ -134,6 +141,7 @@ class ZeroTierService extends ChangeNotifier {
 
   Future<void> _start() async {
     if (_node.running || _starting || _turnedOff) return;
+    _suspended = false;
     _starting = true;
     _notify();
     try {
@@ -167,7 +175,29 @@ class ZeroTierService extends ChangeNotifier {
   /// Turns the node off until [start] is called again.
   Future<void> stop() {
     _turnedOff = true;
+    _suspended = false;
     return _serial(_stop);
+  }
+
+  /// Stopped by [suspend], to start again on [resumeIfSuspended].
+  bool _suspended = false;
+  bool get suspended => _suspended;
+
+  /// Stops the node while nux is in the background and nothing uses it (an idle node still costs CPU,
+  /// and Android kills apps that use too much in the background). Unlike [stop] it is not "turned off":
+  /// a connection that needs ZeroTier starts it again, and so does coming back to nux.
+  Future<void> suspend() async {
+    if (!_node.running || _starting || _stopping) return;
+    _suspended = true;
+    _log.i('zerotier', 'In the background with nothing using it: stopping the node');
+    await _serial(_stop);
+  }
+
+  /// Starts the node again after [suspend] (nux is shown again).
+  Future<void> resumeIfSuspended() async {
+    if (!_suspended || _turnedOff) return;
+    _suspended = false;
+    await start();
   }
 
   Future<void> _stop() async {

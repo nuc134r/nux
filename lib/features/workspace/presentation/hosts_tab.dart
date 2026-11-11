@@ -10,6 +10,8 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/host_ping.dart';
+import '../../zerotier/data/zerotier_service.dart';
+import '../../zerotier/presentation/zerotier_path_badge.dart';
 import '../../connections/presentation/connection_actions.dart';
 import '../../ssh/data/ssh_pool.dart';
 import '../../ssh/data/ssh_providers.dart';
@@ -420,7 +422,11 @@ class _HostTile extends ConsumerWidget {
   List<NuxMenuItem> _menu(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final c = connection;
+    final network = c.zerotierNetwork;
+    final peer = network == null ? null : ref.read(zeroTierServiceProvider).peerAt(network, c.host);
     return [
+      // How ZeroTier reaches the host, as libzt sees it now.
+      if (peer != null) NuxMenuCustom((_) => ZeroTierPathBadge(peer: peer)),
       NuxMenuCustom(
         (menuContext) => Padding(
           padding: const EdgeInsets.fromLTRB(10, 4, 10, 6),

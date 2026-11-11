@@ -1649,6 +1649,8 @@
   "ztAccessDenied": "Not authorized: allow this node in the network's controller",
   "ztAddresses": "Addresses",
   "ztAutoStart": "Start with nux",
+  "ztBadgeDirect": "Direct",
+  "ztBadgeRelayed": "Relayed",
   "ztBroadcast": "Broadcast",
   "ztCopyAddress": "Copy ZeroTier address",
   "ztDetailsWhenRunning": "Turn the node on to see the details",

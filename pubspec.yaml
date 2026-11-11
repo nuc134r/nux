@@ -3,7 +3,7 @@ description: "SSH/SFTP client, port forwarder and mobile IDE."
 publish_to: 'none'
 
 # The release version comes from the git tag (tool/version.sh); this one is only used for local builds.
-version: 0.11.15+1
+version: 0.11.16+1
 
 environment:
   sdk: ^3.13.7
@@ -100,10 +100,11 @@ flutter:
         - asset: assets/fonts/SourceCodePro-It.otf
           style: italic
 
-# libzt with a guarded allocator while the heap-corruption crashes are hunted: an overrun or a write after
-# free inside ZeroTier then faults at once, in libzt, with its function in the crash report (see
-# zerotier_sockets' hook/build.dart). Small cost; turn off once the cause is known.
+# memory_guard: true builds libzt with a guarded allocator: an overrun or a write after free inside ZeroTier
+# faults at once, in libzt, with its function in the crash report (see zerotier_sockets' hook/build.dart).
+# It found the heap corruption fixed in 0.11.11; off since, as each of libzt's ~170 allocations a second
+# then maps its own pages, and Android killed nux in the background for the CPU that took.
 hooks:
   user_defines:
     zerotier_sockets:
-      memory_guard: true
+      memory_guard: false

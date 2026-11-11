@@ -2628,6 +2628,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ztAutoStart => 'Запускать вместе с nux';
 
   @override
+  String get ztBadgeDirect => 'Напрямую';
+
+  @override
+  String get ztBadgeRelayed => 'Через ретранслятор';
+
+  @override
   String get ztBroadcast => 'Широковещание';
 
   @override

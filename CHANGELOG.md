@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.16
+
+- **Less battery in the background.** Android killed nux for using too much CPU while it sat in the background with nothing to do: the ZeroTier node kept running. Now, two minutes after you leave nux with no terminal or forwarding in use, the node stops, and it starts again when you come back (or when a connection needs it). The memory checking added for the ZeroTier crash hunt is off too: it found the bug fixed in 0.11.11 and has caught nothing since, and it made every one of ZeroTier's allocations much more expensive.
+- A ZeroTier host's menu shows how it is reached: **Direct** (with the public address and port the traffic goes to) or **Relayed** through a ZeroTier root server, with ZeroTier's own latency.
+
 ## 0.11.15
 
 - ZeroTier node details name the peers after your hosts: nux learns which member has which address from the traffic to it (and reads it straight from ZeroTier's RFC4193 and 6PLANE IPv6 addresses), and remembers it, so a host is recognised from the first connection on. Tap a named peer to open a terminal on it.

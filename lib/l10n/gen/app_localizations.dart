@@ -4364,6 +4364,18 @@ abstract class AppLocalizations {
   /// **'Start with nux'**
   String get ztAutoStart;
 
+  /// No description provided for @ztBadgeDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get ztBadgeDirect;
+
+  /// No description provided for @ztBadgeRelayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Relayed'**
+  String get ztBadgeRelayed;
+
   /// No description provided for @ztBroadcast.
   ///
   /// In en, this message translates to:
