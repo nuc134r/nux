@@ -2631,6 +2631,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ztBroadcast => 'Широковещание';
 
   @override
+  String get ztCopyAddress => 'Копировать адрес ZeroTier';
+
+  @override
   String get ztDetailsWhenRunning => 'Включите узел, чтобы увидеть подробности';
 
   @override

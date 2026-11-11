@@ -14,6 +14,9 @@ import '../../settings/data/settings_repository.dart';
 const _networksKey = 'zerotier.networks';
 const _autoStartKey = 'zerotier.autoStart';
 
+/// Members' ZeroTier addresses learned from traffic: `{"network id/IP": "address"}`.
+const _membersKey = 'zerotier.members';
+
 /// The app's ZeroTier node: started on demand (or with the app), remembers the joined networks.
 class ZeroTierService extends ChangeNotifier {
   ZeroTierService(this._settings, this._log);
@@ -85,7 +88,37 @@ class ZeroTierService extends ChangeNotifier {
     final s = await _settings.load();
     networks = [for (final n in (jsonDecode(s.values[_networksKey] ?? '[]') as List)) n as String];
     autoStart = s.values[_autoStartKey] == 'true';
+    try {
+      _members = {...(jsonDecode(s.values[_membersKey] ?? '{}') as Map).cast<String, String>()};
+    } on Object {
+      _members = {};
+    }
     _notify();
+  }
+
+  Map<String, String> _members = {};
+  Timer? _learnTimer;
+
+  /// The ZeroTier address of the member at [ip] in network [networkId]: learned from traffic (see
+  /// [learnMembers]) or, for RFC4193 and 6PLANE IPv6 addresses, read from the address itself.
+  String? memberAddress(String networkId, String ip) =>
+      _members['$networkId/${ip.trim().toLowerCase()}'] ?? zeroTierAddressFromIp(ip.trim(), networkId);
+
+  /// Remembers which member has which IPv4 address, from the network stack's recent neighbors (it forgets
+  /// them after a few minutes; nux keeps them, so a host stays recognised).
+  Future<void> learnMembers() async {
+    if (!running) return;
+    var changed = false;
+    for (final n in _node.neighbors()) {
+      final key = '${n.networkId}/${n.ip}';
+      if (_members[key] != n.address) {
+        _members[key] = n.address;
+        changed = true;
+      }
+    }
+    if (!changed) return;
+    _notify();
+    await _settings.set(_membersKey, jsonEncode(_members));
   }
 
   Future<void> setAutoStart(bool v) async {
@@ -119,6 +152,8 @@ class ZeroTierService extends ChangeNotifier {
       _logGuard('on start');
       _guardLog?.cancel();
       _guardLog = Timer.periodic(const Duration(minutes: 10), (_) => _logGuard('while running'));
+      _learnTimer?.cancel();
+      _learnTimer = Timer.periodic(const Duration(seconds: 30), (_) => learnMembers());
       _watch = _node.watch().listen((s) {
         _state = s;
         _notify();
@@ -141,6 +176,10 @@ class ZeroTierService extends ChangeNotifier {
     _stopping = true;
     unawaited(_watch?.cancel());
     _watch = null;
+    _learnTimer?.cancel();
+    _learnTimer = null;
+    // What the stack knows now, before it is gone (the query runs at once, the save after).
+    unawaited(learnMembers().catchError((Object _) {}));
     final stopping = _node.stop();
     _state = null;
     if (!_stopped.isCompleted) _stopped.complete();
@@ -201,6 +240,7 @@ class ZeroTierService extends ChangeNotifier {
     _disposed = true;
     _watch?.cancel();
     _guardLog?.cancel();
+    _learnTimer?.cancel();
     super.dispose();
   }
 }

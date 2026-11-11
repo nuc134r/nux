@@ -1650,6 +1650,7 @@
   "ztAddresses": "Addresses",
   "ztAutoStart": "Start with nux",
   "ztBroadcast": "Broadcast",
+  "ztCopyAddress": "Copy ZeroTier address",
   "ztDetailsWhenRunning": "Turn the node on to see the details",
   "ztLatency": "{ms} ms",
   "@ztLatency": {

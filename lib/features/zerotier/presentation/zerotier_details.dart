@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:zerotier_sockets/zerotier_sockets.dart';
 
+import '../../../app/router.dart';
 import '../../../app/theme.dart';
+import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
+import '../../connections/data/connection_repository.dart';
+import '../../connections/presentation/connection_actions.dart';
 import '../data/zerotier_service.dart';
 import 'zerotier_screen.dart';
 
@@ -41,7 +46,11 @@ class _LiveState extends ConsumerState<_Live> {
       listenable: service,
       builder: (context, _) {
         if (service.running) {
-          _timer ??= Timer.periodic(const Duration(seconds: 2), (_) => setState(() {}));
+          _timer ??= Timer.periodic(const Duration(seconds: 2), (_) {
+            // Name the members as soon as they show up in traffic.
+            service.learnMembers();
+            setState(() {});
+          });
         } else {
           _timer?.cancel();
           _timer = null;
@@ -198,15 +207,23 @@ class ZeroTierNetworkScreen extends StatelessWidget {
 }
 
 /// This node: id, status, port, and the peers it talks to (direct or relayed).
-class ZeroTierNodeScreen extends StatelessWidget {
+class ZeroTierNodeScreen extends ConsumerWidget {
   const ZeroTierNodeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
+    final connections = ref.watch(connectionsProvider).value ?? const <Connection>[];
     return _Live(
       builder: (context, service) {
+        // Hosts reached over ZeroTier, by the member's ZeroTier address.
+        final hosts = <String, List<Connection>>{};
+        for (final c in connections) {
+          final network = c.zerotierNetwork;
+          final address = network == null ? null : service.memberAddress(network, c.host);
+          if (address != null) (hosts[address] ??= []).add(c);
+        }
         final running = service.running;
         final state = service.state;
         final online = running && (state?.online ?? false);
@@ -220,8 +237,12 @@ class ZeroTierNodeScreen extends StatelessWidget {
         final guard = service.guardStats();
         final peers = [...service.peers()]
           ..sort((a, b) {
-            final role = b.role.index.compareTo(a.role.index); // roots first
-            return role != 0 ? role : a.address.compareTo(b.address);
+            // Roots first, then hosts by name, then the other members.
+            final role = b.role.index.compareTo(a.role.index);
+            if (role != 0) return role;
+            final na = hosts[a.address]?.first.name, nb = hosts[b.address]?.first.name;
+            if ((na == null) != (nb == null)) return na == null ? 1 : -1;
+            return na != null ? na.toLowerCase().compareTo(nb!.toLowerCase()) : a.address.compareTo(b.address);
           });
         return Scaffold(
           appBar: AppBar(title: Text(l10n.ztNodeDetails)),
@@ -255,7 +276,7 @@ class ZeroTierNodeScreen extends StatelessWidget {
                   title: l10n.ztPeers,
                   children: [
                     if (peers.isEmpty) ListTile(title: Text(l10n.ztNoPeers)),
-                    for (final p in peers) _PeerTile(p),
+                    for (final p in peers) _PeerTile(p, hosts: hosts[p.address] ?? const []),
                   ],
                 ),
             ],
@@ -266,13 +287,16 @@ class ZeroTierNodeScreen extends StatelessWidget {
   }
 }
 
-class _PeerTile extends StatelessWidget {
-  const _PeerTile(this.peer);
+class _PeerTile extends ConsumerWidget {
+  const _PeerTile(this.peer, {required this.hosts});
 
   final ZeroTierPeer peer;
 
+  /// Saved hosts on this member (several when they differ by user or port).
+  final List<Connection> hosts;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final p = peer;
     final role = switch (p.role) {
@@ -286,18 +310,56 @@ class _PeerTile extends StatelessWidget {
       if (p.latency != null) l10n.ztLatency(p.latency!),
       if (p.version != null) l10n.ztVersion(p.version!),
     ].join(' · ');
+    final path = preferred == null ? l10n.ztPeerRelayed : l10n.ztPeerDirect(preferred.address);
+    final color = hosts.map((c) => c.color).nonNulls.firstOrNull;
+    void copy() {
+      Clipboard.setData(ClipboardData(text: p.address));
+      showSnack(context, l10n.copied);
+    }
+
     return ListTile(
       leading: Icon(
-        p.role == ZeroTierPeerRole.leaf ? Icons.devices_other : Icons.dns_outlined,
+        p.role == ZeroTierPeerRole.leaf ? (hosts.isEmpty ? Icons.devices_other : Icons.computer) : Icons.dns_outlined,
         color: p.direct ? Colors.green : null,
       ),
-      title: Text(p.address, style: _mono),
-      subtitle: Text('$facts\n${preferred == null ? l10n.ztPeerRelayed : l10n.ztPeerDirect(preferred.address)}'),
+      title: hosts.isEmpty
+          ? Text(p.address, style: _mono)
+          : Row(
+              children: [
+                if (color != null) ...[
+                  Container(
+                    width: 4,
+                    height: 16,
+                    decoration: BoxDecoration(color: Color(color), borderRadius: BorderRadius.circular(2)),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Text(hosts.map((c) => c.name).toSet().join(', '), overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
+      subtitle: Text(hosts.isEmpty ? '$facts\n$path' : '${p.address} · $facts\n$path'),
       isThreeLine: true,
-      onTap: () {
-        Clipboard.setData(ClipboardData(text: p.address));
-        showSnack(context, l10n.copied);
-      },
+      // A host opens a terminal on it (a menu when there are several); other peers copy their address.
+      onTap: hosts.isEmpty
+          ? copy
+          : () => showNuxMenu(
+              context,
+              beside: true,
+              (_) => [
+                for (final c in hosts)
+                  NuxMenuAction(
+                    icon: Icons.terminal,
+                    label: hosts.length == 1 ? l10n.openTerminal : '${l10n.openTerminal}: ${c.name}',
+                    onSelected: () {
+                      openTerminal(ref, c.id);
+                      context.go(Routes.home);
+                    },
+                  ),
+                NuxMenuAction(icon: Icons.copy, label: l10n.ztCopyAddress, onSelected: copy),
+              ],
+            ),
     );
   }
 }

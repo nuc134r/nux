@@ -4370,6 +4370,12 @@ abstract class AppLocalizations {
   /// **'Broadcast'**
   String get ztBroadcast;
 
+  /// No description provided for @ztCopyAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy ZeroTier address'**
+  String get ztCopyAddress;
+
   /// No description provided for @ztDetailsWhenRunning.
   ///
   /// In en, this message translates to:

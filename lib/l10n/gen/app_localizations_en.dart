@@ -2593,6 +2593,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ztBroadcast => 'Broadcast';
 
   @override
+  String get ztCopyAddress => 'Copy ZeroTier address';
+
+  @override
   String get ztDetailsWhenRunning => 'Turn the node on to see the details';
 
   @override

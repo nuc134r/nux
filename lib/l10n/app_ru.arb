@@ -712,6 +712,7 @@
   "ztAddresses": "Адреса",
   "ztAutoStart": "Запускать вместе с nux",
   "ztBroadcast": "Широковещание",
+  "ztCopyAddress": "Копировать адрес ZeroTier",
   "ztDetailsWhenRunning": "Включите узел, чтобы увидеть подробности",
   "ztLatency": "{ms} мс",
   "ztMac": "MAC-адрес",

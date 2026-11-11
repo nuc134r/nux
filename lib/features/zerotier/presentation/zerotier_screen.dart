@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:zerotier_sockets/zerotier_sockets.dart';
@@ -108,14 +107,9 @@ class ZeroTierScreen extends ConsumerWidget {
                       ),
                       subtitle: Text(l10n.ztNodeIdHint),
                       onTap: () => context.push(Routes.zerotierNode),
-                      trailing: IconButton(
-                        tooltip: l10n.copy,
-                        icon: const Icon(Icons.copy),
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(text: nodeId));
-                          showSnack(context, l10n.copied);
-                        },
-                      ),
+                      titleAlignment: ListTileTitleAlignment.center,
+                      // Copying the id is in the details (a tap on it there).
+                      trailing: const Icon(Icons.chevron_right),
                     ),
                   SwitchListTile(
                     secondary: const Icon(Icons.power_settings_new),
@@ -136,7 +130,6 @@ class ZeroTierScreen extends ConsumerWidget {
                       state: service.network(id),
                       running: service.running,
                       onTap: () => context.push(Routes.zerotierNetwork(id)),
-                      onLeave: () => confirmLeaveNetwork(context, service, id),
                     ),
                 ],
               ),
@@ -196,14 +189,12 @@ class _NetworkTile extends StatelessWidget {
     required this.state,
     required this.running,
     required this.onTap,
-    required this.onLeave,
   });
 
   final String id;
   final ZeroTierNetworkState? state;
   final bool running;
   final VoidCallback onTap;
-  final VoidCallback onLeave;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +210,10 @@ class _NetworkTile extends StatelessWidget {
       ),
       subtitle: Text([if (s?.name != null) id, status].join('\n')),
       isThreeLine: s?.name != null,
-      trailing: IconButton(tooltip: l10n.leave, icon: const Icon(Icons.logout), onPressed: onLeave),
+      // Three-line tiles put the icons at the top by default; the status may also wrap.
+      titleAlignment: ListTileTitleAlignment.center,
+      // Copy and Leave are in the network's details.
+      trailing: const Icon(Icons.chevron_right),
     );
   }
 }

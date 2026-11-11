@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.15
+
+- ZeroTier node details name the peers after your hosts: nux learns which member has which address from the traffic to it (and reads it straight from ZeroTier's RFC4193 and 6PLANE IPv6 addresses), and remembers it, so a host is recognised from the first connection on. Tap a named peer to open a terminal on it.
+- ZeroTier screen: the network and node rows lead to their details (chevrons), with the icons centred; copying an id and leaving a network moved to the details screens.
+
 ## 0.11.14
 
 - **Snippets**: saved terminal commands you run in two taps from a terminal tab's ⋮ → Snippets (a long press types the command without running it, to edit it first). It comes with useful presets (disk space, biggest folders, large files, processes by memory or CPU, open ports, the system log, failed services, Docker containers and more); add, edit, reorder and delete them in Settings → Snippets.

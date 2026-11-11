@@ -1518,11 +1518,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: b1be1900e14de32e44fcefaa77cd0287bea85cdd
-      resolved-ref: b1be1900e14de32e44fcefaa77cd0287bea85cdd
+      ref: "4e9793bb8a6ea3a27439cc433aeaf28e74a99d78"
+      resolved-ref: "4e9793bb8a6ea3a27439cc433aeaf28e74a99d78"
       url: "https://github.com/nuc134r/zerotier_sockets_flutter.git"
     source: git
-    version: "2.0.0-dev.6"
+    version: "2.0.0-dev.7"
 sdks:
   dart: ">=3.13.7 <4.0.0"
   flutter: ">=3.47.0"
