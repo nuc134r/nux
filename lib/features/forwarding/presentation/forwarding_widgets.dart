@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../core/db/database.dart';
 import '../../../core/widgets/nux_menu.dart';
+import '../../../core/widgets/widgets.dart' show showSnack;
 import '../../../l10n/l10n.dart';
 import '../../browser/domain/address.dart';
 import '../../browser/presentation/browser_tab.dart';
@@ -12,6 +13,7 @@ import '../../workspace/data/workspace.dart';
 import '../../files/domain/file_listing.dart';
 import '../../ssh/data/ssh_connector.dart';
 import '../../ssh/presentation/ssh_errors.dart';
+import '../data/forward_rule_repository.dart';
 import '../data/forwarding_providers.dart';
 import '../domain/forward_rule.dart';
 import '../domain/forwarder.dart';
@@ -51,13 +53,24 @@ class HostForwardings extends StatelessWidget {
             ForwardingRow(rule: r),
             Divider(height: 1, indent: 12, endIndent: 12, color: scheme.outlineVariant.withValues(alpha: .5)),
           ],
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(40)),
-              icon: const Icon(Icons.add, size: 18),
-              label: Text(context.l10n.addPortForwarding),
-              onPressed: () => context.push(Routes.newForward(host.id)),
+          // The whole row is the button, no outline.
+          InkWell(
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+            onTap: () => context.push(Routes.newForward(host.id)),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
+              child: Row(
+                children: [
+                  Icon(Icons.add, size: 20, color: scheme.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      context.l10n.addPortForwarding,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(color: scheme.primary),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -66,7 +79,28 @@ class HostForwardings extends StatelessWidget {
   }
 }
 
-/// `Database` / `8080 → 8020 [TCP] [UDP]` with a switch, and traffic chips while it runs. Tap to edit.
+/// Asks, stops the forward if it runs, deletes it and says so.
+Future<void> deleteForwarding(BuildContext context, WidgetRef ref, ForwardRule rule) async {
+  final l10n = context.l10n;
+  final name = rule.label.isNotEmpty ? rule.label : rule.describe();
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.deleteForwardTitle(name)),
+      content: Text(l10n.deleteForwardBody),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.delete)),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  await ref.read(forwardingManagerProvider).stop(rule.id);
+  await ref.read(forwardRuleRepositoryProvider).delete(rule.id);
+  if (context.mounted) showSnack(context, l10n.deleted(name));
+}
+
+/// `Database` / `8080 → 8020 [TCP] [UDP]` with a switch, and traffic chips while it runs. Tap for its menu.
 class ForwardingRow extends ConsumerWidget {
   const ForwardingRow({super.key, required this.rule});
 
@@ -97,30 +131,37 @@ class ForwardingRow extends ConsumerWidget {
           ForwardState.failed => s.error == null ? l10n.forwardFailed : forwardErrorText(l10n, s.error!, rule),
           _ => null,
         };
+        void menu() => showNuxMenu(
+          context,
+          beside: true,
+          (_) => [
+            // A forward that listens here can be opened as a web page (http://localhost:port).
+            if (rule.forwardKind != ForwardKind.remote)
+              NuxMenuAction(
+                icon: Icons.public,
+                label: l10n.openInBrowserTab,
+                onSelected: () {
+                  if (!s.on) manager.start(rule);
+                  openBrowserTab(ref.read(workspaceProvider), '${forwardedPortUri(rule.bindPort)}');
+                },
+              ),
+            NuxMenuAction(
+              icon: Icons.edit_outlined,
+              label: l10n.edit,
+              onSelected: () => context.push(Routes.forward(rule.id)),
+            ),
+            const NuxMenuDivider(),
+            NuxMenuAction(
+              icon: Icons.delete_outline,
+              label: l10n.delete,
+              onSelected: () => deleteForwarding(context, ref, rule),
+            ),
+          ],
+        );
         return InkWell(
-          onTap: () => context.push(Routes.forward(rule.id)),
-          // A forward that listens here can be opened as a web page (http://localhost:port).
-          onLongPress: rule.forwardKind == ForwardKind.remote
-              ? null
-              : () => showNuxMenu(
-                  context,
-                  beside: true,
-                  (_) => [
-                    NuxMenuAction(
-                      icon: Icons.public,
-                      label: l10n.openInBrowserTab,
-                      onSelected: () {
-                        if (!s.on) manager.start(rule);
-                        openBrowserTab(ref.read(workspaceProvider), '${forwardedPortUri(rule.bindPort)}');
-                      },
-                    ),
-                    NuxMenuAction(
-                      icon: Icons.edit_outlined,
-                      label: l10n.edit,
-                      onSelected: () => context.push(Routes.forward(rule.id)),
-                    ),
-                  ],
-                ),
+          // Tap and long press both open the menu (the switch turns it on and off).
+          onTap: menu,
+          onLongPress: menu,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 0, 8),
             child: Column(

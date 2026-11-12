@@ -89,7 +89,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addKey => 'Add key';
 
   @override
-  String get addPortForwarding => 'Add port forwarding';
+  String get addPortForwarding => 'Create port forwarding';
 
   @override
   String get addRow => 'Add row';
@@ -503,6 +503,14 @@ class AppLocalizationsEn extends AppLocalizations {
       one: 'Delete $count item?',
     );
     return '$_temp0';
+  }
+
+  @override
+  String get deleteForwardBody => 'It stops if it is running.';
+
+  @override
+  String deleteForwardTitle(String name) {
+    return 'Delete $name?';
   }
 
   @override

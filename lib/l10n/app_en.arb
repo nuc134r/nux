@@ -83,7 +83,7 @@
   "addForward": "Add forwarding",
   "addHost": "Add host",
   "addKey": "Add key",
-  "addPortForwarding": "Add port forwarding",
+  "addPortForwarding": "Create port forwarding",
   "addRow": "Add row",
   "addSnippet": "Add snippet",
   "addressHint": "Address or search",
@@ -366,6 +366,15 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "deleteForwardBody": "It stops if it is running.",
+  "deleteForwardTitle": "Delete {name}?",
+  "@deleteForwardTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
       }
     }
   },

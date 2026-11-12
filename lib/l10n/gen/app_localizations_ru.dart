@@ -89,7 +89,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addKey => 'Добавить клавишу';
 
   @override
-  String get addPortForwarding => 'Добавить проброс порта';
+  String get addPortForwarding => 'Создать проброс порта';
 
   @override
   String get addRow => 'Добавить ряд';
@@ -511,6 +511,14 @@ class AppLocalizationsRu extends AppLocalizations {
       one: 'Удалить $count объект?',
     );
     return '$_temp0';
+  }
+
+  @override
+  String get deleteForwardBody => 'Если он запущен, он остановится.';
+
+  @override
+  String deleteForwardTitle(String name) {
+    return 'Удалить $name?';
   }
 
   @override

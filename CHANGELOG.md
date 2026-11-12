@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.18
+
+- Port forwardings under a host: a tap opens the forwarding's menu (open in a browser tab, edit, and now **delete**), as a long press did; the switch still turns it on and off. "Add port forwarding" is now **Create port forwarding**, a plain full-width row instead of an outlined button.
+
 ## 0.11.17
 
 - **Less battery in the background.** Android killed nux for using too much CPU while it sat in the background with nothing to do: the ZeroTier node kept running. Now, two minutes after you leave nux with no terminal or forwarding in use, the node stops, and it starts again when you come back (or when a connection needs it). The memory checking added for the ZeroTier crash hunt is off too: it found the bug fixed in 0.11.11 and has caught nothing since, and it made every one of ZeroTier's allocations much more expensive.

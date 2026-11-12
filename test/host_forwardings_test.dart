@@ -39,7 +39,7 @@ void main() {
     await tester.tap(find.byTooltip('Forwardings'));
     await settle(tester);
     expect(find.text('Database'), findsOneWidget);
-    expect(find.text('Add port forwarding'), findsOneWidget);
+    expect(find.text('Create port forwarding'), findsOneWidget);
 
     await tester.tap(find.byType(Switch));
     await settle(tester);
@@ -53,6 +53,19 @@ void main() {
     await tester.tap(find.text('1 port, 2 connections'));
     await settle(tester);
     expect(find.text('Database'), findsOneWidget);
+
+    // A tap opens the row's menu (as a long press does): open, edit, delete.
+    await tester.tap(find.text('Database'));
+    await settle(tester);
+    expect(find.text('Edit'), findsOneWidget);
+    await tester.tap(find.text('Delete'));
+    await settle(tester);
+    expect(find.text('Delete Database?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+    await settle(tester);
+    expect(find.text('Database'), findsNothing);
+    expect(manager.status('sample').on, isFalse, reason: 'stopped before it was deleted');
 
     await manager.stopAll(); // ends the notification ticker
     await tester.pump(const Duration(seconds: 1));

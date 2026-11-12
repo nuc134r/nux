@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @addPortForwarding.
   ///
   /// In en, this message translates to:
-  /// **'Add port forwarding'**
+  /// **'Create port forwarding'**
   String get addPortForwarding;
 
   /// No description provided for @addRow.
@@ -859,6 +859,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{Delete {count} item?} other{Delete {count} items?}}'**
   String deleteFilesTitle(int count);
+
+  /// No description provided for @deleteForwardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It stops if it is running.'**
+  String get deleteForwardBody;
+
+  /// No description provided for @deleteForwardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteForwardTitle(String name);
 
   /// No description provided for @deleteKeyBody.
   ///
