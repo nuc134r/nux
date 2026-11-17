@@ -56,6 +56,7 @@ ForwardRule rule(String id, {bool auto = false}) => ForwardRule(
       targetPort: 5432,
       tcp: true,
       udp: false,
+      direct: true,
       autoStart: auto,
       sortOrder: 0,
     );

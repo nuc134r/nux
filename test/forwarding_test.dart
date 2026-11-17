@@ -160,6 +160,7 @@ void main() {
           targetPort: 5432,
           tcp: tcp,
           udp: udp,
+          direct: true,
           autoStart: false,
           sortOrder: 0,
         );
@@ -182,7 +183,7 @@ void main() {
   });
 
   test('a host on ZeroTier is reached directly when the rule goes to the host itself', () {
-    ForwardRule rule(ForwardKind k, String target) => ForwardRule(
+    ForwardRule rule(ForwardKind k, String target, {bool direct = true}) => ForwardRule(
           id: 'r',
           createdAt: DateTime(2026),
           updatedAt: DateTime(2026),
@@ -195,6 +196,7 @@ void main() {
           targetPort: 80,
           tcp: true,
           udp: false,
+          direct: direct,
           autoStart: false,
           sortOrder: 0,
         );
@@ -217,5 +219,8 @@ void main() {
     expect(rule(ForwardKind.local, 'other').routeVia(host(net)), ForwardRoute.ssh);
     expect(rule(ForwardKind.remote, 'localhost').routeVia(host(net)), ForwardRoute.ssh);
     expect(rule(ForwardKind.local, 'localhost').routeVia(host(null)), ForwardRoute.ssh);
+    // Asked for SSH: like ssh -L, reaches what listens only on the host's localhost.
+    expect(rule(ForwardKind.local, 'localhost', direct: false).routeVia(host(net)), ForwardRoute.ssh);
+    expect(rule(ForwardKind.local, 'localhost', direct: false).canGoDirect(host(net)), isTrue);
   });
 }

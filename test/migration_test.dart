@@ -40,12 +40,14 @@ void main() {
     }
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 6);
+    // The database migrates to the current version; the v6 step is what this checks.
+    await verifier.migrateAndValidate(db, db.schemaVersion);
     final rules = {for (final r in await db.select(db.forwardRules).get()) r.id: r};
     expect(rules['a']!.connectionId, 'nas');
     expect((rules['a']!.kind, rules['a']!.targetHost, rules['a']!.tcp, rules['a']!.udp), ('local', 'localhost', true, false));
     final created = await (db.select(db.connections)..where((c) => c.id.equals(rules['b']!.connectionId!))).getSingle();
     expect((created.host, created.zerotierNetwork), ('192.0.2.20', 'a1b2c3d4e5f60708'));
     expect((rules['b']!.tcp, rules['b']!.udp), (false, true));
+    expect(rules.values.every((r) => r.direct), isTrue, reason: 'v8: existing rules keep going directly');
   });
 }

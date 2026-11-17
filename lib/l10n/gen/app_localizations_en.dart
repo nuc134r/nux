@@ -943,6 +943,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)';
 
   @override
+  String get forwardRouteDirect => 'Direct over ZeroTier';
+
+  @override
+  String forwardRouteDirectHint(String host) {
+    return 'Straight to $host\'s ZeroTier address: no SSH login, TCP and UDP. A service there that listens only on localhost cannot be reached this way.';
+  }
+
+  @override
+  String get forwardRouteSsh => 'Through SSH';
+
+  @override
+  String forwardRouteSshHint(String host) {
+    return 'Through an SSH session to $host, like ssh -L: also reaches services that listen only on its localhost. TCP only.';
+  }
+
+  @override
   String get forwardShared => 'Allow other devices on the network';
 
   @override

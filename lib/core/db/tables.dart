@@ -118,6 +118,11 @@ class ForwardRules extends Table with SyncedTable {
   BoolColumn get tcp => boolean().withDefault(const Constant(true))();
   BoolColumn get udp => boolean().withDefault(const Constant(false))();
 
+  /// On a ZeroTier host, a local forward to the host itself goes straight to its ZeroTier address (no
+  /// SSH, TCP and UDP) unless this is false: then it goes through SSH like `ssh -L`, which also reaches
+  /// services listening only on the host's localhost. Ignored otherwise.
+  BoolColumn get direct => boolean().withDefault(const Constant(true))();
+
   /// Started when nux starts.
   BoolColumn get autoStart => boolean().withDefault(const Constant(false))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();

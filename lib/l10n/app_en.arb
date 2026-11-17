@@ -728,6 +728,24 @@
   "forwardRemote": "Remote",
   "forwardRemoteHint": "A port on the server leads back to something this device can reach, like a dev server on your phone (ssh -R)",
   "forwardRemoteRefused": "The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)",
+  "forwardRouteDirect": "Direct over ZeroTier",
+  "forwardRouteDirectHint": "Straight to {host}'s ZeroTier address: no SSH login, TCP and UDP. A service there that listens only on localhost cannot be reached this way.",
+  "@forwardRouteDirectHint": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "forwardRouteSsh": "Through SSH",
+  "forwardRouteSshHint": "Through an SSH session to {host}, like ssh -L: also reaches services that listen only on its localhost. TCP only.",
+  "@forwardRouteSshHint": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
   "forwardShared": "Allow other devices on the network",
   "forwardSharedHint": "Listens on all interfaces instead of only this device",
   "forwardStarting": "Starting…",

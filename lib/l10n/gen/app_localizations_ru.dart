@@ -958,6 +958,22 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сервер отказался слушать этот порт (занят или проброс выключен в sshd_config)';
 
   @override
+  String get forwardRouteDirect => 'Напрямую через ZeroTier';
+
+  @override
+  String forwardRouteDirectHint(String host) {
+    return 'Сразу на ZeroTier-адрес $host: без входа по SSH, TCP и UDP. Сервис, слушающий там только localhost, так не доступен.';
+  }
+
+  @override
+  String get forwardRouteSsh => 'Через SSH';
+
+  @override
+  String forwardRouteSshHint(String host) {
+    return 'Через SSH-сессию к $host, как ssh -L: доступны и сервисы, слушающие только его localhost. Только TCP.';
+  }
+
+  @override
   String get forwardShared => 'Разрешить другим устройствам в сети';
 
   @override

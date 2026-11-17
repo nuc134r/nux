@@ -55,6 +55,9 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
   String? _connectionId;
   bool _tcp = true;
   bool _udp = false;
+
+  /// Straight to the ZeroTier host when the rule allows it, else through SSH.
+  bool _direct = true;
   bool _shared = false;
   bool _autoStart = false;
   bool _loaded = false;
@@ -93,6 +96,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
         _shared = r.shared;
         _tcp = r.tcp;
         _udp = r.udp;
+        _direct = r.direct;
         _autoStart = r.autoStart;
       }
     }
@@ -120,12 +124,16 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
     targetPort: _kind == ForwardKind.dynamic ? 0 : int.tryParse(_targetPort.text.trim()) ?? 0,
     tcp: _tcp || !_udpAllowed,
     udp: _udp && _udpAllowed,
+    direct: _direct,
     autoStart: _autoStart,
     sortOrder: _original?.sortOrder ?? 0,
   );
 
-  /// UDP goes straight over ZeroTier, so only to a port of a ZeroTier host itself.
-  bool get _udpAllowed => _host?.zerotierNetwork != null && _kind == ForwardKind.local && isLoopback(_targetHost.text);
+  /// A local forward to a port of the ZeroTier host itself can go straight over ZeroTier.
+  bool get _canGoDirect => _host?.zerotierNetwork != null && _kind == ForwardKind.local && isLoopback(_targetHost.text);
+
+  /// UDP goes straight over ZeroTier, so only on that route.
+  bool get _udpAllowed => _canGoDirect && _direct;
 
   Connection? get _host {
     final id = _connectionId;
@@ -175,6 +183,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
         targetPort: Value(draft.targetPort),
         tcp: Value(draft.tcp),
         udp: Value(draft.udp),
+        direct: Value(draft.direct),
         autoStart: Value(draft.autoStart),
         createdAt: _isNew ? Value(DateTime.now()) : const Value.absent(),
         updatedAt: Value(DateTime.now()),
@@ -256,6 +265,25 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                     selected: {_kind},
                     onSelectionChanged: (s) => setState(() => _kind = s.single),
                   ),
+                  if (_canGoDirect) ...[
+                    const SizedBox(height: 12),
+                    SegmentedButton<bool>(
+                      showSelectedIcon: false,
+                      segments: [
+                        ButtonSegment(value: true, label: Text(l10n.forwardRouteDirect)),
+                        ButtonSegment(value: false, label: Text(l10n.forwardRouteSsh)),
+                      ],
+                      selected: {_direct},
+                      onSelectionChanged: (s) => setState(() => _direct = s.single),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        _direct ? l10n.forwardRouteDirectHint(hostName) : l10n.forwardRouteSshHint(hostName),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
                   if (onZeroTier && _kind == ForwardKind.local) ...[
                     const SizedBox(height: 12),
                     Wrap(
@@ -275,7 +303,7 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
                         ),
                       ],
                     ),
-                    if (!_udpAllowed)
+                    if (!_udpAllowed && !(_canGoDirect && !_direct))
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(l10n.udpNeedsHostItself(hostName), style: theme.textTheme.bodySmall),

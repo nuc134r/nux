@@ -34,12 +34,13 @@ extension ForwardRuleX on ForwardRule {
   /// Listens on every interface (other devices on the network can connect).
   bool get shared => !isLoopback(bindHost);
 
-  /// Direct over ZeroTier when the host is on a ZeroTier network and the rule just reaches a port of
-  /// the host itself; anything else (another destination, remote, SOCKS) needs SSH.
-  ForwardRoute routeVia(Connection? host) =>
-      host?.zerotierNetwork != null && forwardKind == ForwardKind.local && isLoopback(targetHost)
-      ? ForwardRoute.zeroTier
-      : ForwardRoute.ssh;
+  /// A local forward to a port of a ZeroTier host itself can skip SSH; anything else (another
+  /// destination, remote, SOCKS) needs it.
+  bool canGoDirect(Connection? host) =>
+      host?.zerotierNetwork != null && forwardKind == ForwardKind.local && isLoopback(targetHost);
+
+  /// Direct over ZeroTier when it can and the rule did not ask for SSH (`ForwardRules.direct`).
+  ForwardRoute routeVia(Connection? host) => direct && canGoDirect(host) ? ForwardRoute.zeroTier : ForwardRoute.ssh;
 
   /// `8080 → 8020`, `::1234 → otherserver:8020`, `1234 ← 8020`, `SOCKS 1080`.
   String describe() {

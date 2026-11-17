@@ -2848,6 +2848,19 @@ class $ForwardRulesTable extends ForwardRules
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _directMeta = const VerificationMeta('direct');
+  @override
+  late final GeneratedColumn<bool> direct = GeneratedColumn<bool>(
+    'direct',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("direct" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   static const VerificationMeta _autoStartMeta = const VerificationMeta(
     'autoStart',
   );
@@ -2890,6 +2903,7 @@ class $ForwardRulesTable extends ForwardRules
     targetPort,
     tcp,
     udp,
+    direct,
     autoStart,
     sortOrder,
   ];
@@ -2994,6 +3008,12 @@ class $ForwardRulesTable extends ForwardRules
         udp.isAcceptableOrUnknown(data['udp']!, _udpMeta),
       );
     }
+    if (data.containsKey('direct')) {
+      context.handle(
+        _directMeta,
+        direct.isAcceptableOrUnknown(data['direct']!, _directMeta),
+      );
+    }
     if (data.containsKey('auto_start')) {
       context.handle(
         _autoStartMeta,
@@ -3067,6 +3087,10 @@ class $ForwardRulesTable extends ForwardRules
         DriftSqlType.bool,
         data['${effectivePrefix}udp'],
       )!,
+      direct: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}direct'],
+      )!,
       autoStart: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}auto_start'],
@@ -3111,6 +3135,11 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
   final bool tcp;
   final bool udp;
 
+  /// On a ZeroTier host, a local forward to the host itself goes straight to its ZeroTier address (no
+  /// SSH, TCP and UDP) unless this is false: then it goes through SSH like `ssh -L`, which also reaches
+  /// services listening only on the host's localhost. Ignored otherwise.
+  final bool direct;
+
   /// Started when nux starts.
   final bool autoStart;
   final int sortOrder;
@@ -3128,6 +3157,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     required this.targetPort,
     required this.tcp,
     required this.udp,
+    required this.direct,
     required this.autoStart,
     required this.sortOrder,
   });
@@ -3151,6 +3181,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     map['target_port'] = Variable<int>(targetPort);
     map['tcp'] = Variable<bool>(tcp);
     map['udp'] = Variable<bool>(udp);
+    map['direct'] = Variable<bool>(direct);
     map['auto_start'] = Variable<bool>(autoStart);
     map['sort_order'] = Variable<int>(sortOrder);
     return map;
@@ -3175,6 +3206,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       targetPort: Value(targetPort),
       tcp: Value(tcp),
       udp: Value(udp),
+      direct: Value(direct),
       autoStart: Value(autoStart),
       sortOrder: Value(sortOrder),
     );
@@ -3199,6 +3231,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       targetPort: serializer.fromJson<int>(json['targetPort']),
       tcp: serializer.fromJson<bool>(json['tcp']),
       udp: serializer.fromJson<bool>(json['udp']),
+      direct: serializer.fromJson<bool>(json['direct']),
       autoStart: serializer.fromJson<bool>(json['autoStart']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
     );
@@ -3220,6 +3253,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
       'targetPort': serializer.toJson<int>(targetPort),
       'tcp': serializer.toJson<bool>(tcp),
       'udp': serializer.toJson<bool>(udp),
+      'direct': serializer.toJson<bool>(direct),
       'autoStart': serializer.toJson<bool>(autoStart),
       'sortOrder': serializer.toJson<int>(sortOrder),
     };
@@ -3239,6 +3273,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     int? targetPort,
     bool? tcp,
     bool? udp,
+    bool? direct,
     bool? autoStart,
     int? sortOrder,
   }) => ForwardRule(
@@ -3257,6 +3292,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     targetPort: targetPort ?? this.targetPort,
     tcp: tcp ?? this.tcp,
     udp: udp ?? this.udp,
+    direct: direct ?? this.direct,
     autoStart: autoStart ?? this.autoStart,
     sortOrder: sortOrder ?? this.sortOrder,
   );
@@ -3283,6 +3319,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           : this.targetPort,
       tcp: data.tcp.present ? data.tcp.value : this.tcp,
       udp: data.udp.present ? data.udp.value : this.udp,
+      direct: data.direct.present ? data.direct.value : this.direct,
       autoStart: data.autoStart.present ? data.autoStart.value : this.autoStart,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
     );
@@ -3304,6 +3341,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           ..write('targetPort: $targetPort, ')
           ..write('tcp: $tcp, ')
           ..write('udp: $udp, ')
+          ..write('direct: $direct, ')
           ..write('autoStart: $autoStart, ')
           ..write('sortOrder: $sortOrder')
           ..write(')'))
@@ -3325,6 +3363,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
     targetPort,
     tcp,
     udp,
+    direct,
     autoStart,
     sortOrder,
   );
@@ -3345,6 +3384,7 @@ class ForwardRule extends DataClass implements Insertable<ForwardRule> {
           other.targetPort == this.targetPort &&
           other.tcp == this.tcp &&
           other.udp == this.udp &&
+          other.direct == this.direct &&
           other.autoStart == this.autoStart &&
           other.sortOrder == this.sortOrder);
 }
@@ -3363,6 +3403,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
   final Value<int> targetPort;
   final Value<bool> tcp;
   final Value<bool> udp;
+  final Value<bool> direct;
   final Value<bool> autoStart;
   final Value<int> sortOrder;
   final Value<int> rowid;
@@ -3380,6 +3421,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.targetPort = const Value.absent(),
     this.tcp = const Value.absent(),
     this.udp = const Value.absent(),
+    this.direct = const Value.absent(),
     this.autoStart = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3398,6 +3440,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     this.targetPort = const Value.absent(),
     this.tcp = const Value.absent(),
     this.udp = const Value.absent(),
+    this.direct = const Value.absent(),
     this.autoStart = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3419,6 +3462,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Expression<int>? targetPort,
     Expression<bool>? tcp,
     Expression<bool>? udp,
+    Expression<bool>? direct,
     Expression<bool>? autoStart,
     Expression<int>? sortOrder,
     Expression<int>? rowid,
@@ -3437,6 +3481,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       if (targetPort != null) 'target_port': targetPort,
       if (tcp != null) 'tcp': tcp,
       if (udp != null) 'udp': udp,
+      if (direct != null) 'direct': direct,
       if (autoStart != null) 'auto_start': autoStart,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (rowid != null) 'rowid': rowid,
@@ -3457,6 +3502,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     Value<int>? targetPort,
     Value<bool>? tcp,
     Value<bool>? udp,
+    Value<bool>? direct,
     Value<bool>? autoStart,
     Value<int>? sortOrder,
     Value<int>? rowid,
@@ -3475,6 +3521,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
       targetPort: targetPort ?? this.targetPort,
       tcp: tcp ?? this.tcp,
       udp: udp ?? this.udp,
+      direct: direct ?? this.direct,
       autoStart: autoStart ?? this.autoStart,
       sortOrder: sortOrder ?? this.sortOrder,
       rowid: rowid ?? this.rowid,
@@ -3523,6 +3570,9 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
     if (udp.present) {
       map['udp'] = Variable<bool>(udp.value);
     }
+    if (direct.present) {
+      map['direct'] = Variable<bool>(direct.value);
+    }
     if (autoStart.present) {
       map['auto_start'] = Variable<bool>(autoStart.value);
     }
@@ -3551,6 +3601,7 @@ class ForwardRulesCompanion extends UpdateCompanion<ForwardRule> {
           ..write('targetPort: $targetPort, ')
           ..write('tcp: $tcp, ')
           ..write('udp: $udp, ')
+          ..write('direct: $direct, ')
           ..write('autoStart: $autoStart, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('rowid: $rowid')
@@ -5972,6 +6023,7 @@ typedef $$ForwardRulesTableCreateCompanionBuilder =
       Value<int> targetPort,
       Value<bool> tcp,
       Value<bool> udp,
+      Value<bool> direct,
       Value<bool> autoStart,
       Value<int> sortOrder,
       Value<int> rowid,
@@ -5991,6 +6043,7 @@ typedef $$ForwardRulesTableUpdateCompanionBuilder =
       Value<int> targetPort,
       Value<bool> tcp,
       Value<bool> udp,
+      Value<bool> direct,
       Value<bool> autoStart,
       Value<int> sortOrder,
       Value<int> rowid,
@@ -6085,6 +6138,11 @@ class $$ForwardRulesTableFilterComposer
 
   ColumnFilters<bool> get udp => $composableBuilder(
     column: $table.udp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get direct => $composableBuilder(
+    column: $table.direct,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6191,6 +6249,11 @@ class $$ForwardRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get direct => $composableBuilder(
+    column: $table.direct,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get autoStart => $composableBuilder(
     column: $table.autoStart,
     builder: (column) => ColumnOrderings(column),
@@ -6276,6 +6339,9 @@ class $$ForwardRulesTableAnnotationComposer
   GeneratedColumn<bool> get udp =>
       $composableBuilder(column: $table.udp, builder: (column) => column);
 
+  GeneratedColumn<bool> get direct =>
+      $composableBuilder(column: $table.direct, builder: (column) => column);
+
   GeneratedColumn<bool> get autoStart =>
       $composableBuilder(column: $table.autoStart, builder: (column) => column);
 
@@ -6347,6 +6413,7 @@ class $$ForwardRulesTableTableManager
                 Value<int> targetPort = const Value.absent(),
                 Value<bool> tcp = const Value.absent(),
                 Value<bool> udp = const Value.absent(),
+                Value<bool> direct = const Value.absent(),
                 Value<bool> autoStart = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -6364,6 +6431,7 @@ class $$ForwardRulesTableTableManager
                 targetPort: targetPort,
                 tcp: tcp,
                 udp: udp,
+                direct: direct,
                 autoStart: autoStart,
                 sortOrder: sortOrder,
                 rowid: rowid,
@@ -6383,6 +6451,7 @@ class $$ForwardRulesTableTableManager
                 Value<int> targetPort = const Value.absent(),
                 Value<bool> tcp = const Value.absent(),
                 Value<bool> udp = const Value.absent(),
+                Value<bool> direct = const Value.absent(),
                 Value<bool> autoStart = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -6400,6 +6469,7 @@ class $$ForwardRulesTableTableManager
                 targetPort: targetPort,
                 tcp: tcp,
                 udp: udp,
+                direct: direct,
                 autoStart: autoStart,
                 sortOrder: sortOrder,
                 rowid: rowid,

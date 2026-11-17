@@ -1544,6 +1544,30 @@ abstract class AppLocalizations {
   /// **'The server refused to listen on that port (taken, or forwarding is turned off in its sshd_config)'**
   String get forwardRemoteRefused;
 
+  /// No description provided for @forwardRouteDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct over ZeroTier'**
+  String get forwardRouteDirect;
+
+  /// No description provided for @forwardRouteDirectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Straight to {host}\'s ZeroTier address: no SSH login, TCP and UDP. A service there that listens only on localhost cannot be reached this way.'**
+  String forwardRouteDirectHint(String host);
+
+  /// No description provided for @forwardRouteSsh.
+  ///
+  /// In en, this message translates to:
+  /// **'Through SSH'**
+  String get forwardRouteSsh;
+
+  /// No description provided for @forwardRouteSshHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Through an SSH session to {host}, like ssh -L: also reaches services that listen only on its localhost. TCP only.'**
+  String forwardRouteSshHint(String host);
+
   /// No description provided for @forwardShared.
   ///
   /// In en, this message translates to:
