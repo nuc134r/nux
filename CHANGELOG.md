@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.22
+
+- Hosts behind a jump host say so in the hosts list: `192.0.2.4 via 192.0.2.1` under the name instead of just the address.
+
 ## 0.11.21
 
 - The background notification is more useful. While any port forwarding runs, its title is the traffic (`↑ uploaded • ↓ downloaded`) and its text lists every running forwarding on its own line: `name • port • connections`. With no forwarding, the title says how many shells are active and the text lists their hosts, one per line.

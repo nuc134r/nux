@@ -873,6 +873,17 @@
     }
   },
   "hostKeyUnknownTitle": "New server",
+  "hostVia": "{host} via {jump}",
+  "@hostVia": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "jump": {
+        "type": "String"
+      }
+    }
+  },
   "hosts": "Hosts",
   "hoursAgo": "{count} h ago",
   "@hoursAgo": {

@@ -296,6 +296,7 @@
   "hostKeyTrustedBefore": "Ранее доверенные",
   "hostKeyUnknownBody": "Это первое подключение к {host}. Перед тем как доверять, сверьте отпечаток ниже с отпечатком сервера.",
   "hostKeyUnknownTitle": "Новый сервер",
+  "hostVia": "{host} через {jump}",
   "hosts": "Хосты",
   "hoursAgo": "{count} ч назад",
   "imageUnreadable": "Не удалось открыть изображение",

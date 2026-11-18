@@ -1874,6 +1874,12 @@ abstract class AppLocalizations {
   /// **'New server'**
   String get hostKeyUnknownTitle;
 
+  /// No description provided for @hostVia.
+  ///
+  /// In en, this message translates to:
+  /// **'{host} via {jump}'**
+  String hostVia(String host, String jump);
+
   /// No description provided for @hosts.
   ///
   /// In en, this message translates to:

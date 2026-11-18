@@ -1150,6 +1150,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hostKeyUnknownTitle => 'New server';
 
   @override
+  String hostVia(String host, String jump) {
+    return '$host via $jump';
+  }
+
+  @override
   String get hosts => 'Hosts';
 
   @override

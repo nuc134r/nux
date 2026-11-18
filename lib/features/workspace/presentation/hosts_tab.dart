@@ -339,6 +339,7 @@ class _HostTile extends ConsumerWidget {
     final scheme = theme.colorScheme;
     final c = connection;
     final manager = ref.watch(forwardingManagerProvider);
+    final jump = c.jumpHostId == null ? null : ref.watch(connectionProvider(c.jumpHostId!)).value;
     final tile = Padding(
       padding: EdgeInsets.fromLTRB(12, 3, 12, open ? 0 : 3),
       child: Material(
@@ -374,7 +375,11 @@ class _HostTile extends ConsumerWidget {
                               style: theme.textTheme.titleMedium,
                             ),
                             Text(
-                              c.host,
+                              // `192.0.2.4 via 192.0.2.1` when it connects through a jump host.
+                              switch (jump?.host) {
+                                final via? => context.l10n.hostVia(c.host, via),
+                                _ => c.host,
+                              },
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),

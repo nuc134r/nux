@@ -1170,6 +1170,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hostKeyUnknownTitle => 'Новый сервер';
 
   @override
+  String hostVia(String host, String jump) {
+    return '$host через $jump';
+  }
+
+  @override
   String get hosts => 'Хосты';
 
   @override
