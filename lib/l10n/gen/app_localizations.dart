@@ -1520,6 +1520,12 @@ abstract class AppLocalizations {
   /// **'Port {port} is already in use on this device'**
   String forwardPortInUse(int port);
 
+  /// No description provided for @forwardPortTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Same port as {name}, which is on'**
+  String forwardPortTaken(String name);
+
   /// No description provided for @forwardReconnecting.
   ///
   /// In en, this message translates to:
@@ -1613,8 +1619,8 @@ abstract class AppLocalizations {
   /// No description provided for @forwardingTraffic.
   ///
   /// In en, this message translates to:
-  /// **'↓ {bytesIn}  ↑ {bytesOut}'**
-  String forwardingTraffic(String bytesIn, String bytesOut);
+  /// **'↑ {bytesOut} • ↓ {bytesIn}'**
+  String forwardingTraffic(String bytesOut, String bytesIn);
 
   /// No description provided for @forwardings.
   ///
@@ -3457,6 +3463,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden'**
   String get shareLogHint;
+
+  /// No description provided for @shellsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} shell active} other{{count} shells active}}'**
+  String shellsActive(int count);
 
   /// No description provided for @show.
   ///

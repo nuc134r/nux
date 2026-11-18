@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.21
+
+- The background notification is more useful. While any port forwarding runs, its title is the traffic (`↑ uploaded • ↓ downloaded`) and its text lists every running forwarding on its own line: `name • port • connections`. With no forwarding, the title says how many shells are active and the text lists their hosts, one per line.
+- Several forwardings can now use the same port (for example the same local port to different servers). Only one of them can be on at a time: while one is on, the others' switches are off with a note saying which one holds the port.
+
 ## 0.11.20
 
 - New logo: the app icon (and the "n" of the notification icon) use the new rounder lettering.

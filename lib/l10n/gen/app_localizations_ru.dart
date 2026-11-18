@@ -942,6 +942,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String forwardPortTaken(String name) {
+    return 'Тот же порт, что у $name, а он включён';
+  }
+
+  @override
   String forwardReconnecting(int attempt) {
     return 'Соединение потеряно, переподключение (попытка $attempt)…';
   }
@@ -1006,8 +1011,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forwardingChannel => 'Проброс портов';
 
   @override
-  String forwardingTraffic(String bytesIn, String bytesOut) {
-    return '↓ $bytesIn  ↑ $bytesOut';
+  String forwardingTraffic(String bytesOut, String bytesIn) {
+    return '↑ $bytesOut • ↓ $bytesIn';
   }
 
   @override
@@ -2077,6 +2082,19 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get shareLogHint =>
       'Что делал nux, включая прошлые запуски и сбои, текстовым файлом со скрытыми хостами и адресами';
+
+  @override
+  String shellsActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count сессии активны',
+      many: '$count сессий активно',
+      few: '$count сессии активны',
+      one: '$count сессия активна',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get show => 'Показать';

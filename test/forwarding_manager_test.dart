@@ -30,10 +30,11 @@ class FakeKeepAlive implements KeepAlive {
   void pressStop() => _stop.add(null);
 
   @override
-  Future<void> start({required String title, required String text, required String stopLabel}) async => calls.add('start $title');
+  Future<void> start({required String title, required String text, required String stopLabel}) async =>
+      calls.add('start $title | $text');
 
   @override
-  Future<void> update({required String title, required String text}) async => calls.add('update $title');
+  Future<void> update({required String title, required String text}) async => calls.add('update $title | $text');
 
   @override
   Future<void> stop() async => calls.add('stop');
@@ -42,16 +43,16 @@ class FakeKeepAlive implements KeepAlive {
   Stream<void> get stopRequested => _stop.stream;
 }
 
-ForwardRule rule(String id, {bool auto = false}) => ForwardRule(
+ForwardRule rule(String id, {bool auto = false, int port = 8080, String label = ''}) => ForwardRule(
       id: id,
       createdAt: DateTime(2026),
       updatedAt: DateTime(2026),
       connectionId: 'c',
       zerotierNetwork: null,
       kind: ForwardKind.local.name,
-      label: '',
+      label: label,
       bindHost: '127.0.0.1',
-      bindPort: 8080,
+      bindPort: port,
       targetHost: 'db',
       targetPort: 5432,
       tcp: true,
@@ -94,7 +95,11 @@ void main() {
       },
       keepAlive: keepAlive,
       log: Log(),
-      texts: () => ForwardingTexts(title: (n) => '$n active', text: (i, o) => '$i/$o', stop: 'Stop'),
+      texts: () => ForwardingTexts(
+        title: (i, o) => '↑ $o • ↓ $i',
+        line: (r, n) => [?r.name, '${r.bindPort}', '$n conn'].join(' • '),
+        stop: 'Stop',
+      ),
       retryDelays: const [Duration(milliseconds: 10), Duration(milliseconds: 10)],
     );
   });
@@ -103,7 +108,7 @@ void main() {
   test('start and stop drive the background service', () async {
     await manager.start(rule('a'));
     expect(manager.status('a').state, ForwardState.active);
-    expect(keepAlive.calls.first, 'start 1 active');
+    expect(keepAlive.calls.first, 'start ↑ 0 • ↓ 0 | PostgreSQL • 8080 • 0 conn');
     await manager.stop('a');
     expect(forwards.single.closed, isTrue);
     expect(manager.status('a').state, ForwardState.stopped);
@@ -168,5 +173,34 @@ void main() {
     keepAlive.pressStop();
     await pumpEventQueue();
     expect(manager.activeCount, 0);
+  });
+
+  test('the notification: traffic in the title, a line per running forward', () async {
+    await manager.start(rule('a', label: 'Database'));
+    await manager.start(rule('b', port: 8443, label: ''));
+    forwards.first.stats
+      ..open = 2
+      ..bytesIn = 300
+      ..bytesOut = 20;
+    await manager.stop('b');
+    await manager.start(rule('b', port: 8443));
+    expect(keepAlive.calls.last, 'update ↑ 20 • ↓ 300 | Database • 8080 • 2 conn\nPostgreSQL • 8443 • 0 conn');
+  });
+
+  test('rules may share a port; only one of them runs at a time', () async {
+    await manager.start(rule('a'));
+    expect(manager.clashWith(rule('b'))?.id, 'a');
+    await manager.start(rule('b'));
+    expect(manager.status('b').on, isFalse, reason: 'a holds the port');
+    expect(forwards, hasLength(1));
+    await manager.stop('a');
+    expect(manager.clashWith(rule('b')), isNull);
+    await manager.start(rule('b'));
+    expect(manager.status('b').on, isTrue);
+    // Auto-start: the first one wins.
+    await manager.stop('b');
+    await manager.startAuto([rule('a', auto: true), rule('b', auto: true)]);
+    await pumpEventQueue();
+    expect((manager.status('a').on, manager.status('b').on), (true, false));
   });
 }

@@ -717,6 +717,14 @@
       }
     }
   },
+  "forwardPortTaken": "Same port as {name}, which is on",
+  "@forwardPortTaken": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "forwardReconnecting": "Connection lost, reconnecting (attempt {attempt})…",
   "@forwardReconnecting": {
     "placeholders": {
@@ -760,13 +768,13 @@
   },
   "forwardingBackgroundHint": "Forwarding keeps running while nux is in the background; a notification shows it. Closing nux from the recent apps stops it.",
   "forwardingChannel": "Port forwarding",
-  "forwardingTraffic": "↓ {bytesIn}  ↑ {bytesOut}",
+  "forwardingTraffic": "↑ {bytesOut} • ↓ {bytesIn}",
   "@forwardingTraffic": {
     "placeholders": {
-      "bytesIn": {
+      "bytesOut": {
         "type": "String"
       },
-      "bytesOut": {
+      "bytesIn": {
         "type": "String"
       }
     }
@@ -1352,6 +1360,14 @@
   "shareFile": "Share",
   "shareLog": "Share log",
   "shareLogHint": "What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden",
+  "shellsActive": "{count, plural, one{{count} shell active} other{{count} shells active}}",
+  "@shellsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "show": "Show",
   "showAsText": "Show as text",
   "showBytes": "Show bytes",

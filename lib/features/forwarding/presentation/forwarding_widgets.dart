@@ -112,11 +112,7 @@ class ForwardingRow extends ConsumerWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final manager = ref.watch(forwardingManagerProvider);
-    final name = rule.label.isNotEmpty
-        ? rule.label
-        : rule.forwardKind == ForwardKind.dynamic
-        ? null
-        : wellKnownPorts[rule.targetPort];
+    final name = rule.name;
     final ports = theme.textTheme.bodyMedium?.copyWith(
       color: name == null ? scheme.onSurface : scheme.onSurfaceVariant,
     );
@@ -125,7 +121,10 @@ class ForwardingRow extends ConsumerWidget {
       builder: (context, _) {
         final s = manager.status(rule.id);
         final stats = s.stats;
+        // Rules may share a port; only one of them can be on.
+        final clash = s.on ? null : manager.clashWith(rule);
         final note = switch (s.state) {
+          _ when clash != null => l10n.forwardPortTaken(clash.name ?? clash.describe()),
           ForwardState.starting => l10n.forwardStarting,
           ForwardState.reconnecting => l10n.forwardReconnecting(s.attempt),
           ForwardState.failed => s.error == null ? l10n.forwardFailed : forwardErrorText(l10n, s.error!, rule),
@@ -140,6 +139,7 @@ class ForwardingRow extends ConsumerWidget {
               NuxMenuAction(
                 icon: Icons.public,
                 label: l10n.openInBrowserTab,
+                enabled: s.on || manager.clashWith(rule) == null,
                 onSelected: () {
                   if (!s.on) manager.start(rule);
                   openBrowserTab(ref.read(workspaceProvider), '${forwardedPortUri(rule.bindPort)}');
@@ -189,7 +189,10 @@ class ForwardingRow extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Switch(value: s.on, onChanged: (v) => v ? manager.start(rule) : manager.stop(rule.id)),
+                    Switch(
+                      value: s.on,
+                      onChanged: clash != null ? null : (v) => v ? manager.start(rule) : manager.stop(rule.id),
+                    ),
                   ],
                 ),
                 if (note != null)

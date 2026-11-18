@@ -927,6 +927,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String forwardPortTaken(String name) {
+    return 'Same port as $name, which is on';
+  }
+
+  @override
   String forwardReconnecting(int attempt) {
     return 'Connection lost, reconnecting (attempt $attempt)…';
   }
@@ -990,8 +995,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forwardingChannel => 'Port forwarding';
 
   @override
-  String forwardingTraffic(String bytesIn, String bytesOut) {
-    return '↓ $bytesIn  ↑ $bytesOut';
+  String forwardingTraffic(String bytesOut, String bytesIn) {
+    return '↑ $bytesOut • ↓ $bytesIn';
   }
 
   @override
@@ -2048,6 +2053,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get shareLogHint =>
       'What nux did, also in earlier launches and crashes, as a text file with hosts and addresses hidden';
+
+  @override
+  String shellsActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count shells active',
+      one: '$count shell active',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get show => 'Show';

@@ -34,25 +34,26 @@ void main() {
 
   Future<void> flush() => Future<void>.delayed(Duration.zero);
 
-  test('one service for all slots, shown together in slot order, stopped when the last one stops', () async {
-    final ssh = hub.slot('ssh');
-    final fwd = hub.slot('forwarding', order: 1);
+  test('one service for all slots; the most important active one is shown; stopped when the last stops', () async {
+    final fwd = hub.slot('forwarding');
+    final ssh = hub.slot('ssh', order: 1);
 
-    await fwd.start(title: '1 forward', text: '↓ 1 KB', stopLabel: 'Stop all');
-    await ssh.start(title: '2 SSH connections', text: '', stopLabel: 'Disconnect all');
-    await fwd.update(title: '1 forward', text: '↓ 2 KB');
+    await fwd.start(title: '↑ 1 KB • ↓ 1 KB', text: 'Database • 8080', stopLabel: 'Stop all');
+    await ssh.start(title: '2 shells active', text: 'NAS\nRouter', stopLabel: 'Disconnect all');
+    await fwd.update(title: '↑ 1 KB • ↓ 2 KB', text: 'Database • 8080');
     await fwd.stop();
-    await ssh.update(title: '1 SSH connection', text: '');
+    await ssh.update(title: '1 shell active', text: '');
     await ssh.stop();
     await ssh.stop(); // already stopped: nothing
     await flush();
 
     expect(service.calls, [
-      'start 1 forward | ↓ 1 KB | Stop all',
-      'start 2 SSH connections · 1 forward | ↓ 1 KB | Disconnect all', // two reasons: a common button
-      'update 2 SSH connections · 1 forward | ↓ 2 KB',
-      'update 2 SSH connections | In the background',
-      'update 1 SSH connection | In the background',
+      'start ↑ 1 KB • ↓ 1 KB | Database • 8080 | Stop all',
+      // Two reasons: a common button; the forwardings still shown.
+      'start ↑ 1 KB • ↓ 1 KB | Database • 8080 | Disconnect all',
+      'update ↑ 1 KB • ↓ 2 KB | Database • 8080',
+      'update 2 shells active | NAS\nRouter',
+      'update 1 shell active | In the background',
       'stop',
     ]);
   });

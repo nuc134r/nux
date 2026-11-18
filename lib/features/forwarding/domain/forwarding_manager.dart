@@ -37,10 +37,13 @@ class ForwardStatus {
 
 /// Texts for the background notification (translated by the app).
 class ForwardingTexts {
-  const ForwardingTexts({required this.title, required this.text, required this.stop});
+  const ForwardingTexts({required this.title, required this.line, required this.stop});
 
-  final String Function(int active) title;
-  final String Function(int bytesIn, int bytesOut) text;
+  /// The notification's title: the traffic of all running forwards.
+  final String Function(int bytesIn, int bytesOut) title;
+
+  /// One line of the notification's text per running forward.
+  final String Function(ForwardRule rule, int connections) line;
   final String stop;
 }
 
@@ -87,9 +90,26 @@ class ForwardingManager extends ChangeNotifier {
   int get bytesIn => _status.values.fold(0, (sum, s) => sum + (s.stats?.bytesIn ?? 0));
   int get bytesOut => _status.values.fold(0, (sum, s) => sum + (s.stats?.bytesOut ?? 0));
 
+  /// A running rule that listens on the same port as [rule] (rules may share a port, only one at a time
+  /// can be on).
+  ForwardRule? clashWith(ForwardRule rule) =>
+      conflictingRule(rule, [for (final r in _rules.values) if (r.id != rule.id && status(r.id).on) r]);
+
+  /// Connections a running forward has open (SOCKS: made so far).
+  int connections(ForwardRule rule) {
+    final stats = status(rule.id).stats;
+    if (stats == null) return 0;
+    return rule.forwardKind == ForwardKind.dynamic ? stats.connections : stats.open;
+  }
+
   Future<void> start(ForwardRule rule) async {
     final s = status(rule.id);
     if (s.on) return;
+    final clash = clashWith(rule);
+    if (clash != null) {
+      log.w('forwarding', 'Not starting ${rule.describe()}: ${clash.describe()} uses the port');
+      return;
+    }
     _rules[rule.id] = rule;
     s
       ..state = ForwardState.starting
@@ -207,23 +227,34 @@ class ForwardingManager extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
+  /// The notification: traffic in the title, one line per running forward.
+  ({String title, String text}) _notification() {
+    final t = texts();
+    final lines = [
+      for (final r in _rules.values)
+        if (status(r.id).on) t.line(r, connections(r)),
+    ];
+    return (title: t.title(bytesIn, bytesOut), text: lines.join('\n'));
+  }
+
   /// Starts, updates or stops the background service to match what runs.
   void _syncService() {
     final active = activeCount;
-    final t = texts();
     if (active > 0 && !_serviceOn) {
       _serviceOn = true;
-      unawaited(keepAlive.start(title: t.title(active), text: t.text(bytesIn, bytesOut), stopLabel: t.stop));
+      final n = _notification();
+      unawaited(keepAlive.start(title: n.title, text: n.text, stopLabel: texts().stop));
       _ticker = Timer.periodic(const Duration(seconds: 3), (_) {
-        final t = texts();
-        keepAlive.update(title: t.title(activeCount), text: t.text(bytesIn, bytesOut));
+        final n = _notification();
+        keepAlive.update(title: n.title, text: n.text);
       });
     } else if (active == 0 && _serviceOn) {
       _serviceOn = false;
       _ticker?.cancel();
       unawaited(keepAlive.stop());
     } else if (_serviceOn) {
-      unawaited(keepAlive.update(title: t.title(active), text: t.text(bytesIn, bytesOut)));
+      final n = _notification();
+      unawaited(keepAlive.update(title: n.title, text: n.text));
     }
   }
 

@@ -61,7 +61,13 @@ class SshPool extends ChangeNotifier {
   SSHClient? connectedClient(String connectionId) => _entries[connectionId]?.client;
 
   /// Open connections that something uses (idle ones close by themselves soon).
-  int get inUseCount => _entries.values.where((e) => e.client != null && e.refs > 0).length;
+  int get inUseCount => inUse.length;
+
+  /// Their connection ids, in the order they were opened.
+  List<String> get inUse => [
+    for (final e in _entries.entries)
+      if (e.value.client != null && e.value.refs > 0) e.key,
+  ];
 
   /// Connects (or joins a connection in progress) and takes a lease on it.
   Future<SshLease> acquire(String connectionId, SshPrompter prompter) async {

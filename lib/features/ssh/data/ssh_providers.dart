@@ -39,9 +39,11 @@ final sshPrompterProvider = Provider<SshPrompter>((ref) => ref.watch(dialogSshPr
 final sshKeepAliveProvider = Provider((ref) {
   final keepAlive = SshKeepAlive(
     ref.watch(sshPoolProvider),
-    ref.watch(keepAliveHubProvider).slot('ssh'),
-    title: (n) => currentL10n.value.sshConnectionsOpen(n),
+    // After the forwardings: the notification shows them when any runs.
+    ref.watch(keepAliveHubProvider).slot('ssh', order: 1),
+    title: (n) => currentL10n.value.shellsActive(n),
     stopLabel: () => currentL10n.value.disconnectAll,
+    name: (id) => ref.read(connectionsProvider).value?.where((c) => c.id == id).firstOrNull?.name,
   );
   ref.onDispose(keepAlive.dispose);
   return keepAlive;

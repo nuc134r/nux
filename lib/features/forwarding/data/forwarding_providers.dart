@@ -19,7 +19,7 @@ import '../domain/forwarding_manager.dart';
 import 'forward_rule_repository.dart';
 
 /// Forwarding's share of the background service (after the SSH sessions in the notification).
-final keepAliveProvider = Provider<KeepAlive>((ref) => ref.watch(keepAliveHubProvider).slot('forwarding', order: 1));
+final keepAliveProvider = Provider<KeepAlive>((ref) => ref.watch(keepAliveHubProvider).slot('forwarding'));
 
 /// What a direct ZeroTier rule's lease carries: where in the network to go.
 class _ZeroTierTarget {
@@ -92,8 +92,11 @@ final forwardingManagerProvider = Provider((ref) {
     texts: () {
       final l10n = currentL10n.value;
       return ForwardingTexts(
-        title: l10n.forwardingActive,
-        text: (bytesIn, bytesOut) => l10n.forwardingTraffic(formatSize(bytesIn), formatSize(bytesOut)),
+        // `↑ 1.2 MB • ↓ 30 MB`: uploaded, then downloaded.
+        title: (bytesIn, bytesOut) => l10n.forwardingTraffic(formatSize(bytesOut), formatSize(bytesIn)),
+        // `Database • 15432 • 2 connections`
+        line: (rule, connections) =>
+            [?rule.name, '${rule.bindPort}', l10n.forwardConnections(connections)].join(' • '),
         stop: l10n.stopAll,
       );
     },

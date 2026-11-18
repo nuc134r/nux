@@ -162,13 +162,8 @@ class _ForwardRuleEditorState extends ConsumerState<ForwardRuleEditor> {
 
   Future<void> _save() async {
     if (!_form.currentState!.validate()) return;
-    final l10n = context.l10n;
+    // Another rule may use the same port (only one of them can be on at a time).
     final draft = _draft();
-    final conflict = conflictingRule(draft, _others);
-    if (conflict != null) {
-      showSnack(context, l10n.forwardConflict(conflict.label.isNotEmpty ? conflict.label : conflict.describe()));
-      return;
-    }
     final repo = ref.read(forwardRuleRepositoryProvider);
     final id = await repo.save(
       ForwardRulesCompanion(

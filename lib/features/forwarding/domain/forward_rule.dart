@@ -42,6 +42,13 @@ extension ForwardRuleX on ForwardRule {
   /// Direct over ZeroTier when it can and the rule did not ask for SSH (`ForwardRules.direct`).
   ForwardRoute routeVia(Connection? host) => direct && canGoDirect(host) ? ForwardRoute.zeroTier : ForwardRoute.ssh;
 
+  /// The label, or the well-known service of the destination port (`PostgreSQL`); null for neither.
+  String? get name => label.isNotEmpty
+      ? label
+      : forwardKind == ForwardKind.dynamic
+      ? null
+      : wellKnownPorts[targetPort];
+
   /// `8080 → 8020`, `::1234 → otherserver:8020`, `1234 ← 8020`, `SOCKS 1080`.
   String describe() {
     final bind = shared ? '::$bindPort' : '$bindPort';

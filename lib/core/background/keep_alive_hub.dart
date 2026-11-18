@@ -3,7 +3,7 @@ import 'dart:async';
 import 'keep_alive.dart';
 
 /// One foreground service, several reasons to keep running (SSH sessions, port forwards): each holds a
-/// [slot], and the notification shows them together. The notification's button stops all of them.
+/// [slot]. The notification shows the most important active slot (lowest order); its button stops all.
 class KeepAliveHub {
   KeepAliveHub(this._service, {required this.stopLabel, required this.idleText});
 
@@ -22,7 +22,7 @@ class KeepAliveHub {
   ({String title, String text})? _shown;
   Future<void> _queue = Future.value();
 
-  /// A [KeepAlive] for one reason; slots with a lower [order] come first in the notification.
+  /// A [KeepAlive] for one reason; of the active slots, the one with the lowest [order] is shown.
   KeepAlive slot(String id, {int order = 0}) {
     _order[id] = order;
     return _Slot(this, id);
@@ -63,9 +63,9 @@ class KeepAliveHub {
       return;
     }
     final entries = _active.entries.toList()..sort((a, b) => (_order[a.key] ?? 0).compareTo(_order[b.key] ?? 0));
-    final title = entries.map((e) => e.value.title).where((t) => t.isNotEmpty).join(' · ');
-    final texts = entries.map((e) => e.value.text).where((t) => t.isNotEmpty).join(' · ');
-    final text = texts.isEmpty ? idleText() : texts;
+    final shown = entries.first.value;
+    final title = shown.title;
+    final text = shown.text.isEmpty ? idleText() : shown.text;
     final label = entries.length == 1 ? entries.single.value.stopLabel : stopLabel();
     _shown = (title: title, text: text);
     if (!_on || label != _label) {
