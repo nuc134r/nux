@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.24
+
+- The notification icon is a little smaller again: between its old size and the full-size one of 0.11.23.
+
 ## 0.11.23
 
 - The notification icon (the "n" in the status bar) is bigger: it fills the whole icon instead of about two thirds of it.
