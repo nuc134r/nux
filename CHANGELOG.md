@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.20
+
+- New logo: the app icon (and the "n" of the notification icon) use the new rounder lettering.
+
 ## 0.11.19
 
 - A port forwarding to a ZeroTier host itself can now go **Through SSH** instead of **Direct over ZeroTier** (a new choice in the forwarding editor). Direct stays the default: no SSH login, TCP and UDP, but it goes to the host's ZeroTier address, so a service that listens only on the host's localhost (many databases and dev servers) cannot be reached. Through SSH works like `ssh -L` and reaches those too (TCP only).
