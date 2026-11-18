@@ -39,8 +39,8 @@ class ForwardStatus {
 class ForwardingTexts {
   const ForwardingTexts({required this.title, required this.line, required this.stop});
 
-  /// The notification's title: the traffic of all running forwards.
-  final String Function(int bytesIn, int bytesOut) title;
+  /// The notification's title: how many forwards run.
+  final String Function(int active) title;
 
   /// One line of the notification's text per running forward.
   final String Function(ForwardRule rule, int connections) line;
@@ -227,14 +227,14 @@ class ForwardingManager extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  /// The notification: traffic in the title, one line per running forward.
+  /// The notification: how many run in the title, one line per running forward.
   ({String title, String text}) _notification() {
     final t = texts();
     final lines = [
       for (final r in _rules.values)
         if (status(r.id).on) t.line(r, connections(r)),
     ];
-    return (title: t.title(bytesIn, bytesOut), text: lines.join('\n'));
+    return (title: t.title(lines.length), text: lines.join('\n'));
   }
 
   /// Starts, updates or stops the background service to match what runs.

@@ -488,6 +488,7 @@
   "portHere": "Порт здесь",
   "portOnHost": "Порт на {host}",
   "portSuggested": "Предложен: не занят другими пробросами",
+  "portsActive": "{count, plural, one{{count} порт активен} few{{count} порта активны} many{{count} портов активно} other{{count} порта активны}}",
   "portsCount": "{count, plural, one{{count} порт} few{{count} порта} many{{count} портов} other{{count} порта}}",
   "previous": "Предыдущее",
   "protection": "Защита",

@@ -1238,6 +1238,14 @@
     }
   },
   "portSuggested": "Suggested: not used by other forwardings",
+  "portsActive": "{count, plural, one{{count} port active} other{{count} ports active}}",
+  "@portsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "portsCount": "{count, plural, one{{count} port} other{{count} ports}}",
   "@portsCount": {
     "placeholders": {

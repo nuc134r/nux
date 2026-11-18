@@ -5,7 +5,7 @@ shown in the app under Settings → App version. Write for people using the app,
 
 ## 0.11.23
 
-- Notification: a forwarding's line is shorter, `Database • 15432 • ⇄ 2` (⇄ counts its connections) instead of spelling out "2 connections".
+- Notification: while forwardings run, the title says how many ports are active (instead of the traffic), and each forwarding's line is shorter: `Database • 15432 • ⇄ 2` (⇄ counts its connections) instead of spelling out "2 connections".
 
 ## 0.11.22
 

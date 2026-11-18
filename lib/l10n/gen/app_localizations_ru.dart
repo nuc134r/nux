@@ -1822,6 +1822,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get portSuggested => 'Предложен: не занят другими пробросами';
 
   @override
+  String portsActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count порта активны',
+      many: '$count портов активно',
+      few: '$count порта активны',
+      one: '$count порт активен',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String portsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

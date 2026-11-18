@@ -96,7 +96,7 @@ void main() {
       keepAlive: keepAlive,
       log: Log(),
       texts: () => ForwardingTexts(
-        title: (i, o) => '↑ $o • ↓ $i',
+        title: (n) => '$n ports',
         line: (r, n) => [?r.name, '${r.bindPort}', '$n conn'].join(' • '),
         stop: 'Stop',
       ),
@@ -108,7 +108,7 @@ void main() {
   test('start and stop drive the background service', () async {
     await manager.start(rule('a'));
     expect(manager.status('a').state, ForwardState.active);
-    expect(keepAlive.calls.first, 'start ↑ 0 • ↓ 0 | PostgreSQL • 8080 • 0 conn');
+    expect(keepAlive.calls.first, 'start 1 ports | PostgreSQL • 8080 • 0 conn');
     await manager.stop('a');
     expect(forwards.single.closed, isTrue);
     expect(manager.status('a').state, ForwardState.stopped);
@@ -184,7 +184,7 @@ void main() {
       ..bytesOut = 20;
     await manager.stop('b');
     await manager.start(rule('b', port: 8443));
-    expect(keepAlive.calls.last, 'update ↑ 20 • ↓ 300 | Database • 8080 • 2 conn\nPostgreSQL • 8443 • 0 conn');
+    expect(keepAlive.calls.last, 'update 2 ports | Database • 8080 • 2 conn\nPostgreSQL • 8443 • 0 conn');
   });
 
   test('rules may share a port; only one of them runs at a time', () async {

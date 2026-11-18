@@ -3026,6 +3026,12 @@ abstract class AppLocalizations {
   /// **'Suggested: not used by other forwardings'**
   String get portSuggested;
 
+  /// No description provided for @portsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} port active} other{{count} ports active}}'**
+  String portsActive(int count);
+
   /// No description provided for @portsCount.
   ///
   /// In en, this message translates to:

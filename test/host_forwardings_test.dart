@@ -25,7 +25,7 @@ void main() {
       startForward: (lease, rule, onChange) async => forward,
       keepAlive: FakeKeepAlive(),
       log: Log(),
-      texts: () => ForwardingTexts(title: (a, b) => '', line: (r, n) => '', stop: 'Stop'),
+      texts: () => ForwardingTexts(title: (n) => '', line: (r, n) => '', stop: 'Stop'),
     );
     addTearDown(manager.dispose);
     final c = ProviderContainer(

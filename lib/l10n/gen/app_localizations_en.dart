@@ -1797,6 +1797,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get portSuggested => 'Suggested: not used by other forwardings';
 
   @override
+  String portsActive(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ports active',
+      one: '$count port active',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String portsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
