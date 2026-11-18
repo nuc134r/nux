@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.23
+
+- Notification: a forwarding's line is shorter, `Database • 15432 • ⇄ 2` (⇄ counts its connections) instead of spelling out "2 connections".
+
 ## 0.11.22
 
 - Hosts behind a jump host say so in the hosts list: `192.0.2.4 via 192.0.2.1` under the name instead of just the address.

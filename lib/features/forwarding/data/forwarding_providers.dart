@@ -94,9 +94,8 @@ final forwardingManagerProvider = Provider((ref) {
       return ForwardingTexts(
         // `↑ 1.2 MB • ↓ 30 MB`: uploaded, then downloaded.
         title: (bytesIn, bytesOut) => l10n.forwardingTraffic(formatSize(bytesOut), formatSize(bytesIn)),
-        // `Database • 15432 • 2 connections`
-        line: (rule, connections) =>
-            [?rule.name, '${rule.bindPort}', l10n.forwardConnections(connections)].join(' • '),
+        // `Database • 15432 • ⇄ 2`: ⇄ (like the title's arrows) counts the open connections.
+        line: (rule, connections) => [?rule.name, '${rule.bindPort}', '⇄ $connections'].join(' • '),
         stop: l10n.stopAll,
       );
     },
