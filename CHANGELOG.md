@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.11.25
+
+- Notification: each running forwarding's line starts with its port, then its connections, then its name: `15432 • ⇄ 2 • Database`.
+
 ## 0.11.24
 
 - The notification icon is a little smaller again: between its old size and the full-size one of 0.11.23.

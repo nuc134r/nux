@@ -92,8 +92,8 @@ final forwardingManagerProvider = Provider((ref) {
       final l10n = currentL10n.value;
       return ForwardingTexts(
         title: l10n.portsActive,
-        // `Database • 15432 • ⇄ 2`: ⇄ (like the title's arrows) counts the open connections.
-        line: (rule, connections) => [?rule.name, '${rule.bindPort}', '⇄ $connections'].join(' • '),
+        // `15432 • ⇄ 2 • Database`: port, open connections, name.
+        line: (rule, connections) => ['${rule.bindPort}', '⇄ $connections', ?rule.name].join(' • '),
         stop: l10n.stopAll,
       );
     },
