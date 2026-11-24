@@ -9,21 +9,47 @@ import 'package:path_provider/path_provider.dart';
 import 'package:zerotier_sockets/zerotier_sockets.dart';
 
 import '../../../core/log/log.dart';
+import '../../proxy/data/proxy_repository.dart';
+import '../../proxy/domain/socks5.dart';
+import '../../proxy/domain/zerotier_proxy_link.dart';
 import '../../settings/data/settings_repository.dart';
 
 const _networksKey = 'zerotier.networks';
 const _autoStartKey = 'zerotier.autoStart';
+
+/// The proxy (a `Proxies` id) the node's traffic goes through; unset: directly. Not exported with the
+/// settings (the id means nothing on another device).
+const zeroTierProxySetting = 'zerotier.proxyId';
 
 /// Members' ZeroTier addresses learned from traffic: `{"network id/IP": "address"}`.
 const _membersKey = 'zerotier.members';
 
 /// The app's ZeroTier node: started on demand (or with the app), remembers the joined networks.
 class ZeroTierService extends ChangeNotifier {
-  ZeroTierService(this._settings, this._log);
+  ZeroTierService(
+    this._settings,
+    this._log, {
+    Future<Socks5Proxy?> Function(String id)? resolveProxy,
+    ZeroTierProxyLink? proxyLink,
+  }) : _resolveProxy = resolveProxy ?? ((_) async => null) {
+    this.proxyLink = proxyLink ??
+        ZeroTierProxyLink(
+          setRelay: (r) => _node.udpRelay = r,
+          onChange: _notify,
+          log: (m) => _log.i('zerotier', 'Proxy: $m'),
+        );
+  }
 
   final SettingsRepository _settings;
   final Log _log;
+  final Future<Socks5Proxy?> Function(String id) _resolveProxy;
   ZeroTierNode get _node => ZeroTierNode.instance;
+
+  /// The node's traffic through a SOCKS5 proxy ([proxyId]).
+  late final ZeroTierProxyLink proxyLink;
+
+  /// The proxy the node goes through; null: directly.
+  String? proxyId;
 
   bool _storageSet = false;
   StreamSubscription<ZeroTierNodeState>? _watch;
@@ -95,6 +121,7 @@ class ZeroTierService extends ChangeNotifier {
     final s = await _settings.load();
     networks = [for (final n in (jsonDecode(s.values[_networksKey] ?? '[]') as List)) n as String];
     autoStart = s.values[_autoStartKey] == 'true';
+    proxyId = s.values[zeroTierProxySetting];
     try {
       _members = {...(jsonDecode(s.values[_membersKey] ?? '{}') as Map).cast<String, String>()};
     } on Object {
@@ -128,6 +155,39 @@ class ZeroTierService extends ChangeNotifier {
     await _settings.set(_membersKey, jsonEncode(_members));
   }
 
+  /// Sends the node through proxy [id] (null: directly). A running node changes at once.
+  Future<void> setProxy(String? id) async {
+    proxyId = id;
+    await _settings.set(zeroTierProxySetting, id);
+    _notify();
+    if (_node.running) {
+      await _serial(_applyProxy);
+    } else if (id == null) {
+      await _applyProxy();
+    }
+  }
+
+  /// Proxy [id] was edited or deleted: a node going through it connects again.
+  Future<void> proxyChanged(String id) async {
+    if (proxyId == id && _node.running) await _serial(_applyProxy);
+  }
+
+  /// Makes the UDP association (or goes direct) before packets flow.
+  Future<void> _applyProxy() async {
+    final id = proxyId;
+    Socks5Proxy? proxy;
+    if (id != null) {
+      proxy = await _resolveProxy(id);
+      if (proxy == null) {
+        // Deleted: the node goes directly again, as hosts that used it do.
+        _log.w('zerotier', 'Its proxy no longer exists: directly');
+        proxyId = null;
+        await _settings.set(zeroTierProxySetting, null);
+      }
+    }
+    await proxyLink.use(proxy);
+  }
+
   Future<void> setAutoStart(bool v) async {
     autoStart = v;
     await _settings.set(_autoStartKey, '$v');
@@ -151,6 +211,7 @@ class ZeroTierService extends ChangeNotifier {
         _node.initStorage(dir.path);
         _storageSet = true;
       }
+      await _applyProxy();
       await _node.start();
       if (_stopped.isCompleted) _stopped = Completer<void>();
       for (final n in networks) {
@@ -211,6 +272,7 @@ class ZeroTierService extends ChangeNotifier {
     // What the stack knows now, before it is gone (the query runs at once, the save after).
     unawaited(learnMembers().catchError((Object _) {}));
     final stopping = _node.stop();
+    proxyLink.close();
     _state = null;
     if (!_stopped.isCompleted) _stopped.complete();
     _notify();
@@ -252,7 +314,9 @@ class ZeroTierService extends ChangeNotifier {
       await _node.waitUntilReady(networkId: parseNetworkId(id), timeout: timeout);
     } on TimeoutException {
       final n = network(id);
+      final link = proxyLink;
       throw ZeroTierException(switch (n?.status) {
+        _ when link.state == ProxyLinkState.failed => 'ZeroTier\'s proxy: ${proxyErrorText(link.error)}',
         ZeroTierNetworkStatus.accessDenied => 'Not authorized on network $id',
         ZeroTierNetworkStatus.notFound => 'Network $id does not exist',
         _ when !(_state?.online ?? false) => 'ZeroTier is offline (no route to its root servers)',
@@ -268,6 +332,7 @@ class ZeroTierService extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    proxyLink.dispose();
     _watch?.cancel();
     _guardLog?.cancel();
     _learnTimer?.cancel();
@@ -301,7 +366,8 @@ class ZeroTierSshSocket implements SSHSocket {
 }
 
 final zeroTierServiceProvider = Provider((ref) {
-  final service = ZeroTierService(ref.watch(settingsRepositoryProvider), ref.watch(logProvider));
+  final proxies = ref.watch(proxyRepositoryProvider);
+  final service = ZeroTierService(ref.watch(settingsRepositoryProvider), ref.watch(logProvider), resolveProxy: proxies.resolve);
   ref.onDispose(service.dispose);
   service.load();
   return service;

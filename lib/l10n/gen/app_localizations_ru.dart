@@ -92,6 +92,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addPortForwarding => 'Создать проброс порта';
 
   @override
+  String get addProxy => 'Добавить прокси';
+
+  @override
   String get addRow => 'Добавить ряд';
 
   @override
@@ -536,6 +539,19 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get deleteProxyBody => 'Через него ничего не идёт.';
+
+  @override
+  String deleteProxyTitle(String name) {
+    return 'Удалить $name?';
+  }
+
+  @override
+  String deleteProxyUsed(String names) {
+    return 'Они снова будут подключаться напрямую: $names';
+  }
+
+  @override
   String get deleteUntrackedBody =>
       'Файла ещё нет в git, поэтому он будет удалён.';
 
@@ -668,6 +684,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editKey => 'Клавиша';
+
+  @override
+  String get editProxy => 'Изменить прокси';
 
   @override
   String get editSnippet => 'Изменить сниппет';
@@ -1572,6 +1591,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noPreview => 'Нет превью';
 
   @override
+  String get noProxiesHint =>
+      'SOCKS5-прокси для выбранных хостов и для ZeroTier, с логином или без.';
+
+  @override
+  String get noProxiesYet => 'Прокси пока нет';
+
+  @override
   String get noStashes => 'Ничего не спрятано';
 
   @override
@@ -1852,6 +1878,73 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get protection => 'Защита';
+
+  @override
+  String get proxies => 'Прокси';
+
+  @override
+  String get proxy => 'Прокси';
+
+  @override
+  String get proxyDirect => 'Напрямую';
+
+  @override
+  String proxyFailed(String error) {
+    return 'Прокси: $error';
+  }
+
+  @override
+  String get proxyForZeroTier => 'Трафик ZeroTier';
+
+  @override
+  String get proxyForZeroTierHint =>
+      'Весь трафик узла ZeroTier. ZeroTier работает только по UDP: прокси должен передавать UDP (UDP ASSOCIATE).';
+
+  @override
+  String get proxyHostHint =>
+      'Подключаться через SOCKS5-прокси (Настройки → Прокси)';
+
+  @override
+  String get proxyHostsHint =>
+      'Хосты в сети ZeroTier или за промежуточным хостом здесь не показаны: их соединения идут через них.';
+
+  @override
+  String get proxyLoginHint => 'Оставьте пустым, если прокси не требует входа';
+
+  @override
+  String get proxyNoHosts =>
+      'Пока нет хостов, которые могли бы его использовать';
+
+  @override
+  String get proxyTest => 'Проверить';
+
+  @override
+  String get proxyUseFor => 'Что идёт через него';
+
+  @override
+  String proxyUsedBy(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count хостов',
+      few: '$count хоста',
+      one: '$count хост',
+      zero: 'Не используется',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get proxyViaJumpHint =>
+      'За промежуточным хостом: идёт тем же путём, что и он';
+
+  @override
+  String get proxyWorksTcpOnly =>
+      'Прокси работает для хостов, но не передаёт UDP: ZeroTier не сможет его использовать';
+
+  @override
+  String get proxyWorksUdp =>
+      'Прокси работает, включая UDP: ZeroTier может его использовать';
 
   @override
   String get publicKey => 'Открытый ключ';
@@ -2800,6 +2893,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ztPrivate => 'Закрытая: участников нужно авторизовать';
+
+  @override
+  String ztProxyConnected(String name, String relay) {
+    return '$name: через его ретранслятор $relay';
+  }
+
+  @override
+  String ztProxyConnecting(String name) {
+    return '$name: подключение…';
+  }
+
+  @override
+  String ztProxyFailed(String name, String error) {
+    return '$name: $error. Повтор; ZeroTier пока ничего не отправляет.';
+  }
 
   @override
   String get ztPublic => 'Открытая: присоединиться может любой';

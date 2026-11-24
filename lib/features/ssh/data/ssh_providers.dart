@@ -9,6 +9,9 @@ import '../../zerotier/data/zerotier_service.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/known_hosts_repository.dart';
 import '../../identities/data/identity_repository.dart';
+import '../../proxy/data/proxy_repository.dart';
+import '../../proxy/data/proxy_socket.dart';
+import '../../proxy/domain/socks5.dart';
 import '../domain/ssh_prompter.dart';
 import '../presentation/prompter_provider.dart';
 import 'ssh_connector.dart';
@@ -23,6 +26,11 @@ final sshConnectorProvider = Provider((ref) => SshConnector(
       zerotierSocket: (network, host, port, timeout) async {
         await ref.read(zeroTierServiceProvider).ensureNetwork(network);
         return ZeroTierSshSocket(await ZeroTierSocket.connect(host, port, timeout: timeout));
+      },
+      proxySocket: (proxyId, host, port, timeout) async {
+        final proxy = await ref.read(proxyRepositoryProvider).resolve(proxyId);
+        if (proxy == null) throw const Socks5Exception(Socks5Error.unreachable, 'The proxy no longer exists');
+        return Socks5SshSocket(await socks5Connect(proxy, host, port, timeout: timeout));
       },
     ));
 

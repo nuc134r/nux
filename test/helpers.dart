@@ -25,6 +25,7 @@ List<Override> testOverrides({AppDatabase? db, SecretStore? secrets, SshPrompter
       sshPrompterProvider.overrideWithValue(prompter ?? const RefusingPrompter()),
       deviceNameProvider.overrideWith((ref) async => 'Pixel-9'),
       hostPingerProvider.overrideWithValue((host, port) async => const Duration(milliseconds: 42)),
+      proxyPingerProvider.overrideWithValue((proxy, host, port) async => const Duration(milliseconds: 64)),
     ];
 
 /// Says no to everything (no dialogs in widget tests).
@@ -96,6 +97,14 @@ Future<void> insertSamples(AppDatabase db, SecretStore secrets) async {
         port: 22,
         keyType: 'ssh-ed25519',
         fingerprint: 'SHA256:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      ));
+  await db.into(db.proxies).insert(ProxiesCompanion.insert(
+        id: const Value('sample'),
+        createdAt: now,
+        updatedAt: now,
+        name: 'Office proxy',
+        host: 'proxy.example.com',
+        username: const Value('dev'),
       ));
 }
 

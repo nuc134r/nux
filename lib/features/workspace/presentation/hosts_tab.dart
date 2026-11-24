@@ -10,6 +10,7 @@ import '../../../core/widgets/nux_menu.dart';
 import '../../../l10n/l10n.dart';
 import '../../connections/data/connection_repository.dart';
 import '../../connections/data/host_ping.dart';
+import '../../proxy/data/proxy_repository.dart';
 import '../../zerotier/data/zerotier_service.dart';
 import '../../zerotier/presentation/zerotier_path_badge.dart';
 import '../../connections/presentation/connection_actions.dart';
@@ -340,6 +341,10 @@ class _HostTile extends ConsumerWidget {
     final c = connection;
     final manager = ref.watch(forwardingManagerProvider);
     final jump = c.jumpHostId == null ? null : ref.watch(connectionProvider(c.jumpHostId!)).value;
+    // The proxy only counts for hosts reached over the internet (see SshConnector).
+    final proxy = c.proxyId == null || c.jumpHostId != null || c.zerotierNetwork != null
+        ? null
+        : ref.watch(proxiesProvider).value?.where((p) => p.id == c.proxyId).firstOrNull;
     final tile = Padding(
       padding: EdgeInsets.fromLTRB(12, 3, 12, open ? 0 : 3),
       child: Material(
@@ -375,8 +380,9 @@ class _HostTile extends ConsumerWidget {
                               style: theme.textTheme.titleMedium,
                             ),
                             Text(
-                              // `192.0.2.4 via 192.0.2.1` when it connects through a jump host.
-                              switch (jump?.host) {
+                              // `192.0.2.4 via 192.0.2.1` when it connects through a jump host, `via <name>`
+                              // through a proxy.
+                              switch (jump?.host ?? proxy?.name) {
                                 final via? => context.l10n.hostVia(c.host, via),
                                 _ => c.host,
                               },
@@ -500,6 +506,7 @@ class _Ping extends ConsumerWidget {
         port: c.port,
         network: c.zerotierNetwork,
         viaJump: c.jumpHostId != null,
+        proxyId: c.proxyId,
       )),
     );
     // While a refresh runs the previous result stays shown.

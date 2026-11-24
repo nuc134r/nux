@@ -9,6 +9,7 @@ import '../../../core/widgets/widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../../identities/data/identity_repository.dart';
 import '../../identities/domain/key_material.dart';
+import '../../proxy/data/proxy_repository.dart';
 import '../data/connection_repository.dart';
 import '../../zerotier/presentation/zerotier_network_field.dart';
 import 'connection_actions.dart';
@@ -39,6 +40,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
   String? _jumpHostId;
   String? _zerotierNetwork;
   bool _viaZeroTier = false;
+  String? _proxyId;
   int? _color;
   bool _savePassword = false;
   bool _hasSavedPassword = false;
@@ -71,6 +73,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
         _jumpHostId = c.jumpHostId;
         _zerotierNetwork = c.zerotierNetwork;
         _viaZeroTier = c.zerotierNetwork != null;
+        _proxyId = c.proxyId;
         _color = c.color;
         _savePassword = c.savePassword;
         _hasSavedPassword = c.savePassword && await repo.savedPassword(id) != null;
@@ -104,6 +107,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
       identityIds: Value(encodeIdentityIds(_keys)),
       jumpHostId: Value(_jumpHostId),
       zerotierNetwork: Value(_viaZeroTier ? _zerotierNetwork : null),
+      proxyId: Value(_viaZeroTier || _jumpHostId != null ? null : _proxyId),
       groupName: Value(_group.text.trim().isEmpty ? null : _group.text.trim()),
       color: Value(_color),
       keepAliveSeconds: Value(int.tryParse(_keepAlive.text.trim()) ?? 15),
@@ -128,6 +132,7 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
     final connections = ref.watch(connectionsProvider).value ?? const <Connection>[];
     final groups = {for (final c in connections) ?c.groupName}.toList()..sort();
     final jumpCandidates = connections.where((c) => c.id != widget.connectionId).toList();
+    final proxies = ref.watch(proxiesProvider).value ?? const <Proxy>[];
 
     return Scaffold(
       appBar: AppBar(
@@ -273,6 +278,24 @@ class _ConnectionEditorScreenState extends ConsumerState<ConnectionEditorScreen>
                   ),
                   if (_viaZeroTier) ...[
                     ZeroTierNetworkField(initial: _zerotierNetwork, onChanged: (v) => _zerotierNetwork = v),
+                    const SizedBox(height: 12),
+                  ],
+                  // Only for hosts reached over the internet: a ZeroTier host goes through the node (which
+                  // has its own proxy setting), a host behind a jump host the jump host's way.
+                  if (!_viaZeroTier && proxies.isNotEmpty) ...[
+                    DropdownButtonFormField<String?>(
+                      key: ValueKey('proxy-${_jumpHostId != null}'),
+                      initialValue: _jumpHostId == null && proxies.any((p) => p.id == _proxyId) ? _proxyId : null,
+                      decoration: InputDecoration(
+                        labelText: l10n.proxy,
+                        helperText: _jumpHostId != null ? l10n.proxyViaJumpHint : l10n.proxyHostHint,
+                      ),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.proxyDirect)),
+                        for (final p in proxies) DropdownMenuItem(value: p.id, child: Text(p.name)),
+                      ],
+                      onChanged: _jumpHostId != null ? null : (v) => setState(() => _proxyId = v),
+                    ),
                     const SizedBox(height: 12),
                   ],
                   DropdownButtonFormField<String?>(

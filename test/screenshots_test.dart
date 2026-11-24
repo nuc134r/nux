@@ -406,6 +406,7 @@ void main() {
     ),
     'key': _Shot(ThemeMode.dark, Routes.key('sample')),
     'generate': const _Shot(ThemeMode.light, Routes.newKey),
+    'proxy': _Shot(ThemeMode.dark, Routes.proxy('sample')),
     'desktop': _Shot(
       ThemeMode.dark,
       Routes.home,

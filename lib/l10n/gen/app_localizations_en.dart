@@ -92,6 +92,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPortForwarding => 'Create port forwarding';
 
   @override
+  String get addProxy => 'Add proxy';
+
+  @override
   String get addRow => 'Add row';
 
   @override
@@ -528,6 +531,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get deleteProxyBody => 'Nothing goes through it.';
+
+  @override
+  String deleteProxyTitle(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String deleteProxyUsed(String names) {
+    return 'These will connect directly again: $names';
+  }
+
+  @override
   String get deleteUntrackedBody =>
       'The file is not in git yet, so it is deleted.';
 
@@ -660,6 +676,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editKey => 'Key';
+
+  @override
+  String get editProxy => 'Edit proxy';
 
   @override
   String get editSnippet => 'Edit snippet';
@@ -1550,6 +1569,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPreview => 'No preview';
 
   @override
+  String get noProxiesHint =>
+      'A SOCKS5 proxy for the hosts you choose and for ZeroTier, with or without a login.';
+
+  @override
+  String get noProxiesYet => 'No proxies yet';
+
+  @override
   String get noStashes => 'Nothing stashed';
 
   @override
@@ -1823,6 +1849,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get protection => 'Protection';
+
+  @override
+  String get proxies => 'Proxies';
+
+  @override
+  String get proxy => 'Proxy';
+
+  @override
+  String get proxyDirect => 'Directly';
+
+  @override
+  String proxyFailed(String error) {
+    return 'Proxy: $error';
+  }
+
+  @override
+  String get proxyForZeroTier => 'ZeroTier traffic';
+
+  @override
+  String get proxyForZeroTierHint =>
+      'All of the ZeroTier node\'s traffic. ZeroTier speaks only UDP: the proxy must relay UDP (UDP ASSOCIATE).';
+
+  @override
+  String get proxyHostHint =>
+      'Connect through a SOCKS5 proxy (Settings → Proxies)';
+
+  @override
+  String get proxyHostsHint =>
+      'Hosts on a ZeroTier network or behind a jump host are not listed: their connections go through those.';
+
+  @override
+  String get proxyLoginHint => 'Leave empty when the proxy needs no login';
+
+  @override
+  String get proxyNoHosts => 'No hosts that could use it yet';
+
+  @override
+  String get proxyTest => 'Test';
+
+  @override
+  String get proxyUseFor => 'What goes through it';
+
+  @override
+  String proxyUsedBy(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hosts',
+      one: '1 host',
+      zero: 'Not used',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get proxyViaJumpHint =>
+      'Behind a jump host: goes the jump host\'s way';
+
+  @override
+  String get proxyWorksTcpOnly =>
+      'The proxy works for hosts but does not relay UDP: ZeroTier cannot use it';
+
+  @override
+  String get proxyWorksUdp =>
+      'The proxy works, UDP included: ZeroTier can use it';
 
   @override
   String get publicKey => 'Public key';
@@ -2758,6 +2849,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ztPrivate => 'Private: members need authorizing';
+
+  @override
+  String ztProxyConnected(String name, String relay) {
+    return '$name: through its relay $relay';
+  }
+
+  @override
+  String ztProxyConnecting(String name) {
+    return '$name: connecting…';
+  }
+
+  @override
+  String ztProxyFailed(String name, String error) {
+    return '$name: $error. Trying again; ZeroTier sends nothing meanwhile.';
+  }
 
   @override
   String get ztPublic => 'Public: anyone can join';

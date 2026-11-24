@@ -95,6 +95,12 @@ class SettingsScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push(Routes.zerotier),
               ),
+              ListTile(
+                leading: const Icon(Icons.alt_route),
+                title: Text(l10n.proxies),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(Routes.proxies),
+              ),
             ],
           ),
           Island(

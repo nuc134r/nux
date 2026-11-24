@@ -7,12 +7,63 @@ import '../../../app/router.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/nux_menu.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../../core/db/database.dart';
 import '../../../l10n/l10n.dart';
+import '../../proxy/data/proxy_repository.dart';
+import '../../proxy/domain/socks5.dart';
+import '../../proxy/domain/zerotier_proxy_link.dart';
 import '../data/zerotier_service.dart';
 
 /// The ZeroTier node: on/off, its id (to authorize it), and the joined networks.
 class ZeroTierScreen extends ConsumerWidget {
   const ZeroTierScreen({super.key});
+
+  /// Directly or through one of the saved proxies; with none saved, opens Proxies to add one.
+  Future<void> _chooseProxy(BuildContext context, ZeroTierService service, List<Proxy> proxies) async {
+    if (proxies.isEmpty) {
+      await context.push(Routes.proxies);
+      return;
+    }
+    final l10n = context.l10n;
+    const direct = '';
+    final chosen = await showDialog<String>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.proxy),
+        children: [
+          RadioGroup<String>(
+            groupValue: service.proxyId ?? direct,
+            onChanged: (v) => Navigator.pop(context, v),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RadioListTile<String>(value: direct, title: Text(l10n.proxyDirect)),
+                for (final p in proxies)
+                  RadioListTile<String>(value: p.id, title: Text(p.name), subtitle: Text(p.address)),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+            child: Text(l10n.proxyForZeroTierHint, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
+    );
+    if (chosen == null) return;
+    await service.setProxy(chosen == direct ? null : chosen);
+  }
+
+  static String _proxyStatus(AppLocalizations l10n, ZeroTierService service, Proxy? proxy) {
+    if (proxy == null) return l10n.proxyDirect;
+    final link = service.proxyLink;
+    return switch (link.state) {
+      ProxyLinkState.connected when service.running => l10n.ztProxyConnected(proxy.name, link.relay ?? ''),
+      ProxyLinkState.failed when service.running => l10n.ztProxyFailed(proxy.name, proxyErrorText(link.error)),
+      _ when service.running => l10n.ztProxyConnecting(proxy.name),
+      _ => '${proxy.name} · ${proxy.address}',
+    };
+  }
 
   Future<void> _join(BuildContext context, ZeroTierService service) async {
     final l10n = context.l10n;
@@ -50,6 +101,7 @@ class ZeroTierScreen extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final service = ref.watch(zeroTierServiceProvider);
+    final proxies = ref.watch(proxiesProvider).value ?? const <Proxy>[];
     return ListenableBuilder(
       listenable: service,
       builder: (context, _) {
@@ -116,6 +168,18 @@ class ZeroTierScreen extends ConsumerWidget {
                     title: Text(l10n.ztAutoStart),
                     value: service.autoStart,
                     onChanged: service.setAutoStart,
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.alt_route,
+                      color: service.proxyId != null && service.proxyLink.state == ProxyLinkState.failed && service.running
+                          ? theme.colorScheme.error
+                          : null,
+                    ),
+                    title: Text(l10n.proxy),
+                    subtitle: Text(_proxyStatus(l10n, service, proxies.where((p) => p.id == service.proxyId).firstOrNull)),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _chooseProxy(context, service, proxies),
                   ),
                 ],
               ),

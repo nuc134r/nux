@@ -8,6 +8,7 @@ import '../features/forwarding/presentation/forward_rule_editor.dart';
 import '../features/identities/presentation/generate_key_screen.dart';
 import '../features/identities/presentation/identities_screen.dart';
 import '../features/identities/presentation/identity_screen.dart';
+import '../features/proxy/presentation/proxies_screen.dart';
 import '../core/keys/key_bar_layout.dart';
 import '../features/settings/presentation/appearance_screen.dart';
 import '../features/settings/presentation/key_bar_settings.dart';
@@ -38,6 +39,9 @@ abstract final class Routes {
   static const newKey = '/keys/new';
   static String key(String id) => '/keys/$id';
   static const knownHosts = '/known-hosts';
+  static const proxies = '/proxies';
+  static const newProxy = '/proxies/new';
+  static String proxy(String id) => '/proxies/$id';
 
   /// Forwardings belong to a host: they are listed under it in the hosts tab.
   static String newForward(String connectionId) => '/forwarding/new?connection=$connectionId';
@@ -62,6 +66,9 @@ abstract final class Routes {
     newKey,
     key('sample'),
     knownHosts,
+    proxies,
+    newProxy,
+    proxy('sample'),
     newForward('sample'),
     forward('sample'),
     zerotier,
@@ -98,6 +105,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       _screen(Routes.newKey, (state) => const GenerateKeyScreen()),
       _screen('/keys/:id', (state) => IdentityScreen(identityId: state.pathParameters['id']!)),
       _screen(Routes.knownHosts, (state) => const KnownHostsScreen()),
+      _screen(Routes.proxies, (state) => const ProxiesScreen()),
+      _screen(Routes.newProxy, (state) => const ProxyEditorScreen()),
+      _screen('/proxies/:id', (state) => ProxyEditorScreen(proxyId: state.pathParameters['id'])),
       _screen('/forwarding/new', (state) => ForwardRuleEditor(connectionId: state.uri.queryParameters['connection']!)),
       _screen('/forwarding/:id', (state) => ForwardRuleEditor(ruleId: state.pathParameters['id'])),
       _screen(Routes.zerotier, (state) => const ZeroTierScreen()),

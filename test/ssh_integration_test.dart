@@ -15,6 +15,9 @@ import 'package:nux/features/identities/data/identity_repository.dart';
 import 'package:nux/features/identities/domain/key_generator.dart';
 import 'package:nux/features/identities/domain/key_material.dart';
 import 'package:nux/features/ssh/data/ssh_backend.dart';
+import 'package:nux/features/proxy/data/proxy_repository.dart';
+import 'package:nux/features/proxy/data/proxy_socket.dart';
+import 'package:nux/features/proxy/domain/socks5.dart';
 import 'package:nux/features/ssh/data/ssh_connector.dart';
 import 'package:nux/features/ssh/data/ssh_keep_alive.dart';
 import 'package:nux/features/ssh/data/ssh_pool.dart';
@@ -22,6 +25,7 @@ import 'package:nux/features/ssh/domain/ssh_prompter.dart';
 
 import 'helpers.dart';
 import 'keep_alive_hub_test.dart' show RecordingKeepAlive;
+import 'socks5_test_server.dart';
 import 'ssh_test_server.dart';
 
 class FakePrompter implements SshPrompter {
@@ -73,6 +77,7 @@ void main() {
   late SshPool pool;
   late FakePrompter prompter;
   late KeyMaterial key;
+  late ProxyRepository proxies;
 
   setUpAll(() async {
     server = await TestSshServer.start();
@@ -87,8 +92,20 @@ void main() {
     connections = ConnectionRepository(db, secrets);
     identities = IdentityRepository(db, secrets, connections);
     known = KnownHostsRepository(db);
+    proxies = ProxyRepository(db, secrets);
     final log = Log();
-    connector = SshConnector(connections: connections, identities: identities, knownHosts: known, log: log);
+    connector = SshConnector(
+      connections: connections,
+      identities: identities,
+      knownHosts: known,
+      log: log,
+      // As the app wires it (ssh_providers.dart).
+      proxySocket: (proxyId, host, port, timeout) async {
+        final proxy = await proxies.resolve(proxyId);
+        if (proxy == null) throw const Socks5Exception(Socks5Error.unreachable, 'gone');
+        return Socks5SshSocket(await socks5Connect(proxy, host, port, timeout: timeout));
+      },
+    );
     pool = SshPool(connector, log, idleTimeout: Duration.zero);
     prompter = FakePrompter();
   });
@@ -97,7 +114,12 @@ void main() {
     await db.close();
   });
 
-  Future<String> addConnection({required String identityId, String? jumpHostId, String host = '127.0.0.1'}) =>
+  Future<String> addConnection({
+    required String identityId,
+    String? jumpHostId,
+    String host = '127.0.0.1',
+    String? proxyId,
+  }) =>
       connections.save(ConnectionsCompanion.insert(
         name: 'test',
         host: host,
@@ -107,6 +129,7 @@ void main() {
         updatedAt: DateTime(2026),
         identityIds: Value(encodeIdentityIds([identityId])),
         jumpHostId: Value(jumpHostId),
+        proxyId: Value(proxyId),
       ));
 
   bool skip() => server == null;
@@ -211,6 +234,41 @@ void main() {
     final r = await SshBackend(id: target, displayName: 't', client: lease.client).processRunner.run('echo via-jump');
     expect(r.stdout, 'via-jump\n');
     expect(prompter.hostKeys.map((q) => q.host), ['127.0.0.1', 'localhost']);
+  });
+
+  test('connects through a SOCKS5 proxy with a login; the host name is resolved by the proxy', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final socks = await TestSocks5Server.start(username: 'nux', password: 'secret');
+    addTearDown(socks.close);
+    final proxyId = await proxies.save(
+      ProxiesCompanion.insert(name: 'p', host: '127.0.0.1', port: Value(socks.port), username: const Value('nux'), createdAt: DateTime(2026), updatedAt: DateTime(2026)),
+      password: 'secret',
+    );
+    final c = await addConnection(identityId: await identities.add(key, name: 'k'), host: 'localhost', proxyId: proxyId);
+    final lease = await pool.acquire(c, prompter);
+    addTearDown(lease.release);
+    final r = await SshBackend(id: c, displayName: 't', client: lease.client).processRunner.run('echo via-proxy');
+    expect(r.stdout, 'via-proxy\n');
+    expect(socks.logins, ['nux']);
+    expect(socks.connects, ['localhost:${server!.port}']);
+  });
+
+  test('a host behind a proxy that does not answer is unreachable, and is not tried directly', () async {
+    if (skip()) return markTestSkipped('sshd not available');
+    final socks = await TestSocks5Server.start(username: 'nux', password: 'secret');
+    addTearDown(socks.close);
+    final proxyId = await proxies.save(
+      ProxiesCompanion.insert(name: 'p', host: '127.0.0.1', port: Value(socks.port), username: const Value('nux'), createdAt: DateTime(2026), updatedAt: DateTime(2026)),
+      password: 'wrong',
+    );
+    final c = await addConnection(identityId: await identities.add(key, name: 'k'), proxyId: proxyId);
+    await expectLater(
+      pool.acquire(c, prompter),
+      throwsA(isA<SshConnectException>()
+          .having((e) => e.failure, 'failure', SshFailure.unreachable)
+          .having((e) => e.message, 'message', startsWith('Proxy:'))),
+    );
+    expect(prompter.hostKeys, isEmpty, reason: 'the SSH server was never reached');
   });
 
   test('connections in use keep the app alive in the background; Disconnect all closes them', () async {

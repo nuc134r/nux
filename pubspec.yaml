@@ -3,7 +3,7 @@ description: "SSH/SFTP client, port forwarder and mobile IDE."
 publish_to: 'none'
 
 # The release version comes from the git tag (tool/version.sh); this one is only used for local builds.
-version: 0.11.25+1
+version: 0.12.0+1
 
 environment:
   sdk: ^3.13.7
@@ -40,7 +40,7 @@ dependencies:
   zerotier_sockets:
     git:
       url: https://github.com/nuc134r/zerotier_sockets_flutter.git
-      ref: c62b2a98a90c7e58baf57411e5241cd89e94ccfc
+      ref: 95bdb00cd5e2a9d7848cdb77cc25d3bc048ae3e6
   dartssh2: ^4.1.0
   flterm:
     path: packages/flterm

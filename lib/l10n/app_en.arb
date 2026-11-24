@@ -84,6 +84,7 @@
   "addHost": "Add host",
   "addKey": "Add key",
   "addPortForwarding": "Create port forwarding",
+  "addProxy": "Add proxy",
   "addRow": "Add row",
   "addSnippet": "Add snippet",
   "addressHint": "Address or search",
@@ -395,6 +396,23 @@
       }
     }
   },
+  "deleteProxyBody": "Nothing goes through it.",
+  "deleteProxyTitle": "Delete {name}?",
+  "@deleteProxyTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteProxyUsed": "These will connect directly again: {names}",
+  "@deleteProxyUsed": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
   "deleteUntrackedBody": "The file is not in git yet, so it is deleted.",
   "deleteWorkspace": "Delete workspace",
   "deleteWorkspaceBody": "Its tabs are closed. Files on the host are not touched.",
@@ -470,6 +488,7 @@
   "editForward": "Edit forwarding",
   "editHost": "Edit host",
   "editKey": "Key",
+  "editProxy": "Edit proxy",
   "editSnippet": "Edit snippet",
   "editor": "Editor",
   "editorFontSize": "File text size",
@@ -1116,6 +1135,8 @@
   "noKeysHint": "Keys let you sign in without a password. Generate one here, or import a key you already use.",
   "noKeysYet": "No keys yet",
   "noPreview": "No preview",
+  "noProxiesHint": "A SOCKS5 proxy for the hosts you choose and for ZeroTier, with or without a login.",
+  "noProxiesYet": "No proxies yet",
   "noStashes": "Nothing stashed",
   "noTabs": "No open tabs",
   "noTabsHint": "Open the hosts list or connect to a server.",
@@ -1256,6 +1277,36 @@
   },
   "previous": "Previous",
   "protection": "Protection",
+  "proxies": "Proxies",
+  "proxy": "Proxy",
+  "proxyDirect": "Directly",
+  "proxyFailed": "Proxy: {error}",
+  "@proxyFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "proxyForZeroTier": "ZeroTier traffic",
+  "proxyForZeroTierHint": "All of the ZeroTier node's traffic. ZeroTier speaks only UDP: the proxy must relay UDP (UDP ASSOCIATE).",
+  "proxyHostHint": "Connect through a SOCKS5 proxy (Settings → Proxies)",
+  "proxyHostsHint": "Hosts on a ZeroTier network or behind a jump host are not listed: their connections go through those.",
+  "proxyLoginHint": "Leave empty when the proxy needs no login",
+  "proxyNoHosts": "No hosts that could use it yet",
+  "proxyTest": "Test",
+  "proxyUseFor": "What goes through it",
+  "proxyUsedBy": "{count, plural, =0{Not used} =1{1 host} other{{count} hosts}}",
+  "@proxyUsedBy": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "proxyViaJumpHint": "Behind a jump host: goes the jump host's way",
+  "proxyWorksTcpOnly": "The proxy works for hosts but does not relay UDP: ZeroTier cannot use it",
+  "proxyWorksUdp": "The proxy works, UDP included: ZeroTier can use it",
   "publicKey": "Public key",
   "publish": "Publish",
   "publishBranchBody": "This branch is not on the server yet. Push it to origin and track it?",
@@ -1770,6 +1821,36 @@
   "ztPeers": "Peers",
   "ztPort": "UDP port",
   "ztPrivate": "Private: members need authorizing",
+  "ztProxyConnected": "{name}: through its relay {relay}",
+  "@ztProxyConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "relay": {
+        "type": "String"
+      }
+    }
+  },
+  "ztProxyConnecting": "{name}: connecting…",
+  "@ztProxyConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ztProxyFailed": "{name}: {error}. Trying again; ZeroTier sends nothing meanwhile.",
+  "@ztProxyFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "ztPublic": "Public: anyone can join",
   "ztRequesting": "Waiting for the network's controller (authorize this node there)",
   "ztRouteDirect": "In the network itself",

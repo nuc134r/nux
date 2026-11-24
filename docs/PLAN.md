@@ -145,6 +145,22 @@ from the UI isolate. Problems:
 
 Spike first (M4.0): one hook building libzt for `android-arm64` + `linux-x64`, a `dart test` that starts a node.
 
+### Outgoing SOCKS5 proxies
+
+Saved proxies (`Proxies` table, password in `SecretStore`) are chosen per use, not globally:
+
+- **Hosts**: `Connections.proxyId`. Only the first hop uses it: a host behind a jump host goes the jump
+  host's way, a host on a ZeroTier network goes through the node. A host with a proxy is never connected
+  (or pinged) directly, even when the proxy fails: hiding the route is the point. Host names go to the
+  proxy unresolved (ATYP domain), so no DNS query leaves the device for them.
+- **ZeroTier**: libzt speaks only UDP and has no TCP fallback, so the proxy must relay UDP (UDP
+  ASSOCIATE). `zerotier_sockets`' libzt patch 0005 wraps every packet in a SOCKS5 UDP header and sends it
+  to the relay, takes datagrams only from the relay, and stops advertising local interface addresses.
+  nux keeps the association's TCP connection (`ZeroTierProxyLink`); while it is down the node is *held*
+  (sends nothing) and the association is retried with backoff. Rejected: a TUN-style capture of the
+  node's sockets (not possible without root), ZeroTier's TCP relay (not in libzt; possible later for
+  TCP-only proxies).
+
 ## 5. Tabs (Chrome-style)
 
 Start from `tab_switcher` 1.0.1 (the extracted library). `lamp_studio` still carries a slightly newer local

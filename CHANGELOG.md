@@ -3,6 +3,12 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.12.0
+
+- **SOCKS5 proxies** (Settings → Proxies), with or without a username and password. Each proxy says what goes through it: any of your hosts (also chosen in a host's settings, under Advanced) and the ZeroTier node. "Test" in its ⋮ menu checks the login and whether the proxy relays UDP.
+- Hosts behind a proxy connect only through it, never directly, and say so in the hosts list (`example.com via Office proxy`); their ping goes through the proxy too. Host names are resolved by the proxy.
+- ZeroTier through a proxy: ZeroTier speaks only UDP, so the proxy must relay UDP (SOCKS5 UDP ASSOCIATE). All of the node's traffic then goes to the proxy, and your own addresses are not offered to other ZeroTier members. If the proxy drops out, ZeroTier waits (sends nothing) and reconnects to the proxy by itself; the ZeroTier screen shows how it is going.
+
 ## 0.11.25
 
 - Notification: each running forwarding's line starts with its port, then its connections, then its name: `15432 • ⇄ 2 • Database`.

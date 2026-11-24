@@ -116,6 +116,16 @@ Decisions and rationale: [`docs/PLAN.md`](docs/PLAN.md).
 - [ ] JSON-RPC client over an exec channel's stdio; server registry with `command -v` detection
 - [ ] Diagnostics, hover, completion, definition, references, rename, format, code actions
 
+## M3b — SOCKS5 proxies (outgoing)
+- [x] SOCKS5 client (RFC 1928/1929): CONNECT with remote DNS, username/password, UDP ASSOCIATE; test server in `test/`
+- [x] Proxies table (schema v9), password in `SecretStore`; per-host proxy (`Connections.proxyId`), never a direct fallback
+- [x] ZeroTier through a proxy: `zerotier_sockets` `udpRelay` (libzt patch 0005), association kept by `ZeroTierProxyLink`
+      (held while it is down); proxy choice and status on the ZeroTier screen
+- [ ] Device-test ZeroTier over a real UDP-relaying SOCKS5 server (the CI sandbox has no UDP to the roots)
+- [ ] ZeroTier over a TCP-only proxy (no UDP relay): would need ZeroTier's TCP relay protocol in libzt
+- [ ] Merge `zerotier_sockets` branch `ccr-783143cb-q5j6gb` (patch 0005) and pin nux to the merged commit
+- [ ] Proxy for in-app updates and the browser tab (WebView `ProxyController`)
+
 ## M9 — Polish / research
 - [x] New icons: nux wordmark (launcher, adaptive + themed), n (notification), from icons/*.svg
 - [x] Web browser tab (PLAN §5): address bar, back/forward/reload, restore URL; [ ] downloads to transfers

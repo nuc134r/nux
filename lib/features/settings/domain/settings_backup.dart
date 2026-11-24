@@ -3,8 +3,9 @@ library;
 
 import 'dart:convert';
 
-/// Settings that belong to this device and are not exported (an update the user postponed here).
-const deviceOnlySettings = {'dismissedUpdate'};
+/// Settings that belong to this device and are not exported (an update the user postponed here; the
+/// proxy ZeroTier goes through, a row of this device's database).
+const deviceOnlySettings = {'dismissedUpdate', 'zerotier.proxyId'};
 
 /// [values] as a settings file.
 String exportSettings(Map<String, String> values, {required DateTime at}) =>

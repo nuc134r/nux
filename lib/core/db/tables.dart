@@ -51,6 +51,20 @@ class Connections extends Table with SyncedTable {
 
   /// Reach the host through this ZeroTier network (16 hex digits) instead of the internet.
   TextColumn get zerotierNetwork => text().nullable()();
+
+  /// Connect through this SOCKS5 proxy (not for hosts on a ZeroTier network or behind a jump host).
+  TextColumn get proxyId => text().nullable().references(Proxies, #id, onDelete: KeyAction.setNull)();
+}
+
+/// A SOCKS5 proxy that hosts (`Connections.proxyId`) and the ZeroTier node can go through. Its password
+/// lives in `SecretStore` as `proxy:<id>`.
+class Proxies extends Table with SyncedTable {
+  TextColumn get name => text()();
+  TextColumn get host => text()();
+  IntColumn get port => integer().withDefault(const Constant(1080))();
+
+  /// Empty: no authentication.
+  TextColumn get username => text().withDefault(const Constant(''))();
 }
 
 /// An SSH key. The private key lives in `SecretStore` as `key:<id>` (OpenSSH format, encrypted with

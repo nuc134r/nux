@@ -14,6 +14,7 @@ import '../../connections/domain/host_key_check.dart';
 import '../../identities/data/identity_repository.dart';
 import '../../identities/domain/key_import.dart';
 import '../../identities/domain/key_material.dart';
+import '../../proxy/domain/socks5.dart';
 import '../domain/ssh_prompter.dart';
 import 'ssh_transport_tuning.dart';
 
@@ -75,8 +76,12 @@ class SshConnector {
     required this.log,
     this.socketFactory = tcpSocket,
     this.zerotierSocket,
+    this.proxySocket,
     this.timeout = const Duration(seconds: 15),
   });
+
+  /// Opens a TCP connection through a saved SOCKS5 proxy (for connections with a `proxyId`).
+  final Future<SSHSocket> Function(String proxyId, String host, int port, Duration timeout)? proxySocket;
 
   /// Opens a TCP connection inside a ZeroTier network (for connections with a `zerotierNetwork`).
   final Future<SSHSocket> Function(String networkId, String host, int port, Duration timeout)? zerotierSocket;
@@ -151,13 +156,22 @@ class SshConnector {
         throw SshConnectException(SshFailure.unreachable, '$e');
       }
     }
-    log.i('ssh', 'Connecting to ${c.host}:${c.port}${c.zerotierNetwork == null ? '' : ' over ZeroTier'}');
+    final network = c.zerotierNetwork;
+    // A host on a ZeroTier network is reached through the node (whose own traffic may use a proxy).
+    final proxyId = network == null ? c.proxyId : null;
+    log.i('ssh', 'Connecting to ${c.host}:${c.port}${network != null ? ' over ZeroTier' : proxyId != null ? ' through a proxy' : ''}');
     try {
       final zt = zerotierSocket;
-      final network = c.zerotierNetwork;
-      return network != null && zt != null
-          ? await zt(network, c.host, c.port, timeout)
-          : await socketFactory(c.host, c.port, timeout);
+      final proxied = proxySocket;
+      if (network != null && zt != null) return await zt(network, c.host, c.port, timeout);
+      if (proxyId != null) {
+        // Never directly instead: the user chose to hide this host's traffic behind the proxy.
+        if (proxied == null) throw const SshConnectException(SshFailure.unreachable, 'Proxies are not available');
+        return await proxied(proxyId, c.host, c.port, timeout);
+      }
+      return await socketFactory(c.host, c.port, timeout);
+    } on Socks5Exception catch (e) {
+      throw SshConnectException(SshFailure.unreachable, 'Proxy: ${e.message}');
     } on SocketException catch (e) {
       throw SshConnectException(SshFailure.unreachable, e.osError?.message ?? e.message);
     } on TimeoutException {

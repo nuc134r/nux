@@ -211,6 +211,452 @@ class AppSettingsCompanion extends UpdateCompanion<SettingRow> {
   }
 }
 
+class $ProxiesTable extends Proxies with TableInfo<$ProxiesTable, Proxy> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProxiesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newId,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _hostMeta = const VerificationMeta('host');
+  @override
+  late final GeneratedColumn<String> host = GeneratedColumn<String>(
+    'host',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _portMeta = const VerificationMeta('port');
+  @override
+  late final GeneratedColumn<int> port = GeneratedColumn<int>(
+    'port',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1080),
+  );
+  static const VerificationMeta _usernameMeta = const VerificationMeta(
+    'username',
+  );
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+    'username',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    name,
+    host,
+    port,
+    username,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'proxies';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Proxy> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('host')) {
+      context.handle(
+        _hostMeta,
+        host.isAcceptableOrUnknown(data['host']!, _hostMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_hostMeta);
+    }
+    if (data.containsKey('port')) {
+      context.handle(
+        _portMeta,
+        port.isAcceptableOrUnknown(data['port']!, _portMeta),
+      );
+    }
+    if (data.containsKey('username')) {
+      context.handle(
+        _usernameMeta,
+        username.isAcceptableOrUnknown(data['username']!, _usernameMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Proxy map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Proxy(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      host: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}host'],
+      )!,
+      port: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}port'],
+      )!,
+      username: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}username'],
+      )!,
+    );
+  }
+
+  @override
+  $ProxiesTable createAlias(String alias) {
+    return $ProxiesTable(attachedDatabase, alias);
+  }
+}
+
+class Proxy extends DataClass implements Insertable<Proxy> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String name;
+  final String host;
+  final int port;
+
+  /// Empty: no authentication.
+  final String username;
+  const Proxy({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.name,
+    required this.host,
+    required this.port,
+    required this.username,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['name'] = Variable<String>(name);
+    map['host'] = Variable<String>(host);
+    map['port'] = Variable<int>(port);
+    map['username'] = Variable<String>(username);
+    return map;
+  }
+
+  ProxiesCompanion toCompanion(bool nullToAbsent) {
+    return ProxiesCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      name: Value(name),
+      host: Value(host),
+      port: Value(port),
+      username: Value(username),
+    );
+  }
+
+  factory Proxy.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Proxy(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      name: serializer.fromJson<String>(json['name']),
+      host: serializer.fromJson<String>(json['host']),
+      port: serializer.fromJson<int>(json['port']),
+      username: serializer.fromJson<String>(json['username']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'name': serializer.toJson<String>(name),
+      'host': serializer.toJson<String>(host),
+      'port': serializer.toJson<int>(port),
+      'username': serializer.toJson<String>(username),
+    };
+  }
+
+  Proxy copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? name,
+    String? host,
+    int? port,
+    String? username,
+  }) => Proxy(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    name: name ?? this.name,
+    host: host ?? this.host,
+    port: port ?? this.port,
+    username: username ?? this.username,
+  );
+  Proxy copyWithCompanion(ProxiesCompanion data) {
+    return Proxy(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      name: data.name.present ? data.name.value : this.name,
+      host: data.host.present ? data.host.value : this.host,
+      port: data.port.present ? data.port.value : this.port,
+      username: data.username.present ? data.username.value : this.username,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Proxy(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('name: $name, ')
+          ..write('host: $host, ')
+          ..write('port: $port, ')
+          ..write('username: $username')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, createdAt, updatedAt, name, host, port, username);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Proxy &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.name == this.name &&
+          other.host == this.host &&
+          other.port == this.port &&
+          other.username == this.username);
+}
+
+class ProxiesCompanion extends UpdateCompanion<Proxy> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> name;
+  final Value<String> host;
+  final Value<int> port;
+  final Value<String> username;
+  final Value<int> rowid;
+  const ProxiesCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.name = const Value.absent(),
+    this.host = const Value.absent(),
+    this.port = const Value.absent(),
+    this.username = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProxiesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String name,
+    required String host,
+    this.port = const Value.absent(),
+    this.username = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       name = Value(name),
+       host = Value(host);
+  static Insertable<Proxy> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? name,
+    Expression<String>? host,
+    Expression<int>? port,
+    Expression<String>? username,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (name != null) 'name': name,
+      if (host != null) 'host': host,
+      if (port != null) 'port': port,
+      if (username != null) 'username': username,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProxiesCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? name,
+    Value<String>? host,
+    Value<int>? port,
+    Value<String>? username,
+    Value<int>? rowid,
+  }) {
+    return ProxiesCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      name: name ?? this.name,
+      host: host ?? this.host,
+      port: port ?? this.port,
+      username: username ?? this.username,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (host.present) {
+      map['host'] = Variable<String>(host.value);
+    }
+    if (port.present) {
+      map['port'] = Variable<int>(port.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProxiesCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('name: $name, ')
+          ..write('host: $host, ')
+          ..write('port: $port, ')
+          ..write('username: $username, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ConnectionsTable extends Connections
     with TableInfo<$ConnectionsTable, Connection> {
   @override
@@ -395,6 +841,20 @@ class $ConnectionsTable extends Connections
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _proxyIdMeta = const VerificationMeta(
+    'proxyId',
+  );
+  @override
+  late final GeneratedColumn<String> proxyId = GeneratedColumn<String>(
+    'proxy_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES proxies (id) ON DELETE SET NULL',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -413,6 +873,7 @@ class $ConnectionsTable extends Connections
     keepAliveSeconds,
     lastUsedAt,
     zerotierNetwork,
+    proxyId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -547,6 +1008,12 @@ class $ConnectionsTable extends Connections
         ),
       );
     }
+    if (data.containsKey('proxy_id')) {
+      context.handle(
+        _proxyIdMeta,
+        proxyId.isAcceptableOrUnknown(data['proxy_id']!, _proxyIdMeta),
+      );
+    }
     return context;
   }
 
@@ -620,6 +1087,10 @@ class $ConnectionsTable extends Connections
         DriftSqlType.string,
         data['${effectivePrefix}zerotier_network'],
       ),
+      proxyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}proxy_id'],
+      ),
     );
   }
 
@@ -654,6 +1125,9 @@ class Connection extends DataClass implements Insertable<Connection> {
 
   /// Reach the host through this ZeroTier network (16 hex digits) instead of the internet.
   final String? zerotierNetwork;
+
+  /// Connect through this SOCKS5 proxy (not for hosts on a ZeroTier network or behind a jump host).
+  final String? proxyId;
   const Connection({
     required this.id,
     required this.createdAt,
@@ -671,6 +1145,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     required this.keepAliveSeconds,
     this.lastUsedAt,
     this.zerotierNetwork,
+    this.proxyId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -700,6 +1175,9 @@ class Connection extends DataClass implements Insertable<Connection> {
     }
     if (!nullToAbsent || zerotierNetwork != null) {
       map['zerotier_network'] = Variable<String>(zerotierNetwork);
+    }
+    if (!nullToAbsent || proxyId != null) {
+      map['proxy_id'] = Variable<String>(proxyId);
     }
     return map;
   }
@@ -732,6 +1210,9 @@ class Connection extends DataClass implements Insertable<Connection> {
       zerotierNetwork: zerotierNetwork == null && nullToAbsent
           ? const Value.absent()
           : Value(zerotierNetwork),
+      proxyId: proxyId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(proxyId),
     );
   }
 
@@ -757,6 +1238,7 @@ class Connection extends DataClass implements Insertable<Connection> {
       keepAliveSeconds: serializer.fromJson<int>(json['keepAliveSeconds']),
       lastUsedAt: serializer.fromJson<DateTime?>(json['lastUsedAt']),
       zerotierNetwork: serializer.fromJson<String?>(json['zerotierNetwork']),
+      proxyId: serializer.fromJson<String?>(json['proxyId']),
     );
   }
   @override
@@ -779,6 +1261,7 @@ class Connection extends DataClass implements Insertable<Connection> {
       'keepAliveSeconds': serializer.toJson<int>(keepAliveSeconds),
       'lastUsedAt': serializer.toJson<DateTime?>(lastUsedAt),
       'zerotierNetwork': serializer.toJson<String?>(zerotierNetwork),
+      'proxyId': serializer.toJson<String?>(proxyId),
     };
   }
 
@@ -799,6 +1282,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     int? keepAliveSeconds,
     Value<DateTime?> lastUsedAt = const Value.absent(),
     Value<String?> zerotierNetwork = const Value.absent(),
+    Value<String?> proxyId = const Value.absent(),
   }) => Connection(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -818,6 +1302,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     zerotierNetwork: zerotierNetwork.present
         ? zerotierNetwork.value
         : this.zerotierNetwork,
+    proxyId: proxyId.present ? proxyId.value : this.proxyId,
   );
   Connection copyWithCompanion(ConnectionsCompanion data) {
     return Connection(
@@ -849,6 +1334,7 @@ class Connection extends DataClass implements Insertable<Connection> {
       zerotierNetwork: data.zerotierNetwork.present
           ? data.zerotierNetwork.value
           : this.zerotierNetwork,
+      proxyId: data.proxyId.present ? data.proxyId.value : this.proxyId,
     );
   }
 
@@ -870,7 +1356,8 @@ class Connection extends DataClass implements Insertable<Connection> {
           ..write('sortOrder: $sortOrder, ')
           ..write('keepAliveSeconds: $keepAliveSeconds, ')
           ..write('lastUsedAt: $lastUsedAt, ')
-          ..write('zerotierNetwork: $zerotierNetwork')
+          ..write('zerotierNetwork: $zerotierNetwork, ')
+          ..write('proxyId: $proxyId')
           ..write(')'))
         .toString();
   }
@@ -893,6 +1380,7 @@ class Connection extends DataClass implements Insertable<Connection> {
     keepAliveSeconds,
     lastUsedAt,
     zerotierNetwork,
+    proxyId,
   );
   @override
   bool operator ==(Object other) =>
@@ -913,7 +1401,8 @@ class Connection extends DataClass implements Insertable<Connection> {
           other.sortOrder == this.sortOrder &&
           other.keepAliveSeconds == this.keepAliveSeconds &&
           other.lastUsedAt == this.lastUsedAt &&
-          other.zerotierNetwork == this.zerotierNetwork);
+          other.zerotierNetwork == this.zerotierNetwork &&
+          other.proxyId == this.proxyId);
 }
 
 class ConnectionsCompanion extends UpdateCompanion<Connection> {
@@ -933,6 +1422,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
   final Value<int> keepAliveSeconds;
   final Value<DateTime?> lastUsedAt;
   final Value<String?> zerotierNetwork;
+  final Value<String?> proxyId;
   final Value<int> rowid;
   const ConnectionsCompanion({
     this.id = const Value.absent(),
@@ -951,6 +1441,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     this.keepAliveSeconds = const Value.absent(),
     this.lastUsedAt = const Value.absent(),
     this.zerotierNetwork = const Value.absent(),
+    this.proxyId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ConnectionsCompanion.insert({
@@ -970,6 +1461,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     this.keepAliveSeconds = const Value.absent(),
     this.lastUsedAt = const Value.absent(),
     this.zerotierNetwork = const Value.absent(),
+    this.proxyId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
        updatedAt = Value(updatedAt),
@@ -993,6 +1485,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     Expression<int>? keepAliveSeconds,
     Expression<DateTime>? lastUsedAt,
     Expression<String>? zerotierNetwork,
+    Expression<String>? proxyId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1012,6 +1505,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
       if (keepAliveSeconds != null) 'keep_alive_seconds': keepAliveSeconds,
       if (lastUsedAt != null) 'last_used_at': lastUsedAt,
       if (zerotierNetwork != null) 'zerotier_network': zerotierNetwork,
+      if (proxyId != null) 'proxy_id': proxyId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1033,6 +1527,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     Value<int>? keepAliveSeconds,
     Value<DateTime?>? lastUsedAt,
     Value<String?>? zerotierNetwork,
+    Value<String?>? proxyId,
     Value<int>? rowid,
   }) {
     return ConnectionsCompanion(
@@ -1052,6 +1547,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
       keepAliveSeconds: keepAliveSeconds ?? this.keepAliveSeconds,
       lastUsedAt: lastUsedAt ?? this.lastUsedAt,
       zerotierNetwork: zerotierNetwork ?? this.zerotierNetwork,
+      proxyId: proxyId ?? this.proxyId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1107,6 +1603,9 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
     if (zerotierNetwork.present) {
       map['zerotier_network'] = Variable<String>(zerotierNetwork.value);
     }
+    if (proxyId.present) {
+      map['proxy_id'] = Variable<String>(proxyId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1132,6 +1631,7 @@ class ConnectionsCompanion extends UpdateCompanion<Connection> {
           ..write('keepAliveSeconds: $keepAliveSeconds, ')
           ..write('lastUsedAt: $lastUsedAt, ')
           ..write('zerotierNetwork: $zerotierNetwork, ')
+          ..write('proxyId: $proxyId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4090,6 +4590,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $ProxiesTable proxies = $ProxiesTable(this);
   late final $ConnectionsTable connections = $ConnectionsTable(this);
   late final $IdentitiesTable identities = $IdentitiesTable(this);
   late final $KnownHostsTable knownHosts = $KnownHostsTable(this);
@@ -4102,6 +4603,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     appSettings,
+    proxies,
     connections,
     identities,
     knownHosts,
@@ -4114,6 +4616,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'connections',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('connections', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'proxies',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('connections', kind: UpdateKind.update)],
@@ -4292,6 +4801,343 @@ typedef $$AppSettingsTableProcessedTableManager =
       SettingRow,
       PrefetchHooks Function()
     >;
+typedef $$ProxiesTableCreateCompanionBuilder = ProxiesCompanion Function({
+  Value<String> id,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  required String name,
+  required String host,
+  Value<int> port,
+  Value<String> username,
+  Value<int> rowid,
+});
+typedef $$ProxiesTableUpdateCompanionBuilder = ProxiesCompanion Function({
+  Value<String> id,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<String> name,
+  Value<String> host,
+  Value<int> port,
+  Value<String> username,
+  Value<int> rowid,
+});
+
+final class $$ProxiesTableReferences
+    extends BaseReferences<_$AppDatabase, $ProxiesTable, Proxy> {
+  $$ProxiesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ConnectionsTable, List<Connection>>
+  _connectionsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.connections,
+    aliasName: 'proxies__id__connections__proxy_id',
+  );
+
+  $$ConnectionsTableProcessedTableManager get connectionsRefs {
+    final manager = $$ConnectionsTableTableManager(
+      $_db,
+      $_db.connections,
+    ).filter((f) => f.proxyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_connectionsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ProxiesTableFilterComposer
+    extends Composer<_$AppDatabase, $ProxiesTable> {
+  $$ProxiesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get host => $composableBuilder(
+    column: $table.host,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get port => $composableBuilder(
+    column: $table.port,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> connectionsRefs(
+    Expression<bool> Function($$ConnectionsTableFilterComposer f) f,
+  ) {
+    final $$ConnectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.connections,
+      getReferencedColumn: (t) => t.proxyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ConnectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ProxiesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProxiesTable> {
+  $$ProxiesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get host => $composableBuilder(
+    column: $table.host,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get port => $composableBuilder(
+    column: $table.port,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ProxiesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProxiesTable> {
+  $$ProxiesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get host =>
+      $composableBuilder(column: $table.host, builder: (column) => column);
+
+  GeneratedColumn<int> get port =>
+      $composableBuilder(column: $table.port, builder: (column) => column);
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  Expression<T> connectionsRefs<T extends Object>(
+    Expression<T> Function($$ConnectionsTableAnnotationComposer a) f,
+  ) {
+    final $$ConnectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.connections,
+      getReferencedColumn: (t) => t.proxyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ConnectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ProxiesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProxiesTable,
+          Proxy,
+          $$ProxiesTableFilterComposer,
+          $$ProxiesTableOrderingComposer,
+          $$ProxiesTableAnnotationComposer,
+          $$ProxiesTableCreateCompanionBuilder,
+          $$ProxiesTableUpdateCompanionBuilder,
+          (Proxy, $$ProxiesTableReferences),
+          Proxy,
+          PrefetchHooks Function({bool connectionsRefs})
+        > {
+  $$ProxiesTableTableManager(_$AppDatabase db, $ProxiesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProxiesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProxiesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProxiesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> host = const Value.absent(),
+                Value<int> port = const Value.absent(),
+                Value<String> username = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProxiesCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                name: name,
+                host: host,
+                port: port,
+                username: username,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                required String name,
+                required String host,
+                Value<int> port = const Value.absent(),
+                Value<String> username = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProxiesCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                name: name,
+                host: host,
+                port: port,
+                username: username,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ProxiesTable, Proxy>(table),
+                  $$ProxiesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({connectionsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (connectionsRefs) db.connections],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (connectionsRefs)
+                    await $_getPrefetchedDataByColumns<
+                      Proxy,
+                      $ProxiesTable,
+                      Connection,
+                      $ConnectionsTable
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ProxiesTableReferences
+                          ._connectionsRefsTable(db),
+                      managerFromTypedResult: (p0) => $$ProxiesTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).connectionsRefs,
+                      currentColumn: 'id',
+                      referencedColumn: 'proxy_id',
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ProxiesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ProxiesTable,
+      Proxy,
+      $$ProxiesTableFilterComposer,
+      $$ProxiesTableOrderingComposer,
+      $$ProxiesTableAnnotationComposer,
+      $$ProxiesTableCreateCompanionBuilder,
+      $$ProxiesTableUpdateCompanionBuilder,
+      (Proxy, $$ProxiesTableReferences),
+      Proxy,
+      PrefetchHooks Function({bool connectionsRefs})
+    >;
 typedef $$ConnectionsTableCreateCompanionBuilder =
     ConnectionsCompanion Function({
       Value<String> id,
@@ -4310,6 +5156,7 @@ typedef $$ConnectionsTableCreateCompanionBuilder =
       Value<int> keepAliveSeconds,
       Value<DateTime?> lastUsedAt,
       Value<String?> zerotierNetwork,
+      Value<String?> proxyId,
       Value<int> rowid,
     });
 typedef $$ConnectionsTableUpdateCompanionBuilder =
@@ -4330,6 +5177,7 @@ typedef $$ConnectionsTableUpdateCompanionBuilder =
       Value<int> keepAliveSeconds,
       Value<DateTime?> lastUsedAt,
       Value<String?> zerotierNetwork,
+      Value<String?> proxyId,
       Value<int> rowid,
     });
 
@@ -4348,6 +5196,23 @@ final class $$ConnectionsTableReferences
       $_db.connections,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_jumpHostIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProxiesTable _proxyIdTable(_$AppDatabase db) =>
+      db.proxies.createAlias('connections__proxy_id__proxies__id');
+
+  $$ProxiesTableProcessedTableManager? get proxyId {
+    final $_column = $_itemColumn<String>('proxy_id');
+    if ($_column == null) return null;
+    final manager = $$ProxiesTableTableManager(
+      $_db,
+      $_db.proxies,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_proxyIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -4507,6 +5372,29 @@ class $$ConnectionsTableFilterComposer
           }) => $$ConnectionsTableFilterComposer(
             $db: $db,
             $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProxiesTableFilterComposer get proxyId {
+    final $$ProxiesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.proxyId,
+      referencedTable: $db.proxies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProxiesTableFilterComposer(
+            $db: $db,
+            $table: $db.proxies,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4698,6 +5586,29 @@ class $$ConnectionsTableOrderingComposer
     );
     return composer;
   }
+
+  $$ProxiesTableOrderingComposer get proxyId {
+    final $$ProxiesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.proxyId,
+      referencedTable: $db.proxies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProxiesTableOrderingComposer(
+            $db: $db,
+            $table: $db.proxies,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$ConnectionsTableAnnotationComposer
@@ -4778,6 +5689,29 @@ class $$ConnectionsTableAnnotationComposer
           }) => $$ConnectionsTableAnnotationComposer(
             $db: $db,
             $table: $db.connections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProxiesTableAnnotationComposer get proxyId {
+    final $$ProxiesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.proxyId,
+      referencedTable: $db.proxies,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProxiesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.proxies,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4878,6 +5812,7 @@ class $$ConnectionsTableTableManager
           Connection,
           PrefetchHooks Function({
             bool jumpHostId,
+            bool proxyId,
             bool bookmarksRefs,
             bool forwardRulesRefs,
             bool workspacesRefs,
@@ -4912,6 +5847,7 @@ class $$ConnectionsTableTableManager
                 Value<int> keepAliveSeconds = const Value.absent(),
                 Value<DateTime?> lastUsedAt = const Value.absent(),
                 Value<String?> zerotierNetwork = const Value.absent(),
+                Value<String?> proxyId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ConnectionsCompanion(
                 id: id,
@@ -4930,6 +5866,7 @@ class $$ConnectionsTableTableManager
                 keepAliveSeconds: keepAliveSeconds,
                 lastUsedAt: lastUsedAt,
                 zerotierNetwork: zerotierNetwork,
+                proxyId: proxyId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4950,6 +5887,7 @@ class $$ConnectionsTableTableManager
                 Value<int> keepAliveSeconds = const Value.absent(),
                 Value<DateTime?> lastUsedAt = const Value.absent(),
                 Value<String?> zerotierNetwork = const Value.absent(),
+                Value<String?> proxyId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ConnectionsCompanion.insert(
                 id: id,
@@ -4968,6 +5906,7 @@ class $$ConnectionsTableTableManager
                 keepAliveSeconds: keepAliveSeconds,
                 lastUsedAt: lastUsedAt,
                 zerotierNetwork: zerotierNetwork,
+                proxyId: proxyId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4981,6 +5920,7 @@ class $$ConnectionsTableTableManager
           prefetchHooksCallback:
               ({
                 jumpHostId = false,
+                proxyId = false,
                 bookmarksRefs = false,
                 forwardRulesRefs = false,
                 workspacesRefs = false,
@@ -5016,6 +5956,17 @@ class $$ConnectionsTableTableManager
                                 ._jumpHostIdTable(db),
                             referencedColumn: $$ConnectionsTableReferences
                                 ._jumpHostIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (proxyId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.proxyId,
+                            referencedTable: $$ConnectionsTableReferences
+                                ._proxyIdTable(db),
+                            referencedColumn: $$ConnectionsTableReferences
+                                ._proxyIdTable(db)
                                 .id,
                           ) as T;
                         }
@@ -5106,6 +6057,7 @@ typedef $$ConnectionsTableProcessedTableManager =
       Connection,
       PrefetchHooks Function({
         bool jumpHostId,
+        bool proxyId,
         bool bookmarksRefs,
         bool forwardRulesRefs,
         bool workspacesRefs,
@@ -6898,6 +7850,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$ProxiesTableTableManager get proxies =>
+      $$ProxiesTableTableManager(_db, _db.proxies);
   $$ConnectionsTableTableManager get connections =>
       $$ConnectionsTableTableManager(_db, _db.connections);
   $$IdentitiesTableTableManager get identities =>

@@ -224,6 +224,12 @@ abstract class AppLocalizations {
   /// **'Create port forwarding'**
   String get addPortForwarding;
 
+  /// No description provided for @addProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Add proxy'**
+  String get addProxy;
+
   /// No description provided for @addRow.
   ///
   /// In en, this message translates to:
@@ -890,6 +896,24 @@ abstract class AppLocalizations {
   /// **'The private key is erased from this device and removed from these hosts: {names}. Unless you have a copy, it cannot be recovered.'**
   String deleteKeyUsed(String names);
 
+  /// No description provided for @deleteProxyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing goes through it.'**
+  String get deleteProxyBody;
+
+  /// No description provided for @deleteProxyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String deleteProxyTitle(String name);
+
+  /// No description provided for @deleteProxyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'These will connect directly again: {names}'**
+  String deleteProxyUsed(String names);
+
   /// No description provided for @deleteUntrackedBody.
   ///
   /// In en, this message translates to:
@@ -1129,6 +1153,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Key'**
   String get editKey;
+
+  /// No description provided for @editProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit proxy'**
+  String get editProxy;
 
   /// No description provided for @editSnippet.
   ///
@@ -2564,6 +2594,18 @@ abstract class AppLocalizations {
   /// **'No preview'**
   String get noPreview;
 
+  /// No description provided for @noProxiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A SOCKS5 proxy for the hosts you choose and for ZeroTier, with or without a login.'**
+  String get noProxiesHint;
+
+  /// No description provided for @noProxiesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No proxies yet'**
+  String get noProxiesYet;
+
   /// No description provided for @noStashes.
   ///
   /// In en, this message translates to:
@@ -3049,6 +3091,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Protection'**
   String get protection;
+
+  /// No description provided for @proxies.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxies'**
+  String get proxies;
+
+  /// No description provided for @proxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy'**
+  String get proxy;
+
+  /// No description provided for @proxyDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Directly'**
+  String get proxyDirect;
+
+  /// No description provided for @proxyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy: {error}'**
+  String proxyFailed(String error);
+
+  /// No description provided for @proxyForZeroTier.
+  ///
+  /// In en, this message translates to:
+  /// **'ZeroTier traffic'**
+  String get proxyForZeroTier;
+
+  /// No description provided for @proxyForZeroTierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'All of the ZeroTier node\'s traffic. ZeroTier speaks only UDP: the proxy must relay UDP (UDP ASSOCIATE).'**
+  String get proxyForZeroTierHint;
+
+  /// No description provided for @proxyHostHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect through a SOCKS5 proxy (Settings → Proxies)'**
+  String get proxyHostHint;
+
+  /// No description provided for @proxyHostsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosts on a ZeroTier network or behind a jump host are not listed: their connections go through those.'**
+  String get proxyHostsHint;
+
+  /// No description provided for @proxyLoginHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty when the proxy needs no login'**
+  String get proxyLoginHint;
+
+  /// No description provided for @proxyNoHosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No hosts that could use it yet'**
+  String get proxyNoHosts;
+
+  /// No description provided for @proxyTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get proxyTest;
+
+  /// No description provided for @proxyUseFor.
+  ///
+  /// In en, this message translates to:
+  /// **'What goes through it'**
+  String get proxyUseFor;
+
+  /// No description provided for @proxyUsedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Not used} =1{1 host} other{{count} hosts}}'**
+  String proxyUsedBy(int count);
+
+  /// No description provided for @proxyViaJumpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Behind a jump host: goes the jump host\'s way'**
+  String get proxyViaJumpHint;
+
+  /// No description provided for @proxyWorksTcpOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The proxy works for hosts but does not relay UDP: ZeroTier cannot use it'**
+  String get proxyWorksTcpOnly;
+
+  /// No description provided for @proxyWorksUdp.
+  ///
+  /// In en, this message translates to:
+  /// **'The proxy works, UDP included: ZeroTier can use it'**
+  String get proxyWorksUdp;
 
   /// No description provided for @publicKey.
   ///
@@ -4633,6 +4771,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Private: members need authorizing'**
   String get ztPrivate;
+
+  /// No description provided for @ztProxyConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: through its relay {relay}'**
+  String ztProxyConnected(String name, String relay);
+
+  /// No description provided for @ztProxyConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: connecting…'**
+  String ztProxyConnecting(String name);
+
+  /// No description provided for @ztProxyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {error}. Trying again; ZeroTier sends nothing meanwhile.'**
+  String ztProxyFailed(String name, String error);
 
   /// No description provided for @ztPublic.
   ///
