@@ -67,12 +67,14 @@ class KeepAliveHub {
     final title = shown.title;
     final text = shown.text.isEmpty ? idleText() : shown.text;
     final label = entries.length == 1 ? entries.single.value.stopLabel : stopLabel();
+    final same = _shown == (title: title, text: text);
     _shown = (title: title, text: text);
     if (!_on || label != _label) {
       _on = true;
       _label = label;
       _enqueue(() => _service.start(title: title, text: text, stopLabel: label));
-    } else {
+    } else if (!same) {
+      // Unchanged content is not posted again: every post moves the notification in the shade.
       _enqueue(() => _service.update(title: title, text: text));
     }
   }

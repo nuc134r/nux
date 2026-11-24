@@ -36,6 +36,10 @@ class NoKeepAlive implements KeepAlive {
 
 const _stopButton = 'stop';
 
+/// Sent to the app when the user swiped the notification away (Android 14+ allows that even for a
+/// foreground service's; older versions keep it, as it is ongoing).
+const _dismissed = 'dismissed';
+
 /// Entry point of the foreground service's isolate: it only relays the notification's buttons.
 @pragma('vm:entry-point')
 void keepAliveCallback() => FlutterForegroundTask.setTaskHandler(_RelayHandler());
@@ -60,6 +64,9 @@ class _RelayHandler extends TaskHandler {
 
   @override
   void onNotificationPressed() => FlutterForegroundTask.launchApp();
+
+  @override
+  void onNotificationDismissed() => FlutterForegroundTask.sendDataToMain(_dismissed);
 }
 
 /// An Android foreground service (type `specialUse`, see AndroidManifest.xml) whose notification shows
@@ -102,11 +109,18 @@ class ForegroundServiceKeepAlive implements KeepAlive {
   String? _lastFailure;
   DateTime? _stopPressed;
 
+  /// What the running service's notification shows; null when it must be posted (again).
+  ({String title, String text, bool buttons})? _posted;
+
   void _onData(Object data) {
     if (data == _stopButton) {
       // The service already stopped itself; don't start it again before the app has caught up.
       _stopPressed = DateTime.now();
       _stop.add(null);
+    } else if (data == _dismissed && _wanted != null) {
+      // Swiped away while connections run: post it again (the only time an unchanged one is).
+      _posted = null;
+      _serial(() => _ensure(withButtons: true));
     }
   }
 
@@ -153,6 +167,7 @@ class ForegroundServiceKeepAlive implements KeepAlive {
   @override
   Future<void> stop() {
     _wanted = null;
+    _posted = null;
     return _serial(() async {
       if (_wanted == null && await FlutterForegroundTask.isRunningService) await FlutterForegroundTask.stopService();
     });
@@ -182,6 +197,13 @@ class ForegroundServiceKeepAlive implements KeepAlive {
     if (w == null) return;
     final buttons = [NotificationButton(id: _stopButton, text: w.stopLabel)];
     if (await FlutterForegroundTask.isRunningService) {
+      // Each post moves the notification in the shade (and may light the screen): only changes are sent.
+      // Buttons sent once stay, so a post without them still shows the same notification.
+      final posted = _posted;
+      if (posted != null && posted.title == w.title && posted.text == w.text && (posted.buttons || !withButtons)) {
+        return;
+      }
+      _posted = (title: w.title, text: w.text, buttons: withButtons || (posted?.buttons ?? false));
       await FlutterForegroundTask.updateService(
         notificationTitle: w.title,
         notificationText: w.text,
@@ -200,6 +222,7 @@ class ForegroundServiceKeepAlive implements KeepAlive {
     );
     switch (result) {
       case ServiceRequestSuccess():
+        _posted = (title: w.title, text: w.text, buttons: true);
         if (_lastFailure != null) log('Background service started after an earlier failure');
         _lastFailure = null;
       case ServiceRequestFailure(:final error):

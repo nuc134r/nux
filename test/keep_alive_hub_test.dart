@@ -58,6 +58,20 @@ void main() {
     ]);
   });
 
+  test('an update that changes nothing is not posted (each post moves the notification)', () async {
+    final fwd = hub.slot('forwarding');
+    await fwd.start(title: '1 port active', text: '8080 • ⇄ 1 • Web', stopLabel: 'Stop all');
+    for (var i = 0; i < 5; i++) {
+      await fwd.update(title: '1 port active', text: '8080 • ⇄ 1 • Web');
+    }
+    await fwd.update(title: '1 port active', text: '8080 • ⇄ 2 • Web');
+    await flush();
+    expect(service.calls, [
+      'start 1 port active | 8080 • ⇄ 1 • Web | Stop all',
+      'update 1 port active | 8080 • ⇄ 2 • Web',
+    ]);
+  });
+
   test("the notification's button reaches every slot", () async {
     final pressed = <String>[];
     hub.slot('ssh').stopRequested.listen((_) => pressed.add('ssh'));

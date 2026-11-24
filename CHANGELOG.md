@@ -3,6 +3,10 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.12.1
+
+- The background notification no longer jumps around in the notification shade: it is only updated when what it says changes (before, every bit of traffic posted it again). If you swipe it away (Android 14 and newer allow that) while connections run, it comes back.
+
 ## 0.12.0
 
 - **SOCKS5 proxies** (Settings → Proxies), with or without a username and password. Each proxy says what goes through it: any of your hosts (also chosen in a host's settings, under Advanced) and the ZeroTier node. "Test" in its ⋮ menu checks the login and whether the proxy relays UDP.
