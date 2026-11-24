@@ -209,6 +209,9 @@ void _pipe(
   onChange?.call();
   if (!open.add(close)) return;
 
+  // A write to a socket the app reset fails through `done`, not `add`: handled here, or it is an uncaught
+  // error ("Connection reset by peer").
+  socket.done.then((_) => close(), onError: (Object _) => close()).ignore();
   socket.listen(
     (data) {
       stats.bytesOut += data.length;

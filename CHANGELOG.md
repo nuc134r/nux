@@ -3,6 +3,11 @@
 Each `## <version>` section becomes the GitHub release notes for that tag (tool/changelog.sh) and is
 shown in the app under Settings → App version. Write for people using the app, not for developers.
 
+## 0.12.2
+
+- Fix: nux could crash right when it started (more likely just after an update) while ZeroTier came up with networks it had joined before.
+- Port forwarding no longer logs "Uncaught error: Connection reset by peer" when an app closes its connection abruptly.
+
 ## 0.12.1
 
 - The background notification no longer jumps around in the notification shade: it is only updated when what it says changes (before, every bit of traffic posted it again). If you swipe it away (Android 14 and newer allow that) while connections run, it comes back.

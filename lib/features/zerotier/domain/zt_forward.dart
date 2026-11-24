@@ -63,6 +63,8 @@ class _ZtTcpForward implements RunningForward {
     stats.open++;
     onChange?.call();
     if (!_open.add(close)) return;
+    // Write failures (the app reset its connection) arrive through `done`: handled, not uncaught.
+    socket.done.then((_) => close(), onError: (Object _) => close()).ignore();
 
     socket.listen((d) {
       stats.bytesOut += d.length;
